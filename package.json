@@ -1,0 +1,10 @@
+{
+  "name": "psc",
+  "title": "Psc CMS",
+  "homepage": "http://www.ps-webforge.com/",
+  "author": {
+    "name": "Philipp Scheit"
+  },
+  "licences": ["LGPL"]
+  
+}
