@@ -19,7 +19,7 @@ module.exports = function(grunt) {
       base: '.'
     },
     qunit: {
-      all: ['tests/all.html']
+      all: ['http://localhost:8000/tests/all.html']
     },
     concat: {
       dist: {
