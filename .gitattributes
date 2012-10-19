@@ -1,0 +1,3 @@
+* export-ignore
+dist !export-ignore
+dist/psc-cms*.js !export-ignore

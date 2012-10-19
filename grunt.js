@@ -14,19 +14,23 @@ module.exports = function(grunt) {
     lint: {
       files: ['grunt.js', 'lib/**/*.js']
     },
+    server: {
+      port: 8000,
+      base: '.'
+    },
     qunit: {
-      files: ['tests/**/*.html']
+      all: ['tests/all.html']
     },
     concat: {
       dist: {
-        src: ['<banner:meta.banner>', '<file_strip_banner:lib/<%= pkg.name %>.js>'],
-        dest: 'dist/<%= pkg.name %>.js'
+        src: ['<banner:meta.banner>', '<file_strip_banner:lib/<%= pkg.name %>.js>', 'lib/**/*.js'],
+        dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.js'
       }
     },
     min: {
       dist: {
         src: ['<banner:meta.banner>', '<config:concat.dist.dest>'],
-        dest: 'dist/<%= pkg.name %>.min.js'
+        dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js'
       }
     },
     watch: {
@@ -35,7 +39,7 @@ module.exports = function(grunt) {
     },
     jshint: {
       options: {
-        curly: true,
+        curly: false, /* dont blame for missing curlies around ifs */
         eqeqeq: true,
         immed: true,
         latedef: true,
@@ -62,6 +66,6 @@ module.exports = function(grunt) {
   });
 
   // Default task.
-  grunt.registerTask('default', 'lint qunit concat min');
-
+  grunt.registerTask('default', 'lint server qunit concat min');
+  grunt.registerTask('test', 'server qunit');
 };
