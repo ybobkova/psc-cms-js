@@ -7,12 +7,36 @@
 </head>
 <body>
   <div id="qunit"></div>
-  <script src="/vendor/jquery/jquery-1.8.2.js"></script>
+  
   <script src="/vendor/qunit/qunit-1.10.0.js"></script>
-  <script src="/vendor/joose/all.js"></script>
-  <script src="/vendor/joose/x-namespace-depended.js"></script>
-  <script src="/lib/psc-cms.js"></script>
-  <script src="/vendor/webforge/assert.js"></script>
-  <script src="AsyncTest.js"></script>
+  
+  <!-- Load application
+    data-main is (of course) a relative path to this file you can use absolute paths to the webroot as well
+  -->
+  <script src="/lib/config.js"></script>
+  <script data-main="/lib/main" src="/vendor/require.js"></script>
+
+  <script>
+  QUnit.config.autostart = false;
+  
+  require(["joose"], function () {
+    use.paths = ["/lib"];
+    
+    JooseX.Namespace.Depended.Resource.JavaScript.meta.extend({
+      doesnt  : [ JooseX.Namespace.Depended.Transport.XHRAsync, JooseX.Namespace.Depended.Materialize.Eval ],
+      does    : JooseX.Namespace.Depended.Transport.ScriptTag
+    });
+  
+    require(["jquery", "../tests/all"], function ($, tests) {
+      
+    
+      require(tests, function () {
+         QUnit.start();
+      });
+    
+    });    
+  });
+  
+  </script>
 </body>
 </html>
