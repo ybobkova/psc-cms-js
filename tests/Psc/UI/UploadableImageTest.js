@@ -1,4 +1,4 @@
-define(['Psc/UI/UploadableImage','Psc/Test/DoublesManager','Psc/UI/ResizableImage'], function() {
+define(['psc-tests-assert','Psc/UI/UploadableImage','Psc/Test/DoublesManager','Psc/UI/ResizableImage'], function() {
   
   module("Psc.UI.UploadableImage");
   
@@ -34,10 +34,10 @@ define(['Psc/UI/UploadableImage','Psc/Test/DoublesManager','Psc/UI/ResizableImag
     var $img = $html.find('.psc-cms-ui-uploadable-image');
     
     
-    assertTrue($img.is('.psc-cms-ui-uploadable-image'));
+    this.assertTrue($img.is('.psc-cms-ui-uploadable-image'));
     
     // noch icht fertig: 
-    //assertTrue($img.is('.psc-cms-ui-resizable-image'));
+    //this.assertTrue($img.is('.psc-cms-ui-resizable-image'));
     //resizableImage = Psc.UI.WidgetWrapper.unwrapWidget($img, Psc.UI.ResizableImage);
   });
   
@@ -46,8 +46,8 @@ define(['Psc/UI/UploadableImage','Psc/Test/DoublesManager','Psc/UI/ResizableImag
     var $html = this.emptyImage.unwrap();
     var $img = $html.find('.psc-cms-ui-uploadable-image');
     
-    //assertFalse($img.is('.psc-cms-ui-resizable-image'), 'is not an resizable image');
-    assertTrue($img.is('.psc-cms-ui-uploadable-image.placeholder'),'is placeholder');
+    //this.assertFalse($img.is('.psc-cms-ui-resizable-image'), 'is not an resizable image');
+    this.assertTrue($img.is('.psc-cms-ui-uploadable-image.placeholder'),'is placeholder');
   });
   
   test("if dbl clicked on div in image (resizable image or placeholder) the uploadService is invoked", function () {
@@ -58,12 +58,12 @@ define(['Psc/UI/UploadableImage','Psc/Test/DoublesManager','Psc/UI/ResizableImag
       $image.simulate('dblclick');
       
       var dialog = uploadService.getSingleDialog();
-      assertTrue(dialog.isOpen());
+      this.assertTrue(dialog.isOpen());
       
       dialog.close();
       
       //var request = uploadService.getAjaxService().getRequest();
-      //assertNotUndefined(request,'ajax service request has been invoked '+debug);
+      //this.assertNotUndefined(request,'ajax service request has been invoked '+debug);
     };
     
     doTest(this.image.unwrap(), this.uploadService, 'for image');

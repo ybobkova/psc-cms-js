@@ -1,4 +1,4 @@
-define(['Psc/EventDispatching','Psc/EventManager'], function() {
+define(['psc-tests-assert','Psc/EventDispatching','Psc/EventManager'], function() {
   
   module("Psc.EventDispatching", {
     setup: function () {
@@ -12,13 +12,13 @@ define(['Psc/EventDispatching','Psc/EventManager'], function() {
 
   test("manager gets contructed and returned", function() {
     var eventDispatcher = new eventDispatchingClass();
-    assertInstanceOf(Psc.EventManager,eventDispatcher.getEventManager());
+    this.assertInstanceOf(Psc.EventManager,eventDispatcher.getEventManager());
   });
     
   test("injection", function () {
     var myEventManager = new Psc.EventManager();
     var eventDispatcher = new eventDispatchingClass( { eventManager: myEventManager} );
 
-    assertSame(myEventManager, eventDispatcher.getEventManager(), 'eventManager gets injected through constructor');
+    this.assertSame(myEventManager, eventDispatcher.getEventManager(), 'eventManager gets injected through constructor');
   });
 });

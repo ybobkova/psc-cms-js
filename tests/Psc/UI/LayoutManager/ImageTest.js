@@ -1,4 +1,4 @@
-define(['Psc/UI/LayoutManager/Image','Psc/UI/ResizableImage','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/LayoutManager/Image','Psc/UI/ResizableImage','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.ResizableImage");
   
@@ -34,9 +34,9 @@ define(['Psc/UI/LayoutManager/Image','Psc/UI/ResizableImage','Psc/Test/DoublesMa
     var $widget = this.image.create(), $splitPane, $imageContainer, $img;
     this.$container.append($widget);
     
-    assertEquals(1, ($splitPane = $widget.find('div.psc-cms-ui-splitpane')).length);
-    assertEquals(1, ($imageContainer = $splitPane.find('> div.right')).length);
-    assertEquals(1, ($img = $imageContainer.find('img')).length, 'img can be found');
+    this.assertEquals(1, ($splitPane = $widget.find('div.psc-cms-ui-splitpane')).length);
+    this.assertEquals(1, ($imageContainer = $splitPane.find('> div.right')).length);
+    this.assertEquals(1, ($img = $imageContainer.find('img')).length, 'img can be found');
   });
   
   test("if emtpy url is set a placeholder is used for image", function() {
@@ -44,7 +44,7 @@ define(['Psc/UI/LayoutManager/Image','Psc/UI/ResizableImage','Psc/Test/DoublesMa
     
     var $widget = this.emptyImage.create(), $placeHolder;
     
-    assertEquals(1, ($placeHolder = $widget.find('div.placeholder')).length,'placeholder is constructed');
+    this.assertEquals(1, ($placeHolder = $widget.find('div.placeholder')).length,'placeholder is constructed');
     
   });
 });

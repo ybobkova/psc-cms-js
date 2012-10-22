@@ -1,4 +1,4 @@
-define(['Psc/UI/FormBuilder'], function() {
+define(['psc-tests-assert','Psc/UI/FormBuilder'], function() {
   
   module("Psc.UI.FormBuilder");
   
@@ -20,17 +20,17 @@ define(['Psc/UI/FormBuilder'], function() {
         
     var $form = fb.build(), $textFields = $form.find('input[type="text"]');
     
-    assertNotUndefined($form.jquery);
-    assertEquals(1, $form.length, 'form ist vorhanden');
-    assertEquals(2, $textFields.length, 'textfields sind vorhanden');
+    this.assertNotUndefined($form.jquery);
+    this.assertEquals(1, $form.length, 'form ist vorhanden');
+    this.assertEquals(2, $textFields.length, 'textfields sind vorhanden');
   });
   
   test("_genereate Name Unit", function () {
     $.extend(this,setup());
     
-    assertEquals("part1[part2]", this.formBuilder._generateName(['part1','part2']));
-    assertEquals("part", this.formBuilder._generateName(['part']));
-    assertEquals("part", this.formBuilder._generateName('part'));
+    this.assertEquals("part1[part2]", this.formBuilder._generateName(['part1','part2']));
+    this.assertEquals("part", this.formBuilder._generateName(['part']));
+    this.assertEquals("part", this.formBuilder._generateName('part'));
   });
   
   test("radios", function () {
@@ -48,21 +48,21 @@ define(['Psc/UI/FormBuilder'], function() {
     
     
     //$('#visible-fixture').empty().append($form);
-    assertEquals('Position', $wrapper.find('> label.psc-cms-ui-label').text());
-    assertEquals(2, $radios.length, '2 radios are build '+$radios.selector);
+    this.assertEquals('Position', $wrapper.find('> label.psc-cms-ui-label').text());
+    this.assertEquals(2, $radios.length, '2 radios are build '+$radios.selector);
     
-    assertEquals(1, $radioLeft.length, $radioLeft.selector);
-    assertEquals('align', $radioLeft.attr('name'));
-    assertEquals(1, $labelLeft.length, $labelLeft.selector);
-    assertEquals('links',$labelLeft.text());
+    this.assertEquals(1, $radioLeft.length, $radioLeft.selector);
+    this.assertEquals('align', $radioLeft.attr('name'));
+    this.assertEquals(1, $labelLeft.length, $labelLeft.selector);
+    this.assertEquals('links',$labelLeft.text());
     
-    assertEquals(1, $radioRight.length, $radioRight.selector);
-    assertEquals('align', $radioRight.attr('name'));
-    assertEquals(1, $labelRight.length, $labelRight.selector);
-    assertEquals('rechts',$labelRight.text());
+    this.assertEquals(1, $radioRight.length, $radioRight.selector);
+    this.assertEquals('align', $radioRight.attr('name'));
+    this.assertEquals(1, $labelRight.length, $labelRight.selector);
+    this.assertEquals('rechts',$labelRight.text());
     
-    assertTrue($radioRight.is(':checked'), '$radioRight is:checked');
-    assertFalse($radioLeft.is(':checked'), '$radioLeft isnot:checked');
+    this.assertTrue($radioRight.is(':checked'), '$radioRight is:checked');
+    this.assertFalse($radioLeft.is(':checked'), '$radioLeft isnot:checked');
     
   });
 });

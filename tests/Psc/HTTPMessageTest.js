@@ -1,4 +1,4 @@
-define(['Psc/HTTPMessage'], function () {
+define(['psc-tests-assert','Psc/HTTPMessage'], function () {
   module("Psc.HTTPMessage");
   
   test("parsesHeaderFromString", function() {
@@ -8,7 +8,7 @@ define(['Psc/HTTPMessage'], function () {
     
     message.parseHeader(headerString);
     
-    assertEquals({
+    this.assertEquals({
       "Date": "Mon, 19 Mar 2012 06:48:32 GMT",
       "Server": "Apache/2.2.22 (Win32) PHP/5.3.10",
       "X-Powered-By": "PHP/5.3.10",
@@ -25,15 +25,15 @@ define(['Psc/HTTPMessage'], function () {
   test("setsAndGetsAndDeletesHeaderFields", function() {
     var message = new Psc.HTTPMessage({});
     
-    assertEquals(null, message.getHeaderField('Content-Type'));
+    this.assertEquals(null, message.getHeaderField('Content-Type'));
     message.setHeaderField('Content-Type','text/html');
-    assertEquals('text/html', message.getHeaderField('Content-Type'));
+    this.assertEquals('text/html', message.getHeaderField('Content-Type'));
     message.removeHeaderField('Content-Type');
-    assertEquals(null, message.getHeaderField('Content-Type'));
+    this.assertEquals(null, message.getHeaderField('Content-Type'));
     
     message.setHeaderField('Content-Type','text/html');
     message.setHeaderField('Pragma','no-cache');
-    assertEquals('no-cache', message.getHeaderField('Pragma'));
-    assertEquals('text/html', message.getHeaderField('Content-Type'));
+    this.assertEquals('no-cache', message.getHeaderField('Pragma'));
+    this.assertEquals('text/html', message.getHeaderField('Content-Type'));
   });
 });

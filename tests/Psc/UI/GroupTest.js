@@ -1,4 +1,4 @@
-define(['Psc/UI/Group'], function() {
+define(['psc-tests-assert','Psc/UI/Group'], function() {
   
   module("Psc.UI.Group");
   

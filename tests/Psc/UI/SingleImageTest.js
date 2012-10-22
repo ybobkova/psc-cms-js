@@ -1,4 +1,4 @@
-define(['Psc/UI/ResizableImage','Psc/UI/SingleImage','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/ResizableImage','Psc/UI/SingleImage','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.SingleImage");
   
@@ -33,15 +33,15 @@ define(['Psc/UI/ResizableImage','Psc/UI/SingleImage','Psc/Test/DoublesManager'],
     
     var $widget = this.image.unwrap(), $img;
     
-    assertEquals(1, ($img = $widget.find('img')).length);
-    assertEquals('/js/fixtures/normalImage.jpg', $img.attr('src'));
+    this.assertEquals(1, ($img = $widget.find('img')).length);
+    this.assertEquals('/js/fixtures/normalImage.jpg', $img.attr('src'));
   });
   
   test("if emtpy url is set a placeholder is used for image", function() {
     $.extend(this, setup());
     
     var $widget = this.emptyImage.unwrap(), $placeHolder;
-    assertEquals(1, ($placeHolder = $widget.find('div.placeholder')).length,'placeholder is constructed');
+    this.assertEquals(1, ($placeHolder = $widget.find('div.placeholder')).length,'placeholder is constructed');
   });
   
   test("hidden field is synchronized on edited", function() {
@@ -51,9 +51,9 @@ define(['Psc/UI/ResizableImage','Psc/UI/SingleImage','Psc/Test/DoublesManager'],
     
     this.emptyImage.getImage().getEventManager().triggerEvent('image-edited', {}, [this.emptyImage.getImage(), 7, '/new/url']);
     
-    assertEquals('7', $widget.find('input[type="hidden"]').val());
+    this.assertEquals('7', $widget.find('input[type="hidden"]').val());
     // das geht natürlich nicht, weil wir ja kein richtiges event haben sondern nur eins faken
-    //assertEquals('/new/url', $widget.find('img').attr('src'));
-    assertEquals('/new/url', this.emptyImage.getUrl());
+    //this.assertEquals('/new/url', $widget.find('img').attr('src'));
+    this.assertEquals('/new/url', this.emptyImage.getUrl());
   });
 });

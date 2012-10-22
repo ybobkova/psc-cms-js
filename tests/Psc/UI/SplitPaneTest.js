@@ -1,4 +1,4 @@
-define(['Psc/UI/SplitPane'], function() {
+define(['psc-tests-assert','Psc/UI/SplitPane'], function() {
   
   module("Psc.UI.SplitPane");
   

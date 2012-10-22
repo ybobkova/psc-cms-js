@@ -1,4 +1,4 @@
-define(['Psc/UI/Spinner'], function() {
+define(['psc-tests-assert','Psc/UI/Spinner'], function() {
   module("Psc.UI.Spinner");
 
   test("construct", function() {
@@ -6,20 +6,20 @@ define(['Psc/UI/Spinner'], function() {
     $('body').append($container);
     
     var spinner = new Psc.UI.Spinner({ });
-    assertEquals(0, $container.find('img').length, 'ein bild wurde dem container noch nicht hinzugefügt');
+    this.assertEquals(0, $container.find('img').length, 'ein bild wurde dem container noch nicht hinzugefügt');
     
     spinner.show();
     stop();
     setTimeout(function () {
       start();
-      assertTrue($container.find('img').is(':visible'), 'spinner is visible after show()');
+      this.assertTrue($container.find('img').is(':visible'), 'spinner is visible after show()');
 
 
       spinner.remove();
       stop();
       setTimeout(function () {
         start();
-        assertTrue($container.find('img').is(':not(:visible)'),'spinner is not visible after remove');
+        this.assertTrue($container.find('img').is(':not(:visible)'),'spinner is not visible after remove');
       }, 200); // wegen effect
 
     },200);

@@ -1,4 +1,4 @@
-define(['Psc/UI/HTML/Base'], function() {
+define(['psc-tests-assert','Psc/UI/HTML/Base'], function() {
   var htmlClass;
   
   module("Psc.UI.HTML.Base", {
@@ -25,7 +25,7 @@ define(['Psc/UI/HTML/Base'], function() {
     });
     
     
-    assertEquals('<div title="my title" class="ui-widget ui-row"></div>', $('#qunit-fixture').empty().append($div).html());
+    this.assertEquals('<div title="my title" class="ui-widget ui-row"></div>', $('#qunit-fixture').empty().append($div).html());
   
   });
 });

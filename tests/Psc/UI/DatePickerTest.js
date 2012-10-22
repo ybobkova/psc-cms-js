@@ -1,4 +1,4 @@
-define(['Psc/UI/DatePicker','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/DatePicker','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.DatePicker");
   

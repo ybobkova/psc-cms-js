@@ -1,4 +1,4 @@
-define(['tiptoi/GameEditor'], function() {
+define(['psc-tests-assert','tiptoi/GameEditor'], function() {
   
   module("tiptoi.GameEditor");
   
@@ -43,10 +43,10 @@ define(['tiptoi/GameEditor'], function() {
     
     var grid = this.gameEditor.getFiles(), $table;
     
-    assertEquals(1, ($table = this.$fixture.find('div.game-files table')).length, 'table is rendered in html');
-    assertTrue(this.gameEditor.getService().pulledCalled, 'service was called for uploaded files');
+    this.assertEquals(1, ($table = this.$fixture.find('div.game-files table')).length, 'table is rendered in html');
+    this.assertTrue(this.gameEditor.getService().pulledCalled, 'service was called for uploaded files');
     
     var row1 = grid.getRow(1);
-    assertEquals(1, grid.getRows().length);
+    this.assertEquals(1, grid.getRows().length);
   });
 });

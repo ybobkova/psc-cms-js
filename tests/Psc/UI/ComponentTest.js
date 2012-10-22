@@ -1,4 +1,4 @@
-define(['Psc/UI/Component'], function() {
+define(['psc-tests-assert','Psc/UI/Component'], function() {
   
   module("Psc.UI.Component");
   

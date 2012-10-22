@@ -1,4 +1,4 @@
-define(['Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/AjaxHandler','Psc/UI/Tab'], function() {
+define(['psc-tests-assert','Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/AjaxHandler','Psc/UI/Tab'], function() {
   var html, $html, $autoComplete;
   
   module("Psc.UI.AutoComplete", {
@@ -36,8 +36,8 @@ define(['Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/AjaxHandler','Psc/UI/T
       
       after: {
         handle: function (request) {
-          assertEquals('gira', request.getBody().search, 'gira is send as request term');
-          assertEquals('true', request.getBody().autocomplete);
+          this.assertEquals('gira', request.getBody().search, 'gira is send as request term');
+          this.assertEquals('true', request.getBody().autocomplete);
         }
       }
     });
@@ -52,8 +52,8 @@ define(['Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/AjaxHandler','Psc/UI/T
       widget: $autoComplete
     });
     
-    assertEquals(100, $autoComplete.autocomplete('option','delay'),'delay is put to widget');
-    assertEquals(1, $autoComplete.autocomplete('option','minLength'), 'minlength is put to widget');
+    this.assertEquals(100, $autoComplete.autocomplete('option','delay'),'delay is put to widget');
+    this.assertEquals(1, $autoComplete.autocomplete('option','minLength'), 'minlength is put to widget');
     
     // jetzt faken wir das "tippen" ins feld
     $autoComplete.simulate("focus")['val']( "gira" ).keydown();
@@ -63,17 +63,17 @@ define(['Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/AjaxHandler','Psc/UI/T
     setTimeout(function() {
       start();
       
-	  assertTrue( $autoComplete.is( ":visible" ), "menu is visible after delay" );
-      //assertTrue(autoComplete.isOpen(), 'autoComplete isOpen() is true');
+	  this.assertTrue( $autoComplete.is( ":visible" ), "menu is visible after delay" );
+      //this.assertTrue(autoComplete.isOpen(), 'autoComplete isOpen() is true');
       // geht nicht verlässlich
       
       // select first
 	  $autoComplete.simulate( "keydown", { keyCode: $.ui.keyCode.DOWN } );
 	  $autoComplete.simulate( "keydown", { keyCode: $.ui.keyCode.ENTER } );
       
-      assertNotFalse(evm.wasTriggered('tab-open', 1, function (e, tab, $target) {
-        assertSame($target[0], $autoComplete[0],'target from event is the autocomplete');
-        assertInstanceOf(Psc.UI.Tab, tab, 'event Parameter eins ist ein Psc.UI.Tab');
+      this.assertNotFalse(evm.wasTriggered('tab-open', 1, function (e, tab, $target) {
+        this.assertSame($target[0], $autoComplete[0],'target from event is the autocomplete');
+        this.assertInstanceOf(Psc.UI.Tab, tab, 'event Parameter eins ist ein Psc.UI.Tab');
         return true;
       }), 'tab-open was triggered');
       
@@ -96,7 +96,7 @@ define(['Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/AjaxHandler','Psc/UI/T
 
       setTimeout(function() {
         start();
-        assertTrue(autoComplete.isOpen(),'isOpen() is true after searching');
+        this.assertTrue(autoComplete.isOpen(),'isOpen() is true after searching');
         
         setTimeout(function() {
           $autoComplete.blur();
@@ -133,7 +133,7 @@ define(['Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/AjaxHandler','Psc/UI/T
       var eventTriggered = false;
       autoComplete.getEventManager().on('auto-complete-open', function (e, items) {
         eventTriggered = true;
-        assertEquals(assertItemsNum, items.length, 'es werden '+assertItemsNum+' items für "'+searchTerm+'" angezeigt');
+        this.assertEquals(assertItemsNum, items.length, 'es werden '+assertItemsNum+' items für "'+searchTerm+'" angezeigt');
       });
 
       // trigger
@@ -142,8 +142,8 @@ define(['Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/AjaxHandler','Psc/UI/T
 
       setTimeout(function() {
         start();
-        assertTrue(autoComplete.isOpen(),'isOpen() is true after searching '+testLabel);
-        assertTrue(eventTriggered,'event has triggered before opening (time) '+testLabel);
+        this.assertTrue(autoComplete.isOpen(),'isOpen() is true after searching '+testLabel);
+        this.assertTrue(eventTriggered,'event has triggered before opening (time) '+testLabel);
       
         setTimeout(function() {
           $autoComplete.blur();
@@ -183,7 +183,7 @@ define(['Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/AjaxHandler','Psc/UI/T
     });
     
     autoComplete.getEventManager().on('auto-complete-notfound', function (e) {
-      assertTrue(true, "notfound is triggered");
+      this.assertTrue(true, "notfound is triggered");
     });
     
     autoComplete.search("nix ist da");
@@ -204,7 +204,7 @@ define(['Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/AjaxHandler','Psc/UI/T
             var body = req.getBody();
             start();
             
-            assertEquals(15, body.maxResults, 'maxResult is set in Request Body');
+            this.assertEquals(15, body.maxResults, 'maxResult is set in Request Body');
           }
         }
       }))(),

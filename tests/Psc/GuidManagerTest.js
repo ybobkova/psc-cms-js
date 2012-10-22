@@ -1,4 +1,4 @@
-define(['Psc/GuidManager'], function() {
+define(['psc-tests-assert','Psc/GuidManager'], function() {
   
   module("Psc.GuidManager", {
     setup: function () {
@@ -12,7 +12,7 @@ define(['Psc/GuidManager'], function() {
     var guids = {}, guid;
     for (var i = 0; i<100; i++) {
       guid = manager.create();
-      assertTrue(guid.length > 0);
+      this.assertTrue(guid.length > 0);
 
       if (guids[guid]) {
         fail('guid '+guid+' wurde vorher vom manager erzeugt. Schlüsselkollision!');

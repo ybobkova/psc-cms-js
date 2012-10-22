@@ -1,4 +1,4 @@
-define(['tiptoi/Sound'], function() {
+define(['psc-tests-assert','tiptoi/Sound'], function() {
   
   module("tiptoi.Sound", {
     setup: function () {
@@ -12,6 +12,6 @@ define(['tiptoi/Sound'], function() {
       number: '2-TEST_0001'
     });
   
-    assertEquals("„i make a trembling noise“ (2-TEST_0001)", sound.toString());
+    this.assertEquals("„i make a trembling noise“ (2-TEST_0001)", sound.toString());
   });
 });

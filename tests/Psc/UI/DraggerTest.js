@@ -1,4 +1,4 @@
-define(['Psc/UI/Dragger'], function() {
+define(['psc-tests-assert','Psc/UI/Dragger'], function() {
   
   module("Psc.UI.Dragger");
   
@@ -25,8 +25,8 @@ define(['Psc/UI/Dragger'], function() {
       
       oldPos = $draggable.offset();
 
-      assertEquals(124,$draggable.outerWidth(), 'outerWidth fits test');
-      assertEquals(31,$draggable.outerHeight(), 'outerHeight fits tests');
+      this.assertEquals(124,$draggable.outerWidth(), 'outerWidth fits test');
+      this.assertEquals(31,$draggable.outerHeight(), 'outerHeight fits tests');
       
       return [drag, $draggable, oldPos];
   };
@@ -37,8 +37,8 @@ define(['Psc/UI/Dragger'], function() {
     drag.distance($draggable, 30, 0);
     pos = $draggable.offset();
     
-    assertEquals(oldPos.left+30, pos.left, 'left Position goes +30');
-    assertEquals(oldPos.top, pos.top, 'top Position does not change');
+    this.assertEquals(oldPos.left+30, pos.left, 'left Position goes +30');
+    this.assertEquals(oldPos.top, pos.top, 'top Position does not change');
   });
   
   test("drags To Certain Position", function () {
@@ -48,8 +48,8 @@ define(['Psc/UI/Dragger'], function() {
 
     pos = $draggable.offset();
     // mit paar rundungsfehlern, 100% präzisiion ist für uns aber nicht so wichtig
-    assertEquals(Math.round(pos.top), 200, 'top position after absolute positioning'); 
-    assertEquals(Math.round(pos.left), 200, 'left position after absolute positioning');
+    this.assertEquals(Math.round(pos.top), 200, 'top position after absolute positioning'); 
+    this.assertEquals(Math.round(pos.left), 200, 'left position after absolute positioning');
   });
   
   test("drags onto an Element acceptance with droppable", function () {
@@ -66,8 +66,8 @@ define(['Psc/UI/Dragger'], function() {
 		}
 	});
     
-    assertEquals('not dropped',$droppable.find('p').text())
+    this.assertEquals('not dropped',$droppable.find('p').text())
     drag.toElement($draggable, $droppable);
-    assertEquals('dropped',$droppable.find('p').text())
+    this.assertEquals('dropped',$droppable.find('p').text())
   });
 });

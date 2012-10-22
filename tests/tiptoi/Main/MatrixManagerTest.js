@@ -1,4 +1,4 @@
-define(['Psc/UI/Main','Psc/UI/Dragger','Psc/UI/Tabs','Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable','Psc/Request', 'tiptoi/Main'], function() {
+define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Dragger','Psc/UI/Tabs','Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable','Psc/Request', 'tiptoi/Main'], function() {
   
   var main, tiptoiMain, $fixture = $('#qunit-fixture').empty();
 
@@ -38,9 +38,9 @@ define(['Psc/UI/Main','Psc/UI/Dragger','Psc/UI/Tabs','Psc/UI/DropBox','Psc/UI/Dr
   asyncTest("fixture test: transitions form is loaded from js", function () {
     var $dropBoxes = $fixture.find('div.psc-cms-ui-drop-box');
     
-    assertEquals(6, $dropBoxes.length, 'dropboxes count in fixture'); // 4 in jedem mode in einem 2 und die meta im accordion
+    this.assertEquals(6, $dropBoxes.length, 'dropboxes count in fixture'); // 4 in jedem mode in einem 2 und die meta im accordion
     
-    assertTrue($.psc.getPresence('MatrixManager'),'MatrixManager is present');
+    this.assertTrue($.psc.getPresence('MatrixManager'),'MatrixManager is present');
     start();
   });
   
@@ -50,16 +50,16 @@ define(['Psc/UI/Main','Psc/UI/Dragger','Psc/UI/Tabs','Psc/UI/DropBox','Psc/UI/Dr
         //$action1 = $transition1.find('div.action:eq(0)'),
         $actionButton = $transition1.find('button.add-action');
         
-    assertEquals(1, $actionButton.length, 'action button is found');
+    this.assertEquals(1, $actionButton.length, 'action button is found');
     
-    assertEquals(1,$transition1.find('div.action').length, 'in transition1 is 1 action');
+    this.assertEquals(1,$transition1.find('div.action').length, 'in transition1 is 1 action');
     
     $actionButton.simulate('click');
     
     stop();
     // set timeout ist nicht so schön, aber ich hab gar keine andere idee grad (ich muss hier auf den ajaxRequest warten)
     setTimeout(function () {
-      assertEquals(2, $transition1.find('div.action').length, 'one action is added to transition');
+      this.assertEquals(2, $transition1.find('div.action').length, 'one action is added to transition');
       
       start();
     }, 1500);
@@ -79,11 +79,11 @@ define(['Psc/UI/Main','Psc/UI/Dragger','Psc/UI/Tabs','Psc/UI/DropBox','Psc/UI/Dr
       start();
       
       var post = ajaxResponse.getRequest().getBody();
-      assertNotUndefined(post, 'post is passed to event');
+      this.assertNotUndefined(post, 'post is passed to event');
       
-      assertType('array', post.transitions);
-      assertType('array', post.deleteTransitions);
-      assertNotUndefined('', post.oid);
+      this.assertType('array', post.transitions);
+      this.assertType('array', post.deleteTransitions);
+      this.assertNotUndefined('', post.oid);
       
       // usw
     });

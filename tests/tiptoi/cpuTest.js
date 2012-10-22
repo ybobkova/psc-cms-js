@@ -1,4 +1,4 @@
-define(['tiptoi/cpu','tiptoi/InputProvider','tiptoi/Timer'], function() {
+define(['psc-tests-assert','tiptoi/cpu','tiptoi/InputProvider','tiptoi/Timer'], function() {
   
   module("tiptoi.cpu");
   
@@ -20,8 +20,8 @@ define(['tiptoi/cpu','tiptoi/InputProvider','tiptoi/Timer'], function() {
     $.extend(this, setup());
     
     var timer = this.cpu.startTimer(2);
-    assertInstanceOf(tiptoi.Timer, timer);
-    assertEquals(2, timer.getSeconds());
+    this.assertInstanceOf(tiptoi.Timer, timer);
+    this.assertEquals(2, timer.getSeconds());
     
     timer.hasRunOut(function () {
       ok("has run out");
@@ -62,7 +62,7 @@ define(['tiptoi/cpu','tiptoi/InputProvider','tiptoi/Timer'], function() {
       console.log('stop timer');
       timer.stop();
       ok("input given right in time");
-      assertEquals(7, input);
+      this.assertEquals(7, input);
       start();
     });
   });
@@ -74,8 +74,8 @@ define(['tiptoi/cpu','tiptoi/InputProvider','tiptoi/Timer'], function() {
     
     this.cpu.on('tiptoi-input-ignored', function (e, reason, type, input) {
       ok("timer has timed out and input is ignored");
-      assertEquals('timedout', reason);
-      assertEquals(7, input);
+      this.assertEquals('timedout', reason);
+      this.assertEquals(7, input);
       start();
     });
     

@@ -1,4 +1,4 @@
-define(['tiptoi/Main','Psc/UI/Main'], function() {
+define(['psc-tests-assert','tiptoi/Main','Psc/UI/Main'], function() {
   var tiptoiMain, main;
   
   module("tiptoi.Main", {
@@ -32,7 +32,7 @@ define(['tiptoi/Main','Psc/UI/Main'], function() {
     $.when(tiptoiMain.createAction(data))
       .progress(function(ajaxRequest) {
         start();
-        assertNotUndefined(ajaxRequest, 'progress is called');
+        this.assertNotUndefined(ajaxRequest, 'progress is called');
         $('#qunit-fixture').html(ajaxRequest.getBody());
         stop();
       })
@@ -40,15 +40,15 @@ define(['tiptoi/Main','Psc/UI/Main'], function() {
         start();
         var $html = $('#qunit-fixture'), $action, $dropBox, dropBox;
       
-        assertEquals(1, ($action = $html.find('div.action')).length, 'div.action is found in html');
-        assertEquals(1, ($dropBox = $html.find('div.psc-cms-ui-drop-box')).length, 'div.psc-cms-ui-drop-box');
+        this.assertEquals(1, ($action = $html.find('div.action')).length, 'div.action is found in html');
+        this.assertEquals(1, ($dropBox = $html.find('div.psc-cms-ui-drop-box')).length, 'div.psc-cms-ui-drop-box');
         
         dropBox = $dropBox.data('joose');
         
-        assertTrue(dropBox.isMultiple(), 'drop box is multiple');
-        assertEquals('#oid-9999001 div.action div.psc-cms-ui-drop-box', dropBox.isConnectedWith(), 'drop box is ConnectedWith Others');
+        this.assertTrue(dropBox.isMultiple(), 'drop box is multiple');
+        this.assertEquals('#oid-9999001 div.action div.psc-cms-ui-drop-box', dropBox.isConnectedWith(), 'drop box is ConnectedWith Others');
       
-        assertNotUndefined(dropBox = $dropBox.data('joose'), 'dropBox is linked to joose');
+        this.assertNotUndefined(dropBox = $dropBox.data('joose'), 'dropBox is linked to joose');
       }, function (response) {
         start();
         fail('createAction was rejected');
@@ -68,7 +68,7 @@ define(['tiptoi/Main','Psc/UI/Main'], function() {
     $.when(tiptoiMain.createTransition(data))
       .progress(function(ajaxRequest) {
         start();
-        assertNotUndefined(ajaxRequest, 'progress is called');
+        this.assertNotUndefined(ajaxRequest, 'progress is called');
         $('#qunit-fixture').html(ajaxRequest.getBody());
         stop();
       })
@@ -76,8 +76,8 @@ define(['tiptoi/Main','Psc/UI/Main'], function() {
         start();
         var $html = $('#qunit-fixture'), $transition;
       
-        assertEquals(1, ($transition = $html.find('div.transition')).length, 'div.transition is found in html');
-        assertEquals(1, ($transition = $html.find('div.action')).length, 'div.transition has one action in html');
+        this.assertEquals(1, ($transition = $html.find('div.transition')).length, 'div.transition is found in html');
+        this.assertEquals(1, ($transition = $html.find('div.action')).length, 'div.transition has one action in html');
 
       }, function (response) {
         start();

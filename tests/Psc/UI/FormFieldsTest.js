@@ -1,4 +1,4 @@
-define(['Psc/UI/FormFields','Psc/UI/FormBuilder', 'Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/FormFields','Psc/UI/FormBuilder', 'Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.FormFields");
   
@@ -36,7 +36,7 @@ define(['Psc/UI/FormFields','Psc/UI/FormBuilder', 'Psc/Test/DoublesManager'], fu
     
     var $form = $('</form>'); // ist egal weil wir oben den Reader gemockt haben
   
-    assertEquals({
+    this.assertEquals({
         'field1': 'value1',
         'field2': 'value2',
         'field3': 'links',
@@ -54,8 +54,8 @@ define(['Psc/UI/FormFields','Psc/UI/FormBuilder', 'Psc/Test/DoublesManager'], fu
     var $field2 = $form.find('input[type="text"][name="field2"]');
     var $field3 = $form.find('input[type="radio"][name="field3"]');
     
-    assertEquals(1, $field1.length, 'field1 is there');
-    assertEquals(1, $field2.length, 'field2 is there');
-    assertEquals(2, $field3.length, 'field3 is there');
+    this.assertEquals(1, $field1.length, 'field1 is there');
+    this.assertEquals(1, $field2.length, 'field2 is there');
+    this.assertEquals(2, $field3.length, 'field3 is there');
   });
 });

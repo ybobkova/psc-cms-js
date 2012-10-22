@@ -1,4 +1,4 @@
-define(['Psc/UI/Template','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/Template','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.Template");
   
@@ -23,6 +23,6 @@ define(['Psc/UI/Template','Psc/Test/DoublesManager'], function() {
     // weil das wirklich wirklich replaced
     $commentsCount = $('#comments-count');
     
-    assertEquals('<span id="comments-count">8 Comments</span>', $commentsCount[0].outerHTML);
+    this.assertEquals('<span id="comments-count">8 Comments</span>', $commentsCount[0].outerHTML);
   });
 });

@@ -1,4 +1,4 @@
-define(['Psc/UploadService','Psc/Request','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UploadService','Psc/Request','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UploadService");
   
@@ -30,12 +30,12 @@ define(['Psc/UploadService','Psc/Request','Psc/Test/DoublesManager'], function()
     this.uploadService.openSingleDialog(this.request);
     
     var dialog = this.uploadService.getSingleDialog();
-    assertTrue(dialog.isOpen(), 'dialog wurde geöffnet');
+    this.assertTrue(dialog.isOpen(), 'dialog wurde geöffnet');
     
     var $dialog = dialog.unwrap(), $file;
-    assertEquals(1, $dialog.find('form').length, 'form ist vorhanden');
-    assertEquals(1, ($file = $dialog.find('form input[type="file"]')).length, 'file input ist vorhanden');
-    assertEquals('uploadFile', $file.attr('name'), 'file hat den namen uploadFile als namen');
+    this.assertEquals(1, $dialog.find('form').length, 'form ist vorhanden');
+    this.assertEquals(1, ($file = $dialog.find('form input[type="file"]')).length, 'file input ist vorhanden');
+    this.assertEquals('uploadFile', $file.attr('name'), 'file hat den namen uploadFile als namen');
     
     dialog.close();
   });
@@ -61,10 +61,10 @@ define(['Psc/UploadService','Psc/Request','Psc/Test/DoublesManager'], function()
         $file = $form.find('input[type="file"]'),
         $desc = $form.find('input[type="text"][name="download-description"]');
     
-    assertEquals(1, $form.length, 'form ist vorhanden');
-    assertEquals(1, $file.length, 'file input ist vorhanden');
-    assertEquals('uploadFile', $file.attr('name'), 'file hat den namen uploadFile als namen');
-    assertEquals(1, $desc.length, 'description is added to our form');
+    this.assertEquals(1, $form.length, 'form ist vorhanden');
+    this.assertEquals(1, $file.length, 'file input ist vorhanden');
+    this.assertEquals('uploadFile', $file.attr('name'), 'file hat den namen uploadFile als namen');
+    this.assertEquals(1, $desc.length, 'description is added to our form');
     
     dialog.close();
   });
@@ -82,8 +82,8 @@ define(['Psc/UploadService','Psc/Request','Psc/Test/DoublesManager'], function()
     $file.fileupload({
         always: function (e, data) {
           start();
-          assertFalse(dialog.isOpen(), 'dialog is closed on error');
-          assertNotUndefined(that.exceptionProcessor.getException(), 'exception was raised');
+          this.assertFalse(dialog.isOpen(), 'dialog is closed on error');
+          this.assertNotUndefined(that.exceptionProcessor.getException(), 'exception was raised');
         }
     });
     

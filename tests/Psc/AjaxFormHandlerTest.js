@@ -1,4 +1,4 @@
-define(['Psc/AjaxFormHandler','Psc/FormRequest','Psc/Exception'], function () {
+define(['psc-tests-assert','Psc/AjaxFormHandler','Psc/FormRequest','Psc/Exception'], function () {
 
   module("Psc.AjaxFormHandler");
 
@@ -11,12 +11,12 @@ define(['Psc/AjaxFormHandler','Psc/FormRequest','Psc/Exception'], function () {
       var req = ajaxFormHandler.handle(formRequest);
       
       req.done(function (response) { // responste sollte http.form.saved.php sein
-        assertInstanceOf(Psc.Response, response);
-        assertEquals(200,response.getCode());
+        this.assertInstanceOf(Psc.Response, response);
+        this.assertEquals(200,response.getCode());
         var body = response.getBody();
-        assertEquals(2,body.id);
-        assertFalse(body.yearKnown);
-        assertEquals("5698800", body.birthday.date);
+        this.assertEquals(2,body.id);
+        this.assertFalse(body.yearKnown);
+        this.assertEquals("5698800", body.birthday.date);
         
         start();
       });
@@ -32,9 +32,9 @@ define(['Psc/AjaxFormHandler','Psc/FormRequest','Psc/Exception'], function () {
       var req = ajaxFormHandler.handle(formRequest);
       
       req.fail(function (response) { // responste sollte http.form.saved.php sein
-        assertInstanceOf(Psc.Response, response);
-        assertEquals(400,response.getCode());
-        assertTrue(response.isValidation());
+        this.assertInstanceOf(Psc.Response, response);
+        this.assertEquals(400,response.getCode());
+        this.assertTrue(response.isValidation());
         
         start();
       });
@@ -53,9 +53,9 @@ define(['Psc/AjaxFormHandler','Psc/FormRequest','Psc/Exception'], function () {
       var req = ajaxFormHandler.handle(formRequest);
       
       req.fail(function (exception) {
-        assertInstanceOf(Psc.Exception, exception);
+        this.assertInstanceOf(Psc.Exception, exception);
         
-        assertEquals(1, exception.getMessage().match(/Fatal error: Call to undefined function blubb\(\)/).length);
+        this.assertEquals(1, exception.getMessage().match(/Fatal error: Call to undefined function blubb\(\)/).length);
         
         start();
       });

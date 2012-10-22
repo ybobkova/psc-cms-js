@@ -1,4 +1,4 @@
-define(['Psc/CMS/ComboDropBoxable','Psc/UI/DropBoxButton','Psc/CMS/FastItem'], function() {
+define(['psc-tests-assert','Psc/CMS/ComboDropBoxable','Psc/UI/DropBoxButton','Psc/CMS/FastItem'], function() {
   var comboDropBoxable;
   
   module("Psc.CMS.ComboDropBoxable", {
@@ -26,15 +26,15 @@ define(['Psc/CMS/ComboDropBoxable','Psc/UI/DropBoxButton','Psc/CMS/FastItem'], f
   });
 
   test("acceptance", function() {
-    assertInstanceOf(Psc.UI.Tab, tab = comboDropBoxable.getTab());
-    assertDoesRole(Psc.UI.DropBoxButton, comboDropBoxable.getDropBoxButton());
+    this.assertInstanceOf(Psc.UI.Tab, tab = comboDropBoxable.getTab());
+    this.assertDoesRole(Psc.UI.DropBoxButton, comboDropBoxable.getDropBoxButton());
     
   });
   
   test("buttonable sets button icons", function () {
     var $button = comboDropBoxable.createButton();
     
-    //assertInstanceOf(Psc.UI.Button, button = comboDropBoxable.getButton());
-    assertEquals({primary: 'ui-icon-plus', secondary: null}, $button.button('option','icons'), 'icons are correct');
+    //this.assertInstanceOf(Psc.UI.Button, button = comboDropBoxable.getButton());
+    this.assertEquals({primary: 'ui-icon-plus', secondary: null}, $button.button('option','icons'), 'icons are correct');
   });
 });

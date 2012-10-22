@@ -1,4 +1,4 @@
-define(['Psc/UI/FormReader','Psc/UI/FormBuilder'], function() {
+define(['psc-tests-assert','Psc/UI/FormReader','Psc/UI/FormBuilder'], function() {
   
   module("Psc.UI.FormReader");
   
@@ -23,7 +23,7 @@ define(['Psc/UI/FormReader','Psc/UI/FormBuilder'], function() {
     
     raises(function () {
     
-    assertEquals({
+    this.assertEquals({
         title: {
           de: 'german title',
           en: 'english title'
@@ -48,7 +48,7 @@ define(['Psc/UI/FormReader','Psc/UI/FormBuilder'], function() {
     
     var $form = fb.build();
     
-    assertEquals({
+    this.assertEquals({
         'title-de': 'german title',
         'title-en': 'english title'
       },

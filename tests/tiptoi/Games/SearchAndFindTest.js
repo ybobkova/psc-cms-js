@@ -1,4 +1,4 @@
-define(['tiptoi/Main','tiptoi/GameTester', 'tiptoi/Program', 'tiptoi/cpu','tiptoi/InputProvider', 'Psc/Code'], function() {
+define(['psc-tests-assert','tiptoi/Main','tiptoi/GameTester', 'tiptoi/Program', 'tiptoi/cpu','tiptoi/InputProvider', 'Psc/Code'], function() {
   
   
   module("tiptoi.SearchAndFind", {
@@ -37,7 +37,7 @@ define(['tiptoi/Main','tiptoi/GameTester', 'tiptoi/Program', 'tiptoi/cpu','tipto
       
       status.done(function () {
         Psc.Code.info('gespielt wurde'+"\n", gameTester.getPlayedSounds().join("\n"));
-        assertTrue(gameTester.getPlayed().length > 4);
+        this.assertTrue(gameTester.getPlayed().length > 4);
         start();
       });
 

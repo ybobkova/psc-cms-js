@@ -1,4 +1,4 @@
-define(['Psc/Request'], function () {
+define(['psc-tests-assert','Psc/Request'], function () {
   module("Psc.Request");
   
   test("construct", function() {
@@ -7,13 +7,13 @@ define(['Psc/Request'], function () {
       method: 'PUT'
     });
     
-    assertEquals('/entities/person/12/form', request.getUrl());
+    this.assertEquals('/entities/person/12/form', request.getUrl());
     
-    assertException("Psc.WrongValueException", function () {
+    this.assertException("Psc.WrongValueException", function () {
       request.setFormat('blubb')
     });
   
-    assertException("Psc.WrongValueException", function () {
+    this.assertException("Psc.WrongValueException", function () {
       request.setMethod('PUD')
     });
   });
@@ -26,9 +26,9 @@ define(['Psc/Request'], function () {
       body: 'not empty'
     });
     
-    assertEquals('not empty',request.getBody());
-    assertEquals(null, request.getHeaderField('X-Psc-Cms-Request-Method'));
-    assertEquals('POST',request.getMethod());
+    this.assertEquals('not empty',request.getBody());
+    this.assertEquals(null, request.getHeaderField('X-Psc-Cms-Request-Method'));
+    this.assertEquals('POST',request.getMethod());
   });
   
   test("headerIsEmptyAtStart", function () {
@@ -37,8 +37,8 @@ define(['Psc/Request'], function () {
       method: 'POST'
     });
     
-    assertEmptyObject(request.getHeader());
-    assertEquals(null, request.getHeaderField('Content-Type'));
+    this.assertEmptyObject(request.getHeader());
+    this.assertEquals(null, request.getHeaderField('Content-Type'));
   });
   
   test("requestGetsandSetsHeaderFields", function() {
@@ -47,11 +47,11 @@ define(['Psc/Request'], function () {
       method: 'POST'
     });
     
-    assertEquals(null, request.getHeaderField('Content-Type'));
+    this.assertEquals(null, request.getHeaderField('Content-Type'));
     request.setHeaderField('Content-Type', 'text/html');
-    assertEquals('text/html', request.getHeaderField('Content-Type'));
+    this.assertEquals('text/html', request.getHeaderField('Content-Type'));
     request.removeHeaderField('Content-Type');
-    assertEquals(null, request.getHeaderField('Content-Type'));
+    this.assertEquals(null, request.getHeaderField('Content-Type'));
   });
   
   test("setMethodSetsXRequestMethodHeader", function() {
@@ -62,7 +62,7 @@ define(['Psc/Request'], function () {
     var xHeader = 'X-Psc-Cms-Request-Method';
   
     // initialize sets it
-    assertEquals('PUT', request.getHeaderField(xHeader));
+    this.assertEquals('PUT', request.getHeaderField(xHeader));
   });
 
   
@@ -72,7 +72,7 @@ define(['Psc/Request'], function () {
       method: 'GET'
     });
     
-    assertEquals('/entities/search/',request.getUrl());
+    this.assertEquals('/entities/search/',request.getUrl());
   });
   
   

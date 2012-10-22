@@ -1,4 +1,4 @@
-define(['CoMun/Relation','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','CoMun/Relation','Psc/Test/DoublesManager'], function() {
   
   module("CoMun.Relation");
   

@@ -1,4 +1,4 @@
-define(['Psc/UI/ComboBox','Psc/UI/AutoComplete'], function() {
+define(['psc-tests-assert','Psc/UI/ComboBox','Psc/UI/AutoComplete'], function() {
 
   var loadFixture = function(assertions) {
     return function () {
@@ -6,9 +6,9 @@ define(['Psc/UI/ComboBox','Psc/UI/AutoComplete'], function() {
         var $fixture = $('#qunit-fixture').html(html);
         //var $fixture = $('#visible-fixture').html(html);
         var $comboBox = $fixture.find('.psc-cms-ui-combo-box');
-        assertEquals($comboBox.length,1,'self-test: Fixture hat div.psc-cms-ui-combo-box im html des Ajax Requests');
+        this.assertEquals($comboBox.length,1,'self-test: Fixture hat div.psc-cms-ui-combo-box im html des Ajax Requests');
         
-        assertions($comboBox);
+        this.assertions($comboBox);
       }, 'html');
     };
   };
@@ -62,19 +62,19 @@ define(['Psc/UI/ComboBox','Psc/UI/AutoComplete'], function() {
     var data = {};
     comboBox.serialize(data);
     
-    assertEquals({
+    this.assertEquals({
       'tags': 17 // name aus dem fixture
     }, data, 'data is set');
   }));
   
   asyncTest("serialize sets empty value when initialtext is shown", setupDefault(function (comboBox, $comboBox, initialText) {
     start();
-    assertEquals(true, comboBox.getSelectMode());
+    this.assertEquals(true, comboBox.getSelectMode());
     
     var data = {};
     comboBox.serialize(data);
     
-    assertEquals({
+    this.assertEquals({
       'tags': '' // name aus dem fixture
     }, data, 'data is set to empty');
   }));
@@ -87,7 +87,7 @@ define(['Psc/UI/ComboBox','Psc/UI/AutoComplete'], function() {
     var data = {tags: 'myValue'};
     comboBox.serialize(data);
     
-    assertEquals('myValue', data.tags);
+    this.assertEquals('myValue', data.tags);
   }));
   
   
@@ -102,16 +102,16 @@ define(['Psc/UI/ComboBox','Psc/UI/AutoComplete'], function() {
 
     // select is triggered
     comboBox.getEventManager().on('combo-box-select', function(e, item) {
-      assertTrue(item != undefined, "item is set in select-handler"); //(3)
+      this.assertTrue(item != undefined, "item is set in select-handler"); //(3)
     });
     
     comboBox.getEventManager().on('combo-box-selected', function(e, item) {
-      assertSame(item, comboBox.getSelected(), 'item is set in select-handler'); //(2)
+      this.assertSame(item, comboBox.getSelected(), 'item is set in select-handler'); //(2)
     });
 
     autoComplete.getEventManager().on('auto-complete-open', function () {
       start();
-      assertTrue(autoComplete.isOpen(), 'autoComplete isOpen() is true'); //(1)
+      this.assertTrue(autoComplete.isOpen(), 'autoComplete isOpen() is true'); //(1)
       
       // select second
       $autoComplete.simulate( "keydown", { keyCode: $.ui.keyCode.DOWN } );
@@ -126,10 +126,10 @@ define(['Psc/UI/ComboBox','Psc/UI/AutoComplete'], function() {
     var autoComplete = comboBox.getAutoComplete();
     
     var $button = $comboBox.next('button.ui-button');
-    assertEquals(1, $button.length, 'button is found next to $comboBox');
+    this.assertEquals(1, $button.length, 'button is found next to $comboBox');
     
     autoComplete.getEventManager().on('auto-complete-open', function (e, items) {
-      assertEquals(5, items.length, 'all items are shown in box');
+      this.assertEquals(5, items.length, 'all items are shown in box');
     });
 
     $button.simulate('click');
@@ -148,7 +148,7 @@ define(['Psc/UI/ComboBox','Psc/UI/AutoComplete'], function() {
 
     comboBox.getEventManager().on('auto-complete-notfound', function (e, search) {
       start();
-      assertEquals('notintags', search, 'search term is given in event');
+      this.assertEquals('notintags', search, 'search term is given in event');
     });
 
     $autoComplete.simulate("focus")['val']("notintags").keydown(); // simulate ist immer asynchron (anders als simulate click: hä?!)
@@ -162,20 +162,20 @@ define(['Psc/UI/ComboBox','Psc/UI/AutoComplete'], function() {
     comboBox.setSelectMode(true);
 
     comboBox.getEventManager().on('combo-box-selected', function(e, item) {
-      assertTrue(true, 'was selected');
+      this.assertTrue(true, 'was selected');
     });
     
     var $button = $comboBox.next('button.ui-button');
 
     autoComplete.getEventManager().on('auto-complete-open', function () {
       start();
-      assertTrue(autoComplete.isOpen(), 'autoComplete isOpen() is true'); //(1)
+      this.assertTrue(autoComplete.isOpen(), 'autoComplete isOpen() is true'); //(1)
       
       // select second
       $autoComplete.simulate( "keydown", { keyCode: $.ui.keyCode.DOWN } );
       $autoComplete.simulate( "keydown", { keyCode: $.ui.keyCode.ENTER } );
       
-      assertEquals('Tag: Protest', $autoComplete.val(), 'Protest Tag is in val() of input');
+      this.assertEquals('Tag: Protest', $autoComplete.val(), 'Protest Tag is in val() of input');
     });
 
     $autoComplete.simulate("focus")['val']("Prot").keydown();
@@ -222,22 +222,22 @@ define(['Psc/UI/ComboBox','Psc/UI/AutoComplete'], function() {
     var autoComplete = comboBox.getAutoComplete();
     
     // initialtext will be set
-    assertEquals(initialText, $comboBox.val(), 'init sets value in input');
-    assertTrue($comboBox.hasClass('ui-state-disabled'),'hasClass ui-state-disabled');
-    assertTrue($comboBox.hasClass('ui-widget'),'hasClass ui-widget');
-    assertTrue($comboBox.hasClass('ui-widget-content'),'hasClass ui-widget-content');
-    assertTrue($comboBox.hasClass('ui-corner-left'), 'hasClass ui-corner-left');
+    this.assertEquals(initialText, $comboBox.val(), 'init sets value in input');
+    this.assertTrue($comboBox.hasClass('ui-state-disabled'),'hasClass ui-state-disabled');
+    this.assertTrue($comboBox.hasClass('ui-widget'),'hasClass ui-widget');
+    this.assertTrue($comboBox.hasClass('ui-widget-content'),'hasClass ui-widget-content');
+    this.assertTrue($comboBox.hasClass('ui-corner-left'), 'hasClass ui-corner-left');
 
     // focus removes initial text
     $comboBox.simulate('focus');
-    assertEquals('', $comboBox.val());
+    this.assertEquals('', $comboBox.val());
     
     // removes disabled
-    assertFalse($comboBox.hasClass('ui-state-disabled'),'hasNotClass ui-state-disabled');
+    this.assertFalse($comboBox.hasClass('ui-state-disabled'),'hasNotClass ui-state-disabled');
     
     // button gets added
     var $button = $comboBox.next('button.ui-button');
-    assertEquals(1, $button.length, 'button is found next to $comboBox');
+    this.assertEquals(1, $button.length, 'button is found next to $comboBox');
     
     // click on the button opens the menu after the delay (everytime)
     $button.simulate('click');
@@ -245,14 +245,14 @@ define(['Psc/UI/ComboBox','Psc/UI/AutoComplete'], function() {
     
     setTimeout(function () {
       
-      assertTrue(autoComplete.isOpen(), 'menu is open on first click');
+      this.assertTrue(autoComplete.isOpen(), 'menu is open on first click');
       
       // clicking again, hides it (not yet)
       //stop();
       //setTimeout(function () {
       //  start();
       //  $button.simulate('click');
-      //  assertFalse(autoComplete.isOpen(), 'menu is closed on second click');
+      //  this.assertFalse(autoComplete.isOpen(), 'menu is closed on second click');
       //}, 20);
       
       start();

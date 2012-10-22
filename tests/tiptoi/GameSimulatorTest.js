@@ -1,4 +1,4 @@
-define(['tiptoi/GameSimulator','tiptoi/ProgramRunner','tiptoi/SimpleSoundPlayer','tiptoi/InteractiveInputProvider','Psc/EventManager','tiptoi/HTMLOutput'], function() {
+define(['psc-tests-assert','tiptoi/GameSimulator','tiptoi/ProgramRunner','tiptoi/SimpleSoundPlayer','tiptoi/InteractiveInputProvider','Psc/EventManager','tiptoi/HTMLOutput'], function() {
   
   var $startButton = $('<button class="psc-cms-ui-button psc-guid-4fe1b397df398 ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" role="button" aria-disabled="false"><span class="ui-button-icon-primary ui-icon ui-icon-play"></span><span class="ui-button-text">Spiel starten</span></button>').button({icons: {primary: 'ui-icon-play'}});
   
@@ -47,7 +47,7 @@ define(['tiptoi/GameSimulator','tiptoi/ProgramRunner','tiptoi/SimpleSoundPlayer'
       start();
       var oid = 17121;
       
-      assertEquals(
+      this.assertEquals(
         "Spiel „runsAndWaitsForOneInput“ startet"+
         "PlaySound „game start“ (null)"+
         "tiptoi wartet auf input...",
@@ -79,12 +79,12 @@ define(['tiptoi/GameSimulator','tiptoi/ProgramRunner','tiptoi/SimpleSoundPlayer'
       // expect: outputbox hat die beidne playsounds
       
       // assertions nach allem:
-      assertTrue(listening, 'Input provider listening was triggered from input-provider');
-      assertTrue(gotInput, 'got Input was triggered from input-provider');
-      assertTrue(gotStart, 'tiptoi Program wurde gestartet');
-      assertTrue(gotEnd, 'tiptoi Program lief erfolgreich durch');
+      this.assertTrue(listening, 'Input provider listening was triggered from input-provider');
+      this.assertTrue(gotInput, 'got Input was triggered from input-provider');
+      this.assertTrue(gotStart, 'tiptoi Program wurde gestartet');
+      this.assertTrue(gotEnd, 'tiptoi Program lief erfolgreich durch');
       
-      assertEquals("Spiel „runsAndWaitsForOneInput“ startet"+
+      this.assertEquals("Spiel „runsAndWaitsForOneInput“ startet"+
                    "PlaySound „game start“ (null)"+
                    "tiptoi wartet auf input..."+
                    "getippt wurde: OID: 17121"+

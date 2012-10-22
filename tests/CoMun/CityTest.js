@@ -1,17 +1,24 @@
-define(['CoMun/City','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','CoMun/City','Psc/Test/DoublesManager'], function(t) {
   
   module("CoMun.City");
   
-  var setup = function () {
+  var setup = function (test) {
     //var dm = new Psc.Test.DoublesManager();
-    var city = new CoMun.City({ });
+    var city = new CoMun.City({
+      id: 17,
+      labelPosition: {top: '12px', left: '120px'},
+      position: {top: '35px', left: '121px'},
+      name: 'Hamburg',
+      marked: false,
+      type: 'german'
+    });
     
-    return {city: city};
+    return t.setup(test, {city: city});
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
   
-    // this.city.doSomething();
+    this.assertEquals("german", this.city.getType());
   });
 });

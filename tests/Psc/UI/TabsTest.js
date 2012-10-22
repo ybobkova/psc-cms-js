@@ -1,4 +1,4 @@
-define(['Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function() {
+define(['psc-tests-assert','Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function() {
   var tab = new Psc.UI.Tab({
     id: 'entity-persons-17',
     label: 'Philipp S',
@@ -15,12 +15,12 @@ define(['Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function() {
       $.get('/js/fixtures/tabs.php', function (html) {
         var $fixture = $('#qunit-fixture').html(html);
         var $tabs = $fixture.find('div.psc-cms-ui-tabs');
-        assertEquals($tabs.length,1,'self-test: Fixture hat div.psc-cms-ui-tabs im html des Ajax Requests');
+        this.assertEquals($tabs.length,1,'self-test: Fixture hat div.psc-cms-ui-tabs im html des Ajax Requests');
       
         var tabs = new Psc.UI.Tabs({ widget: $tabs });
-        assertSame($tabs, tabs.unwrap());
+        this.assertSame($tabs, tabs.unwrap());
         
-        assertions($tabs, tabs);
+        this.assertions($tabs, tabs);
       }, 'html');
     };
   };
@@ -30,48 +30,48 @@ define(['Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function() {
   asyncTest("tab parsing", loadFixture(function ($tabs, tabs) {
     var welcome;
     // check welcome tab (parsing)
-    assertInstanceOf(Psc.UI.Tab, welcome = tabs.tab({index: 0}));
-    assertEquals('Willkommen', welcome.getLabel());
-    assertEquals('tab-content0', welcome.getId());
-    assertFalse(welcome.isClosable(),'welcome cannot be closed');
+    this.assertInstanceOf(Psc.UI.Tab, welcome = tabs.tab({index: 0}));
+    this.assertEquals('Willkommen', welcome.getLabel());
+    this.assertEquals('tab-content0', welcome.getId());
+    this.assertFalse(welcome.isClosable(),'welcome cannot be closed');
     
-    assertEquals(0, tabs.getIndex());
-    assertEquals(1, tabs.count());
+    this.assertEquals(0, tabs.getIndex());
+    this.assertEquals(1, tabs.count());
     start();
   }));
     
   asyncTest("has", loadFixture(function ($tabs, tabs) {
     // has
-    assertFalse(tabs.has(),'has with empty');
-    assertFalse(tabs.has({index: null}),'has() returns false with null as index');
-    assertFalse(tabs.has({index: 2}),'has() returns false with not-existing index');
-    assertTrue(tabs.has({index: 0}),'has() returns true with existing index');
+    this.assertFalse(tabs.has(),'has with empty');
+    this.assertFalse(tabs.has({index: null}),'has() returns false with null as index');
+    this.assertFalse(tabs.has({index: 2}),'has() returns false with not-existing index');
+    this.assertTrue(tabs.has({index: 0}),'has() returns true with existing index');
     start();
   }));
   
   asyncTest("add a tab and get his index", loadFixture(function ($tabs, tabs) {
     tabs.add(tab);
-    assertTrue(tab.isClosable(),'normal tab is closable');    
+    this.assertTrue(tab.isClosable(),'normal tab is closable');    
     
     // index + count
-    assertEquals(1, tabs.getIndex());
-    assertEquals(2, tabs.count());
-    assertEquals(1, tabs.getIndex(tab));
+    this.assertEquals(1, tabs.getIndex());
+    this.assertEquals(2, tabs.count());
+    this.assertEquals(1, tabs.getIndex(tab));
   
     // now it has the tab
-    assertTrue(tabs.has(tab));
+    this.assertTrue(tabs.has(tab));
     
     // but not another
-    assertFalse(tabs.has(otherTab));
+    this.assertFalse(tabs.has(otherTab));
     start();
   }));
   
   
   asyncTest("close and isClosable", loadFixture(function ($tabs, tabs) {
     tabs.add(tab);
-    assertTrue(tab.isClosable(),'normal tab is closable');
+    this.assertTrue(tab.isClosable(),'normal tab is closable');
     
-    assertFalse(tabs.tab({index:0}).isClosable(), 'welcome tab is not closable');
+    this.assertFalse(tabs.tab({index:0}).isClosable(), 'welcome tab is not closable');
     start();
   }));
   
@@ -79,8 +79,8 @@ define(['Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function() {
     tabs.add(tab);
     
     // search
-    assertSame(tab, tabs.tab({id: 'entity-persons-17'}));
-    assertSame(tab, tabs.tab({index: tabs.getIndex()}));
+    this.assertSame(tab, tabs.tab({id: 'entity-persons-17'}));
+    this.assertSame(tab, tabs.tab({index: tabs.getIndex()}));
     
     raises(function () {
       tabs.tab({id: 'none'});
@@ -102,7 +102,7 @@ define(['Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function() {
         );
     
     tabs.add(spTab);
-    assertSame(spTab, tabs.tab({id: 'entities-user-info@ps-webforge.comd-form'}));
+    this.assertSame(spTab, tabs.tab({id: 'entities-user-info@ps-webforge.comd-form'}));
   }));
     
   asyncTest("select a tab and open adds and selects tabs", loadFixture(function ($tabs, tabs) {
@@ -112,26 +112,26 @@ define(['Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function() {
     };
     
     // select
-    assertEquals(0, selected(), 'pre-condition: nativer index entspricht nicht dem erwarteten');
+    this.assertEquals(0, selected(), 'pre-condition: nativer index entspricht nicht dem erwarteten');
     tabs.select(tab);
     // native test
-    assertEquals(1, selected(), 'nativer index entspricht nicht dem erwarteten');
+    this.assertEquals(1, selected(), 'nativer index entspricht nicht dem erwarteten');
     
     // "open" a new tab. the first one just adds it
     tabs.open(otherTab);
-    assertEquals(2, tabs.getIndex(otherTab));
+    this.assertEquals(2, tabs.getIndex(otherTab));
     
     // tab is not selected
-    assertEquals(1, selected(), 'nativer index ist noch 1');
+    this.assertEquals(1, selected(), 'nativer index ist noch 1');
     // tab is added
-    assertEquals(3, tabs.count()); // tab,othertab,welcome
-    assertTrue(tabs.has(otherTab),'has() gibt für den open tab true zurück');
+    this.assertEquals(3, tabs.count()); // tab,othertab,welcome
+    this.assertTrue(tabs.has(otherTab),'has() gibt für den open tab true zurück');
     // native test isSelected?
-    assertEquals(1, $tabs.find('ul li a[href="#entity-persons-19"]').length,' tab wurde geöffnet und hinzugefügt (dom)');
+    this.assertEquals(1, $tabs.find('ul li a[href="#entity-persons-19"]').length,' tab wurde geöffnet und hinzugefügt (dom)');
     
     //  "open" the second selects it
     tabs.open(otherTab);
-    assertEquals(2, selected(),'tab was selected the second time');
+    this.assertEquals(2, selected(),'tab was selected the second time');
     start();
   }));
   
@@ -145,7 +145,7 @@ define(['Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function() {
       url: tab.getUrl()
     });
     
-    assertTrue(tabs.has(sameTab), 'sameTab is (with the same id) in tabs');
+    this.assertTrue(tabs.has(sameTab), 'sameTab is (with the same id) in tabs');
   }));
   
   asyncTest("mark tabs unsaved and saved. ", loadFixture(function ($tabs, tabs) {
@@ -153,19 +153,19 @@ define(['Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function() {
     tabs.add(otherTab);
     
     // mark unsaved and then saved
-    assertFalse(tab.isUnsaved());
+    this.assertFalse(tab.isUnsaved());
     tabs.unsaved(tab);
-    assertTrue(tab.isUnsaved());
+    this.assertTrue(tab.isUnsaved());
     tabs.saved(tab);
-    assertFalse(tab.isUnsaved());
+    this.assertFalse(tab.isUnsaved());
     
     // close from code (tab)
     tabs.close(tab);
-    assertEquals(2, tabs.count());
+    this.assertEquals(2, tabs.count());
     
     // close from click (otherTab), otherTab wurde ganz sicher hinzugefügt, d.h. die eventhandler klappen auch für sich veränderne elemente
     $tabs.find('ul li a[href="#entity-persons-19"]').nextAll('span.ui-icon-close').trigger('click');
-    assertEquals(1, tabs.count(),'count ist jetzt 1 nachdem auf close gelickt wurde');
+    this.assertEquals(1, tabs.count(),'count ist jetzt 1 nachdem auf close gelickt wurde');
     start();
   }));
   
@@ -173,26 +173,26 @@ define(['Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function() {
     start();
     tabs.add(tab);
     tabs.add(otherTab);
-    assertEquals(3, tabs.count(),'3 tabs are there (1 fixture + 2 real)'); // 3 denn auch welcome
+    this.assertEquals(3, tabs.count(),'3 tabs are there (1 fixture + 2 real)'); // 3 denn auch welcome
     
     tabs.closeAll();
-    assertEquals(1, tabs.count(),'1 tabs is avaible after closeAll() because it is not closable');
-    assertFalse(tabs.tab({index:0}).isClosable(), 'tab is really not closable');
+    this.assertEquals(1, tabs.count(),'1 tabs is avaible after closeAll() because it is not closable');
+    this.assertFalse(tabs.tab({index:0}).isClosable(), 'tab is really not closable');
   }));
   
   asyncTest("tabs gets added with contextMenu", loadFixture(function ($tabs, tabs) {
     tabs.add(tab);
     start();
     
-    assertEquals(2, tabs.count(),'tabs count is 2');
+    this.assertEquals(2, tabs.count(),'tabs count is 2');
     var $li = $tabs.find('li:has(a[href="#entity-persons-17"])');
     var $span = $li.find('span.options');
-    assertEquals(1, $span.length, 'options span gefunden');
+    this.assertEquals(1, $span.length, 'options span gefunden');
     
     // is registered in manager
     var menu = tabs.getContextMenuManager().get($span);
     
-    assertInstanceOf(Psc.UI.Menu, menu);
+    this.assertInstanceOf(Psc.UI.Menu, menu);
   }));
   
   asyncTest("tabs gets parsed with contextMenu", loadFixture(function ($tabs, tabs) {
@@ -203,10 +203,10 @@ define(['Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function() {
     
     var $li = $tabs.find('li:has(a[href="#tabs-3"])');
     var $span = $li.find('span.options');
-    assertEquals(1, $span.length, '.options span in fixture gefunden');
+    this.assertEquals(1, $span.length, '.options span in fixture gefunden');
     
     var menu = tabs.getContextMenuManager().get($span);
-    assertInstanceOf(Psc.UI.Menu, menu);
+    this.assertInstanceOf(Psc.UI.Menu, menu);
     
     $span.trigger('click');
   }));

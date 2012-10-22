@@ -1,4 +1,4 @@
-define(['Psc/Numbers'], function() {
+define(['psc-tests-assert','Psc/Numbers'], function() {
   
   module("Psc.Numbers", {
     setup: function () {
@@ -10,7 +10,7 @@ define(['Psc/Numbers'], function() {
     var r;
     for (var i = 1; i <= 120; i++) {
       r = Psc.Numbers.randomInt(-1,100)
-      assertTrue(r >= -1 && r <= 100, ''+r+' is in range');
+      this.assertTrue(r >= -1 && r <= 100, ''+r+' is in range');
     }
   });
 });

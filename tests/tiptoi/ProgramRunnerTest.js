@@ -1,4 +1,4 @@
-define(['tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','tiptoi/InputProvider', 'Psc/Code'], function() {
+define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','tiptoi/InputProvider', 'Psc/Code'], function() {
   var tiptoiMain, main, programRunner, program1, played = [];
   
   module("tiptoi.Main", {
@@ -77,7 +77,7 @@ define(['tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','ti
       "tiptoi.end()"
       ))
     ).then(function () {
-      assertEquals(["2-TEST-001"], played);
+      this.assertEquals(["2-TEST-001"], played);
       start();
     }, function (error) {
       fail("program failed");
@@ -93,7 +93,7 @@ define(['tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','ti
     
     program.setSound('aPlaceHolder', sound = new tiptoi.Sound({number: '2-STA_0596', content: 'Die Universität'}));
     
-    assertEquals({aPlaceHolder: sound}, program.getSounds());
+    this.assertEquals({aPlaceHolder: sound}, program.getSounds());
     start();
   });
 
@@ -109,7 +109,7 @@ define(['tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','ti
     ));
     
     status.done(function () {
-      assertEquals(['2-TEST-002'], played);
+      this.assertEquals(['2-TEST-002'], played);
       start();
     });
   });
@@ -142,14 +142,14 @@ define(['tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','ti
     ));
     
     status.progress(function (cpu) {
-      assertInstanceOf(tiptoi.cpu, cpu, 'notify param is a tiptoi.tiptoi instance');
+      this.assertInstanceOf(tiptoi.cpu, cpu, 'notify param is a tiptoi.tiptoi instance');
       log += 'yay up it goes';
     });
     
     status.done(function () {
-      assertEquals(['this should not be allowed', 'i waited for 77'], played);
+      this.assertEquals(['this should not be allowed', 'i waited for 77'], played);
       
-      assertEquals(log, 'yay up it goes');
+      this.assertEquals(log, 'yay up it goes');
       start();
     });
   });
@@ -169,15 +169,15 @@ define(['tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','ti
       });
 
       cpu.on('tiptoi-input-given', function (e, inputType, inputValue) {
-        assertEquals('OID', inputType);
+        this.assertEquals('OID', inputType);
         input = inputValue;
       });
       
     });
     
     status.done(function () {
-      assertTrue(waiting,'tiptoi-waiting-for-input was triggered');
-      assertEquals(77, input,'tiptoi-input-given was triggered');
+      this.assertTrue(waiting,'tiptoi-waiting-for-input was triggered');
+      this.assertEquals(77, input,'tiptoi-input-given was triggered');
       start();
     });
   });
@@ -209,7 +209,7 @@ define(['tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','ti
     ));
     
     status.done(function () {
-      assertEquals(['will be played before', 'timer ran out'], played);
+      this.assertEquals(['will be played before', 'timer ran out'], played);
       start();
     });
     
@@ -238,7 +238,7 @@ define(['tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','ti
     ));
 
     status.done(function () {
-      assertEquals(['contains','contains-not'], played);
+      this.assertEquals(['contains','contains-not'], played);
       start();
     })
   });
@@ -268,7 +268,7 @@ define(['tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','ti
     ));
 
     status.done(function () {
-      assertEquals(['1:contains','2:contains-not'], played);
+      this.assertEquals(['1:contains','2:contains-not'], played);
       start();
     })
     
@@ -295,7 +295,7 @@ define(['tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','ti
     var status = programRunner.run(program);
     
     status.done(function () {
-      assertEquals(['1-TEST_004', '1-TEST_001'], played);
+      this.assertEquals(['1-TEST_004', '1-TEST_001'], played);
       start();
     });
     
@@ -312,7 +312,7 @@ define(['tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','ti
     });
 
     status.fail(function (error) {
-      assertNotUndefined(error, 'some error message is set');
+      this.assertNotUndefined(error, 'some error message is set');
       ok('fail is called');
       start();
     });

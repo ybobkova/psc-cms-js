@@ -1,4 +1,4 @@
-define(['Psc/UI/ContextMenuManager','Psc/UI/Menu'], function() {
+define(['psc-tests-assert','Psc/UI/ContextMenuManager','Psc/UI/Menu'], function() {
   module("Psc.UI.ContextMenuManager");
 
   test("acceptance", function() {
@@ -29,7 +29,7 @@ define(['Psc/UI/ContextMenuManager','Psc/UI/Menu'], function() {
     });
 
     manager.register($anchor, menu);
-    assertSame(menu, manager.get($anchor));
+    this.assertSame(menu, manager.get($anchor));
     
     raises(function () {
       manager.get($('body'));
@@ -40,14 +40,14 @@ define(['Psc/UI/ContextMenuManager','Psc/UI/Menu'], function() {
       manager.toggle($anchor);
     });
     
-    assertFalse(menuOpen);
+    this.assertFalse(menuOpen);
     $anchor.trigger('click');
     
-    assertTrue(menu.unwrap().parents('body').length >= 1,'menu is appended somehow somewhere');
-    assertTrue(menuOpen,'menu is opened through toggle');
+    this.assertTrue(menu.unwrap().parents('body').length >= 1,'menu is appended somehow somewhere');
+    this.assertTrue(menuOpen,'menu is opened through toggle');
     
     $anchor.trigger('click');
-    assertFalse(menuOpen,'menu is closed through toggle');
+    this.assertFalse(menuOpen,'menu is closed through toggle');
     
     manager.unregister($anchor);
   });
@@ -70,9 +70,9 @@ define(['Psc/UI/ContextMenuManager','Psc/UI/Menu'], function() {
 
     manager.register($anchor, menu);
     $anchor.trigger('click');
-    assertEquals(1, menu.unwrap().parents('body').length,'menu is appended somehow somewhere');
+    this.assertEquals(1, menu.unwrap().parents('body').length,'menu is appended somehow somewhere');
     
     manager.unregister($anchor);
-    assertEquals(0, menu.unwrap().parent().length);
+    this.assertEquals(0, menu.unwrap().parent().length);
   });
 });

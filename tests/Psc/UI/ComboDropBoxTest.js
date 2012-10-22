@@ -1,4 +1,4 @@
-define(['Psc/UI/ComboDropBox'], function() {
+define(['psc-tests-assert','Psc/UI/ComboDropBox'], function() {
   
   module("Psc.UI.ComboDropBox", {
     setup: function () {

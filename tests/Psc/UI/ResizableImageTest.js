@@ -1,4 +1,4 @@
-define(['Psc/UI/ResizableImage'], function() {
+define(['psc-tests-assert','Psc/UI/ResizableImage'], function() {
   
   module("Psc.UI.ResizableImage");
   

@@ -1,4 +1,4 @@
-define(['Psc/UI/Navigation'], function() {
+define(['psc-tests-assert','Psc/UI/Navigation'], function() {
   var navigation;
   
   module("Psc.UI.Navigation", {
@@ -195,8 +195,8 @@ define(['Psc/UI/Navigation'], function() {
     flat = navigation.serialize(data);
     
 
-    assertEquals(10,flat.length, 'all items are included in flat');
-    assertEquals(
+    this.assertEquals(10,flat.length, 'all items are included in flat');
+    this.assertEquals(
       // expected
       [
         {
@@ -269,7 +269,7 @@ define(['Psc/UI/Navigation'], function() {
     );
     
     $.each(flat, function (i, node) {
-      assertTrue(node.getGuid().length > 0);
+      this.assertTrue(node.getGuid().length > 0);
     });
     
     //onsole.log(JSON.stringify(flat));

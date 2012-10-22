@@ -1,4 +1,4 @@
-define(['Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable'], function() {
+define(['psc-tests-assert','Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable'], function() {
 
   var loadFixture = function(assertions) {
     return function () {
@@ -6,9 +6,9 @@ define(['Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpen
         //var $fixture = $('#qunit-fixture').html(html);
         var $fixture = $('#visible-fixture').html(html);
         var $dropBox = $fixture.find('.psc-cms-ui-drop-box');
-        assertEquals($dropBox.length,1,'self-test: Fixture hat div.psc-cms-ui-drop-box im html des Ajax Requests');
+        this.assertEquals($dropBox.length,1,'self-test: Fixture hat div.psc-cms-ui-drop-box im html des Ajax Requests');
         
-        assertions($dropBox);
+        this.assertions($dropBox);
       }, 'html');
     };
   };
@@ -91,7 +91,7 @@ define(['Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpen
 
   asyncTest("acceptance", setupDefault(function(dropBox, $dropBox) {
     start();
-    assertSame(dropBox, $dropBox.data('joose'),'joose is linked to $dropBox');
+    this.assertSame(dropBox, $dropBox.data('joose'),'joose is linked to $dropBox');
     
     $dropBox.hasClass('ui-widget-content ui-corner-all');
     
@@ -102,30 +102,30 @@ define(['Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpen
 
   asyncTest("adds a button", setupDefault(function(dropBox, $dropBox) {
     start();
-    assertEquals(0, $dropBox.find('button.psc-cms-ui-button').length, 'dropbox is empty before');
+    this.assertEquals(0, $dropBox.find('button.psc-cms-ui-button').length, 'dropbox is empty before');
     
     dropBox.addButton(button2);
     
     var $button2 = $dropBox.find('button.psc-cms-ui-button');
-    assertEquals(1, $button2.length, 'dropbox has 1 button with psc-cms-ui-button class in it');
+    this.assertEquals(1, $button2.length, 'dropbox has 1 button with psc-cms-ui-button class in it');
     
-    assertEquals('Button 2',$button2.text(), 'Button in Dropbox shows the correct label');
-    assertTrue($button2.hasClass('assigned-item'),' Button has the class assigned-item ');
+    this.assertEquals('Button 2',$button2.text(), 'Button in Dropbox shows the correct label');
+    this.assertTrue($button2.hasClass('assigned-item'),' Button has the class assigned-item ');
   }));
   
   asyncTest("removes an added button", setupDefault(function(dropBox, $dropBox) {
     var $button3;
     
     start();
-    assertEquals(0, $dropBox.find('button.psc-cms-ui-button').length, 'dropbox is empty before');
+    this.assertEquals(0, $dropBox.find('button.psc-cms-ui-button').length, 'dropbox is empty before');
     
     dropBox.addButton(button3);
     $button3 = $dropBox.find('button.psc-cms-ui-button');
-    assertEquals(1, $dropBox.find('button.psc-cms-ui-button').length, 'dropbox has 1 button');
+    this.assertEquals(1, $dropBox.find('button.psc-cms-ui-button').length, 'dropbox has 1 button');
     
     dropBox.removeButton($button3);
     
-    assertEquals(0, $dropBox.find('button.psc-cms-ui-button').length, 'dropbox is empty after');
+    this.assertEquals(0, $dropBox.find('button.psc-cms-ui-button').length, 'dropbox is empty after');
   }));
   
   asyncTest("removes button on click", setupDefault(function(dropBox, $dropBox) {
@@ -136,7 +136,7 @@ define(['Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpen
     
     $button4.simulate('click');
     
-    assertEquals(0, $dropBox.find('button.psc-cms-ui-button').length, 'button is removed');
+    this.assertEquals(0, $dropBox.find('button.psc-cms-ui-button').length, 'button is removed');
   }));
 
   asyncTest("serializes all added buttons", setupDefault(function(dropBox, $dropBox) {
@@ -151,13 +151,13 @@ define(['Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpen
     var data = {};
     dropBox.serialize(data);
 
-    assertEquals({'buttons': [2,3,4]}, data);
+    this.assertEquals({'buttons': [2,3,4]}, data);
     
   }));
 
   // das könnte ein schönerer unit test sein für den nächsten serializes test
   asyncTest("has button from html without adding", setupHTMLButtons(function(dropBox, $dropBox, $button) {
-    assertTrue(dropBox.hasButton($button), 'drop box has the button from html');
+    this.assertTrue(dropBox.hasButton($button), 'drop box has the button from html');
     start();
   }));
 
@@ -170,12 +170,12 @@ define(['Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpen
     var data = {};
     dropBox.serialize(data);
 
-    assertEquals({'buttons': [10,2]}, data); // nummer 10 ist aus dem html
+    this.assertEquals({'buttons': [10,2]}, data); // nummer 10 ist aus dem html
   }));
 
 
   asyncTest("triggers drop-box-multiple-violated on second button when multiple is false", setupDefault(function(dropBox, $dropBox) {
-    assertFalse(dropBox.isMultiple(), 'dropbox is multiple');
+    this.assertFalse(dropBox.isMultiple(), 'dropbox is multiple');
     
     dropBox.addButton(button2);
     
@@ -184,13 +184,13 @@ define(['Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpen
     dropBox.getEventManager().on('drop-box-multiple-violated', function (e, vioButton) {
       e.preventDefault();
       e.stopImmediatePropagation();
-      assertSame(button2, vioButton, 'violated button equals addded button2');
+      this.assertSame(button2, vioButton, 'violated button equals addded button2');
       multipleTriggered = true;
     });
     
     dropBox.addButton(button2);
     
-    assertTrue(multipleTriggered, 'multiple was triggered after adding the same button twice');
+    this.assertTrue(multipleTriggered, 'multiple was triggered after adding the same button twice');
     start();
   }));
   
@@ -201,17 +201,17 @@ define(['Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpen
 
   asyncTest("items can be sortable", setupDefault(function(dropBox, $dropBox) {
     start();
-    assertNotUndefined($dropBox.data('sortable'));
+    this.assertNotUndefined($dropBox.data('sortable'));
   }));
 
 
   asyncTest("has button after adding", setupDefault(function(dropBox, $dropBox) {
     dropBox.addButton(button3);
     
-    assertTrue(dropBox.hasButton(button3), 'has button 3 as Joose Object');
+    this.assertTrue(dropBox.hasButton(button3), 'has button 3 as Joose Object');
     
     $button3 = dropBox.unwrap().find('button.psc-cms-ui-button');
-    assertTrue(dropBox.hasButton($button3), 'has button 3 as jquery');
+    this.assertTrue(dropBox.hasButton($button3), 'has button 3 as jquery');
     start();
   }));
   

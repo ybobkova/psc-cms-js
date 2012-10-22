@@ -1,4 +1,4 @@
-define(['Psc/UI/GridTableEditor','Psc/Table','Psc/UI/GridTable','Psc/CMS/Service'], function() {
+define(['psc-tests-assert','Psc/UI/GridTableEditor','Psc/Table','Psc/UI/GridTable','Psc/CMS/Service'], function() {
   
   module("Psc.UI.GridTableEditor");
   
@@ -71,8 +71,8 @@ define(['Psc/UI/GridTableEditor','Psc/Table','Psc/UI/GridTable','Psc/CMS/Service
   test("attaches buttons", function() {
     $.extend(this, setup());
     
-    assertEquals(1, this.$fixture.find('button.psc-cms-ui-button.grid-download-data').length, 'download button ist vorhanden');
-    assertEquals(1, this.$fixture.find('button.psc-cms-ui-button.grid-upload-data').length, 'upload button ist vorhanden');
+    this.assertEquals(1, this.$fixture.find('button.psc-cms-ui-button.grid-download-data').length, 'download button ist vorhanden');
+    this.assertEquals(1, this.$fixture.find('button.psc-cms-ui-button.grid-upload-data').length, 'upload button ist vorhanden');
   });
   
   test("starts download on service when button is clicked", function () {
@@ -82,8 +82,8 @@ define(['Psc/UI/GridTableEditor','Psc/Table','Psc/UI/GridTable','Psc/CMS/Service
     
     //$downloadButton.simulate('click');
     
-    //assertNotUndefined(downloadRequest, 'downloadRequest was expected in service');
-    //assertNotUndefined(downloadRequest.getBody());
+    //this.assertNotUndefined(downloadRequest, 'downloadRequest was expected in service');
+    //this.assertNotUndefined(downloadRequest.getBody());
   });
   
   test("opens upload dialog when button upload is clicked", function () {
@@ -94,6 +94,6 @@ define(['Psc/UI/GridTableEditor','Psc/Table','Psc/UI/GridTable','Psc/CMS/Service
     
     $dialog = $('body').find('.ui-dialog:visible');
     
-    assertEquals(1, $dialog.length, 'Ein Dialog wurde geöffnet');
+    this.assertEquals(1, $dialog.length, 'Ein Dialog wurde geöffnet');
   });
 });

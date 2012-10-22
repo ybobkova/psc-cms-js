@@ -1,4 +1,4 @@
-define(['Psc/UI/ErrorPane'], function() {
+define(['psc-tests-assert','Psc/UI/ErrorPane'], function() {
   
   module("Psc.UI.ErrorPane", {
     setup: function () {
@@ -14,11 +14,11 @@ define(['Psc/UI/ErrorPane'], function() {
     });
     
     errorPane.display();
-    assertEquals(1, $('#qunit-fixture .psc-cms-ui-error-pane').length);
+    this.assertEquals(1, $('#qunit-fixture .psc-cms-ui-error-pane').length);
     
     // does not attach twice
     errorPane.display();
-    assertEquals(1, $('#qunit-fixture .psc-cms-ui-error-pane').length);
+    this.assertEquals(1, $('#qunit-fixture .psc-cms-ui-error-pane').length);
   });
   
   test("can be removed", function () {
@@ -29,9 +29,9 @@ define(['Psc/UI/ErrorPane'], function() {
     });
     
     errorPane.display();
-    assertEquals(1, $('#qunit-fixture .psc-cms-ui-error-pane').length);
+    this.assertEquals(1, $('#qunit-fixture .psc-cms-ui-error-pane').length);
     
     errorPane.hide();
-    assertEquals(0, $('#qunit-fixture .psc-cms-ui-error-pane').length);
+    this.assertEquals(0, $('#qunit-fixture .psc-cms-ui-error-pane').length);
   });
 });

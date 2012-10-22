@@ -1,4 +1,4 @@
-define(['Psc/UI/HTML/Builder','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/HTML/Builder','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.HTML.Builder");
   
@@ -21,8 +21,8 @@ define(['Psc/UI/HTML/Builder','Psc/Test/DoublesManager'], function() {
     var div = '<div style="'+style+'"></div>';
     
     var $div = $(div);
-    assertEquals('rgb(255, 0, 0)', $div.css('background-color'), 'style is '+style);
-    assertEquals('rgb(0, 0, 1)', $div.css('color'), style);
-    assertEquals('100px', $div.css('width'), style);
+    this.assertEquals('rgb(255, 0, 0)', $div.css('background-color'), 'style is '+style);
+    this.assertEquals('rgb(0, 0, 1)', $div.css('color'), style);
+    this.assertEquals('100px', $div.css('width'), style);
   });
 });

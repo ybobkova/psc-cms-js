@@ -1,4 +1,4 @@
-define(['Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.LayoutManager");
   
@@ -31,11 +31,11 @@ define(['Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function() {
           return '[widget: '+assert.type+'] '+msg;
         };
         
-        assertTrue($widget.hasClass('widget'), m('has class widget'));
-        assertTrue($widget.hasClass(assert.type), m('has class for type'));
-        assertEquals(1, $widget.find('h3.widget-header').length, m('has a header'));
-        assertEquals(1, $widget.find('h3.widget-header span.ui-icon-close').length, m('has a close button'));
-        assertEquals(1, $widget.find('div.widget-content').length, 'has a content div');
+        this.assertTrue($widget.hasClass('widget'), m('has class widget'));
+        this.assertTrue($widget.hasClass(assert.type), m('has class for type'));
+        this.assertEquals(1, $widget.find('h3.widget-header').length, m('has a header'));
+        this.assertEquals(1, $widget.find('h3.widget-header span.ui-icon-close').length, m('has a close button'));
+        this.assertEquals(1, $widget.find('div.widget-content').length, 'has a content div');
       },
       uploadService: layoutManager.getUploadService(),
       '$fixture': $fixture,
@@ -54,8 +54,8 @@ define(['Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function() {
     this.assertWidget({type:'li'}, $list);
     
     $ta = $list.find('div.widget-content textarea');
-    assertEquals(1, $ta.length, 'textarea muss in der liste sein');
-    assertEquals("", $ta.val());
+    this.assertEquals(1, $ta.length, 'textarea muss in der liste sein');
+    this.assertEquals("", $ta.val());
   });
 
   test("paragraph creates a widget with an empty textarea", function() {
@@ -67,8 +67,8 @@ define(['Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function() {
     this.assertWidget({type:'paragraph'}, $widget);
     
     $ta = $widget.find('div.widget-content textarea');
-    assertEquals(1, $ta.length, 'textarea muss im paragraph sein');
-    assertEquals("", $ta.val());
+    this.assertEquals(1, $ta.length, 'textarea muss im paragraph sein');
+    this.assertEquals("", $ta.val());
   });
 
     test("createWidget sends content parameter to subclass", function() {
@@ -76,7 +76,7 @@ define(['Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function() {
   
     var widget = this.layoutManager.createWidget('paragraph', 'mycontent');
     
-    assertEquals("mycontent", widget.unwrap().find('div.widget-content textarea').val());
+    this.assertEquals("mycontent", widget.unwrap().find('div.widget-content textarea').val());
   });
 
   test("headline creates a widget with an empty input", function() {
@@ -89,8 +89,8 @@ define(['Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function() {
     this.assertWidget({type:type}, $widget);
     
     var $input = $widget.find('div.widget-content input');
-    assertEquals(1, $input.length, 'input muss in der '+type+' sein');
-    assertEquals("", $input.val());
+    this.assertEquals(1, $input.length, 'input muss in der '+type+' sein');
+    this.assertEquals("", $input.val());
   });
   
   test("creates an image with the upload service as dpi", function() {
@@ -99,7 +99,7 @@ define(['Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function() {
     var type = "image";
     
     var widget = this.layoutManager.createWidget(type);
-    assertSame(widget.getUploadService(), this.layoutManager.getUploadService());
+    this.assertSame(widget.getUploadService(), this.layoutManager.getUploadService());
     
     var $widget = widget.unwrap();
     
@@ -112,7 +112,7 @@ define(['Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function() {
     this.layoutManager.appendWidget(this.layoutManager.createWidget('headline', 'the headline'));
     this.layoutManager.appendWidget(this.layoutManager.createWidget('sub-headline', 'the second headline'));
     
-    assertEquals(2,this.layoutManager.getWidgets().length);
+    this.assertEquals(2,this.layoutManager.getWidgets().length);
     
   });
   
@@ -136,7 +136,7 @@ define(['Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function() {
     var data = {};
     this.layoutManager.serialize(data)
     
-    assertEquals(expectedData, data, 'layoutManager is serializing correct');
+    this.assertEquals(expectedData, data, 'layoutManager is serializing correct');
   });
   
   test("layoutManager unserializes widgets structure", function () {
@@ -153,12 +153,12 @@ define(['Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function() {
     };
     
     this.layoutManager.unserialize(serialized);
-    assertEquals(5, this.layoutManager.getWidgets().length);
+    this.assertEquals(5, this.layoutManager.getWidgets().length);
     
     var headline = this.layoutManager.getLinkedWidget(this.layoutManager.getLayout().find('div.widget').first());
-    assertEquals('headline', headline.getType());
-    assertEquals('Überschrift', headline.getLabel());
-    assertEquals(2, headline.getLevel());
+    this.assertEquals('headline', headline.getType());
+    this.assertEquals('Überschrift', headline.getLabel());
+    this.assertEquals(2, headline.getLevel());
     
   });
   
@@ -173,7 +173,7 @@ define(['Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function() {
       ]
     }));
     
-    assertEquals(5, this.layoutManager.getWidgets().length);
+    this.assertEquals(5, this.layoutManager.getWidgets().length);
   });
 
 
@@ -182,7 +182,7 @@ define(['Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function() {
     var type = 'downloadslist';
     
     var widget = this.layoutManager.createWidget(type);
-    assertSame(widget.getUploadService(), this.layoutManager.getUploadService());
+    this.assertSame(widget.getUploadService(), this.layoutManager.getUploadService());
     
     var $widget = widget.unwrap();
     this.assertWidget({type:type}, $widget);

@@ -1,4 +1,4 @@
-define(['tiptoi/InputProvider'], function() {
+define(['psc-tests-assert','tiptoi/InputProvider'], function() {
   
   module("tiptoi.InputProvider", {
     setup: function () {
@@ -13,7 +13,7 @@ define(['tiptoi/InputProvider'], function() {
     });
     
     $.when( inputProvider.getInput() ).then(function (input) {
-      assertEquals(77, input);
+      this.assertEquals(77, input);
       start();
     });
     

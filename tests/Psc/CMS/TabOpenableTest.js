@@ -1,4 +1,4 @@
-define(['Psc/CMS/TabOpenable','Psc/CMS/Item','Psc/UI/Tab'], function() {
+define(['psc-tests-assert','Psc/CMS/TabOpenable','Psc/CMS/Item','Psc/UI/Tab'], function() {
   
   module("Psc.CMS.TabOpenable", {
     setup: function () {
@@ -18,8 +18,8 @@ define(['Psc/CMS/TabOpenable','Psc/CMS/Item','Psc/UI/Tab'], function() {
       widget: $('<a></a>')
     });
     
-    assertInstanceOf(Psc.UI.Tab, tab = tabOpenable.getTab());
-    assertEquals('Person Nummer 17', tab.getLabel());
+    this.assertInstanceOf(Psc.UI.Tab, tab = tabOpenable.getTab());
+    this.assertEquals('Person Nummer 17', tab.getLabel());
   
   });
 });

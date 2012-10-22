@@ -1,4 +1,4 @@
-define(['Psc/UI/GridTable','Psc/Table','Psc/UI/WidgetWrapper'], function() {
+define(['psc-tests-assert','Psc/UI/GridTable','Psc/Table','Psc/UI/WidgetWrapper'], function() {
   var table, grid, $fixture;
   
   module("Psc.UI.GridTable", {
@@ -44,8 +44,8 @@ define(['Psc/UI/GridTable','Psc/Table','Psc/UI/WidgetWrapper'], function() {
   });
 
   test("acceptance", function() {
-    assertEquals(20+1, $fixture.find('table tr').length, '20+1 Zeilen der Tabelle erwartet');
-    assertEquals('Das Hotel', $fixture.find('table tr:eq(10) td.sound').text(), 'Hotel ist in Zeile 10');
+    this.assertEquals(20+1, $fixture.find('table tr').length, '20+1 Zeilen der Tabelle erwartet');
+    this.assertEquals('Das Hotel', $fixture.find('table tr:eq(10) td.sound').text(), 'Hotel ist in Zeile 10');
   });
   
   test("empty function empties the whole table with data", function () {
@@ -61,48 +61,48 @@ define(['Psc/UI/GridTable','Psc/Table','Psc/UI/WidgetWrapper'], function() {
     */
     grid.empty();
 
-    assertEquals(1, $fixture.find('table tr').length, '0+1 Zeilen der Tabelle erwartet');
-    assertEquals(0, grid.getRows().length, 'data getRows() returns also 0');
+    this.assertEquals(1, $fixture.find('table tr').length, '0+1 Zeilen der Tabelle erwartet');
+    this.assertEquals(0, grid.getRows().length, 'data getRows() returns also 0');
   });
 
   test("appendRow adds a new Row to the end of the table", function () {
     grid.appendRow(['2-TEST_0001', 'Die S-Bahn-Station', [11046]]);
     
-    assertEquals(20+1+1, $fixture.find('table tr').length);
-    assertEquals(1, $fixture.find('table tr:eq(21) td:contains("2-TEST_0001")').length);
-    assertEquals(20+1, grid.getRows().length, 'Data length was synchronized');
-    assertEquals('2-TEST_0001', grid.getCell(21, 'number'), 'Data repräsentation was synchronized');
+    this.assertEquals(20+1+1, $fixture.find('table tr').length);
+    this.assertEquals(1, $fixture.find('table tr:eq(21) td:contains("2-TEST_0001")').length);
+    this.assertEquals(20+1, grid.getRows().length, 'Data length was synchronized');
+    this.assertEquals('2-TEST_0001', grid.getCell(21, 'number'), 'Data repräsentation was synchronized');
   });
   
   test("insertRow adds a new Row at rowNum i to the table and shifts the other rows down", function () {
     grid.insertRow(['2-TEST_0001', 'Die S-Bahn-Station', [11046]], 2);
-    assertEquals(20+1+1, $fixture.find('table tr').length);
+    this.assertEquals(20+1+1, $fixture.find('table tr').length);
     // wir fügen in zeile 2 ein. diese hat auch den index 2 (wegen der headerzeile)
-    assertEquals(1, $fixture.find('table tr:eq(2) td:contains("Die S-Bahn-Station")').length);
+    this.assertEquals(1, $fixture.find('table tr:eq(2) td:contains("Die S-Bahn-Station")').length);
     
-    assertEquals('Die S-Bahn-Station', grid.getCell(2, 'sound'), 'Data repräsentation was synchronized');
+    this.assertEquals('Die S-Bahn-Station', grid.getCell(2, 'sound'), 'Data repräsentation was synchronized');
   });
   
   test("insertRow(0) adds a new Row to the beginning of the table and shifts the other rows down", function () {
     grid.insertRow(['2-TEST_0001', 'Die S-Bahn-Station', [11046]], 1);
-    assertEquals(20+1+1, $fixture.find('table tr').length);
+    this.assertEquals(20+1+1, $fixture.find('table tr').length);
     // wir fügen in zeile 1 ein. diese hat auch den index 1 (wegen der headerzeile)
-    assertEquals(1, $fixture.find('table tr:eq(1) td:contains("Die S-Bahn-Station")').length);
+    this.assertEquals(1, $fixture.find('table tr:eq(1) td:contains("Die S-Bahn-Station")').length);
     
-    assertEquals('Die S-Bahn-Station', grid.getCell(1, 'sound'),  'Data repräsentation was synchronized');
+    this.assertEquals('Die S-Bahn-Station', grid.getCell(1, 'sound'),  'Data repräsentation was synchronized');
   });
 
 
   test("attached grid can be serialized", function () {
     var $grid = $fixture.find('table');
-    assertTrue($grid.hasClass('psc-cms-ui-grid-table'));
+    this.assertTrue($grid.hasClass('psc-cms-ui-grid-table'));
     
     var joose = Psc.UI.WidgetWrapper.unwrapWidget($grid, Psc.UI.GridTable);
     var data = {};
     
     joose.serialize(data);
     
-    assertEquals(grid.getExport(), data['agrid']);
+    this.assertEquals(grid.getExport(), data['agrid']);
     
   });
 });

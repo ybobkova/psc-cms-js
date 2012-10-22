@@ -1,4 +1,4 @@
-define(['Psc/UI/FormController', 'Psc/EventManagerMock','Psc/AjaxHandler'], function() {
+define(['psc-tests-assert','Psc/UI/FormController', 'Psc/EventManagerMock','Psc/AjaxHandler'], function() {
   module("Psc.UI.FormController");
   
   $('#qunit-fixture').append('<form></form>')
@@ -21,7 +21,7 @@ define(['Psc/UI/FormController', 'Psc/EventManagerMock','Psc/AjaxHandler'], func
       
       override: {
         handle: function (formRequest) {
-          assertSame($form, formRequest.getForm(), 'form is set correctly in FormRequest');
+          this.assertSame($form, formRequest.getForm(), 'form is set correctly in FormRequest');
           return deferred.promise();
         }
       }
@@ -33,9 +33,9 @@ define(['Psc/UI/FormController', 'Psc/EventManagerMock','Psc/AjaxHandler'], func
     
     deferred.resolve(response);
     
-    assertNotFalse(evm.wasTriggered('form-saved',1, function (e, $eventForm, eventResponse) {
-      assertSame($form, $eventForm );
-      assertSame(response, eventResponse);
+    this.assertNotFalse(evm.wasTriggered('form-saved',1, function (e, $eventForm, eventResponse) {
+      this.assertSame($form, $eventForm );
+      this.assertSame(response, eventResponse);
       return true;
     }), 'form-saved was triggered');
     
@@ -49,7 +49,7 @@ define(['Psc/UI/FormController', 'Psc/EventManagerMock','Psc/AjaxHandler'], func
       
       override: {
         handle: function (formRequest) {
-          assertSame($form, formRequest.getForm(), 'form is set correctly in FormRequest');
+          this.assertSame($form, formRequest.getForm(), 'form is set correctly in FormRequest');
           return deferred.promise();
         }
       }
@@ -61,9 +61,9 @@ define(['Psc/UI/FormController', 'Psc/EventManagerMock','Psc/AjaxHandler'], func
     
     deferred.reject(response);
 
-    assertNotFalse(evm.wasTriggered('error-form-save',1, function (e, $eventForm, eventResponse) {
-      assertSame($form, $eventForm );
-      assertSame(response, eventResponse);
+    this.assertNotFalse(evm.wasTriggered('error-form-save',1, function (e, $eventForm, eventResponse) {
+      this.assertSame($form, $eventForm );
+      this.assertSame(response, eventResponse);
       return true;
     }), 'error-form-save was triggered');
     
@@ -82,9 +82,9 @@ define(['Psc/UI/FormController', 'Psc/EventManagerMock','Psc/AjaxHandler'], func
     var formRequest = new Psc.FormRequest({form: $form});
     
     formController.getEventManager().triggerEvent('error-form-exception', {}, [exception, formRequest, formController.getForm()]);
-    assertEquals(1,$form.find('div.psc-cms-ui-error-pane').length,'Error pane found in $form');
+    this.assertEquals(1,$form.find('div.psc-cms-ui-error-pane').length,'Error pane found in $form');
 
-    assertEquals(1,$form.find('div.psc-cms-ui-error-pane:visible').length,'Error pane found in $form');
+    this.assertEquals(1,$form.find('div.psc-cms-ui-error-pane:visible').length,'Error pane found in $form');
     
     var $debug = $form.find('div.psc-cms-ui-error-pane').clone();
     $('#visible-fixture').html($debug);
@@ -96,10 +96,10 @@ define(['Psc/UI/FormController', 'Psc/EventManagerMock','Psc/AjaxHandler'], func
     var response = new Psc.Response({code: 200, reason: 'OK'});
     
     formController.getEventManager().triggerEvent('error-form-save', {}, [formController.getForm(), response]);
-    assertEquals(1,$form.find('div.psc-cms-ui-error-pane').length,'Error pane found in $form');
+    this.assertEquals(1,$form.find('div.psc-cms-ui-error-pane').length,'Error pane found in $form');
     
     formController.getEventManager().triggerEvent('form-saved', {}, [formController.getForm(), response, undefined]);
-    assertEquals(0,$form.find('div.psc-cms-ui-error-pane').length,'Error pane is removed on successful save');
+    this.assertEquals(0,$form.find('div.psc-cms-ui-error-pane').length,'Error pane is removed on successful save');
   });
   
   
@@ -114,8 +114,8 @@ define(['Psc/UI/FormController', 'Psc/EventManagerMock','Psc/AjaxHandler'], func
         handle: function (formRequest) {
           var post = formRequest.getBody();
       
-          assertAttributeEquals(true, 'myCustomKey1', post); // 3
-          assertAttributeEquals(true, 'myCustomKey2', post); // 4
+          this.assertAttributeEquals(true, 'myCustomKey1', post); // 3
+          this.assertAttributeEquals(true, 'myCustomKey2', post); // 4
           return deferred.promise();
         }
       }
@@ -124,8 +124,8 @@ define(['Psc/UI/FormController', 'Psc/EventManagerMock','Psc/AjaxHandler'], func
     var formController = new Psc.UI.FormController({ form: $form, ajaxFormHandler: new ajaxFormHandlerMock({}) });
     
     formController.onSerialization(function ($serForm, data) {
-      assertSame($form, $serForm, 'serialization form is the expected one'); // 1
-      assertNotUndefined(data); // 2
+      this.assertSame($form, $serForm, 'serialization form is the expected one'); // 1
+      this.assertNotUndefined(data); // 2
       
       data.myCustomKey1 = true;
     });

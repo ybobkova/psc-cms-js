@@ -1,4 +1,4 @@
-define(['Psc/FormRequest'], function () {
+define(['psc-tests-assert','Psc/FormRequest'], function () {
   module("Psc.FormRequest");
   
   asyncTest("parsesURLAndMethodFromCMSForm", function() {
@@ -6,8 +6,8 @@ define(['Psc/FormRequest'], function () {
       var $form = $(html);
       var formRequest = new Psc.FormRequest({ form: $form});
       
-      assertEquals('/js/fixtures/ajax/http.form.saved.php',formRequest.getUrl());
-      assertEquals('PUT',formRequest.getMethod());
+      this.assertEquals('/js/fixtures/ajax/http.form.saved.php',formRequest.getUrl());
+      this.assertEquals('PUT',formRequest.getMethod());
     
       start();
     });

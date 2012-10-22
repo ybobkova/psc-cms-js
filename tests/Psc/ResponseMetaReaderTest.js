@@ -1,4 +1,4 @@
-define(['Psc/ResponseMetaReader', 'Psc/Response'], function() {
+define(['psc-tests-assert','Psc/ResponseMetaReader', 'Psc/Response'], function() {
   var responseMetaReader;
   
   module("Psc.ResponseMetaReader", {
@@ -30,15 +30,15 @@ define(['Psc/ResponseMetaReader', 'Psc/Response'], function() {
   });
 
   test("hasReturnsTrueOrFalseOnExistingPaths", function() {
-    assertTrue(responseMetaReader.has(['tab']), 'has [tab]');
-    assertTrue(responseMetaReader.has(['tab','type']), 'has [tab,type]');
-    assertTrue(responseMetaReader.has(['warnings']), 'has [warnings]');
-    assertFalse(responseMetaReader.has(['none']), 'does not have [none]');
-    assertFalse(responseMetaReader.has(['tab','data','none']), 'does not have [tab,data,none]');
+    this.assertTrue(responseMetaReader.has(['tab']), 'has [tab]');
+    this.assertTrue(responseMetaReader.has(['tab','type']), 'has [tab,type]');
+    this.assertTrue(responseMetaReader.has(['warnings']), 'has [warnings]');
+    this.assertFalse(responseMetaReader.has(['none']), 'does not have [none]');
+    this.assertFalse(responseMetaReader.has(['tab','data','none']), 'does not have [tab,data,none]');
   });
     
   test("getReturnsNullOrValueOnExistingPaths", function() {
-    assertEquals({
+    this.assertEquals({
         identifier: 17,
         type: 'entities-person',
         label: 'Other Person',
@@ -51,30 +51,30 @@ define(['Psc/ResponseMetaReader', 'Psc/Response'], function() {
       'returns object with full data for tab'
     );
     
-    assertEquals(
+    this.assertEquals(
       22,
       responseMetaReader.get(['tab','data','contextId']),
       'returns 22 for tab.data.contextId'
     );
     
-    assertEquals(null, responseMetaReader.get(['tab','banane']));
+    this.assertEquals(null, responseMetaReader.get(['tab','banane']));
   });
   
   test("invalidArgumentExceptionOnBullshitInput", function() {
     
-    assertException("Psc.InvalidArgumentException", function () {
+    this.assertException("Psc.InvalidArgumentException", function () {
       responseMetaReader.get('blubb');
     });
 
-    assertException("Psc.InvalidArgumentException", function () {
+    this.assertException("Psc.InvalidArgumentException", function () {
       responseMetaReader.get(17);
     });
 
-    assertException("Psc.InvalidArgumentException", function () {
+    this.assertException("Psc.InvalidArgumentException", function () {
       responseMetaReader.get(null);
     });
 
-    assertException("Psc.InvalidArgumentException", function () {
+    this.assertException("Psc.InvalidArgumentException", function () {
       responseMetaReader.get({0:'eins',1:'zwei'});
     });
   });

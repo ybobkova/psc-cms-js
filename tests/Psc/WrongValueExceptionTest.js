@@ -1,4 +1,4 @@
-define(['Psc/WrongValueException'], function () {
+define(['psc-tests-assert','Psc/WrongValueException'], function () {
   module("Psc.WrongValueException");
   
   test("construct", function() {

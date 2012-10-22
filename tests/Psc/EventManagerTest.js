@@ -1,4 +1,4 @@
-define(['Psc/EventManager'], function() {
+define(['psc-tests-assert','Psc/EventManager'], function() {
   var eventManager;
   
   module("Psc.EventManager", {
@@ -26,7 +26,7 @@ define(['Psc/EventManager'], function() {
     });
     
     manager2.triggerEvent('testEvent');
-    assertTrue(called, 'manager2 Event is called');
+    this.assertTrue(called, 'manager2 Event is called');
   });
 
   test("construct", function() {
@@ -35,7 +35,7 @@ define(['Psc/EventManager'], function() {
   
   test("nativeBinding", function () {
     eventManager.on('tsing', function (e) {
-      assertEquals('tsing', e.type, 'got event');
+      this.assertEquals('tsing', e.type, 'got event');
     });
     
     var ev = jQuery.Event('tsing', {schnurps: 'blubb'});
@@ -47,8 +47,8 @@ define(['Psc/EventManager'], function() {
     var savedEvent = eventManager.createEvent('saved', { method: 'edit' }); // nicht type benutzen als property das braucht jQuery
     
     // erstmal hinten wir nur das hier
-    assertEquals('edit', savedEvent.method);
-    assertEquals('saved', savedEvent.type);
+    this.assertEquals('edit', savedEvent.method);
+    this.assertEquals('saved', savedEvent.type);
   });
   
   test("firstArgumentFromTriggerEventHasToBeAString", function() {
@@ -63,10 +63,10 @@ define(['Psc/EventManager'], function() {
   test("canBeTriggeredWithEvents_acceptsOnAndTrigger", function() {
     var eventCount = 0;
     eventManager.on('saved', function (e, add1, add2) { // meint Psc.saved
-      assertEquals('add1', add1, 'additional Parameter wird im Handler übergeben');
-      assertEquals('add2', add2);
-      assertEquals('saved', e.type);
-      assertEquals('edit', e.method);
+      this.assertEquals('add1', add1, 'additional Parameter wird im Handler übergeben');
+      this.assertEquals('add2', add2);
+      this.assertEquals('saved', e.type);
+      this.assertEquals('edit', e.method);
       
       eventCount++;
     });
@@ -79,7 +79,7 @@ define(['Psc/EventManager'], function() {
     // or aequivalent
     eventManager.triggerEvent('saved', { method: 'edit'}, ['add1','add2']);
     
-    assertEquals(2, eventCount, '2 Events were triggered');
+    this.assertEquals(2, eventCount, '2 Events were triggered');
   });
   
   test("stopsWithPreventedBefore", function() {
@@ -98,7 +98,7 @@ define(['Psc/EventManager'], function() {
     });
     
     eventManager.triggerEvent('test');
-    assertEquals(1,eventCount,'only one event is called');
+    this.assertEquals(1,eventCount,'only one event is called');
   });
 
   test("bindsWildcard", function() {
@@ -128,7 +128,7 @@ define(['Psc/EventManager'], function() {
     eventManager.triggerEvent('test');
     eventManager.triggerEvent('test2');
     eventManager.triggerEvent('test3');
-    assertEquals(0,eventCount, 'no event is called');
+    this.assertEquals(0,eventCount, 'no event is called');
   });
   
   test("bindstwicetosamehandler", function() {
@@ -137,11 +137,11 @@ define(['Psc/EventManager'], function() {
     expect(2);
     
     eventManager.on('test', function (e) {
-      assertTrue(true, 'ok, test ist called');
+      this.assertTrue(true, 'ok, test ist called');
     });
 
     eventManager.on('test', function (e) {
-      assertTrue(true, 'ok, second test ist called');
+      this.assertTrue(true, 'ok, second test ist called');
     });
     
     eventManager.triggerEvent('test');

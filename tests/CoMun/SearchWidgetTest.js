@@ -1,4 +1,4 @@
-define(['CoMun/SearchWidget','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','CoMun/SearchWidget','Psc/Test/DoublesManager'], function() {
   
   module("CoMun.SearchWidget");
   

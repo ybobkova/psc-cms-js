@@ -1,4 +1,4 @@
-define(['tiptoi/GameTable','tiptoi/Sound'], function() {
+define(['psc-tests-assert','tiptoi/GameTable','tiptoi/Sound'], function() {
   
   module("tiptoi.GameTable");
   var createTable = function () {
@@ -30,14 +30,14 @@ define(['tiptoi/GameTable','tiptoi/Sound'], function() {
   test("calculates Blocks correctly", function() {
     var gameTable = createTable();
     
-    assertEquals(4, gameTable.getBlocksNum());
-    assertEquals(4, gameTable.getBlocksNum()); // cache
+    this.assertEquals(4, gameTable.getBlocksNum());
+    this.assertEquals(4, gameTable.getBlocksNum()); // cache
   });
 
   test("returns a Block with all rows", function() {
     var gameTable = createTable();
     
-    assertEquals([
+    this.assertEquals([
         gameTable.rows[4],
         gameTable.rows[5],
         gameTable.rows[6],
@@ -52,9 +52,9 @@ define(['tiptoi/GameTable','tiptoi/Sound'], function() {
     
     var row = gameTable.chooseNotYetUsedRandomRow();
     
-    assertNotUndefined(row.block, 'block in row is defined');
-    assertNotUndefined(row.sound, 'block in sound is defined');
-    assertNotUndefined(row.oid, 'block in oid is defined');
+    this.assertNotUndefined(row.block, 'block in row is defined');
+    this.assertNotUndefined(row.sound, 'block in sound is defined');
+    this.assertNotUndefined(row.oid, 'block in oid is defined');
   });
 
   test("returns a random row never twice", function () {
@@ -68,14 +68,14 @@ define(['tiptoi/GameTable','tiptoi/Sound'], function() {
       if (Joose.A.exists(usedRows, row)) {
         fail("Zeile wurde bereits vorher ausgegeben");
       } else {
-        assertNotUndefined(row.sound);
+        this.assertNotUndefined(row.sound);
         usedRows.push(row);
       }
     }
     
     // ab der letzten ist moep
     var lastRow = gameTable.chooseNotYetUsedRandomRow();
-    assertTrue(!lastRow);
+    this.assertTrue(!lastRow);
   });
 
   test("returns a random block never twice", function () {
@@ -89,14 +89,14 @@ define(['tiptoi/GameTable','tiptoi/Sound'], function() {
       if (Joose.A.exists(usedBlocks, block)) {
         fail("Zeile wurde bereits vorher ausgegeben");
       } else {
-        assertNotUndefined(block[0].sound);
+        this.assertNotUndefined(block[0].sound);
         usedBlocks.push(block);
       }
     }
     
     // ab der letzten ist moep
     var lastBlock = gameTable.chooseNotYetUsedRandomBlock();
-    assertTrue(!lastBlock);
+    this.assertTrue(!lastBlock);
   });
   
   //test("randomizes things", function () {

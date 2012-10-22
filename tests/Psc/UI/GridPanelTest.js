@@ -1,5 +1,5 @@
 (function($) {
-  define(['Psc/UI/GridPanel','Psc/UI/Tab','Psc/UI/Tabs','Psc/UI/Main'], function() {
+  define(['psc-tests-assert','Psc/UI/GridPanel','Psc/UI/Tab','Psc/UI/Tabs','Psc/UI/Main'], function() {
   
   module("Psc.UI.GridPanel", {
     teardown: function () {
@@ -57,27 +57,27 @@
       
       var $rows = gridPanel.getSelectedRows();
       
-      assertEquals(2, $rows.length);
+      this.assertEquals(2, $rows.length);
       
       $.each($rows, function (i, $row) {
-        assertNotUndefined($row.jquery);
+        this.assertNotUndefined($row.jquery);
       });
       
       var rows = gridPanel.getSelectedRows(true);
       $.each(rows, function (i, row) {
-        assertAttributeNotUndefined('email', row, 'email in row '+i+' is set');
+        this.assertAttributeNotUndefined('email', row, 'email in row '+i+' is set');
         if (i === 0) {
-          assertEquals('p.scheit@ps-webforge.com', row.email.find('button').text(), 'email attr has correct text 1 ');
+          this.assertEquals('p.scheit@ps-webforge.com', row.email.find('button').text(), 'email attr has correct text 1 ');
         } else if(i === 1) {
-          assertEquals('i.karbach@ps-webforge.com', row.email.find('button').text(), 'email attr has correct text 2');
+          this.assertEquals('i.karbach@ps-webforge.com', row.email.find('button').text(), 'email attr has correct text 2');
         }
       });
   
       this.unselectRow(1);
       this.unselectRow(2);
       
-      assertEquals(0, gridPanel.getSelectedRows(true).length);
-      assertEquals(0, gridPanel.getSelectedRows().length);
+      this.assertEquals(0, gridPanel.getSelectedRows(true).length);
+      this.assertEquals(0, gridPanel.getSelectedRows().length);
     });
   });
   
@@ -90,7 +90,7 @@
       var evm = main.getEventManager();
       var $newButton = $html.find('button.psc-cms-ui-button-new');
     
-      assertTrue($newButton.hasClass('psc-cms-ui-tab-button-openable'));
+      this.assertTrue($newButton.hasClass('psc-cms-ui-tab-button-openable'));
     });
   });
   
@@ -105,10 +105,10 @@
       this.gridPanel.setSortable(true);
       
       console.log($table);
-      assertTrue($table.hasClass('ui-sortable'), 'sortable is on the table');
-      assertEquals(1, $table.find('tr:eq(1) td.ctrl .ui-icon').length, 'ctrl column has an sortable icon');
+      this.assertTrue($table.hasClass('ui-sortable'), 'sortable is on the table');
+      this.assertEquals(1, $table.find('tr:eq(1) td.ctrl .ui-icon').length, 'ctrl column has an sortable icon');
       
-      assertEquals(3, $table.find('tr:not(:eq(0)) td.ctrl input[type="hidden"][name="mysort[]"]').length);
+      this.assertEquals(3, $table.find('tr:not(:eq(0)) td.ctrl input[type="hidden"][name="mysort[]"]').length);
       
     });
   });
@@ -123,18 +123,18 @@
     
       var $deleteButton = $html.find('button.grid-delete'), $openButton = $html.find('button.grid-open');
     
-      //assertEquals(1, $deleteButton.length, 'delete button is there');
-      assertEquals(1, $openButton.length, 'open button is there');
+      //this.assertEquals(1, $deleteButton.length, 'delete button is there');
+      this.assertEquals(1, $openButton.length, 'open button is there');
     
       gridPanel.getEventManager().on('grid-panel-open', function(e, rows) {
-        assertEquals(1, rows.length);
-        assertAttributeNotUndefined('email', rows[0], 'email in row is set');
-        assertEquals('p.scheit@ps-webforge.com', rows[0].email.find('button').text(), 'td content equals mail');
+        this.assertEquals(1, rows.length);
+        this.assertAttributeNotUndefined('email', rows[0], 'email in row is set');
+        this.assertEquals('p.scheit@ps-webforge.com', rows[0].email.find('button').text(), 'td content equals mail');
       });
     
       gridPanel.getEventManager().on('tab-open', function (e, tab, $target) {
-        assertInstanceOf(Psc.UI.Tab, tab, 'tab is a Tab-Instance');
-        assertSame(gridPanel.getGrid(), $target, 'target is set to grid - html');
+        this.assertInstanceOf(Psc.UI.Tab, tab, 'tab is a Tab-Instance');
+        this.assertSame(gridPanel.getGrid(), $target, 'target is set to grid - html');
       });
     
       this.selectRow(1);

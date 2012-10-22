@@ -1,4 +1,4 @@
-define(['Psc/Table'], function() {
+define(['psc-tests-assert','Psc/Table'], function() {
   var table, insertRow;
   
   module("Psc.Table", {
@@ -40,24 +40,24 @@ define(['Psc/Table'], function() {
   });
 
   test("acceptance", function() {
-    assertTrue(table.hasColumn('number'),'table has Column number');
-    assertTrue(table.hasColumn('sound'), 'table has column sound');
+    this.assertTrue(table.hasColumn('number'),'table has Column number');
+    this.assertTrue(table.hasColumn('sound'), 'table has column sound');
     
-    assertEquals('2-STA_0596', table.getCell(1, 'number'));
-    assertEquals('Der Fernsehturm', table.getCell(20, 'sound'));
+    this.assertEquals('2-STA_0596', table.getCell(1, 'number'));
+    this.assertEquals('Der Fernsehturm', table.getCell(20, 'sound'));
   });
   
   test("insertRow: -1 appends", function () {
     table.insertRow(insertRow, -1);
     
     console.log(table.getData());
-    assertSame(table.getRow(21), insertRow, 'row wurde an stelle 21 eingefügt');
+    this.assertSame(table.getRow(21), insertRow, 'row wurde an stelle 21 eingefügt');
   });
 
   test("insertRow: 1 prepends", function () {
     table.insertRow(insertRow, 1);
     
-    assertSame(table.getRow(1), insertRow, 'row wurde an stelle 1 eingefügt');
+    this.assertSame(table.getRow(1), insertRow, 'row wurde an stelle 1 eingefügt');
   });
   
   

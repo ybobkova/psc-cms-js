@@ -1,4 +1,4 @@
-define(['CoMun/WebsiteMap','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','CoMun/WebsiteMap','Psc/Test/DoublesManager'], function() {
   
   module("CoMun.WebsiteMap");
   

@@ -1,4 +1,4 @@
-define(['Psc/UI/Menu'], function() {
+define(['psc-tests-assert','Psc/UI/Menu'], function() {
   module("Psc.UI.Menu");
 
   test("acceptance", function() {
@@ -18,16 +18,16 @@ define(['Psc/UI/Menu'], function() {
     
     var $menu = menu.unwrap();
     
-    assertEquals(1, $menu.find('li a[href="#pinn"]').length);
-    assertEquals(1, $menu.find('li a[href="#close-all"]').length);
-    assertEquals(1, $menu.find('li a[href="#save"]').length);
+    this.assertEquals(1, $menu.find('li a[href="#pinn"]').length);
+    this.assertEquals(1, $menu.find('li a[href="#close-all"]').length);
+    this.assertEquals(1, $menu.find('li a[href="#save"]').length);
     
-    assertTrue($menu.data('menu') !== undefined);
+    this.assertTrue($menu.data('menu') !== undefined);
     
-    assertFalse(menu.isOpen(),' !isOpen() by default');
+    this.assertFalse(menu.isOpen(),' !isOpen() by default');
     menu.open();
-    assertTrue(menu.isOpen(),'isOpen() after open()');
+    this.assertTrue(menu.isOpen(),'isOpen() after open()');
     menu.close();
-    assertFalse(menu.isOpen(),'!isOpen() after close()');
+    this.assertFalse(menu.isOpen(),'!isOpen() after close()');
   });
 });

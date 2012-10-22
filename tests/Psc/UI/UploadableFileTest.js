@@ -1,4 +1,4 @@
-define(['Psc/UI/UploadableFile','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/UploadableFile','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.UploadableFile");
   
@@ -35,12 +35,12 @@ define(['Psc/UI/UploadableFile','Psc/Test/DoublesManager'], function() {
     $.extend(this, setup());
     
     var $button = this.emptyFile.unwrap().find('button');
-    assertEquals(1, $button.length, 'button ist vorhanden für upload');
+    this.assertEquals(1, $button.length, 'button ist vorhanden für upload');
     
     // opens?
     $button.simulate('click');
     var dialog = this.uploadService.getSingleDialog();
-    assertTrue(dialog.isOpen());
+    this.assertTrue(dialog.isOpen());
     
     var $descriptionInput = dialog.unwrap().find('input[type="text"]');
     
@@ -55,12 +55,12 @@ define(['Psc/UI/UploadableFile','Psc/Test/DoublesManager'], function() {
       $image.simulate('dblclick');
       
       var dialog = uploadService.getSingleDialog();
-      assertTrue(dialog.isOpen());
+      this.assertTrue(dialog.isOpen());
       
       dialog.close();
       
       //var request = uploadService.getAjaxService().getRequest();
-      //assertNotUndefined(request,'ajax service request has been invoked '+debug);
+      //this.assertNotUndefined(request,'ajax service request has been invoked '+debug);
     };
     
     doTest(this.image.unwrap(), this.uploadService, 'for image');

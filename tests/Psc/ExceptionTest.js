@@ -1,4 +1,4 @@
-define(['Psc/Exception','Psc/InvalidArgumentException','Psc/AjaxException'], function () {
+define(['psc-tests-assert','Psc/Exception','Psc/InvalidArgumentException','Psc/AjaxException'], function () {
   module("Psc.Exception");
   
   //test("bootstrap: global object identifier", function () {
@@ -7,10 +7,10 @@ define(['Psc/Exception','Psc/InvalidArgumentException','Psc/AjaxException'], fun
   //  
   //  Psc_applyGOID(o);
   //  
-  //  assertEquals(id+1, o.goid);
+  //  this.assertEquals(id+1, o.goid);
   //  
   //  Psc_applyGOID(o);
-  //  assertEquals(id+2, o.goid);
+  //  this.assertEquals(id+2, o.goid);
   //});
 
   test("copy an object with extend", function () {
@@ -25,8 +25,8 @@ define(['Psc/Exception','Psc/InvalidArgumentException','Psc/AjaxException'], fun
   test("construct", function() {
     var e = new Psc.Exception('This will be shown');
     
-    assertEquals('Psc.Exception',e.getName());
-    assertEquals('This will be shown',e.getMessage());
+    this.assertEquals('Psc.Exception',e.getName());
+    this.assertEquals('This will be shown',e.getMessage());
     
     ok(e instanceof Psc.Exception);
   });
@@ -37,28 +37,28 @@ define(['Psc/Exception','Psc/InvalidArgumentException','Psc/AjaxException'], fun
   test("ajaxExceptionConstruct", function () {
     var e = new Psc.AjaxException('error', 'interner fehler beim ajaxrequest');
     
-    assertEquals('error', e.getTextStatus());
+    this.assertEquals('error', e.getTextStatus());
   });
   
   test("selftest", function() {
     var e = new Psc.InvalidArgumentException('one',false);
     
-    assertInstanceOf(Psc.Exception, e);
-    assertInstanceOf(Psc.InvalidArgumentException, e);
+    this.assertInstanceOf(Psc.Exception, e);
+    this.assertInstanceOf(Psc.InvalidArgumentException, e);
     //
     //var o = {};
-    //assertSame(o,o);
-    //assertSame(o,{});
-    //assertSame(o,o,"my objects are equal");
-    //assertSame(o,{},"my objects are equal");
+    //this.assertSame(o,o);
+    //this.assertSame(o,{});
+    //this.assertSame(o,o,"my objects are equal");
+    //this.assertSame(o,{},"my objects are equal");
     //
-    //assertEquals("yes","no");
-    //assertEquals("yes","yes");
-    //assertEquals("yes","no", 'getter value ist richtig');
-    //assertEquals("yes","yes", 'getter value ist richtig');
+    //this.assertEquals("yes","no");
+    //this.assertEquals("yes","yes");
+    //this.assertEquals("yes","no", 'getter value ist richtig');
+    //this.assertEquals("yes","yes", 'getter value ist richtig');
     //
-    //assertTrue(true, "bla bla gibt true zurück");
-    //assertTrue(false, "bla bla gibt true zurück");
+    //this.assertTrue(true, "bla bla gibt true zurück");
+    //this.assertTrue(false, "bla bla gibt true zurück");
     //
     //fail('test ist blöd');
   });
@@ -76,6 +76,6 @@ define(['Psc/Exception','Psc/InvalidArgumentException','Psc/AjaxException'], fun
     }
     
     // stürzt ab im IE
-    //assertException(null, thrown, 'Our nice Message');
+    //this.assertException(null, thrown, 'Our nice Message');
   });
 });

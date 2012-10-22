@@ -1,4 +1,4 @@
-define(['Psc/UI/Dialog'], function() {
+define(['psc-tests-assert','Psc/UI/Dialog'], function() {
   var dialog, constructSubmitted = false;
   
   module("Psc.UI.Dialog", {
@@ -17,28 +17,28 @@ define(['Psc/UI/Dialog'], function() {
 
   test("creates content from event when created", function() {
     dialog.on('dialog-create-content', function (e, eventDialog) {
-      assertSame(dialog, eventDialog);
+      this.assertSame(dialog, eventDialog);
       eventDialog.setContent('<span class="event">this comes from event</span>');
     });
     
     dialog.open();
     
     var $dialog = $('.psc-guid-my-test-dialog');
-    assertEquals(1, $dialog.length);
-    assertTrue($dialog.is(':visible'));
+    this.assertEquals(1, $dialog.length);
+    this.assertTrue($dialog.is(':visible'));
     
-    assertEquals(1, $dialog.find('span.event').length, 'event span is in content set');
+    this.assertEquals(1, $dialog.find('span.event').length, 'event span is in content set');
   });
   
   test("dialog is closed on default submit", function () {
     dialog.open();
     
     var $dialog = $('.psc-guid-my-test-dialog');
-    assertTrue($dialog.is(':visible'));
+    this.assertTrue($dialog.is(':visible'));
     
     dialog.submit();
     
-    assertFalse($dialog.is(':visible'));
+    this.assertFalse($dialog.is(':visible'));
   });
   
   test("on submit event is triggered and this can prevent closing", function() {
@@ -54,9 +54,9 @@ define(['Psc/UI/Dialog'], function() {
     dialog.submit();
     
     var $dialog = $('.psc-guid-my-test-dialog');
-    assertTrue($dialog.is(':visible'), 'dialog is still open after submit');
+    this.assertTrue($dialog.is(':visible'), 'dialog is still open after submit');
     
-    assertTrue(submitted, 'event was triggerd');
-    assertTrue(constructSubmitted, 'event was triggerd');
+    this.assertTrue(submitted, 'event was triggerd');
+    this.assertTrue(constructSubmitted, 'event was triggerd');
   });
 });

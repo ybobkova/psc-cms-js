@@ -1,4 +1,4 @@
-define(['Psc/Loader','Psc/UI/Main','Psc/UI/Tabs'], function() {
+define(['psc-tests-assert','Psc/Loader','Psc/UI/Main','Psc/UI/Tabs'], function() {
   var main, tabs, loader;
   
   module("Psc.Loader", {
@@ -23,7 +23,7 @@ define(['Psc/Loader','Psc/UI/Main','Psc/UI/Tabs'], function() {
   asyncTest("script tags are loaded in serialised order", function() {
     expect(1);
     $.when( main.getLoader().finished() ).then( function () {
-      assertEquals('block1block2block3block4', testResult);
+      this.assertEquals('block1block2block3block4', testResult);
       start();
     });
   });

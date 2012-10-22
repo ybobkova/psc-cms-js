@@ -1,4 +1,4 @@
-define(['tiptoi/InteractiveInputProvider','Psc/Code'], function() {
+define(['psc-tests-assert','tiptoi/InteractiveInputProvider','Psc/Code'], function() {
   
   module("tiptoi.InteractiveIputProvider", {});
 
@@ -27,18 +27,18 @@ define(['tiptoi/InteractiveInputProvider','Psc/Code'], function() {
       inputs.push(input);
       Psc.Code.info('got input 1');
       
-      assertEquals([18], inputs);
+      this.assertEquals([18], inputs);
     
       
       // 2. mal
       var status2 = provider.getInput();
-      assertNotSame(status1, status2);
+      this.assertNotSame(status1, status2);
       stop();
       $.when( status2 ).then(function (input) {
         inputs.push(input);
         Psc.Code.info('got input 2');
       
-        assertEquals([18,17], inputs);
+        this.assertEquals([18,17], inputs);
         start();
       });
     

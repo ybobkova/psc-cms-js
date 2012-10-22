@@ -1,4 +1,4 @@
-define(['Psc/UI/NavigationNode'], function() {
+define(['psc-tests-assert','Psc/UI/NavigationNode'], function() {
   
   module("Psc.UI.NavigationNode");
   
@@ -44,10 +44,10 @@ define(['Psc/UI/NavigationNode'], function() {
       languages: ['de','en']
     });
     
-    assertTrue(node.html().is('li'), 'html() output is a <li>');
-    assertEquals('editBMW 17', node.html().text());
+    this.assertTrue(node.html().is('li'), 'html() output is a <li>');
+    this.assertEquals('editBMW 17', node.html().text());
     
-    assertEquals('blubb', node.setParent('blubb').getParent(), 'blubb equals');
+    this.assertEquals('blubb', node.setParent('blubb').getParent(), 'blubb equals');
   });
   
   test("html has the poppy edit - button", function () {
@@ -56,8 +56,8 @@ define(['Psc/UI/NavigationNode'], function() {
     var $html = this.node.html(), $edit = $html.find('button');
     this.container.append($html);
     
-    assertEquals(1, $edit.length, 'edit button is in html');
-    assertSame(this.$edit[0], $edit[0]);
+    this.assertEquals(1, $edit.length, 'edit button is in html');
+    this.assertSame(this.$edit[0], $edit[0]);
   });
 
   test("edit opens a popup", function () {
@@ -66,7 +66,7 @@ define(['Psc/UI/NavigationNode'], function() {
     this.$edit.simulate('click');
     
     var dialog = this.node.getDialog();
-    assertTrue(dialog.isOpen(), 'dialog is there and open');
+    this.assertTrue(dialog.isOpen(), 'dialog is there and open');
     dialog.close();
   });
   
@@ -78,7 +78,7 @@ define(['Psc/UI/NavigationNode'], function() {
     
     var $textInputs = $dialog.find('input[type="text"]');
     
-    assertEquals(this.node.getLanguages().length, $textInputs.length, 'inputs title de, inputs title fr are there');
+    this.assertEquals(this.node.getLanguages().length, $textInputs.length, 'inputs title de, inputs title fr are there');
     dialog.close();
   });
   
@@ -96,15 +96,15 @@ define(['Psc/UI/NavigationNode'], function() {
 
     dialog.submit();
     
-    assertEquals('a new title for en', this.node.getTitle('en'));
-    assertEquals('neuer titel fuer de', this.node.getTitle('de'));
+    this.assertEquals('a new title for en', this.node.getTitle('en'));
+    this.assertEquals('neuer titel fuer de', this.node.getTitle('de'));
   });
   
   
   test("refreshTitle updates li", function () {
     $.extend(this, setupWithHTML());
     
-    assertEquals('home', this.$html.find('span.title').text());
+    this.assertEquals('home', this.$html.find('span.title').text());
     
     this.node.setTitle({
       en: 'refreshed home',
@@ -112,6 +112,6 @@ define(['Psc/UI/NavigationNode'], function() {
     });
     
     this.node.refreshTitle();
-    assertEquals('refreshed home', this.$html.find('span.title').text());
+    this.assertEquals('refreshed home', this.$html.find('span.title').text());
   });
 });

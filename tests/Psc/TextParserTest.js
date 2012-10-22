@@ -1,4 +1,4 @@
-define(['Psc/TextParser'], function() {
+define(['psc-tests-assert','Psc/TextParser'], function() {
   
   module("Psc.TextParser");
   
@@ -18,7 +18,7 @@ define(['Psc/TextParser'], function() {
   test("parser extracts test paragraph into nodes", function() {
     $.extend(this, setup());
     
-    assertEquals([
+    this.assertEquals([
         {value: this.texts[0], type: "paragraph"},
         {value: this.texts[1], type: "paragraph"},
         {value: this.texts[2], type: "paragraph"}
@@ -33,7 +33,7 @@ define(['Psc/TextParser'], function() {
   test("parser detects lists in texts", function() {
     $.extend(this, setup());
     
-    assertEquals([
+    this.assertEquals([
         {value: this.texts[0], type: "paragraph"},
         {value: this.texts[1], type: "paragraph"},
         {value: "Mit dem Vorhaben CoMun fördert die:", type: "paragraph"},
@@ -54,7 +54,7 @@ define(['Psc/TextParser'], function() {
   test("parser detects list only in texts", function() {
     $.extend(this, setup());
     
-    assertEquals([
+    this.assertEquals([
       {value: ["list1", "list2", "list3"], type:"list"}
       ],
       

@@ -1,4 +1,4 @@
-define(['Psc/Exception'], function () {
+define(['psc-tests-assert','Psc/Exception'], function () {
   module("Psc.Event"); // to fake it
   
   test("eventON", function() {
@@ -24,22 +24,22 @@ define(['Psc/Exception'], function () {
   //test("selftest", function() {
   //  var e = new Psc.InvalidArgumentException('one',false);
   //  
-  //  assertInstanceOf(Psc.Exception, e);
-  //  assertInstanceOf(Psc.AjaxHandler, e);
+  //  this.assertInstanceOf(Psc.Exception, e);
+  //  this.assertInstanceOf(Psc.AjaxHandler, e);
   //
   //  var o = {};
-  //  assertSame(o,o);
-  //  assertSame(o,{});
-  //  assertSame(o,o,"my objects are equal");
-  //  assertSame(o,{},"my objects are equal");
+  //  this.assertSame(o,o);
+  //  this.assertSame(o,{});
+  //  this.assertSame(o,o,"my objects are equal");
+  //  this.assertSame(o,{},"my objects are equal");
   //  
-  //  assertEquals("yes","no");
-  //  assertEquals("yes","yes");
-  //  assertEquals("yes","no", 'getter value ist richtig');
-  //  assertEquals("yes","yes", 'getter value ist richtig');
+  //  this.assertEquals("yes","no");
+  //  this.assertEquals("yes","yes");
+  //  this.assertEquals("yes","no", 'getter value ist richtig');
+  //  this.assertEquals("yes","yes", 'getter value ist richtig');
   //  
-  //  assertTrue(true, "bla bla gibt true zurück");
-  //  assertTrue(false, "bla bla gibt true zurück");
+  //  this.assertTrue(true, "bla bla gibt true zurück");
+  //  this.assertTrue(false, "bla bla gibt true zurück");
   //
   //  fail('test ist blöd');
   //});

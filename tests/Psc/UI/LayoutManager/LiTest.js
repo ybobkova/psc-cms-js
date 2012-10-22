@@ -1,4 +1,4 @@
-define(['Psc/UI/LayoutManager/List'], function() {
+define(['psc-tests-assert','Psc/UI/LayoutManager/List'], function() {
   
   module("Psc.UI.LayoutManager.List");
   

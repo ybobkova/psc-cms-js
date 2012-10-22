@@ -1,4 +1,4 @@
-define(['Psc/UI/TableBuilder','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/TableBuilder','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.TableBuilder");
   
@@ -24,8 +24,8 @@ define(['Psc/UI/TableBuilder','Psc/Test/DoublesManager'], function() {
     
     var $table = $(table.build());
     
-    assertTrue($table.is('table'), 'rendered is not a table '+table.getHtml());
-    assertEquals(1, $table.find('tr').length, 'one row is rendered '+table.getHtml());
-    assertEquals(3, $table.find('tr td').length, 'row has 3 td '+table.getHtml());
+    this.assertTrue($table.is('table'), 'rendered is not a table '+table.getHtml());
+    this.assertEquals(1, $table.find('tr').length, 'one row is rendered '+table.getHtml());
+    this.assertEquals(3, $table.find('tr td').length, 'row has 3 td '+table.getHtml());
   });
 });

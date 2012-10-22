@@ -1,4 +1,4 @@
-define(['Psc/AjaxHandler', 'Psc/Request'], function () {
+define(['psc-tests-assert','Psc/AjaxHandler', 'Psc/Request'], function () {
   module("Psc.AjaxHandler", {
     setup: function () {
       this.ajaxHandler = new Psc.AjaxHandler();
@@ -34,9 +34,9 @@ define(['Psc/AjaxHandler', 'Psc/Request'], function () {
     var req = this.ajaxHandler.handle(this.request404);
     
     req.fail(function(response) {
-      assertInstanceOf(Psc.Response, response);
-      assertEquals(404, response.getCode());
-      assertEquals("Dies ist ein 404 TestFehler (Seite nicht gefunden)", response.getBody());
+      this.assertInstanceOf(Psc.Response, response);
+      this.assertEquals(404, response.getCode());
+      this.assertEquals("Dies ist ein 404 TestFehler (Seite nicht gefunden)", response.getBody());
       
       start();
     });
@@ -51,10 +51,10 @@ define(['Psc/AjaxHandler', 'Psc/Request'], function () {
     var req = this.ajaxHandler.handle(this.request400Validation);
     
     req.fail(function(response) {
-      assertInstanceOf(Psc.Response, response);
-      assertEquals(400, response.getCode());
-      assertEquals("400 validation body", response.getBody());
-      assertTrue(response.isValidation());
+      this.assertInstanceOf(Psc.Response, response);
+      this.assertEquals(400, response.getCode());
+      this.assertEquals("400 validation body", response.getBody());
+      this.assertTrue(response.isValidation());
       
       start();
     });
@@ -70,11 +70,11 @@ define(['Psc/AjaxHandler', 'Psc/Request'], function () {
     var req = this.ajaxHandler.handle(this.request200);
     
     req.done(function(response) {
-      assertInstanceOf(Psc.Response, response);
-      assertEquals(200, response.getCode());
-      assertEquals("delivered body", response.getBody());
-      assertFalse(response.isValidation());
-      assertEquals('1', response.getHeaderField('X-Test-Header'),'X-Test-Header is equal to 1');
+      this.assertInstanceOf(Psc.Response, response);
+      this.assertEquals(200, response.getCode());
+      this.assertEquals("delivered body", response.getBody());
+      this.assertFalse(response.isValidation());
+      this.assertEquals('1', response.getHeaderField('X-Test-Header'),'X-Test-Header is equal to 1');
       
       start();
     });
@@ -102,7 +102,7 @@ define(['Psc/AjaxHandler', 'Psc/Request'], function () {
     var status = ajaxHandler.handle(request);
     
     status.done(function (response) {
-      assertEquals(request.getBody(), response.getBody());
+      this.assertEquals(request.getBody(), response.getBody());
       start();
     });
     

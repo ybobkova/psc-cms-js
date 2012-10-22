@@ -1,4 +1,4 @@
-define(['Psc/UI/LayoutManager/Websitewidget','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/LayoutManager/Websitewidget','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.LayoutManager.Websitewidget");
   

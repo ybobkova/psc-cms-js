@@ -1,4 +1,4 @@
-define(['Psc/CommentsService','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/CommentsService','Psc/Test/DoublesManager'], function() {
   
   module("Psc.CommentsService");
   

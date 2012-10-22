@@ -1,4 +1,4 @@
-define(['Psc/UI/EffectsManager'], function() {
+define(['psc-tests-assert','Psc/UI/EffectsManager'], function() {
   
   module("Psc.UI.EffectsManager", {
     setup: function () {
@@ -11,7 +11,7 @@ define(['Psc/UI/EffectsManager'], function() {
     
     var cb = function () {
       start();
-      assertTrue(true, "Callback has been run");
+      this.assertTrue(true, "Callback has been run");
     }
     
     effectsManager.blink($('#qunit-fixture'), '#880022', cb);

@@ -1,4 +1,4 @@
-define(['tiptoi/Timer'], function() {
+define(['psc-tests-assert','tiptoi/Timer'], function() {
   
   module("tiptoi.Timer");
   

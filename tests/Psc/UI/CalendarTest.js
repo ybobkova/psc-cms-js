@@ -1,4 +1,4 @@
-define(['Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/CalendarEvent'], function() {
+define(['psc-tests-assert','Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/CalendarEvent'], function(t) {
   
   module("Psc.UI.Calendar");
   
@@ -12,28 +12,27 @@ define(['Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/CalendarEvent'], functi
       region: 'de'
     });
     
-    $.extend(test,
-             {
-              calendar: calendar,
-              $widget: $widget,
-              findEvent: function (title, searchInDate, calendarInstance) {
-                var cal = calendarInstance || calendar;
-                var position = cal.getCellPosition(searchInDate);
-                if (!position) return $();
-                
-                // wir selecten alle spalten an position.column in der zeile position.row
-                var $table = cal.findGridTable(position.row);
-                // wir haben also alle tds der verschiedenen zeilen des grid-table "untereinander"
-                var $tds = $table.find('tr td:nth-child('+(position.column+1)+')');
-                var $event = $tds.find('.event:contains("'+title+'")');
-                
-                return $event;
-              }
-            });
+    t.setup(test, {
+      calendar: calendar,
+      $widget: $widget,
+      findEvent: function (title, searchInDate, calendarInstance) {
+        var cal = calendarInstance || calendar;
+        var position = cal.getCellPosition(searchInDate);
+        if (!position) return $();
+        
+        // wir selecten alle spalten an position.column in der zeile position.row
+        var $table = cal.findGridTable(position.row);
+        // wir haben also alle tds der verschiedenen zeilen des grid-table "untereinander"
+        var $tds = $table.find('tr td:nth-child('+(position.column+1)+')');
+        var $event = $tds.find('.event:contains("'+title+'")');
+        
+        return $event;
+      }
+    });
   };
 
   test("html structure acceptance", function() {
-    setup(this);
+    var that = setup(this);
     
     var $monthsContainer = this.$widget.find('div.month-rows-container'),
         $weekDaysTable = this.$widget.find('table.weekdays-table'),
@@ -41,25 +40,25 @@ define(['Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/CalendarEvent'], functi
         $monthRowsBGs = $monthRows.find('table.bg-table'),
         $monthRowsGrids = $monthRows.find('table.grid-table');
   
-    assertEquals(1, $monthsContainer.length);
-    assertEquals(1, $weekDaysTable.length);
-    assertEquals(5, $monthRows.length);
-    assertEquals(5, $monthRowsBGs.length, 'monthbgs are rendered');
-    assertEquals(5, $monthRowsGrids.length, 'month grids are rendered');
+    this.assertEquals(1, $monthsContainer.length);
+    this.assertEquals(1, $weekDaysTable.length);
+    this.assertEquals(5, $monthRows.length);
+    this.assertEquals(5, $monthRowsBGs.length, 'monthbgs are rendered');
+    this.assertEquals(5, $monthRowsGrids.length, 'month grids are rendered');
     
     // weekdays (header)
     var weekDayLabels = ['Mo','Di','Mi','Do','Fr','Sa','So'];
     $weekDaysTable.find('tr th.calendar-weekday-name').each(function (i, weekDay) {
-      assertEquals(weekDayLabels[i], $(weekDay).text());
+      that.assertEquals(weekDayLabels[i], $(weekDay).text());
     });
     
     // numbers-table in month-row
     $monthRowsGrids.find('tr:first').each(function (rowIndex) {
       var $row = $(this);
       
-      assertEquals(7, $row.find('td').length);
+      that.assertEquals(7, $row.find('td').length);
       $row.find('td').each(function (tdIndex) {
-        assertTrue(parseInt($(this).text(), 10) > 0, 'td '+rowIndex+':'+tdIndex+' in first row of month grid has a number in it');
+        this.assertTrue(parseInt($(this).text(), 10) > 0, 'td '+rowIndex+':'+tdIndex+' in first row of month grid has a number in it');
       });
     });
   });
@@ -69,29 +68,29 @@ define(['Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/CalendarEvent'], functi
     
     var now = Psc.Date.create({day: 5, year: 2012, month: 9});
     this.calendar.setDisplayDate(now).refresh();
-    assertEquals('September', this.$widget.find('div.month-header .month-name').text());
+    this.assertEquals('September', this.$widget.find('div.month-header .month-name').text());
     
     this.$widget.find('a.prev').simulate('click');
-    assertEquals(8, this.calendar.getDisplayDate().getMonth());
-    assertEquals('August', this.$widget.find('div.month-header .month-name').text());
+    this.assertEquals(8, this.calendar.getDisplayDate().getMonth());
+    this.assertEquals('August', this.$widget.find('div.month-header .month-name').text());
     
     this.$widget.find('a.next').simulate('click');
     this.$widget.find('a.next').simulate('click');
-    assertEquals(10, this.calendar.getDisplayDate().getMonth());
-    assertEquals('Oktober', this.$widget.find('div.month-header .month-name').text());
+    this.assertEquals(10, this.calendar.getDisplayDate().getMonth());
+    this.assertEquals('Oktober', this.$widget.find('div.month-header .month-name').text());
     
     this.$widget.find('a.next').simulate('click'); // nov
     this.$widget.find('a.next').simulate('click'); // dec
     this.$widget.find('a.next').simulate('click'); // jan
-    assertEquals('Januar', this.$widget.find('div.month-header .month-name').text());
-    assertEquals('2013', this.$widget.find('div.month-header .year').text());
+    this.assertEquals('Januar', this.$widget.find('div.month-header .month-name').text());
+    this.assertEquals('2013', this.$widget.find('div.month-header .year').text());
   });
   
   test("region is loaded to de", function() {
     setup(this);    
     
-    assertEquals('Di', this.$widget.find('tr th:eq(1)').text());
-    assertEquals('de', this.calendar.getRegion());
+    this.assertEquals('Di', this.$widget.find('tr th:eq(1)').text());
+    this.assertEquals('de', this.calendar.getRegion());
   });
   
   test("position of day in month is queryable", function() {
@@ -102,8 +101,8 @@ define(['Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/CalendarEvent'], functi
     
     var position = this.calendar.getCellPosition(Psc.Date.create({year: 2012, month: 9, day: 18, hours: 10, minutes: 0}));
     
-    assertEquals(3, position.row); // zeile 4 index 3
-    assertEquals(1, position.column); // spalte 2 index 1
+    this.assertEquals(3, position.row); // zeile 4 index 3
+    this.assertEquals(1, position.column); // spalte 2 index 1
   });
 
   test("a single-day date gets added to the correct column", function() {
@@ -120,7 +119,7 @@ define(['Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/CalendarEvent'], functi
     }));
     
     var $event = this.findEvent("Team-Meeting", myEvent.getStart());
-    assertEquals(1, $event.length, 'event was found in '+myEvent.getStart());
+    this.assertEquals(1, $event.length, 'event was found in '+myEvent.getStart());
   });
 
   test("an prevous (in month and time) added event in the will not be shown, but shown when the month is loaded", function () {
@@ -140,11 +139,11 @@ define(['Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/CalendarEvent'], functi
     
     // event is in august, so it isnt displayed in sep
     var $event = this.findEvent('Dienstreise', myEvent.getStart());
-    assertEquals(0, $event.length, 'event is not displayed in sep');
+    this.assertEquals(0, $event.length, 'event is not displayed in sep');
     
     this.$widget.find('a.prev').simulate('click');
     $event = this.findEvent('Dienstreise', myEvent.getStart());
-    assertEquals(1, $event.length, 'event is displayed in aug');
+    this.assertEquals(1, $event.length, 'event is displayed in aug');
   });
   
   test("events can span over a few days", function () {
@@ -163,14 +162,14 @@ define(['Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/CalendarEvent'], functi
     }));
     
     var $event = this.findEvent('Dienstreise', mySpanEvent.getStart());
-    assertEquals(1, $event.length, 'spanning event is rendered');
+    this.assertEquals(1, $event.length, 'spanning event is rendered');
     var $td = $event.closest('td');
     
     // ja, eigentlich wollen wir ja die darstellung testen, das geht aber nicht, also bissl html testen passt schon
     // hier colspan 2 weilder nächste tag in der nächsten zeile steh
-    assertEquals(2, parseInt($td.attr('colspan'), 10));
+    this.assertEquals(2, parseInt($td.attr('colspan'), 10));
     var $endEvent = this.findEvent('Dienstreise', mySpanEvent.getEnd());
-    assertEquals(1, $endEvent.length);
+    this.assertEquals(1, $endEvent.length);
 
     this.calendar.addEvent(new Psc.CalendarEvent({
       title: 'Team-Workshop',
@@ -205,16 +204,16 @@ define(['Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/CalendarEvent'], functi
     }));
 
     $event = this.findEvent('ka2', inBetweenEvent.getStart());
-    assertEquals(1, $event.length, 'inBetweenEvent is not rendered correctly');
+    this.assertEquals(1, $event.length, 'inBetweenEvent is not rendered correctly');
 
     now = Psc.Date.create({day: 2, month: 8, year: 2012});
     this.calendar.setDisplayDate(now).refresh();
     
     $event = this.findEvent('sehr lange Dienstreise', longRun.getStart());
-    assertEquals(1, $event.length, 'longRun is rendered at the end of month with correct colspan');
-    assertEquals("3", $event.closest('td').attr('colspan'), 'colspan from sehr lange Dienstreise should be 3');
+    this.assertEquals(1, $event.length, 'longRun is rendered at the end of month with correct colspan');
+    this.assertEquals("3", $event.closest('td').attr('colspan'), 'colspan from sehr lange Dienstreise should be 3');
     
     var $spanEvent = this.findEvent('Dienstreise', mySpanEvent.getStart());
-    assertEquals("2", $spanEvent.closest('td').attr('colspan'), 'colspan should be 2');
+    this.assertEquals("2", $spanEvent.closest('td').attr('colspan'), 'colspan should be 2');
   });
 });

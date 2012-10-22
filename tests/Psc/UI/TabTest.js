@@ -1,4 +1,4 @@
-define(['Psc/UI/Tab'], function() {
+define(['psc-tests-assert','Psc/UI/Tab'], function() {
   module("Psc.UI.Tab");
 
   test("construct", function() {
@@ -8,10 +8,10 @@ define(['Psc/UI/Tab'], function() {
       url: '/entities/persons/17/form'
     });
     
-    assertEquals('entity-persons-17', tab.getId());
-    assertEquals(null, tab.getContent());
-    assertEquals('Philipp S', tab.getLabel());
-    assertEquals('/entities/persons/17/form', tab.getUrl());
+    this.assertEquals('entity-persons-17', tab.getId());
+    this.assertEquals(null, tab.getContent());
+    this.assertEquals('Philipp S', tab.getLabel());
+    this.assertEquals('/entities/persons/17/form', tab.getUrl());
   });
   
   //test("empty url not allowed", function () {

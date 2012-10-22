@@ -1,4 +1,4 @@
-define(['Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/Test/DoublesManager'], function() {
   
   module("Psc.Test.DoublesManager");
   
