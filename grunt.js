@@ -2,6 +2,15 @@
 module.exports = function(grunt) {
   
   grunt.loadNpmTasks('grunt-requirejs');
+  
+  grunt.registerHelper('mapToUrl', function(files, baseUrl) {
+    return grunt.utils._.map(
+      grunt.file.expandFiles(files),
+      function (file) {
+        return baseUrl+file;
+      }
+    );
+  });  
 
   // Project configuration.
   grunt.initConfig({
@@ -47,7 +56,11 @@ module.exports = function(grunt) {
       base: '.'
     },
     qunit: {
-      all: ['http://localhost:8000/tests/all.html']
+      all: grunt.helper('mapToUrl', [
+          'tests/**/*.html'
+        ],
+        'http://localhost:8000/'
+      )
     },
     'update-tests': {
       src: ['tests/**/*Test.js'],
