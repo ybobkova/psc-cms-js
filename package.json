@@ -6,5 +6,13 @@
     "name": "Philipp Scheit"
   },
   "licences": ["LGPL"],
-  "version": "0.1.0"
+  "version": "0.1.0",
+
+  "devDependencies": {
+    "grunt": "~0.3.14"
+  },
+  
+  "scripts": {
+    "test": "grunt --verbose"
+  }
 }
