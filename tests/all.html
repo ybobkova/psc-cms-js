@@ -20,13 +20,11 @@
   QUnit.config.autostart = false;
   
   require(["require", "joose", "jquery", "../tests/all"], function (require, nothing, $, tests) {
+    // tests is a array of strings with full paths to the found  tests with grunt:update-tests
     require(tests, function () {
-      console.log('start');
       QUnit.start();
     });
-
   });
-  
   </script>
 </body>
 </html>
