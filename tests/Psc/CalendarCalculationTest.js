@@ -1,4 +1,4 @@
-use(['Psc.CalendarCalculation','Psc.Date','Psc.Test.DoublesManager'], function() {
+define(['Psc/CalendarCalculation','Psc/Date','Psc/Test/DoublesManager'], function() {
   
   module("Psc.CalendarCalculation");
   

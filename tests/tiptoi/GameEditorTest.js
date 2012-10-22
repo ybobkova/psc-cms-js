@@ -1,4 +1,4 @@
-use(['tiptoi.GameEditor'], function() {
+define(['tiptoi/GameEditor'], function() {
   
   module("tiptoi.GameEditor");
   

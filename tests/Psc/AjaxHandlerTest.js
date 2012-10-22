@@ -1,4 +1,4 @@
-use(['Psc.AjaxHandler', 'Psc.Request'], function () {
+define(['Psc/AjaxHandler', 'Psc/Request'], function () {
   module("Psc.AjaxHandler", {
     setup: function () {
       this.ajaxHandler = new Psc.AjaxHandler();

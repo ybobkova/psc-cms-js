@@ -1,4 +1,4 @@
-use(['Psc.EventManagerMock'], function() {
+define(['Psc/EventManagerMock'], function() {
   module("Psc.EventManagerMock");
 
   test("onlyAllowedEventsWillBeTriggered", function() {

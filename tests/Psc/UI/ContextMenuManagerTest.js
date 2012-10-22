@@ -1,4 +1,4 @@
-use(['Psc.UI.ContextMenuManager','Psc.UI.Menu'], function() {
+define(['Psc/UI/ContextMenuManager','Psc/UI/Menu'], function() {
   module("Psc.UI.ContextMenuManager");
 
   test("acceptance", function() {

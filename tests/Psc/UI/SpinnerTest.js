@@ -1,4 +1,4 @@
-use(['Psc.UI.Spinner'], function() {
+define(['Psc/UI/Spinner'], function() {
   module("Psc.UI.Spinner");
 
   test("construct", function() {

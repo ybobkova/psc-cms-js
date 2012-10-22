@@ -1,4 +1,4 @@
-use(['Psc.UI.Calendar','Psc.Test.DoublesManager','Psc.CalendarEvent'], function() {
+define(['Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/CalendarEvent'], function() {
   
   module("Psc.UI.Calendar");
   

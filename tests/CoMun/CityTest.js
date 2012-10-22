@@ -1,4 +1,4 @@
-use(['CoMun.City','Psc.Test.DoublesManager'], function() {
+define(['CoMun/City','Psc/Test/DoublesManager'], function() {
   
   module("CoMun.City");
   

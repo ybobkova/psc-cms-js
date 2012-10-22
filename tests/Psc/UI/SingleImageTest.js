@@ -1,4 +1,4 @@
-use(['Psc.UI.ResizableImage','Psc.UI.SingleImage','Psc.Test.DoublesManager'], function() {
+define(['Psc/UI/ResizableImage','Psc/UI/SingleImage','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.SingleImage");
   

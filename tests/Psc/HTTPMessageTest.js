@@ -1,4 +1,4 @@
-use(['Psc.HTTPMessage'], function () {
+define(['Psc/HTTPMessage'], function () {
   module("Psc.HTTPMessage");
   
   test("parsesHeaderFromString", function() {

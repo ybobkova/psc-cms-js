@@ -1,4 +1,4 @@
-use(['Psc.UI.LayoutManager.List'], function() {
+define(['Psc/UI/LayoutManager/List'], function() {
   
   module("Psc.UI.LayoutManager.List");
   

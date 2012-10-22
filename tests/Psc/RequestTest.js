@@ -1,4 +1,4 @@
-use(['Psc.Request'], function () {
+define(['Psc/Request'], function () {
   module("Psc.Request");
   
   test("construct", function() {

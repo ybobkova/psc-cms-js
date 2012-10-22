@@ -1,4 +1,4 @@
-use(['Psc.CMS.Service','Psc.Request'], function() {
+define(['Psc/CMS/Service','Psc/Request'], function() {
   
   module("Psc.CMS.Service", {
     setup: function () {

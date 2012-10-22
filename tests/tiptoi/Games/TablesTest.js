@@ -1,4 +1,4 @@
-use(['tiptoi.Main','tiptoi.GameTester', 'tiptoi.Program', 'tiptoi.cpu','tiptoi.InputProvider', 'Psc.Code','tiptoi.Sound'], function() {
+define(['tiptoi/Main','tiptoi/GameTester', 'tiptoi/Program', 'tiptoi/cpu','tiptoi/InputProvider', 'Psc/Code','tiptoi/Sound'], function() {
   
   
   module("Games Tables Test", {

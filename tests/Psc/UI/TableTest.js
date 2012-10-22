@@ -1,4 +1,4 @@
-use(['Psc.UI.Table','Psc.UI.TableBuilder', 'Psc.Test.DoublesManager'], function() {
+define(['Psc/UI/Table','Psc/UI/TableBuilder', 'Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.Table");
   

@@ -1,4 +1,4 @@
-use(['Psc.UI.HTML.Base'], function() {
+define(['Psc/UI/HTML/Base'], function() {
   var htmlClass;
   
   module("Psc.UI.HTML.Base", {

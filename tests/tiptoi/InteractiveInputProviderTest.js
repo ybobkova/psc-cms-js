@@ -1,4 +1,4 @@
-use(['tiptoi.InteractiveInputProvider','Psc.Code'], function() {
+define(['tiptoi/InteractiveInputProvider','Psc/Code'], function() {
   
   module("tiptoi.InteractiveIputProvider", {});
 

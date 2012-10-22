@@ -1,4 +1,4 @@
-use(['Psc.WrongValueException'], function () {
+define(['Psc/WrongValueException'], function () {
   module("Psc.WrongValueException");
   
   test("construct", function() {

@@ -1,4 +1,4 @@
-use(['Psc.UI.GridTableEditor','Psc.Table','Psc.UI.GridTable','Psc.CMS.Service'], function() {
+define(['Psc/UI/GridTableEditor','Psc/Table','Psc/UI/GridTable','Psc/CMS/Service'], function() {
   
   module("Psc.UI.GridTableEditor");
   

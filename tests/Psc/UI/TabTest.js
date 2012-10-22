@@ -1,4 +1,4 @@
-use(['Psc.UI.Tab'], function() {
+define(['Psc/UI/Tab'], function() {
   module("Psc.UI.Tab");
 
   test("construct", function() {

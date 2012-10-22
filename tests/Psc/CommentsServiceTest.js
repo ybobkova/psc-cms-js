@@ -1,4 +1,4 @@
-use(['Psc.CommentsService','Psc.Test.DoublesManager'], function() {
+define(['Psc/CommentsService','Psc/Test/DoublesManager'], function() {
   
   module("Psc.CommentsService");
   

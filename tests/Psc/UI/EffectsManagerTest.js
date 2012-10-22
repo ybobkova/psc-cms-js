@@ -1,4 +1,4 @@
-use(['Psc.UI.EffectsManager'], function() {
+define(['Psc/UI/EffectsManager'], function() {
   
   module("Psc.UI.EffectsManager", {
     setup: function () {

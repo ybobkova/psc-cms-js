@@ -1,4 +1,4 @@
-use(['Psc.UI.ComboBox','Psc.UI.AutoComplete'], function() {
+define(['Psc/UI/ComboBox','Psc/UI/AutoComplete'], function() {
 
   var loadFixture = function(assertions) {
     return function () {

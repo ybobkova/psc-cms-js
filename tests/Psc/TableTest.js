@@ -1,4 +1,4 @@
-use(['Psc.Table'], function() {
+define(['Psc/Table'], function() {
   var table, insertRow;
   
   module("Psc.Table", {

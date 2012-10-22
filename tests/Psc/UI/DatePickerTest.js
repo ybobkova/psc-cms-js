@@ -1,4 +1,4 @@
-use(['Psc.UI.DatePicker','Psc.Test.DoublesManager'], function() {
+define(['Psc/UI/DatePicker','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.DatePicker");
   

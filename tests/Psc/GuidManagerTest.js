@@ -1,4 +1,4 @@
-use(['Psc.GuidManager'], function() {
+define(['Psc/GuidManager'], function() {
   
   module("Psc.GuidManager", {
     setup: function () {

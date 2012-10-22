@@ -1,4 +1,4 @@
-use(['Psc.Test.DoublesManager'], function() {
+define(['Psc/Test/DoublesManager'], function() {
   
   module("Psc.Test.DoublesManager");
   

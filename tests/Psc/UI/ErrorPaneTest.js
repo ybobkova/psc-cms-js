@@ -1,4 +1,4 @@
-use(['Psc.UI.ErrorPane'], function() {
+define(['Psc/UI/ErrorPane'], function() {
   
   module("Psc.UI.ErrorPane", {
     setup: function () {

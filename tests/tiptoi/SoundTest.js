@@ -1,4 +1,4 @@
-use(['tiptoi.Sound'], function() {
+define(['tiptoi/Sound'], function() {
   
   module("tiptoi.Sound", {
     setup: function () {

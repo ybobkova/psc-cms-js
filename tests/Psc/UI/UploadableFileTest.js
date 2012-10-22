@@ -1,4 +1,4 @@
-use(['Psc.UI.UploadableFile','Psc.Test.DoublesManager'], function() {
+define(['Psc/UI/UploadableFile','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.UploadableFile");
   

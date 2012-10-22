@@ -1,4 +1,4 @@
-use(['Psc.UI.Component'], function() {
+define(['Psc/UI/Component'], function() {
   
   module("Psc.UI.Component");
   

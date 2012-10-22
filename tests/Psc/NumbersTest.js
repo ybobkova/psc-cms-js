@@ -1,4 +1,4 @@
-use(['Psc.Numbers'], function() {
+define(['Psc/Numbers'], function() {
   
   module("Psc.Numbers", {
     setup: function () {

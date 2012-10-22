@@ -1,4 +1,4 @@
-use(['Psc.UI.HTML.Builder','Psc.Test.DoublesManager'], function() {
+define(['Psc/UI/HTML/Builder','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.HTML.Builder");
   

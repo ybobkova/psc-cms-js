@@ -1,4 +1,4 @@
-use(['Psc.UI.Dragger'], function() {
+define(['Psc/UI/Dragger'], function() {
   
   module("Psc.UI.Dragger");
   

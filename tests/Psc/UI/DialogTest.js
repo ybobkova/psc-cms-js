@@ -1,4 +1,4 @@
-use(['Psc.UI.Dialog'], function() {
+define(['Psc/UI/Dialog'], function() {
   var dialog, constructSubmitted = false;
   
   module("Psc.UI.Dialog", {

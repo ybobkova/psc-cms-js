@@ -1,4 +1,4 @@
-use(['Psc.AjaxFormHandler','Psc.FormRequest','Psc.Exception'], function () {
+define(['Psc/AjaxFormHandler','Psc/FormRequest','Psc/Exception'], function () {
 
   module("Psc.AjaxFormHandler");
 

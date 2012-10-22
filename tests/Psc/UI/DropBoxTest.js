@@ -1,4 +1,4 @@
-use(['Psc.UI.DropBox','Psc.UI.DropBoxButton','Psc.CMS.Item', 'Psc.CMS.TabOpenable', 'Psc.CMS.Buttonable', 'Psc.CMS.Identifyable','Psc.CMS.DropBoxButtonable'], function() {
+define(['Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable'], function() {
 
   var loadFixture = function(assertions) {
     return function () {

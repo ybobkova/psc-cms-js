@@ -1,4 +1,4 @@
-use(['Psc.UI.LayoutManager.Image','Psc.UI.ResizableImage','Psc.Test.DoublesManager'], function() {
+define(['Psc/UI/LayoutManager/Image','Psc/UI/ResizableImage','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.ResizableImage");
   

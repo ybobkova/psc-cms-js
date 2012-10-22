@@ -1,4 +1,4 @@
-use(['Psc.UI.AutoComplete','Psc.EventManagerMock','Psc.AjaxHandler','Psc.UI.Tab'], function() {
+define(['Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/AjaxHandler','Psc/UI/Tab'], function() {
   var html, $html, $autoComplete;
   
   module("Psc.UI.AutoComplete", {

@@ -1,4 +1,4 @@
-use(['Psc.FormRequest'], function () {
+define(['Psc/FormRequest'], function () {
   module("Psc.FormRequest");
   
   asyncTest("parsesURLAndMethodFromCMSForm", function() {

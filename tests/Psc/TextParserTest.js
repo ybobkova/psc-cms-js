@@ -1,4 +1,4 @@
-use(['Psc.TextParser'], function() {
+define(['Psc/TextParser'], function() {
   
   module("Psc.TextParser");
   

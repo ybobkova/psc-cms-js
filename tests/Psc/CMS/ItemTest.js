@@ -1,4 +1,4 @@
-use(['Psc.CMS.Item','Psc.UI.Tab','Psc.Code','Psc.CMS.TabOpenable', 'Psc.CMS.DropBoxButtonable', 'Psc.CMS.Buttonable', 'Psc.CMS.Identifyable','Psc.UI.DropBoxButton', 'Psc.UI.WidgetWrapper','Psc.CMS.TabButtonable'], function() {
+define(['Psc/CMS/Item','Psc/UI/Tab','Psc/Code','Psc/CMS/TabOpenable', 'Psc/CMS/DropBoxButtonable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/UI/DropBoxButton', 'Psc/UI/WidgetWrapper','Psc/CMS/TabButtonable'], function() {
   
   module("Psc.CMS.Item", {
     setup: function () {

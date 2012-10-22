@@ -1,4 +1,4 @@
-use(["Psc.InvalidArgumentException"], function () {
+define(["Psc/InvalidArgumentException"], function () {
   module("Psc.InvalidArgumentException");
 
   test("construct", function() {

@@ -1,4 +1,4 @@
-use(['tiptoi.cpu','tiptoi.InputProvider','tiptoi.Timer'], function() {
+define(['tiptoi/cpu','tiptoi/InputProvider','tiptoi/Timer'], function() {
   
   module("tiptoi.cpu");
   

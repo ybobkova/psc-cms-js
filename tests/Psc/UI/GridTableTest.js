@@ -1,4 +1,4 @@
-use(['Psc.UI.GridTable','Psc.Table','Psc.UI.WidgetWrapper'], function() {
+define(['Psc/UI/GridTable','Psc/Table','Psc/UI/WidgetWrapper'], function() {
   var table, grid, $fixture;
   
   module("Psc.UI.GridTable", {

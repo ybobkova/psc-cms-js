@@ -1,5 +1,5 @@
 (function($) {
-  use(['Psc.UI.GridPanel','Psc.UI.Tab','Psc.UI.Tabs','Psc.UI.Main'], function() {
+  define(['Psc/UI/GridPanel','Psc/UI/Tab','Psc/UI/Tabs','Psc/UI/Main'], function() {
   
   module("Psc.UI.GridPanel", {
     teardown: function () {

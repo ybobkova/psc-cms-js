@@ -1,4 +1,4 @@
-use(['Psc.Code','Psc.WrongValueException','Psc.InvalidArgumentException','Psc.Request'], function () {
+define(['Psc/Code','Psc/WrongValueException','Psc/InvalidArgumentException','Psc/Request'], function () {
   
   module("Psc.Code");
 

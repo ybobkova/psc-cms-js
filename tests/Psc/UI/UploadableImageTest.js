@@ -1,4 +1,4 @@
-use(['Psc.UI.UploadableImage','Psc.Test.DoublesManager','Psc.UI.ResizableImage'], function() {
+define(['Psc/UI/UploadableImage','Psc/Test/DoublesManager','Psc/UI/ResizableImage'], function() {
   
   module("Psc.UI.UploadableImage");
   

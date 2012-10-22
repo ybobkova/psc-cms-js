@@ -1,4 +1,4 @@
-use(['Psc.UI.Main','Psc.UI.Tabs','Psc.UI.Tab','Psc.EventManager','Psc.EventManagerMock','Psc.Response', 'Psc.ResponseMetaReader','Psc.UI.FormController'], function() {
+define(['Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventManager','Psc/EventManagerMock','Psc/Response', 'Psc/ResponseMetaReader','Psc/UI/FormController'], function() {
   var main;
   var tabs;
   

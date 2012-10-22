@@ -1,4 +1,4 @@
-use(['Psc.EventManager'], function() {
+define(['Psc/EventManager'], function() {
   var eventManager;
   
   module("Psc.EventManager", {

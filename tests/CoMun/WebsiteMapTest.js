@@ -1,4 +1,4 @@
-use(['CoMun.WebsiteMap','Psc.Test.DoublesManager'], function() {
+define(['CoMun/WebsiteMap','Psc/Test/DoublesManager'], function() {
   
   module("CoMun.WebsiteMap");
   

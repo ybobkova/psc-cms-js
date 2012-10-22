@@ -1,4 +1,4 @@
-use(['tiptoi.Timer'], function() {
+define(['tiptoi/Timer'], function() {
   
   module("tiptoi.Timer");
   

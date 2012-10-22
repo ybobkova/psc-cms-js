@@ -1,4 +1,4 @@
-use(['Psc.UI.WidgetWrapper'], function() {
+define(['Psc/UI/WidgetWrapper'], function() {
   module("Psc.UI.WidgetWrapper");
 
   test("acceptance", function() {

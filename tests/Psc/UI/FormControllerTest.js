@@ -1,4 +1,4 @@
-use(['Psc.UI.FormController', 'Psc.EventManagerMock','Psc.AjaxHandler'], function() {
+define(['Psc/UI/FormController', 'Psc/EventManagerMock','Psc/AjaxHandler'], function() {
   module("Psc.UI.FormController");
   
   $('#qunit-fixture').append('<form></form>')

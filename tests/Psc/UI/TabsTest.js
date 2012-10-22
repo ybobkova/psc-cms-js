@@ -1,4 +1,4 @@
-use(['Psc.UI.Tabs','Psc.UI.Tab','Psc.UI.Menu'], function() {
+define(['Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function() {
   var tab = new Psc.UI.Tab({
     id: 'entity-persons-17',
     label: 'Philipp S',

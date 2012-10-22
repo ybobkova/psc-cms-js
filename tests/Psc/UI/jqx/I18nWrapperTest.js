@@ -1,4 +1,4 @@
-use(['Psc.UI.jqx.I18nWrapper','Psc.Test.DoublesManager'], function() {
+define(['Psc/UI/jqx/I18nWrapper','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.jqx.I18nWrapper");
   

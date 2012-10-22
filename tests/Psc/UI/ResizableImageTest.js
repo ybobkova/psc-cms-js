@@ -1,4 +1,4 @@
-use(['Psc.UI.ResizableImage'], function() {
+define(['Psc/UI/ResizableImage'], function() {
   
   module("Psc.UI.ResizableImage");
   

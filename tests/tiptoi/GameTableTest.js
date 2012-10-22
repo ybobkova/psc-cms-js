@@ -1,4 +1,4 @@
-use(['tiptoi.GameTable','tiptoi.Sound'], function() {
+define(['tiptoi/GameTable','tiptoi/Sound'], function() {
   
   module("tiptoi.GameTable");
   var createTable = function () {

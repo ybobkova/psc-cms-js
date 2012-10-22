@@ -1,4 +1,4 @@
-use(['Psc.UI.Group'], function() {
+define(['Psc/UI/Group'], function() {
   
   module("Psc.UI.Group");
   

@@ -1,4 +1,4 @@
-use(['Psc.UI.jqx.WidgetWrapper','Psc.Test.DoublesManager'], function() {
+define(['Psc/UI/jqx/WidgetWrapper','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.jqx.WidgetWrapper");
   

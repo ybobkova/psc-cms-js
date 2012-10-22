@@ -1,4 +1,4 @@
-use(['tiptoi.GameTester'], function() {
+define(['tiptoi/GameTester'], function() {
   
   module("tiptoi.GameTester", {
     setup: function () {

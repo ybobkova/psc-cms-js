@@ -1,4 +1,4 @@
-use(['Psc.UploadService','Psc.Request','Psc.Test.DoublesManager'], function() {
+define(['Psc/UploadService','Psc/Request','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UploadService");
   

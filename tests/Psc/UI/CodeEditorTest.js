@@ -1,4 +1,4 @@
-use(['Psc.UI.CodeEditor'], function() {
+define(['Psc/UI/CodeEditor'], function() {
   var $html;
   
   module("Psc.UI.CodeEditor", {

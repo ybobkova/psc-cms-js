@@ -1,4 +1,4 @@
-use(['Psc.CMS.TabOpenable','Psc.CMS.Item','Psc.UI.Tab'], function() {
+define(['Psc/CMS/TabOpenable','Psc/CMS/Item','Psc/UI/Tab'], function() {
   
   module("Psc.CMS.TabOpenable", {
     setup: function () {

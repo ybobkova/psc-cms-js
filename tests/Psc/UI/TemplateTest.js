@@ -1,4 +1,4 @@
-use(['Psc.UI.Template','Psc.Test.DoublesManager'], function() {
+define(['Psc/UI/Template','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.Template");
   

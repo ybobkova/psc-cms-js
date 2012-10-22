@@ -1,4 +1,4 @@
-use(['CoMun.Curver','Psc.Test.DoublesManager'], function() {
+define(['CoMun/Curver','Psc/Test/DoublesManager'], function() {
   
   module("CoMun.Curver");
   

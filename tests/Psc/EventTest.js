@@ -1,4 +1,4 @@
-use(['Psc.Exception'], function () {
+define(['Psc/Exception'], function () {
   module("Psc.Event"); // to fake it
   
   test("eventON", function() {

@@ -1,4 +1,4 @@
-use(['tiptoi.ConsoleOutput'], function() {
+define(['tiptoi/ConsoleOutput'], function() {
   
   module("tiptoi.ConsoleOutput", {
     setup: function () {

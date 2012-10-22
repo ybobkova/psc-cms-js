@@ -1,4 +1,4 @@
-use(['Psc.Loader','Psc.UI.Main','Psc.UI.Tabs'], function() {
+define(['Psc/Loader','Psc/UI/Main','Psc/UI/Tabs'], function() {
   var main, tabs, loader;
   
   module("Psc.Loader", {

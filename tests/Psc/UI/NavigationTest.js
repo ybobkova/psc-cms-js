@@ -1,4 +1,4 @@
-use(['Psc.UI.Navigation'], function() {
+define(['Psc/UI/Navigation'], function() {
   var navigation;
   
   module("Psc.UI.Navigation", {

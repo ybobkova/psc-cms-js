@@ -1,4 +1,4 @@
-use(['tiptoi.InputProvider'], function() {
+define(['tiptoi/InputProvider'], function() {
   
   module("tiptoi.InputProvider", {
     setup: function () {

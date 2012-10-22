@@ -1,4 +1,4 @@
-use(['Psc.UI.ComboDropBox'], function() {
+define(['Psc/UI/ComboDropBox'], function() {
   
   module("Psc.UI.ComboDropBox", {
     setup: function () {

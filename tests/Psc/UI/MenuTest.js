@@ -1,4 +1,4 @@
-use(['Psc.UI.Menu'], function() {
+define(['Psc/UI/Menu'], function() {
   module("Psc.UI.Menu");
 
   test("acceptance", function() {

@@ -1,4 +1,4 @@
-use(['Psc.UI.FormReader','Psc.UI.FormBuilder'], function() {
+define(['Psc/UI/FormReader','Psc/UI/FormBuilder'], function() {
   
   module("Psc.UI.FormReader");
   

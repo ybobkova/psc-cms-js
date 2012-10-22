@@ -1,4 +1,4 @@
-use(['Psc.UI.LayoutManager.Websitewidget','Psc.Test.DoublesManager'], function() {
+define(['Psc/UI/LayoutManager/Websitewidget','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.LayoutManager.Websitewidget");
   

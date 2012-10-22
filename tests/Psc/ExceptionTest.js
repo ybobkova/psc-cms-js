@@ -1,4 +1,4 @@
-use(['Psc.Exception','Psc.InvalidArgumentException','Psc.AjaxException'], function () {
+define(['Psc/Exception','Psc/InvalidArgumentException','Psc/AjaxException'], function () {
   module("Psc.Exception");
   
   //test("bootstrap: global object identifier", function () {

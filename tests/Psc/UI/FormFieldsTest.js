@@ -1,4 +1,4 @@
-use(['Psc.UI.FormFields','Psc.UI.FormBuilder', 'Psc.Test.DoublesManager'], function() {
+define(['Psc/UI/FormFields','Psc/UI/FormBuilder', 'Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.FormFields");
   

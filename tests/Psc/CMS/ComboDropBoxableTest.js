@@ -1,4 +1,4 @@
-use(['Psc.CMS.ComboDropBoxable','Psc.UI.DropBoxButton','Psc.CMS.FastItem'], function() {
+define(['Psc/CMS/ComboDropBoxable','Psc/UI/DropBoxButton','Psc/CMS/FastItem'], function() {
   var comboDropBoxable;
   
   module("Psc.CMS.ComboDropBoxable", {

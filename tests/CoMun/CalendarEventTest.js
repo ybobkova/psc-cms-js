@@ -1,4 +1,4 @@
-use(['CoMun.CalendarEvent','Psc.Test.DoublesManager'], function() {
+define(['CoMun/CalendarEvent','Psc/Test/DoublesManager'], function() {
   
   module("CoMun.CalendarEvent");
   

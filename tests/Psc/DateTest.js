@@ -1,4 +1,4 @@
-use(['Psc.Date','Psc.Test.DoublesManager'], function() {
+define(['Psc/Date','Psc/Test/DoublesManager'], function() {
   
   module("Psc.Date");
   

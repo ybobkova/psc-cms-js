@@ -1,4 +1,4 @@
-use(['Psc.UI.Button','Psc.Test.DoublesManager'], function() {
+define(['Psc/UI/Button','Psc/Test/DoublesManager'], function() {
   
   module("Psc.UI.Button");
   

@@ -1,4 +1,4 @@
-use(['Psc.UI.Main','Psc.UI.Dragger','Psc.UI.Tabs','Psc.UI.DropBox','Psc.UI.DropBoxButton','Psc.CMS.Item', 'Psc.CMS.TabOpenable', 'Psc.CMS.Buttonable', 'Psc.CMS.Identifyable','Psc.CMS.DropBoxButtonable'], function() {
+define(['Psc/UI/Main','Psc/UI/Dragger','Psc/UI/Tabs','Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable'], function() {
   
   var main, $dropbox1, $dropbox2, dropBox1, dropBox2, drag;
 

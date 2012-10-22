@@ -1,4 +1,4 @@
-use(['Psc.EventDispatching','Psc.EventManager'], function() {
+define(['Psc/EventDispatching','Psc/EventManager'], function() {
   
   module("Psc.EventDispatching", {
     setup: function () {

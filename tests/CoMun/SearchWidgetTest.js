@@ -1,4 +1,4 @@
-use(['CoMun.SearchWidget','Psc.Test.DoublesManager'], function() {
+define(['CoMun/SearchWidget','Psc/Test/DoublesManager'], function() {
   
   module("CoMun.SearchWidget");
   

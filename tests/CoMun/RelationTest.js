@@ -1,4 +1,4 @@
-use(['CoMun.Relation','Psc.Test.DoublesManager'], function() {
+define(['CoMun/Relation','Psc/Test/DoublesManager'], function() {
   
   module("CoMun.Relation");
   

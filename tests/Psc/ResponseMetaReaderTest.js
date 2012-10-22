@@ -1,4 +1,4 @@
-use(['Psc.ResponseMetaReader', 'Psc.Response'], function() {
+define(['Psc/ResponseMetaReader', 'Psc/Response'], function() {
   var responseMetaReader;
   
   module("Psc.ResponseMetaReader", {

@@ -1,4 +1,4 @@
-use(['Psc.UI.LayoutManagerComponent'], function() {
+define(['Psc/UI/LayoutManagerComponent'], function() {
   
   module("Psc.UI.LayoutManagerComponent");
   

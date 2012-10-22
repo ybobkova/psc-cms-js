@@ -1,4 +1,4 @@
-use(['tiptoi.GameMaker'], function() {
+define(['tiptoi/GameMaker'], function() {
   
   module("tiptoi.GameMaker", {
     setup: function () {

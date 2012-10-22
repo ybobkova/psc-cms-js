@@ -1,4 +1,4 @@
-use(['tiptoi.Main','Psc.UI.Main'], function() {
+define(['tiptoi/Main','Psc/UI/Main'], function() {
   var tiptoiMain, main;
   
   module("tiptoi.Main", {

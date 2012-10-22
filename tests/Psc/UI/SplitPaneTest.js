@@ -1,4 +1,4 @@
-use(['Psc.UI.SplitPane'], function() {
+define(['Psc/UI/SplitPane'], function() {
   
   module("Psc.UI.SplitPane");
   

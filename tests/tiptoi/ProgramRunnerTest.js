@@ -1,4 +1,4 @@
-use(['tiptoi.Main','tiptoi.ProgramRunner', 'tiptoi.Program', 'tiptoi.cpu','tiptoi.InputProvider', 'Psc.Code'], function() {
+define(['tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','tiptoi/InputProvider', 'Psc/Code'], function() {
   var tiptoiMain, main, programRunner, program1, played = [];
   
   module("tiptoi.Main", {
