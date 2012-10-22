@@ -1,10 +1,9 @@
-define(['psc-tests-assert','Psc/Code','Psc/WrongValueException','Psc/InvalidArgumentException','Psc/Request'], function () {
+define(['psc-tests-assert','Psc/Code','Psc/WrongValueException','Psc/InvalidArgumentException','Psc/Request'], function (t) {
   
   module("Psc.Code");
-
-
   
   test("splice", function () {
+    t.setup(this);
     var o = {A: "some string", B: "another String"};
     
     var a = (Array.prototype.slice).call(o);
@@ -14,12 +13,14 @@ define(['psc-tests-assert','Psc/Code','Psc/WrongValueException','Psc/InvalidArgu
 
   
   test("valueReturnsFirstAndValidates", function() {
+    t.setup(this);
     this.assertEquals('a1', Psc.Code.value('a1', 'a1','a2','a3'));
     this.assertEquals('a3', Psc.Code.value('a3', 'a1','a2','a3'));
     this.assertEquals('a2', Psc.Code.value('a2', 'a1','a2','a3'));
   });
   
   test("valueThrowsExceptionOnWrongEntry", function () {
+    t.setup(this);
     this.assertException("Psc.WrongValueException", function () {
       Psc.Code.value('wrong', 'a1','a2','a3');
     });
@@ -27,10 +28,12 @@ define(['psc-tests-assert','Psc/Code','Psc/WrongValueException','Psc/InvalidArgu
   });
   
   test("varInfo", function() {
+    t.setup(this);
     this.assertEquals('a1', Psc.Code.varInfo('a1'));
   });
   
   test("isArray", function() {
+    var that = t.setup(this);
     var positiveValues = [
       ['eins'],
       [{v: 1}, {v: 2}],
@@ -46,16 +49,17 @@ define(['psc-tests-assert','Psc/Code','Psc/WrongValueException','Psc/InvalidArgu
     ];
     
     Joose.A.each(positiveValues, function (data) {
-      this.assertTrue(Psc.Code.isArray(data), debug(data)+" isArray");
+      that.assertTrue(Psc.Code.isArray(data), that.debug(data)+" isArray");
     });
 
     Joose.A.each(negativeValues, function (data) {
-      this.assertFalse(Psc.Code.isArray(data), debug(data)+" !isArray");
+      that.assertFalse(Psc.Code.isArray(data), that.debug(data)+" !isArray");
     });
   });
 
 
   test("isInstanceOf", function() {
+    var that = t.setup(this);
     var iae = new Psc.InvalidArgumentException('katching','blubb');
     var e = new Psc.Exception('wuah');
     var o = {};
@@ -82,11 +86,11 @@ define(['psc-tests-assert','Psc/Code','Psc/WrongValueException','Psc/InvalidArgu
     ];
     
     Joose.A.each(positiveValues, function (data) {
-      this.assertTrue(Psc.Code.isInstanceOf(data[0], data[1]), debug(data[0])+" isInstanceof "+debug(data[1]));
+      that.assertTrue(Psc.Code.isInstanceOf(data[0], data[1]), that.debug(data[0])+" isInstanceof "+that.debug(data[1]));
     });
 
     Joose.A.each(negativeValues, function (data) {
-      this.assertFalse(Psc.Code.isInstanceOf(data[0], data[1]), debug(data[0])+" isInstanceof "+debug(data[1]));
+      that.assertFalse(Psc.Code.isInstanceOf(data[0], data[1]), that.debug(data[0])+" isInstanceof "+that.debug(data[1]));
     });
 
     Joose.A.each(failureValues, function (data) {
@@ -97,6 +101,7 @@ define(['psc-tests-assert','Psc/Code','Psc/WrongValueException','Psc/InvalidArgu
   });
   
   test("isRole", function () {
+    t.setup(this);
     Role("TestRole", {});
     
     var objectClass = Class({

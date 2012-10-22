@@ -1,37 +1,26 @@
 /*global module:false*/
 module.exports = function(grunt) {
   
-  grunt.loadNpmTasks('grunt-requirejs');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-server');
+  grunt.loadNpmTasks('grunt-contrib-qunit');
+  grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   
-  grunt.registerHelper('mapToUrl', function(files, baseUrl) {
-    return grunt.utils._.map(
+  var mapToUrl = function(files, baseUrl) {
+    return grunt.util._.map(
       grunt.file.expandFiles(files),
       function (file) {
         return baseUrl+file;
       }
     );
-  });  
+  };  
 
   // Project configuration.
   grunt.initConfig({
-    pkg: '<json:package.json>',
-    meta: {
-      banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
-        '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-        '<%= pkg.homepage ? "* " + pkg.homepage + "\n" : "" %>' +
-        '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-        ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */'
-    },
-/*
- *
- <script src="/vendor/qunit/qunit-1.10.0.js"></script>
- <script src="/vendor/joose/all.js"></script>
- <script src="/vendor/joose/x-namespace-depended.js"></script>
- <script src="/lib/psc-cms.js"></script>
- <script src="/vendor/webforge/assert.js"></script>
+    pkg: grunt.file.readJSON('package.json'),
 
- *
- **/
     requirejs: {
       dir: 'build',
       appDir: 'lib',
@@ -48,70 +37,50 @@ module.exports = function(grunt) {
       findNestedDependencies: true
     },
 
-    lint: {
-      files: ['grunt.js', 'lib/**/*.js']
+    jshint: {
+      files: ['Gruntfile.js', 'lib/**/*.js']
     },
+    
     server: {
       port: 8000,
       base: '.'
     },
+    
     qunit: {
-      all: grunt.helper('mapToUrl', [
-          'tests/**/*.html'
-        ],
-        'http://localhost:8000/'
-      )
+      all: ['http://localhost:8000/tests/all.html'],
+      options: {
+        timeout: 7000
+      }
     },
     'update-tests': {
-      src: ['tests/**/*Test.js'],
+      src: ['tests/**/*Test.js']
     },
     concat: {
+      options: {
+        banner:
+          '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
+          '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
+          '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
+          '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
+          ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */',
+        stripBanners: true
+      },
       dist: {
-        src: ['<banner:meta.banner>', '<file_strip_banner:lib/<%= pkg.name %>.js>', 'lib/**/*.js'],
+        src: ['lib/<%= pkg.name %>.js', 'lib/**/*.js'],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.js'
       }
     },
-    min: {
+    uglify: {
       dist: {
-        src: ['<banner:meta.banner>', '<config:concat.dist.dest>'],
+        src: ['dist/<%= pkg.name %>-<%= pkg.version %>.js'],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js'
       }
-    },
-    watch: {
-      files: '<config:lint.files>',
-      tasks: 'lint qunit'
-    },
-    jshint: {
-      options: {
-        curly: false, /* dont blame for missing curlies around ifs */
-        eqeqeq: true,
-        immed: true,
-        latedef: true,
-        newcap: true,
-        noarg: true,
-        sub: true,
-        undef: true,
-        boss: true,
-        eqnull: true,
-        browser: true,
-        jquery: true
-      },
-      globals: {
-        $: true,
-        Joose: true, use: true,
-
-        Psc: true,
-        tiptoi: true,
-        CoMun: true,
-        QUnit: true
-      }
-    },
-    uglify: {}
+    }
   });
 
   // Default task.
-  grunt.registerTask('default', 'lint server qunit concat min');
-  grunt.registerTask('test', 'server qunit');
+  grunt.registerTask('default', ['jshint', 'server', 'qunit', 'concat', 'uglify']);
+  grunt.registerTask('test', ['server', 'qunit']);
 
   grunt.registerMultiTask("update-tests", "updates the index for test files", function() {
     var filepaths = grunt.file.expandFiles(this.file.src);

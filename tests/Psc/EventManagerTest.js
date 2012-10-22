@@ -1,21 +1,19 @@
-define(['psc-tests-assert','Psc/EventManager'], function() {
-  var eventManager;
-  
-  module("Psc.EventManager", {
-    setup: function() {
-      eventManager = new Psc.EventManager({ });
-    }
-  });
+define(['psc-tests-assert','Psc/EventManager'], function(t) {
 
+  module("Psc.EventManager");
+  
+  var setup = function (test) {
+    return t.setup(test, {
+      eventManager: new Psc.EventManager()
+    });
+  };
   
   test("new Instance does not get triggered", function() {
+    setup(this);
+    
     var manager1 = new Psc.EventManager();
     var manager2 = new Psc.EventManager();
     var called = false;
-    
-    //eventManager.on('*', function(e) {
-      //e.stopImmediatePropagation();
-    //});
     
     manager1.on('testEvent', function(e) {
       fail('manager1 on must not be called');
@@ -29,22 +27,21 @@ define(['psc-tests-assert','Psc/EventManager'], function() {
     this.assertTrue(called, 'manager2 Event is called');
   });
 
-  test("construct", function() {
-    expect(0);
-  });
-  
   test("nativeBinding", function () {
-    eventManager.on('tsing', function (e) {
-      this.assertEquals('tsing', e.type, 'got event');
+    var that = setup(this);
+    
+    this.eventManager.on('tsing', function (e) {
+      that.assertEquals('tsing', e.type, 'got event');
     });
     
     var ev = jQuery.Event('tsing', {schnurps: 'blubb'});
     
-    eventManager.trigger(ev);
+    this.eventManager.trigger(ev);
   });
   
   test("constructsJQueryEvents", function() {
-    var savedEvent = eventManager.createEvent('saved', { method: 'edit' }); // nicht type benutzen als property das braucht jQuery
+    var that = setup(this);
+    var savedEvent = that.eventManager.createEvent('saved', { method: 'edit' }); // nicht type benutzen als property das braucht jQuery
     
     // erstmal hinten wir nur das hier
     this.assertEquals('edit', savedEvent.method);
@@ -52,21 +49,24 @@ define(['psc-tests-assert','Psc/EventManager'], function() {
   });
   
   test("firstArgumentFromTriggerEventHasToBeAString", function() {
+    var that = setup(this);
     raises(
       function () {
         // first param should be a string not the object -.-
-        eventManager.triggerEvent({idiot:true}, ['var1']);
+        that.eventManager.triggerEvent({idiot:true}, ['var1']);
       }
     );
   });
   
   test("canBeTriggeredWithEvents_acceptsOnAndTrigger", function() {
+    var that = setup(this), eventManager = that.eventManager;
     var eventCount = 0;
+    
     eventManager.on('saved', function (e, add1, add2) { // meint Psc.saved
-      this.assertEquals('add1', add1, 'additional Parameter wird im Handler übergeben');
-      this.assertEquals('add2', add2);
-      this.assertEquals('saved', e.type);
-      this.assertEquals('edit', e.method);
+      that.assertEquals('add1', add1, 'additional Parameter wird im Handler übergeben');
+      that.assertEquals('add2', add2);
+      that.assertEquals('saved', e.type);
+      that.assertEquals('edit', e.method);
       
       eventCount++;
     });
@@ -83,8 +83,9 @@ define(['psc-tests-assert','Psc/EventManager'], function() {
   });
   
   test("stopsWithPreventedBefore", function() {
+    var that = setup(this);
     var eventCount = 0;
-    var eventManager = new Psc.EventManager();
+    var eventManager = that.eventManager;
     // wer zuerst kommt und e.stopImmediatePropagation drückt gewinnt
     
     eventManager.on('test', function (e) {
@@ -101,7 +102,8 @@ define(['psc-tests-assert','Psc/EventManager'], function() {
     this.assertEquals(1,eventCount,'only one event is called');
   });
 
-  test("bindsWildcard", function() {
+  test("whatever", function() {
+    var that = setup(this);
     var eventCount = 0;
     var eventManager = new Psc.EventManager();
     // wer zuerst kommt und e.stopImmediatePropagation drückt gewinnt
@@ -132,16 +134,17 @@ define(['psc-tests-assert','Psc/EventManager'], function() {
   });
   
   test("bindstwicetosamehandler", function() {
-    var eventManager = new Psc.EventManager();
+    var that = setup(this);
+    var eventManager = that.eventManager;
     
     expect(2);
     
     eventManager.on('test', function (e) {
-      this.assertTrue(true, 'ok, test ist called');
+      that.assertTrue(true, 'ok, test ist called');
     });
 
     eventManager.on('test', function (e) {
-      this.assertTrue(true, 'ok, second test ist called');
+      that.assertTrue(true, 'ok, second test ist called');
     });
     
     eventManager.triggerEvent('test');

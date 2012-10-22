@@ -18,6 +18,7 @@
 
   <script>
   QUnit.config.autostart = false;
+  QUnit.config.reorder = false;
   
   require(["require", "joose", "jquery", "../tests/all"], function (require, nothing, $, tests) {
     // tests is a array of strings with full paths to the found  tests with grunt:update-tests

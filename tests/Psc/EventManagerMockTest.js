@@ -1,7 +1,10 @@
-define(['psc-tests-assert','Psc/EventManagerMock'], function() {
+define(['psc-tests-assert','Psc/EventManagerMock'], function(t) {
+  
   module("Psc.EventManagerMock");
 
   test("onlyAllowedEventsWillBeTriggered", function() {
+    t.setup(this);
+    
     var eventManagerMock = new Psc.EventManagerMock({
       allow: ['allowed1'],
       denySilent: false
@@ -25,6 +28,8 @@ define(['psc-tests-assert','Psc/EventManagerMock'], function() {
   });
 
   test("eventsWillbeLogged", function() {
+    t.setup(this);
+    
     var eventManagerMock = new Psc.EventManagerMock({
       allow: ['allowed1', 'allowed2'],
       denySilent: false
@@ -46,6 +51,8 @@ define(['psc-tests-assert','Psc/EventManagerMock'], function() {
   });
   
   test("wasTriggered test", function () {
+    t.setup(this);
+    
     var eventManagerMock = new Psc.EventManagerMock({
       allow: ['allowed1', 'allowed2'],
       denySilent: false
@@ -63,6 +70,8 @@ define(['psc-tests-assert','Psc/EventManagerMock'], function() {
   });
 
   test("wasTriggered callback test", function() {
+    t.setup(this);
+    
     var eventManagerMock = new Psc.EventManagerMock({
       allow: ['allowed1', 'allowed2'],
       denySilent: false
@@ -80,6 +89,8 @@ define(['psc-tests-assert','Psc/EventManagerMock'], function() {
   });
 
   test("wasTriggered num+callback test", function() {
+    t.setup(this);
+    
     var eventManagerMock = new Psc.EventManagerMock({
       allow: ['allowed1', 'allowed2'],
       denySilent: false
@@ -94,5 +105,4 @@ define(['psc-tests-assert','Psc/EventManagerMock'], function() {
       })
     );
   });
-  
 });

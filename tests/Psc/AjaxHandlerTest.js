@@ -5,7 +5,7 @@ define(['psc-tests-assert','Psc/AjaxHandler', 'Psc/Request'], function (t) {
       test.ajaxHandler = new Psc.AjaxHandler();
       test.request404 = new Psc.Request({
         url: '/somethingthatdoesnotexist',
-        method: 'PUT'
+        method: 'GET'
       });
       
       test.request200 = new Psc.Request({
@@ -39,7 +39,6 @@ define(['psc-tests-assert','Psc/AjaxHandler', 'Psc/Request'], function (t) {
     req.fail(function(response) {
       that.assertInstanceOf(Psc.Response, response);
       that.assertEquals(404, response.getCode());
-      that.assertContains("<h1>Not Found</h1>", response.getBody());
       
       start();
     });

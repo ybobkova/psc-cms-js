@@ -24,14 +24,14 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 				var isException = e instanceof Psc.Exception;
 				
 				//assertTrue(isException, this.formatMessage("e ist eine (sub-)instanz von Exception", isException));
-				QUnit.push( isException, isException, true, this.formatMessage(this.debug(e)+" is instanceof Psc.Exception", isException) );
+				QUnit.push( isException, isException, true, baseAssertions.formatMessage(baseAssertions.debug(e)+" is instanceof Psc.Exception", isException) );
 			
 				if (isException) {
-					assertEquals(expectedException, e.getName(), "Name ist '"+expectedException+"'");
+					baseAssertions.assertEquals(expectedException, e.getName(), "Name ist '"+expectedException+"'");
 			
 					if (expectedMessage) {
-						equal(e.getMessage(), expectedMessage, "Message ist '"+expectedMessage+"'");
-				}
+						QUnit.equal(e.getMessage(), expectedMessage, "Message ist '"+expectedMessage+"'");
+					}
 				
 					if (assertions) {
 						assertions(e);
