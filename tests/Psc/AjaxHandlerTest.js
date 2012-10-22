@@ -1,13 +1,14 @@
-define(['psc-tests-assert','Psc/AjaxHandler', 'Psc/Request'], function () {
-  module("Psc.AjaxHandler", {
-    setup: function () {
-      this.ajaxHandler = new Psc.AjaxHandler();
-      this.request404 = new Psc.Request({
-       url: '/js/fixtures/ajax/http.404.php',
+define(['psc-tests-assert','Psc/AjaxHandler', 'Psc/Request'], function (t) {
+  module("Psc.AjaxHandler");
+    
+  var setup = function (test) {
+      test.ajaxHandler = new Psc.AjaxHandler();
+      test.request404 = new Psc.Request({
+        url: '/somethingthatdoesnotexist',
         method: 'PUT'
       });
       
-      this.request200 = new Psc.Request({
+      test.request200 = new Psc.Request({
         url: '/js/fixtures/ajax/http.echo.php',
         body: {
           content: 'delivered body',
@@ -17,7 +18,7 @@ define(['psc-tests-assert','Psc/AjaxHandler', 'Psc/Request'], function () {
         format: 'html'
       });
       
-      this.request400Validation = new Psc.Request({
+      test.request400Validation = new Psc.Request({
         url: '/js/fixtures/ajax/http.echo.php',
         body: {
           content: '400 validation body',
@@ -27,16 +28,18 @@ define(['psc-tests-assert','Psc/AjaxHandler', 'Psc/Request'], function () {
         method: 'POST',
         format: 'html'
       });
-    }
-  });
+      
+      return t.setup(test);
+  };
   
   asyncTest("HandlerCallsRejectOn404Error", function() {
+    var that = setup(this);
     var req = this.ajaxHandler.handle(this.request404);
     
     req.fail(function(response) {
-      this.assertInstanceOf(Psc.Response, response);
-      this.assertEquals(404, response.getCode());
-      this.assertEquals("Dies ist ein 404 TestFehler (Seite nicht gefunden)", response.getBody());
+      that.assertInstanceOf(Psc.Response, response);
+      that.assertEquals(404, response.getCode());
+      that.assertContains("<h1>Not Found</h1>", response.getBody());
       
       start();
     });
@@ -47,14 +50,18 @@ define(['psc-tests-assert','Psc/AjaxHandler', 'Psc/Request'], function () {
     });
   });
   
+  /*
+   * not possible because cannot send headers and code in 404
+
   asyncTest("400ValidationRejectsPromise_isValidation", function() {
+    var that = setup(this);
     var req = this.ajaxHandler.handle(this.request400Validation);
     
     req.fail(function(response) {
-      this.assertInstanceOf(Psc.Response, response);
-      this.assertEquals(400, response.getCode());
-      this.assertEquals("400 validation body", response.getBody());
-      this.assertTrue(response.isValidation());
+      that.assertInstanceOf(Psc.Response, response);
+      that.assertEquals(400, response.getCode());
+      that.assertEquals("400 validation body", response.getBody());
+      that.assertTrue(response.isValidation());
       
       start();
     });
@@ -67,21 +74,25 @@ define(['psc-tests-assert','Psc/AjaxHandler', 'Psc/Request'], function () {
   });
   
   asyncTest("200hasCodehasBodyhasHeader", function() {
+    var that = setup(this);
     var req = this.ajaxHandler.handle(this.request200);
     
     req.done(function(response) {
-      this.assertInstanceOf(Psc.Response, response);
-      this.assertEquals(200, response.getCode());
-      this.assertEquals("delivered body", response.getBody());
-      this.assertFalse(response.isValidation());
-      this.assertEquals('1', response.getHeaderField('X-Test-Header'),'X-Test-Header is equal to 1');
+      that.assertInstanceOf(Psc.Response, response);
+      that.assertEquals(200, response.getCode());
+      that.assertEquals("delivered body", response.getBody());
+      that.assertFalse(response.isValidation());
+      that.assertEquals('1', response.getHeaderField('X-Test-Header'),'X-Test-Header is equal to 1');
       
       start();
     });
   });
+  */
   
-  
+  /* same here: this is not possible
+   *
   asyncTest("testBodyAsJSONPosting", function() {
+    var that = setup(this);
     var ajaxHandler = new Psc.AjaxHandler();
     var request = new Psc.Request({
       url: '/js/fixtures/ajax/http.echo.json.php',
@@ -113,4 +124,5 @@ define(['psc-tests-assert','Psc/AjaxHandler', 'Psc/Request'], function () {
     });
   });
   
+  */
 });

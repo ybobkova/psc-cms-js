@@ -3,8 +3,6 @@ define(['psc-tests-assert','Psc/UI/Main', 'Psc/Exception'], function () {
         var log = '';
         var setupCount = 1, teardownCount = 1;
     
-    console.log('load async1');
-      
       module("async", {
         setup: function () {
           

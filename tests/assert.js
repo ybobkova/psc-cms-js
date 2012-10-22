@@ -24,7 +24,7 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 				var isException = e instanceof Psc.Exception;
 				
 				//assertTrue(isException, this.formatMessage("e ist eine (sub-)instanz von Exception", isException));
-				QUnit.push( isException, isException, true, this.formatMessage(debug(e)+" is instanceof Psc.Exception", isException) );
+				QUnit.push( isException, isException, true, this.formatMessage(this.debug(e)+" is instanceof Psc.Exception", isException) );
 			
 				if (isException) {
 					assertEquals(expectedException, e.getName(), "Name ist '"+expectedException+"'");
@@ -57,6 +57,11 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 			var result = (actual === expected);
 			QUnit.push( result, actual, expected, this.formatMessage(message || "objects reference the same instance", result));
 		},
+		
+		assertContains: function(expected, actual, message) {
+			var result = actual.search(expected) > 0;
+			QUnit.push( result, actual, expected, this.formatMessage(message) || "string/object contains "+this.debug(expected), result);
+		},
 	
 		assertNotSame: function(expected, actual, message) {
 			var result = actual !== expected;
@@ -65,34 +70,34 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 		
 		assertTrue: function(actual, message) {
 			var result = actual === true;
-			QUnit.push( result, actual, true, this.formatMessage(message || debug(actual)+" is true ", result) );
+			QUnit.push( result, actual, true, this.formatMessage(message || this.debug(actual)+" is true ", result) );
 		},
 	
 		assertFalse: function(actual, message) {
 			var result = actual === false;
-			QUnit.push( result, actual, false, this.formatMessage(message || debug(actual)+" is false ", result) );
+			QUnit.push( result, actual, false, this.formatMessage(message || this.debug(actual)+" is false ", result) );
 		},
 	
 		assertNotFalse: function(actual, message) {
 			var result = actual !== false;
-			QUnit.push( result, actual, 'something not false', this.formatMessage(message || debug(actual)+" is not false ", result) );
+			QUnit.push( result, actual, 'something not false', this.formatMessage(message || this.debug(actual)+" is not false ", result) );
 		},
 	
 		assertNotUndefined: function(actual, message) {
 			var result = actual !== undefined;
-			QUnit.push( result, actual, 'something not undefined', this.formatMessage(message || debug(actual)+" is not undefined ", result) );
+			QUnit.push( result, actual, 'something not undefined', this.formatMessage(message || this.debug(actual)+" is not undefined ", result) );
 		},
 		
 		assertAttributeEquals: function(expected, actualAttribute, actualObject, message) {
 			var actual;
 			var result = actualObject[actualAttribute] && QUnit.equiv(expected, actual = actualObject[actualAttribute]);
-			QUnit.push( result, actual, expected, this.formatMessage(message || debug(actualObject)+"["+actualAttribute+"] equals value ", result) );
+			QUnit.push( result, actual, expected, this.formatMessage(message || this.debug(actualObject)+"["+actualAttribute+"] equals value ", result) );
 		},
 	
 		assertAttributeNotUndefined: function(actualAttribute, actualObject, message) {
 			var actual = actualObject[actualAttribute];
 			var result = actual !== undefined;
-			QUnit.push( result, actual, "something not undefined", this.formatMessage(message || debug(actualObject)+"["+actualAttribute+"] equals value ", result) );
+			QUnit.push( result, actual, "something not undefined", this.formatMessage(message || this.debug(actualObject)+"["+actualAttribute+"] equals value ", result) );
 		},
 	
 		fail: function(message) {
@@ -108,22 +113,22 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 				result = expectedType === typeof actual;
 			}
 
-			return QUnit.push( result, typeof actual, expectedType, this.formatMessage(message || debug(actual)+" is typeof "+expectedType+".", result) );
+			return QUnit.push( result, typeof actual, expectedType, this.formatMessage(message || this.debug(actual)+" is typeof "+expectedType+".", result) );
 		},
 		
 		assertEmptyObject: function(actual, message) {
 			var result = Joose.O.isEmpty(actual);
-			return QUnit.push( result, true, true, this.formatMessage(message || debug(actual)+" is an empty object.", result) );
+			return QUnit.push( result, true, true, this.formatMessage(message || this.debug(actual)+" is an empty object.", result) );
 		},
 		
 		// expected muss der Constructor sein, kein String!
 		assertInstanceOf: function(expected, actual, message) {
 			if (!Joose.O.isClass(expected)) {
-				fail(debug(expected)+" is NOT a valid Class. Is this a Constructor-Function?");
+				fail(this.debug(expected)+" is NOT a valid Class. Is this a Constructor-Function?");
 				return;
 			}
 			if (!Joose.O.isInstance(actual)) {
-				fail(debug(actual)+" is not an object-instance");
+				fail(this.debug(actual)+" is not an object-instance");
 				return;
 			}
 			
@@ -137,10 +142,10 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 		// expected muss der Constructor sein, kein String!
 		assertDoesRole: function(expectedRole, actual, message) {
 			if (!Joose.O.isClass(expectedRole)) {
-				fail(debug(expected)+" is NOT a valid Class. Is this a Constructor-Function for a Role?");
+				fail(this.debug(expected)+" is NOT a valid Class. Is this a Constructor-Function for a Role?");
 			}
 			if (!Joose.O.isInstance(actual)) {
-				fail(debug(actual)+" is not an object-instance");
+				fail(this.debug(actual)+" is not an object-instance");
 			}
 			
 			var result = Psc.Code.isRole(actual, expectedRole);

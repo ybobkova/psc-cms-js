@@ -9,12 +9,13 @@ define(['psc-tests-assert',
   "/tests/Psc/CalendarCalculationTest.js",
   "/tests/Psc/CalendarEventTest.js",
 
+  "/tests/Psc/AjaxFormHandlerTest.js",
+  "/tests/Psc/AjaxHandlerTest.js",
+
 /*
   "/tests/CoMun/RelationTest.js",
   "/tests/CoMun/SearchWidgetTest.js",
   "/tests/CoMun/WebsiteMapTest.js",
-  "/tests/Psc/AjaxFormHandlerTest.js",
-  "/tests/Psc/AjaxHandlerTest.js",
   "/tests/Psc/CMS/ComboDropBoxableTest.js",
   "/tests/Psc/CMS/ItemTest.js",
   "/tests/Psc/CMS/ServiceTest.js",

@@ -1,0 +1,1 @@
+Fatal error: Call to undefined function blubb() in D:\www\psc-cms\Umsetzung\base\htdocs\js\fixtures\ajax\http.damage.php on line 3 Call Stack: 0.3149 1566960 1. {main}() D:\www\psc-cms\Umsetzung\base\htdocs\js\fixtures\ajax\http.damage.php:0 
