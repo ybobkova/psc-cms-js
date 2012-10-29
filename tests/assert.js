@@ -156,12 +156,17 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 		}
   }; // var baseAssertions
 
-	
-	
 	var helpers = {
+		visibleFixture: function (html) {
+			var $html = $(html);
+			
+			$('#visible-fixture').empty().append($html);
+			
+			return $html;
+		},
 		setup: function(test, testSetups) {
 			
-			$.extend(test, baseAssertions, testSetups || {});
+			$.extend(test, {$widget: $('#visible-fixture')}, baseAssertions, testSetups || {});
 			
 			return test;
 		}

@@ -22,4 +22,10 @@ define(['psc-tests-assert','Psc/CalendarEvent','Psc/Date', 'Psc/Test/DoublesMana
     });
     this.assertEquals("1.9. 2.9. 3.9. 4.9. ", days);
   });
+  
+  test("todo: formatRange tests", function () {
+    setup(this);
+    
+    expect(0);
+  });
 });
