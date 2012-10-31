@@ -22,19 +22,19 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     requirejs: {
-      dir: 'build',
-      appDir: 'lib',
-      baseUrl: 'lib',
-      paths: {
-        jquery    : 'vendor/jquery',
-        backbone  : 'vendor/backbone'
-      },
-      pragmas: {
-        doExclude: true
-      },
-      skipModuleInsertion: false,
-      optimizeAllPluginResources: true,
-      findNestedDependencies: true
+      compile: {
+        options: {
+          dir: "build",
+          appDir: "lib/",
+          baseUrl: "./",
+          mainConfigFile: "lib/config.js",
+          modules: [
+            { name: "main" }
+          ],
+          findNestedDependencies: true,
+          optimize: "none"
+        }
+      }
     },
 
     jshint: {
@@ -47,7 +47,7 @@ module.exports = function(grunt) {
     },
     
     qunit: {
-      all: ['http://localhost:8000/tests/all.html'],
+      all: ['http://localhost:8000/tests/Psc/UI/DateTimePicker.html'],
       options: {
         timeout: 7000
       }
@@ -79,7 +79,9 @@ module.exports = function(grunt) {
   });
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'server', 'qunit', 'concat', 'uglify']);
+  //['concat', 'uglify']
+  grunt.registerTask('pack', ['jshint', 'requirejs']);
+  grunt.registerTask('default', ['jshint', 'server', 'qunit', 'requirejs']);
   grunt.registerTask('test', ['server', 'qunit']);
 
   grunt.registerMultiTask("update-tests", "updates the index for test files", function() {

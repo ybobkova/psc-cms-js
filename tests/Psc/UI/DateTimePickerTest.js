@@ -17,6 +17,7 @@ define(['psc-tests-assert','text!fixtures/datetimepicker.html', 'Psc/UI/DateTime
 
   test("acceptance", function() {
     setup(this);
+    expect(0);
   
     // this.datePicker.doSomething();
   });
