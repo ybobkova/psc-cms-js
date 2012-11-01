@@ -686,7 +686,7 @@ extend( QUnit, {
 
 		var tests, banner, result,
 			qunit = id( "qunit" );
-
+		
 		if ( qunit ) {
 			qunit.innerHTML =
 				"<h1 id='qunit-header'>" + escapeInnerText( document.title ) + "</h1>" +

@@ -1,0 +1,7 @@
+#visible-fixture {
+  margin: 10px;
+  padding: 5px;
+  border: 1px solid #F0F0F0;
+  border-radius: 15px;
+  min-height: 120px;
+}
