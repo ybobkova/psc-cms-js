@@ -2,7 +2,7 @@
 module.exports = function(grunt) {
   
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-server');
+  grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-concat');
@@ -41,15 +41,18 @@ module.exports = function(grunt) {
       files: ['Gruntfile.js', 'lib/**/*.js']
     },
     
-    server: {
-      port: 8000,
-      base: '.'
+    connect: {
+      options: {
+        port: 8000,
+        base: '.'
+      }
     },
     
     qunit: {
-      all: ['http://localhost:8000/tests/Psc/UI/DateTimePicker.html'],
+      all: [mapToUrl('tests/**.html', 'http://localhost:8000')],
       options: {
-        timeout: 7000
+        timeout: 5000,
+        inject: false
       }
     },
     'update-tests': {
@@ -79,10 +82,9 @@ module.exports = function(grunt) {
   });
 
   // Default task.
-  //['concat', 'uglify']
   grunt.registerTask('pack', ['jshint', 'requirejs']);
-  grunt.registerTask('default', ['jshint', 'server', 'qunit', 'requirejs']);
-  grunt.registerTask('test', ['server', 'qunit']);
+  grunt.registerTask('default', ['jshint', 'connect', 'qunit', 'requirejs']);
+  grunt.registerTask('test', ['connect', 'qunit']);
 
   grunt.registerMultiTask("update-tests", "updates the index for test files", function() {
     var filepaths = grunt.file.expandFiles(this.file.src);

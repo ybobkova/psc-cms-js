@@ -25,39 +25,28 @@
   <div id="qunit-fixture">test markup, will be hidden</div>
   <div id="visible-fixture">visible test markup</div>
   
-  <script src="/vendor/qunit/qunit-1.10.0.js"></script>
-
-  <!-- Load application
-    data-main is (of course) a relative path to this file you can use absolute paths to the webroot as well
-  -->
-  <script src="/lib/config.js"></script>
-  <script data-main="/lib/main" src="/vendor/require.js"></script>
-
-  <input id='jqxWidget'>
-  </input>  
-
-  <script>
-  QUnit.config.autostart = false;
-  QUnit.config.reorder = false;
-  
-  require(["require", "joose", "jquery", "jqwidgets-global", "jqwidgets",
-           //"../tests/all"
-          ], function (require, nothing, $, tests) {
-
-    $(document).ready(function () {
-      
-      // Create a jqxDateTimeInput
-      $("#jqxWidget").jqxDateTimeInput({
-        formatString: 'dd.MM.yyyy'
+  <script src="/vendor/require.js"></script>
+  <script type="text/javascript">
+    /* actually its not so difficult:
+     *
+     * first approach was:
+     * run the lib/main script with data-main in the script tag above and to the testRunner requiring here
+     *
+     * <script data-main="/lib/main" src="/vendor/require.js"
+     * <script>require(['testRunner'], function (testRunner) { restRunner.run(...) }
+     *
+     * that does fail randomly, because:
+     * second inline-script-tag could be run before the requirejs script-tag is evaluatied, so that in the
+     * first require() the path for testRunner and other libs is wrong
+     *
+     * now the main is loaded first, then in the second step the runner and all its deps are loaded in the last step the test is run
+     * (thats three nested requires)
+     */
+    require(["/lib/main.js"], function () {
+      require(["../tests/testRunner","../tests/all"], function (runner, tests) {
+        runner.run(tests);
       });
-      
     });
-
-    // tests is a array of strings with full paths to the found  tests with grunt:update-tests
-    //require(tests, function () {
-      //QUnit.start();
-    //});
-  });
   </script>
 </body>
 </html>

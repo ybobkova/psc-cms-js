@@ -8,7 +8,7 @@ define(['psc-tests-assert','Psc/Exception'], function () {
     
     fixture.append($form);
     
-    fixture.on('evtype evtype2', '(input, select).sp1:not([readonly="readonly"])', function (e) {
+    fixture.on('evtype evtype2', 'input.sp1:not([readonly="readonly"], select.sp1:not([readonly="readonly"])', function (e) {
     });
     
     //fixture.trigger('evtype');

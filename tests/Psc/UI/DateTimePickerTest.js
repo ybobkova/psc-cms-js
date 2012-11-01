@@ -1,5 +1,5 @@
 define(['psc-tests-assert','text!fixtures/datetimepicker.html', 'Psc/UI/DateTimePicker','Psc/Test/DoublesManager'], function(t, html) {
-  
+
   module("Psc.UI.DateTimePicker");
   
   var setup = function (test) {
@@ -17,7 +17,7 @@ define(['psc-tests-assert','text!fixtures/datetimepicker.html', 'Psc/UI/DateTime
 
   test("acceptance", function() {
     setup(this);
-    expect(0);
+    this.assertTrue(true, 'yep its running');
   
     // this.datePicker.doSomething();
   });
