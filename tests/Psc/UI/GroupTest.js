@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/Group'], function() {
+define(['psc-tests-assert','Psc/UI/Group'], function(t) {
   
   module("Psc.UI.Group");
   
@@ -9,7 +9,7 @@ define(['psc-tests-assert','Psc/UI/Group'], function() {
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
   
     // this.group.doSomething();
   });

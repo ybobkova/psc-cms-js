@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/Table'], function() {
+define(['psc-tests-assert','Psc/Table'], function(t) {
   var table, insertRow;
   
   module("Psc.Table", {

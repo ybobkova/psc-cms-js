@@ -1,4 +1,4 @@
-define(['psc-tests-assert','tiptoi/Timer'], function() {
+define(['psc-tests-assert','tiptoi/Timer'], function(t) {
   
   module("tiptoi.Timer");
   
@@ -9,7 +9,7 @@ define(['psc-tests-assert','tiptoi/Timer'], function() {
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
   
     // this.timer.doSomething();
   });

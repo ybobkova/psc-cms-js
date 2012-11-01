@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/ResizableImage'], function() {
+define(['psc-tests-assert','Psc/UI/ResizableImage'], function(t) {
   
   module("Psc.UI.ResizableImage");
   
@@ -16,7 +16,7 @@ define(['psc-tests-assert','Psc/UI/ResizableImage'], function() {
 
   test("source refreshing", function() {
     expect(0);
-    $.extend(this, setup());
+    setup(this);
     
     var img = this.resizableImage;
   

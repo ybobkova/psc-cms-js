@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/LayoutManagerComponent'], function() {
+define(['psc-tests-assert','Psc/UI/LayoutManagerComponent'], function(t) {
   
   module("Psc.UI.LayoutManagerComponent");
   
@@ -9,7 +9,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManagerComponent'], function() {
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
   
     // this.layoutManagerComponent.doSomething();
   });

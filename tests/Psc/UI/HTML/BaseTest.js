@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/HTML/Base'], function() {
+define(['psc-tests-assert','Psc/UI/HTML/Base'], function(t) {
   var htmlClass;
   
   module("Psc.UI.HTML.Base", {

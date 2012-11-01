@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/ErrorPane'], function() {
+define(['psc-tests-assert','Psc/UI/ErrorPane'], function(t) {
   
   module("Psc.UI.ErrorPane", {
     setup: function () {

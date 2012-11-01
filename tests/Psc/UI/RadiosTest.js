@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/Dialog'], function() {
+define(['psc-tests-assert','Psc/UI/Dialog'], function(t) {
   var dialog, constructSubmitted = false;
   
   module("Radios Test");

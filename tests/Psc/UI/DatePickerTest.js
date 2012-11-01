@@ -1,16 +1,16 @@
-define(['psc-tests-assert','Psc/UI/DatePicker','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/DatePicker','Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UI.DatePicker");
   
-  var setup = function () {
+  var setup = function() {
     //var dm = new Psc.Test.DoublesManager();
     var datePicker = new Psc.UI.DatePicker({ });
     
-    return {datePicker: datePicker};
+    return t.setup(test, {datePicker: datePicker});
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
   
     // this.datePicker.doSomething();
   });

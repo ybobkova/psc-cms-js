@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/EffectsManager'], function() {
+define(['psc-tests-assert','Psc/UI/EffectsManager'], function(t) {
   
   module("Psc.UI.EffectsManager", {
     setup: function () {

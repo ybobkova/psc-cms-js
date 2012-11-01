@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/Tab'], function() {
+define(['psc-tests-assert','Psc/UI/Tab'], function(t) {
   module("Psc.UI.Tab");
 
   test("construct", function() {

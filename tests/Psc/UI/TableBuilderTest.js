@@ -1,18 +1,18 @@
-define(['psc-tests-assert','Psc/UI/TableBuilder','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/TableBuilder','Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UI.TableBuilder");
   
-  var setup = function () {
+  var setup = function(test) {
     //var dm = new Psc.Test.DoublesManager();
     var tableBuilder = new Psc.UI.TableBuilder({ });
     
-    return {tableBuilder: tableBuilder};
+    return t.setup(test, {tableBuilder: tableBuilder});
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
     
-    var table = this.tableBuilder
+    var table = this.tableBuilder;
   
     table.start({classes: ['my-nice-table']});
     

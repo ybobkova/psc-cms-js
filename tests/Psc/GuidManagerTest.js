@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/GuidManager'], function() {
+define(['psc-tests-assert','Psc/GuidManager'], function(t) {
   
   module("Psc.GuidManager", {
     setup: function () {

@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/Table','Psc/UI/TableBuilder', 'Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/Table','Psc/UI/TableBuilder', 'Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UI.Table");
   
@@ -44,7 +44,7 @@ define(['psc-tests-assert','Psc/UI/Table','Psc/UI/TableBuilder', 'Psc/Test/Doubl
     
     var $colspanTable = $(builder.build()), colspanTable = new Psc.UI.Table({widget: $colspanTable });
     
-    $.extend(test, {table: table, $table: $table, colspanTable: colspanTable, $colspanTable: $colspanTable});
+    return t.setup(test, {table: table, $table: $table, colspanTable: colspanTable, $colspanTable: $colspanTable});
   };
 
   test("findRow returns the row as jquery", function() {
@@ -60,7 +60,7 @@ define(['psc-tests-assert','Psc/UI/Table','Psc/UI/TableBuilder', 'Psc/Test/Doubl
     var $cells = this.table.findRowCells(0, 0, 2);
     this.assertEquals('1:1 1:2 ', $cells.text());
 
-    $cells = this.table.findRowCells(0, 2, 2)
+    $cells = this.table.findRowCells(0, 2, 2);
     this.assertEquals(2, $cells.length, '0,2,2 two cells from index 2 are returned');
     this.assertEquals('1:3 1:4 ', $cells.text());
   });
@@ -72,7 +72,7 @@ define(['psc-tests-assert','Psc/UI/Table','Psc/UI/TableBuilder', 'Psc/Test/Doubl
     this.assertEquals(1, $cells.length, 'should return the colspanned td');
     this.assertEquals('1:2&&1:3 ', $cells.text());
     
-    var $cells = this.colspanTable.findRowCells(2, 2, 2);
+    $cells = this.colspanTable.findRowCells(2, 2, 2);
     this.assertEquals('3:3 3:4 ', $cells.text());
     
   });

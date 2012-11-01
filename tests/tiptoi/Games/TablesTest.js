@@ -1,4 +1,4 @@
-define(['psc-tests-assert','tiptoi/Main','tiptoi/GameTester', 'tiptoi/Program', 'tiptoi/cpu','tiptoi/InputProvider', 'Psc/Code','tiptoi/Sound'], function() {
+define(['psc-tests-assert','tiptoi/Main','tiptoi/GameTester', 'tiptoi/Program', 'tiptoi/cpu','tiptoi/InputProvider', 'Psc/Code','tiptoi/Sound'], function(t) {
   
   
   module("Games Tables Test", {

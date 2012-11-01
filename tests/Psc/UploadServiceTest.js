@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UploadService','Psc/Request','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UploadService','Psc/Request','Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UploadService");
   
@@ -25,7 +25,7 @@ define(['psc-tests-assert','Psc/UploadService','Psc/Request','Psc/Test/DoublesMa
   };
 
   test("openSingleDialog opens a single dialog with a form and a file input in it", function() {
-    $.extend(this, setup());
+    setup(this);
     
     this.uploadService.openSingleDialog(this.request);
     
@@ -41,7 +41,7 @@ define(['psc-tests-assert','Psc/UploadService','Psc/Request','Psc/Test/DoublesMa
   });
 
   test("openSingleDialog renders other fields with the upload field", function() {
-    $.extend(this, setup());
+    setup(this);
     
     var options = {
       form: {
@@ -70,7 +70,7 @@ define(['psc-tests-assert','Psc/UploadService','Psc/Request','Psc/Test/DoublesMa
   });
 
   asyncTest("openSingleDialog submits the upload file and closes the dialog on error", function() {
-    $.extend(this, setup());
+    setup(this);
     
     this.uploadService.openSingleDialog(this.request);
   

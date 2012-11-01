@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/FormReader','Psc/UI/FormBuilder'], function() {
+define(['psc-tests-assert','Psc/UI/FormReader','Psc/UI/FormBuilder'], function(t) {
   
   module("Psc.UI.FormReader");
   
@@ -10,7 +10,7 @@ define(['psc-tests-assert','Psc/UI/FormReader','Psc/UI/FormBuilder'], function()
   };
 
   test("read with [] in names (yagni: not yet implemented)", function() {
-    $.extend(this, setup());
+    setup(this);
     
     var fb = this.formBuilder;
     
@@ -37,7 +37,7 @@ define(['psc-tests-assert','Psc/UI/FormReader','Psc/UI/FormBuilder'], function()
   });
 
   test("read with no [] in names", function() {
-    $.extend(this, setup());
+    setup(this);
     
     var fb = this.formBuilder;
     

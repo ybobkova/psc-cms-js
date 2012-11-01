@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/LayoutManager/Image','Psc/UI/ResizableImage','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/LayoutManager/Image','Psc/UI/ResizableImage','Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UI.ResizableImage");
   
@@ -29,7 +29,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager/Image','Psc/UI/ResizableImage',
   };
 
   test("html is build with image", function() {
-    $.extend(this, setup());
+    setup(this);
     
     var $widget = this.image.create(), $splitPane, $imageContainer, $img;
     this.$container.append($widget);
@@ -40,7 +40,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager/Image','Psc/UI/ResizableImage',
   });
   
   test("if emtpy url is set a placeholder is used for image", function() {
-    $.extend(this, setup());
+    setup(this);
     
     var $widget = this.emptyImage.create(), $placeHolder;
     

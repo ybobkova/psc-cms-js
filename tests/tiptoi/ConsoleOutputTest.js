@@ -1,4 +1,4 @@
-define(['psc-tests-assert','tiptoi/ConsoleOutput'], function() {
+define(['psc-tests-assert','tiptoi/ConsoleOutput'], function(t) {
   
   module("tiptoi.ConsoleOutput", {
     setup: function () {

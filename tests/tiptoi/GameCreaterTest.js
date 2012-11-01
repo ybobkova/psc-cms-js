@@ -1,4 +1,4 @@
-define(['psc-tests-assert','tiptoi/GameCreater'], function() {
+define(['psc-tests-assert','tiptoi/GameCreater'], function(t) {
   
   module("tiptoi.GameCreater");
   
@@ -9,7 +9,7 @@ define(['psc-tests-assert','tiptoi/GameCreater'], function() {
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
   
     // this.gameCreater.doSomething();
   });

@@ -1,4 +1,4 @@
-define(['psc-tests-assert','tiptoi/GameSimulator','tiptoi/ProgramRunner','tiptoi/SimpleSoundPlayer','tiptoi/InteractiveInputProvider','Psc/EventManager','tiptoi/HTMLOutput'], function() {
+define(['psc-tests-assert','tiptoi/GameSimulator','tiptoi/ProgramRunner','tiptoi/SimpleSoundPlayer','tiptoi/InteractiveInputProvider','Psc/EventManager','tiptoi/HTMLOutput'], function(t) {
   
   var $startButton = $('<button class="psc-cms-ui-button psc-guid-4fe1b397df398 ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" role="button" aria-disabled="false"><span class="ui-button-icon-primary ui-icon ui-icon-play"></span><span class="ui-button-text">Spiel starten</span></button>').button({icons: {primary: 'ui-icon-play'}});
   
@@ -14,7 +14,7 @@ define(['psc-tests-assert','tiptoi/GameSimulator','tiptoi/ProgramRunner','tiptoi
     $fixture
       .empty()
       .append($output)
-      .append($startButton)
+      .append($startButton);
     
     var gameSimulator = new tiptoi.GameSimulator({
       startButton: $startButton,

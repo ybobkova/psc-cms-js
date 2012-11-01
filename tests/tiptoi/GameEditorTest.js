@@ -1,4 +1,4 @@
-define(['psc-tests-assert','tiptoi/GameEditor'], function() {
+define(['psc-tests-assert','tiptoi/GameEditor'], function(t) {
   
   module("tiptoi.GameEditor");
   
@@ -39,7 +39,7 @@ define(['psc-tests-assert','tiptoi/GameEditor'], function() {
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
     
     var grid = this.gameEditor.getFiles(), $table;
     

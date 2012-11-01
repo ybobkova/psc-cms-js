@@ -1,15 +1,15 @@
-define(['psc-tests-assert','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.Test.DoublesManager");
   
-  var setup = function () {
+  var setup = function(test) {
     var doublesManager = new Psc.Test.DoublesManager({ });
     
-    return {doublesManager: doublesManager};
+    return t.setup(test, {doublesManager: doublesManager});
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
   
     // this.doublesManager.doSomething();
   });

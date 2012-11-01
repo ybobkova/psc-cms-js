@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/NavigationNode'], function() {
+define(['psc-tests-assert','Psc/UI/NavigationNode'], function(t) {
   
   module("Psc.UI.NavigationNode");
   

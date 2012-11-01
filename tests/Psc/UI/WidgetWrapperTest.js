@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/WidgetWrapper'], function() {
+define(['psc-tests-assert','Psc/UI/WidgetWrapper'], function(t) {
   module("Psc.UI.WidgetWrapper");
 
   test("acceptance", function() {

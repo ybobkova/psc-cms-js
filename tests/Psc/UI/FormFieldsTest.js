@@ -1,12 +1,12 @@
-define(['psc-tests-assert','Psc/UI/FormFields','Psc/UI/FormBuilder', 'Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/FormFields', 'Psc/UI/FormReader', 'Psc/UI/FormBuilder', 'Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UI.FormFields");
   
-  var setup = function () {
+  var setup = function(test) {
     //var dm = new Psc.Test.DoublesManager();
     
     var formReader = new (Class({
-      isa: 'Psc.UI.FormReader',
+      isa: Psc.UI.FormReader,
       
       override: {
         read: function ($form) {
@@ -14,7 +14,7 @@ define(['psc-tests-assert','Psc/UI/FormFields','Psc/UI/FormBuilder', 'Psc/Test/D
             'field1': 'value1',
             'field2': 'value2',
             'field3': 'links'
-          }
+          };
         }
       }
     }))({});
@@ -28,11 +28,11 @@ define(['psc-tests-assert','Psc/UI/FormFields','Psc/UI/FormBuilder', 'Psc/Test/D
       }
     });
     
-    return {formFields: formFields};
+    return t.setup(test, {formFields: formFields});
   };
 
   test("formFields values can be read from a form with help of a formReader", function() {
-    $.extend(this, setup());
+    setup(this);
     
     var $form = $('</form>'); // ist egal weil wir oben den Reader gemockt haben
   
@@ -47,7 +47,7 @@ define(['psc-tests-assert','Psc/UI/FormFields','Psc/UI/FormBuilder', 'Psc/Test/D
   });
   
   test("formFields creates a form with help from formbuilder", function() {
-    $.extend(this, setup());
+    setup(this);
     
     var $form = this.formFields.createForm();
     var $field1 = $form.find('input[type="text"][name="field1"]');

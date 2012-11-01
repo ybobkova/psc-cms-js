@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UI.LayoutManager");
   
@@ -9,7 +9,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
                         '<div class="left"><fieldset class="psc-cms-ui-group"><legend>Layout Test</legend><div class="content"></div></fieldset></div>'+
                         '<div class="right"><div class="psc-cms-ui-accordion"></div></div>'+
                       '</div>'
-                    )
+                    );
     
     $fixture.append($html);
 /*
@@ -46,7 +46,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
   };
 
   test("create List without content creates a widget with an empty textarea", function() {
-    $.extend(this, setup());
+    setup(this);
   
     var list = this.layoutManager.createWidget('li');
     var $list = list.unwrap(), $ta;
@@ -59,7 +59,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
   });
 
   test("paragraph creates a widget with an empty textarea", function() {
-    $.extend(this, setup());
+    setup(this);
   
     var widget = this.layoutManager.createWidget('paragraph');
     var $widget = widget.unwrap(), ta;
@@ -72,7 +72,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
   });
 
     test("createWidget sends content parameter to subclass", function() {
-    $.extend(this, setup());
+    setup(this);
   
     var widget = this.layoutManager.createWidget('paragraph', 'mycontent');
     
@@ -80,7 +80,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
   });
 
   test("headline creates a widget with an empty input", function() {
-    $.extend(this, setup());
+    setup(this);
     var type = "headline";
   
     var widget = this.layoutManager.createWidget(type);
@@ -94,7 +94,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
   });
   
   test("creates an image with the upload service as dpi", function() {
-    $.extend(this, setup());
+    setup(this);
     
     var type = "image";
     
@@ -107,7 +107,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
   });
   
   test("appendWidget appends to the layout from the layoutManager", function () {
-    $.extend(this, setup());
+    setup(this);
     
     this.layoutManager.appendWidget(this.layoutManager.createWidget('headline', 'the headline'));
     this.layoutManager.appendWidget(this.layoutManager.createWidget('sub-headline', 'the second headline'));
@@ -117,7 +117,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
   });
   
   test("layoutManager serializes all appended widgets", function () {
-    $.extend(this, setup());
+    setup(this);
     
     this.layoutManager.appendWidget(this.layoutManager.createWidget('headline', 'the headline'));
     this.layoutManager.appendWidget(this.layoutManager.createWidget('paragraph', 'content of paragraph 1'));
@@ -134,13 +134,13 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
     };
     
     var data = {};
-    this.layoutManager.serialize(data)
+    this.layoutManager.serialize(data);
     
     this.assertEquals(expectedData, data, 'layoutManager is serializing correct');
   });
   
   test("layoutManager unserializes widgets structure", function () {
-    $.extend(this, setup());
+    setup(this);
     
     var serialized = {
       layoutManager: [
@@ -178,7 +178,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
 
 
   test("creates Downloalist", function() {
-    $.extend(this, setup());
+    setup(this);
     var type = 'downloadslist';
     
     var widget = this.layoutManager.createWidget(type);

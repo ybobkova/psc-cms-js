@@ -1,3 +1,4 @@
+define(['jquery'], function (jQuery) {
 /*!
  * jQuery UI 1.8.22
  *
@@ -11886,3 +11887,4 @@ $.effects.transfer = function(o) {
 };
 
 })(jQuery);
+});

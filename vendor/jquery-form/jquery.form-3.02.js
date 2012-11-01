@@ -1,3 +1,4 @@
+define(['jquery'], function (jQuery) {
 /*!
  * jQuery Form Plugin
  * version: 3.02 (07-MAR-2012)
@@ -1048,3 +1049,4 @@ function log() {
 }
 
 })(jQuery);
+});

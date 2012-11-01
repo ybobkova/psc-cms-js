@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/Navigation'], function() {
+define(['psc-tests-assert','Psc/UI/Navigation'], function(t) {
   var navigation;
   
   module("Psc.UI.Navigation", {
@@ -258,7 +258,7 @@ define(['psc-tests-assert','Psc/UI/Navigation'], function() {
           level: 1,
           parent: 'Lautsprecher',
           id: 10
-        },
+        }
       ],
     
       // actual             

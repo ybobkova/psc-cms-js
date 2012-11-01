@@ -1,4 +1,4 @@
-define(['psc-tests-assert','tiptoi/Sound'], function() {
+define(['psc-tests-assert','tiptoi/Sound'], function(t) {
   
   module("tiptoi.Sound", {
     setup: function () {

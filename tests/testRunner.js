@@ -1,16 +1,16 @@
 define(["require", "jquery", "psc-cms", "qunit", "joose", "jqwidgets-global", "jqwidgets"], function (require, $) {
+    // Send messages to the parent PhantomJS process via alert! Good times!!
+    function sendMessage() {
+      var args = [].slice.call(arguments);
+      alert(JSON.stringify(args));
+    }
+
     QUnit.config.autostart = false;
     QUnit.config.reorder = false;
   
     // do the same as the phantom bridge would do, but do it here, after we required qunit
     if (window._phantom) {
     
-      // Send messages to the parent PhantomJS process via alert! Good times!!
-      function sendMessage() {
-        var args = [].slice.call(arguments);
-        alert(JSON.stringify(args));
-      }
-      
       // These methods connect QUnit to PhantomJS.
       QUnit.log(function(obj) {
         // What is this I don’t even

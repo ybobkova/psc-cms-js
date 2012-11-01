@@ -1,3 +1,4 @@
+define(['jquery'], function (jQuery) {
 (function($){
   
   $.widget( "pscUI.paging", {
@@ -187,3 +188,4 @@
     }
   });
 })(jQuery);
+});

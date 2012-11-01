@@ -1,10 +1,10 @@
-define(['psc-tests-assert','Psc/Numbers'], function() {
+define(['psc-tests-assert','Psc/Numbers'], function(t) {
   
-  module("Psc.Numbers", {
-    setup: function () {
-      
-    }
-  });
+  var setup = function (test) {
+    return t.setup(test);
+  };
+  
+  module("Psc.Numbers");
 
   test("acceptance", function() {
     var r;

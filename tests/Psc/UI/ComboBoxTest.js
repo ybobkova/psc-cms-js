@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/ComboBox','Psc/UI/AutoComplete'], function() {
+define(['psc-tests-assert','Psc/UI/ComboBox','Psc/UI/AutoComplete'], function(t) {
 
   var loadFixture = function(assertions) {
     return function () {

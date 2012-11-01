@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/ResizableImage','Psc/UI/SingleImage','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/ResizableImage','Psc/UI/SingleImage','Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UI.SingleImage");
   
@@ -29,7 +29,7 @@ define(['psc-tests-assert','Psc/UI/ResizableImage','Psc/UI/SingleImage','Psc/Tes
   };
 
   test("html is build with image", function() {
-    $.extend(this, setup());
+    setup(this);
     
     var $widget = this.image.unwrap(), $img;
     
@@ -38,14 +38,14 @@ define(['psc-tests-assert','Psc/UI/ResizableImage','Psc/UI/SingleImage','Psc/Tes
   });
   
   test("if emtpy url is set a placeholder is used for image", function() {
-    $.extend(this, setup());
+    setup(this);
     
     var $widget = this.emptyImage.unwrap(), $placeHolder;
     this.assertEquals(1, ($placeHolder = $widget.find('div.placeholder')).length,'placeholder is constructed');
   });
   
   test("hidden field is synchronized on edited", function() {
-    $.extend(this, setup());
+    setup(this);
     
     var $widget = this.emptyImage.unwrap();
     

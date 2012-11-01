@@ -1,7 +1,7 @@
-define(['psc-tests-assert','Psc/UI/FormController', 'Psc/EventManagerMock','Psc/AjaxHandler'], function() {
+define(['psc-tests-assert','Psc/UI/FormController', 'Psc/EventManagerMock','Psc/AjaxHandler', 'Psc/AjaxFormHandler'], function(t) {
   module("Psc.UI.FormController");
   
-  $('#qunit-fixture').append('<form></form>')
+  $('#qunit-fixture').append('<form></form>');
   var $form = $('#qunit-fixture').find('form');
   var evm = new Psc.EventManagerMock({ denySilent: true, allow: []});
 
@@ -17,7 +17,7 @@ define(['psc-tests-assert','Psc/UI/FormController', 'Psc/EventManagerMock','Psc/
     var deferred = $.Deferred();
     var response = new Psc.Response({code: 200, reason: 'OK'});
     var ajaxFormHandlerClass = Class({
-      isa: 'Psc.AjaxFormHandler',
+      isa: Psc.AjaxFormHandler,
       
       override: {
         handle: function (formRequest) {
@@ -45,7 +45,7 @@ define(['psc-tests-assert','Psc/UI/FormController', 'Psc/EventManagerMock','Psc/
     var deferred = $.Deferred();
     var response = new Psc.Response({code: 404, reason: 'Not Found'});
     var ajaxFormHandlerClass = Class({
-      isa: 'Psc.AjaxFormHandler',
+      isa: Psc.AjaxFormHandler,
       
       override: {
         handle: function (formRequest) {
@@ -108,7 +108,7 @@ define(['psc-tests-assert','Psc/UI/FormController', 'Psc/EventManagerMock','Psc/
     
     var deferred = $.Deferred();
     var ajaxFormHandlerMock = Class({
-      isa: 'Psc.AjaxFormHandler',
+      isa: Psc.AjaxFormHandler,
       
       override: {
         handle: function (formRequest) {

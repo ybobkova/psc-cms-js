@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/Loader','Psc/UI/Main','Psc/UI/Tabs'], function() {
+define(['psc-tests-assert','Psc/Loader','Psc/UI/Main','Psc/UI/Tabs'], function(t) {
   var main, tabs, loader;
   
   module("Psc.Loader", {

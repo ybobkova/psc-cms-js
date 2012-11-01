@@ -1,15 +1,15 @@
-define(['psc-tests-assert','Psc/UI/FormBuilder'], function() {
+define(['psc-tests-assert','Psc/UI/FormBuilder'], function(t) {
   
   module("Psc.UI.FormBuilder");
   
-  var setup = function () {
+  var setup = function(test) {
     var formBuilder = new Psc.UI.FormBuilder({ });
     
-    return {formBuilder: formBuilder};
+    return t.setup(test, {formBuilder: formBuilder});
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
     
     var fb = this.formBuilder;
     
@@ -26,7 +26,7 @@ define(['psc-tests-assert','Psc/UI/FormBuilder'], function() {
   });
   
   test("_genereate Name Unit", function () {
-    $.extend(this,setup());
+    setup(this);
     
     this.assertEquals("part1[part2]", this.formBuilder._generateName(['part1','part2']));
     this.assertEquals("part", this.formBuilder._generateName(['part']));
@@ -34,7 +34,7 @@ define(['psc-tests-assert','Psc/UI/FormBuilder'], function() {
   });
   
   test("radios", function () {
-    $.extend(this, setup());
+    setup(this);
     var fb = this.formBuilder;
     
     fb.open(),

@@ -1,27 +1,28 @@
-define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventManager','Psc/EventManagerMock','Psc/Response', 'Psc/ResponseMetaReader','Psc/UI/FormController'], function() {
+define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventManager','Psc/EventManagerMock','Psc/Response', 'Psc/ResponseMetaReader','Psc/UI/FormController'], function(t) {
   var main;
   var tabs;
   
-  var setup = function () {
+  var setup = function(test) {
     tabs = new Psc.UI.Tabs({ widget: fixtures.loadHTML('ui-tabs') });
     main = new Psc.UI.Main({tabs: tabs});
     
-    return {main: main, tabs: tabs};
+    return t.setup(test, {main: main, tabs: tabs});
   };
   
-  module("Psc.UI.Main", {
-    setup: setup
-  });
+  module("Psc.UI.Main");
   
   test("constructInitsEventManager", function() {
+    setup(this);
     this.assertInstanceOf(Psc.EventManager, main.getEventManager());
   });
 
   test("constructInitsFormHandler", function() {
+    setup(this);
     this.assertInstanceOf(Psc.AjaxFormHandler, main.getAjaxFormHandler());
   });
 
   test("constructCanBeInjectedWithEventManager", function() {
+    setup(this);
     var manager = new Psc.EventManager();
     var main = new Psc.UI.Main({eventManager: manager, tabs: tabs});
     
@@ -30,6 +31,7 @@ define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventMa
   });
 
   test("constructCanBeInjectedWithAjaxFormHandler", function() {
+    setup(this);
     var handler = new Psc.AjaxFormHandler();
     var main = new Psc.UI.Main({ajaxFormHandler: handler, tabs: tabs});
     
@@ -38,6 +40,7 @@ define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventMa
   });
   
   test("constructNeedsTabsAsUIObject", function() {
+    setup(this);
     raises(function() {
       new Psc.UI.Main({tabs: null});
     });
@@ -57,6 +60,7 @@ define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventMa
   });
 
   test("event-form-saved triggers tab-open from meta", function() {
+    setup(this);
     var managerMock = new Psc.EventManagerMock({
       allow: 'form-saved',
       denySilent: true
@@ -64,7 +68,7 @@ define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventMa
     
     var main = new Psc.UI.Main({eventManager: managerMock, tabs: tabs});
     var $form = $('<form></form>');
-    var tabHook = undefined;
+    var tabHook;
     // wir injecten hier direkt die meta-daten die sonst aus der Response gelesen würden
     var meta = new responseMetaMock({ data: {
       data: {
@@ -90,6 +94,7 @@ define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventMa
   });
   
   test("event-form-saved tabhook prevents tab-open", function() {
+    setup(this);
     var managerMock = new Psc.EventManagerMock({
       allow: 'form-saved',
       denySilent: true
@@ -116,6 +121,7 @@ define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventMa
   });
 
   test("event-form-saved triggers tab-close from meta", function() {
+    setup(this);
     var managerMock = new Psc.EventManagerMock({
       allow: 'form-saved',
       denySilent: true
@@ -123,7 +129,7 @@ define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventMa
     
     var main = new Psc.UI.Main({eventManager: managerMock, tabs: tabs});
     var $form = $('<form></form>').appendTo(tabs.unwrap().find('#tabs-3'));
-    var tabHook = undefined;
+    var tabHook;
     // wir injecten hier direkt die meta-daten die sonst aus der Response gelesen würden
     var meta = new responseMetaMock({ data: {
       data: {
@@ -139,6 +145,7 @@ define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventMa
   });
   
   test("button in tab can trigger reload", function() {
+    setup(this);
     var $tabs = main.getTabs().unwrap();
     
     var $button = $tabs.find('#tabs-3 button.psc-cms-ui-button-reload');
@@ -153,6 +160,7 @@ define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventMa
   });
 
   test("button in tab can trigger save", function() {
+    setup(this);
     var $tabs = main.getTabs().unwrap();
     expect(6);
     main.attachHandlers();
@@ -177,7 +185,7 @@ define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventMa
   });
 
   test("button in tab can trigger save-close", function() {
-    $.extend(this, setup());
+    setup(this);
     
     var $tabs = this.main.getTabs().unwrap();
     $('#visible-fixture').append($tabs);
@@ -204,6 +212,7 @@ define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventMa
   });
   
   test("when generalEvents are triggered from a Tab main transforms the $tab to the right tab", function() {
+    setup(this);
     var managerMock = new Psc.EventManagerMock({
       allow: 'unsaved', // nur so als beispiel, da die alle denselben handler haben
       denySilent: true
@@ -230,6 +239,7 @@ define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventMa
   });
   
   test("registers an object and has it in registered()", function() {
+    setup(this);
     var object = {id: 17, label: 'my nice object'};
     
     main.register(object, "cat");
@@ -241,15 +251,17 @@ define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventMa
   });
   
   test("shows/hides spinner on tab remote load", function() {
+    setup(this);
     fail('todo');
   });
 
   test("hides spinner on successful tab load and error load", function() {
+    setup(this);
     fail('todo');
   });
 
   test("save and save-close delegates postData until formcontroller", function() {
+    setup(this);
     fail('todo');
   });
-
 });

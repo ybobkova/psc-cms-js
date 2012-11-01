@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/ContextMenuManager','Psc/UI/Menu'], function() {
+define(['psc-tests-assert','Psc/UI/ContextMenuManager','Psc/UI/Menu'], function(t) {
   module("Psc.UI.ContextMenuManager");
 
   test("acceptance", function() {
@@ -9,7 +9,7 @@ define(['psc-tests-assert','Psc/UI/ContextMenuManager','Psc/UI/Menu'], function(
     
     var menuOpen = false;
     var menuMockClass = Class({
-      isa: 'Psc.UI.Menu',
+      isa: Psc.UI.Menu,
       
       after: {
         open: function() {

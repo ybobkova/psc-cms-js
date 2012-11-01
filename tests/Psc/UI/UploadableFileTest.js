@@ -1,8 +1,8 @@
-define(['psc-tests-assert','Psc/UI/UploadableFile','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/UploadableFile','Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UI.UploadableFile");
   
-  var setup = function () {
+  var setup = function(test) {
     var dm = new Psc.Test.DoublesManager();
     
     var $widget, $widgetEmpty;
@@ -28,11 +28,11 @@ define(['psc-tests-assert','Psc/UI/UploadableFile','Psc/Test/DoublesManager'], f
       widget: $widgetEmpty
     });
     
-    return {uploadService: uploadService, file: file, emptyFile: emptyFile};
+    return t.setup(test, {uploadService: uploadService, file: file, emptyFile: emptyFile});
   };
 
   test("placeholder has button, on click starts upload dialog", function () {
-    $.extend(this, setup());
+    setup(this);
     
     var $button = this.emptyFile.unwrap().find('button');
     this.assertEquals(1, $button.length, 'button ist vorhanden für upload');
@@ -48,7 +48,7 @@ define(['psc-tests-assert','Psc/UI/UploadableFile','Psc/Test/DoublesManager'], f
   });
     
   test("placeholder ", function () {
-    $.extend(this, setup());
+    setup(this);
     
     var doTest = function ($html, uploadService, debug) {
       var $image = $html.find('.psc-cms-ui-uploadable-image');

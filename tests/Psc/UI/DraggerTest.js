@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/Dragger'], function() {
+define(['psc-tests-assert','Psc/UI/Dragger'], function(t) {
   
   module("Psc.UI.Dragger");
   

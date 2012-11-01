@@ -1,4 +1,4 @@
-define(['psc-tests-assert','tiptoi/InteractiveInputProvider','Psc/Code'], function() {
+define(['psc-tests-assert','tiptoi/InteractiveInputProvider','Psc/Code'], function(t) {
   
   module("tiptoi.InteractiveIputProvider", {});
 

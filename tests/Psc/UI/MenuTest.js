@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/Menu'], function() {
+define(['psc-tests-assert','Psc/UI/Menu'], function(t) {
   module("Psc.UI.Menu");
 
   test("acceptance", function() {

@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Dragger','Psc/UI/Tabs','Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable','Psc/Request', 'tiptoi/Main'], function() {
+define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Dragger','Psc/UI/Tabs','Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable','Psc/Request', 'tiptoi/Main'], function(t) {
   
   var main, tiptoiMain, $fixture = $('#qunit-fixture').empty();
 

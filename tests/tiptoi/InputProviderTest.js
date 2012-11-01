@@ -1,4 +1,4 @@
-define(['psc-tests-assert','tiptoi/InputProvider'], function() {
+define(['psc-tests-assert','tiptoi/InputProvider'], function(t) {
   
   module("tiptoi.InputProvider", {
     setup: function () {

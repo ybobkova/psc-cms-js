@@ -1,8 +1,8 @@
-define(['psc-tests-assert','tiptoi/cpu','tiptoi/InputProvider','tiptoi/Timer'], function() {
+define(['psc-tests-assert','tiptoi/cpu','tiptoi/InputProvider','tiptoi/Timer'], function(t) {
   
   module("tiptoi.cpu");
   
-  var setup = function (sequence, delay) {
+  var setup = function (test, sequence, delay) {
     if (!sequence) sequence = [];
     if (!delay) delay = 300;
     
@@ -13,11 +13,11 @@ define(['psc-tests-assert','tiptoi/cpu','tiptoi/InputProvider','tiptoi/Timer'], 
       })
     });
     
-    return {cpu: cpu};
+    return t.setup(test, {cpu: cpu});
   };
 
   asyncTest("cpu starts a timer", function () {
-    $.extend(this, setup());
+    setup(this);
     
     var timer = this.cpu.startTimer(2);
     this.assertInstanceOf(tiptoi.Timer, timer);
@@ -30,7 +30,7 @@ define(['psc-tests-assert','tiptoi/cpu','tiptoi/InputProvider','tiptoi/Timer'], 
   });
   
   asyncTest("cpu starts a timer and can stop it", function () {
-    $.extend(this, setup());
+    setup(this);
     
     var timer = this.cpu.startTimer(2);
     
@@ -49,7 +49,7 @@ define(['psc-tests-assert','tiptoi/cpu','tiptoi/InputProvider','tiptoi/Timer'], 
   
 
   asyncTest("when cpu waits for timeout with timer and input is given in time everything works normally", function () {
-    $.extend(this, setup([7], 800));
+    setup(this, [7], 800);
     
     var timer = this.cpu.startTimer(2);
     
@@ -68,7 +68,7 @@ define(['psc-tests-assert','tiptoi/cpu','tiptoi/InputProvider','tiptoi/Timer'], 
   });
 
   asyncTest("when cpu waits for timeout with timer and input is given NOT in time, tiptoi-input-ignored is triggered", function () {
-    $.extend(this, setup([7], 1200)); // use 1200 ms so that the input comes delayed after the timer has timed out
+    setup(this, [7], 1200); // use 1200 ms so that the input comes delayed after the timer has timed out
     
     var timer = this.cpu.startTimer(1); // 1000 ms timer
     

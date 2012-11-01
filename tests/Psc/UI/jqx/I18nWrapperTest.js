@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/jqx/I18nWrapper','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/jqx/I18nWrapper','Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UI.jqx.I18nWrapper");
   

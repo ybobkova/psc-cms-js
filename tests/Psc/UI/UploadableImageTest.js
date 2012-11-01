@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/UploadableImage','Psc/Test/DoublesManager','Psc/UI/ResizableImage'], function() {
+define(['psc-tests-assert','Psc/UI/UploadableImage','Psc/Test/DoublesManager','Psc/UI/ResizableImage'], function(t) {
   
   module("Psc.UI.UploadableImage");
   
@@ -28,7 +28,7 @@ define(['psc-tests-assert','Psc/UI/UploadableImage','Psc/Test/DoublesManager','P
   };
 
   test("image with url shows resizable image", function() {
-    $.extend(this, setup());
+    setup(this);
   
     var $html = this.image.unwrap();
     var $img = $html.find('.psc-cms-ui-uploadable-image');
@@ -42,7 +42,7 @@ define(['psc-tests-assert','Psc/UI/UploadableImage','Psc/Test/DoublesManager','P
   });
   
   test("image without url shows placeholder", function () {
-    $.extend(this, setup());
+    setup(this);
     var $html = this.emptyImage.unwrap();
     var $img = $html.find('.psc-cms-ui-uploadable-image');
     
@@ -51,7 +51,7 @@ define(['psc-tests-assert','Psc/UI/UploadableImage','Psc/Test/DoublesManager','P
   });
   
   test("if dbl clicked on div in image (resizable image or placeholder) the uploadService is invoked", function () {
-    $.extend(this, setup());
+    setup(this);
     
     var doTest = function ($html, uploadService, debug) {
       var $image = $html.find('.psc-cms-ui-uploadable-image');

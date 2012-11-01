@@ -1,19 +1,19 @@
-define(['psc-tests-assert','Psc/UI/Button','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/Button','Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UI.Button");
   
-  var setup = function () {
+  var setup = function(test) {
     //var dm = new Psc.Test.DoublesManager();
     var button = new Psc.UI.Button({
       label: 'mynicebutton',
       leftIcon: 'circle-plus'
     });
     
-    return {button: button};
+    return t.setup(test, {button: button});
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
   
     var $button = this.button.create();
     $('#visible-fixture').append($button);

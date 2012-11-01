@@ -1,16 +1,16 @@
-define(['psc-tests-assert','Psc/UI/Comments','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/Comments','Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UI.Comments");
   
-  var setup = function () {
+  var setup = function(test) {
     //var dm = new Psc.Test.DoublesManager();
     var comments = new Psc.UI.Comments({ });
     
-    return {comments: comments};
+    return t.setup(test, {comments: comments});
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
   
     // this.comments.doSomething();
   });

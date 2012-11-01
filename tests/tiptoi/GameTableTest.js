@@ -1,4 +1,4 @@
-define(['psc-tests-assert','tiptoi/GameTable','tiptoi/Sound'], function() {
+define(['psc-tests-assert','tiptoi/GameTable','tiptoi/Sound'], function(t) {
   
   module("tiptoi.GameTable");
   var createTable = function () {

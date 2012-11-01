@@ -1,5 +1,5 @@
 (function($) {
-  define(['psc-tests-assert','Psc/UI/GridPanel','Psc/UI/Tab','Psc/UI/Tabs','Psc/UI/Main'], function() {
+  define(['psc-tests-assert','Psc/UI/GridPanel','Psc/UI/Tab','Psc/UI/Tabs','Psc/UI/Main'], function(t) {
   
   module("Psc.UI.GridPanel", {
     teardown: function () {

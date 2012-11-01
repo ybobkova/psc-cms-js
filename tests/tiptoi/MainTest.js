@@ -1,4 +1,4 @@
-define(['psc-tests-assert','tiptoi/Main','Psc/UI/Main'], function() {
+define(['psc-tests-assert','tiptoi/Main','Psc/UI/Main'], function(t) {
   var tiptoiMain, main;
   
   module("tiptoi.Main", {

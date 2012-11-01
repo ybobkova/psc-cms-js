@@ -1,4 +1,4 @@
-define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','tiptoi/InputProvider', 'Psc/Code'], function() {
+define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','tiptoi/InputProvider', 'Psc/Code'], function(t) {
   var tiptoiMain, main, programRunner, program1, played = [];
   
   module("tiptoi.Main", {
@@ -240,7 +240,7 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     status.done(function () {
       this.assertEquals(['contains','contains-not'], played);
       start();
-    })
+    });
   });
 
   asyncTest("the program A helper removes elements from arrays", function () {
@@ -270,7 +270,7 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     status.done(function () {
       this.assertEquals(['1:contains','2:contains-not'], played);
       start();
-    })
+    });
     
     status.fail(function(e) {
       console.log(e);

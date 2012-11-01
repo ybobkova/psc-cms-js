@@ -1,12 +1,13 @@
-define(['psc-tests-assert','Psc/CMS/TabOpenable','Psc/CMS/Item','Psc/UI/Tab'], function() {
+define(['psc-tests-assert','Psc/CMS/TabOpenable','Psc/CMS/Item','Psc/UI/Tab'], function(t) {
   
-  module("Psc.CMS.TabOpenable", {
-    setup: function () {
-      
-    }
-  });
+  module("Psc.CMS.TabOpenable");
+
+  var setup = function (test) {
+    return t.setup(test);
+  };
 
   test("acceptance", function() {
+    setup(this);
     
     var tabOpenable = new Psc.CMS.Item({
       trait: Psc.CMS.TabOpenable,

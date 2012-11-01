@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/Template','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/Template','Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UI.Template");
   
@@ -14,7 +14,7 @@ define(['psc-tests-assert','Psc/UI/Template','Psc/Test/DoublesManager'], functio
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
     
     var $commentsCount = $('<span id="comments-count">7 Comments</span>');
     $('#visible-fixture').empty().append($commentsCount);

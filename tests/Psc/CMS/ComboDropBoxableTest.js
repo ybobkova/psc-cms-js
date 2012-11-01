@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/CMS/ComboDropBoxable','Psc/UI/DropBoxButton','Psc/CMS/FastItem'], function() {
+define(['psc-tests-assert','Psc/CMS/ComboDropBoxable','Psc/UI/DropBoxButton','Psc/CMS/FastItem'], function(t) {
   var comboDropBoxable;
   
   module("Psc.CMS.ComboDropBoxable", {

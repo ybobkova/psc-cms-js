@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/AjaxHandler','Psc/UI/Tab'], function() {
+define(['psc-tests-assert','Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/AjaxHandler','Psc/UI/Tab'], function(t) {
   var html, $html, $autoComplete;
   
   module("Psc.UI.AutoComplete", {
@@ -15,7 +15,7 @@ define(['psc-tests-assert','Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/Aja
     }
   });
 
-  var setup = function () {
+  var setup = function(test) {
       var html =
       '<div class="input-set-wrapper"><input type="text" style="width: 90%" id="identifier" class="text ui-widget-content ui-corner-all autocomplete sc-guid-identifier" value="" name="identifier">'+
       ''+
@@ -26,7 +26,7 @@ define(['psc-tests-assert','Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/Aja
       $('#qunit-fixture').html($html); // nicht append sonst haben wir jeweils 2 (und mehr)
       var $autoComplete = $html.find('input[name="identifier"]');
 
-      return {$autoComplete: $autoComplete, $html: $html, html: html, $fixture: $('#qunit-fixture')};
+      return t.setup(test, {$autoComplete: $autoComplete, $html: $html, html: html, $fixture: $('#qunit-fixture')});
     }
   
   asyncTest("acceptance", function() {
@@ -191,7 +191,7 @@ define(['psc-tests-assert','Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/Aja
   });
   
   asyncTest("AutoComplete Restraints Query to maxResults if Set", function () {
-    $.extend(this, setup());
+    setup(this);
     
     var request;
     var autoComplete = new Psc.UI.AutoComplete({

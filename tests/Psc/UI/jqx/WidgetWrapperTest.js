@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/jqx/WidgetWrapper','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/jqx/WidgetWrapper','Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UI.jqx.WidgetWrapper");
   
@@ -10,7 +10,7 @@ define(['psc-tests-assert','Psc/UI/jqx/WidgetWrapper','Psc/Test/DoublesManager']
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
   
     // this.widgetWrapper.doSomething();
   });

@@ -1,8 +1,8 @@
-define(['psc-tests-assert','Psc/TextParser'], function() {
+define(['psc-tests-assert','Psc/TextParser'], function(t) {
   
   module("Psc.TextParser");
   
-  var setup = function () {
+  var setup = function(test) {
     var textParser = new Psc.TextParser({ });
     
     var texts = [
@@ -12,11 +12,11 @@ define(['psc-tests-assert','Psc/TextParser'], function() {
       "owie verschiedenen deutschen Städten, dem Marseille Center for Mediterranean Integration (CMI"
     ];
     
-    return {textParser: textParser, texts: texts};
+    return t.setup(test, {textParser: textParser, texts: texts});
   };
 
   test("parser extracts test paragraph into nodes", function() {
-    $.extend(this, setup());
+    setup(this);
     
     this.assertEquals([
         {value: this.texts[0], type: "paragraph"},
@@ -31,7 +31,7 @@ define(['psc-tests-assert','Psc/TextParser'], function() {
   });
 
   test("parser detects lists in texts", function() {
-    $.extend(this, setup());
+    setup(this);
     
     this.assertEquals([
         {value: this.texts[0], type: "paragraph"},
@@ -52,7 +52,7 @@ define(['psc-tests-assert','Psc/TextParser'], function() {
   });
   
   test("parser detects list only in texts", function() {
-    $.extend(this, setup());
+    setup(this);
     
     this.assertEquals([
       {value: ["list1", "list2", "list3"], type:"list"}

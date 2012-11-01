@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/Spinner'], function() {
+define(['psc-tests-assert','Psc/UI/Spinner'], function(t) {
   module("Psc.UI.Spinner");
 
   test("construct", function() {

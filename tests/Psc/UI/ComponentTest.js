@@ -1,15 +1,15 @@
-define(['psc-tests-assert','Psc/UI/Component'], function() {
+define(['psc-tests-assert','Psc/UI/Component'], function(t) {
   
   module("Psc.UI.Component");
   
-  var setup = function () {
+  var setup = function(test) {
     var component = new Psc.UI.Component({ });
     
-    return {component: component};
+    return t.setup(test, {component: component});
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
   
     // this.component.doSomething();
   });

@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/SplitPane'], function() {
+define(['psc-tests-assert','Psc/UI/SplitPane'], function(t) {
   
   module("Psc.UI.SplitPane");
   
@@ -9,7 +9,7 @@ define(['psc-tests-assert','Psc/UI/SplitPane'], function() {
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
   
     // this.splitPane.doSomething();
   });

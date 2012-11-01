@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/CodeEditor'], function() {
+define(['psc-tests-assert','Psc/UI/CodeEditor'], function(t) {
   var $html;
   
   module("Psc.UI.CodeEditor", {

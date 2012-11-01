@@ -44,8 +44,7 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 			};
 			
 			return raises(block, assert, debugMessage);
-			
-			ok(false, "Es wurde eine Exception "+expectedException+" erwartet. Aber keine gecatched");
+			//ok(false, "Es wurde eine Exception "+expectedException+" erwartet. Aber keine gecatched");
 		},
 		
 		assertEquals: function(expected, actual, message) {

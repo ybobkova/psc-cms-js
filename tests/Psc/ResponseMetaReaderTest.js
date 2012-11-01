@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/ResponseMetaReader', 'Psc/Response'], function() {
+define(['psc-tests-assert','Psc/ResponseMetaReader', 'Psc/Response'], function(t) {
   var responseMetaReader;
   
   module("Psc.ResponseMetaReader", {

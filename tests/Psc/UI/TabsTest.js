@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function() {
+define(['psc-tests-assert','Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function(t) {
   var tab = new Psc.UI.Tab({
     id: 'entity-persons-17',
     label: 'Philipp S',

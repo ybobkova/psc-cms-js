@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/LayoutManager/Websitewidget','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/LayoutManager/Websitewidget','Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UI.LayoutManager.Websitewidget");
   
@@ -10,7 +10,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager/Websitewidget','Psc/Test/Double
   };
 
   test("acceptance", function() {
-    $.extend(this, setup());
+    setup(this);
   
     // this.websitewidget.doSomething();
   });

@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/HTML/TagBuilder','Psc/Test/DoublesManager'], function() {
+define(['psc-tests-assert','Psc/UI/HTML/TagBuilder','Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UI.HTML.TagBuilder");
   
