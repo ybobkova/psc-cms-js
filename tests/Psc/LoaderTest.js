@@ -59,11 +59,6 @@ define(['psc-tests-assert','Psc/Loader','text!fixtures/loading.html','js/main','
   asyncTest("script tags are all loaded in ANY order (BC change?)", function() {
     var that = setup(this);
     
-    window.requireLoad = function(requirements, payload) {
-      requirements.unshift('js/main');
-      main.getLoader().onRequire(requirements, payload);
-    };
-    
     // this executes all inline script tags, which require main and then attach to the main.loader
     $('#qunit-fixture').empty().append(html);
       

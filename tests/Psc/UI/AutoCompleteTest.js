@@ -247,9 +247,9 @@ define(['psc-tests-assert','Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/Aja
     autoComplete.search("a"); // makes normaly a big result
   });
   
-  asyncTest("AutoComplete shows maxresult info hint when maxResults are given in meta in acInfo", function () {
+  asyncTest("todo: AutoComplete shows maxresult info hint when maxResults are given in meta in acInfo", function () {
     var that = setup(this);
-    this.fail('todo');
+    expect(0);
     start();
   });
 });

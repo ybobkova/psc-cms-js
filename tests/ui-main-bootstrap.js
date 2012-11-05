@@ -1,8 +1,7 @@
 /*
- *this bootstrap is a fake bootstrap for tests, which creates a main with fixture contents
- *
+ * this bootstrap is a fake bootstrap for tests, which creates a main with fixture contents
  */
-define(['jquery','Psc/UI/Main','Psc/UI/Tabs'], function ($) {
+define(['jquery','joose','Psc/UI/Main','Psc/UI/Tabs'], function ($) {
   
   var $cmsContent = $('<div />').append('<div class="psc-cms-ui-tabs" />');
   

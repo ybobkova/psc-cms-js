@@ -181,10 +181,9 @@ define(['psc-tests-assert','Psc/UI/ComboBox','Psc/UI/AutoComplete'], function(t)
     $autoComplete.simulate("focus").val("Prot").keydown();
   }));
   
-  test("set correct initial value when selected is set", setupDefault(function () {
+  test("set correct initial value when selected is set", function () {
     expect(0);
   });
-  
   
   //asyncTest("acceptance from acceptance-php-test", function () {
   //  expect(0);
