@@ -1,5 +1,5 @@
 define(['psc-tests-assert','Psc/UI/Dragger'], function(t) {
-	// this test needs jquery-css loaded!
+  // this test needs jquery-css loaded!
   
   module("Psc.UI.Dragger");
   
@@ -17,8 +17,8 @@ define(['psc-tests-assert','Psc/UI/Dragger'], function(t) {
        .css('top','100px')
        .css('left','100px')
        .append($fixture);
-		
-		$('#visible-fixture').empty().append($draggerDiv);
+    
+    $('#visible-fixture').empty().append($draggerDiv);
       
     $draggable = $('<button></button>').button({label: 'i am draggable'});
     $fixture.empty().append($draggable);
@@ -30,14 +30,14 @@ define(['psc-tests-assert','Psc/UI/Dragger'], function(t) {
      
     var ret = t.setup(test, {drag: drag, $draggable: $draggable, oldPos: oldPos, $fixture: $fixture});
 
-		/*
-		 * between browser, phantom versions (windows/linux) there is a lot of difference here
-		 * lets try if we need this assertions, or if the tests will adapt graceful
- 	    test.assertEquals(124, $draggable.outerWidth(), 'outerWidth fits test');
-	    test.assertTrue(Math.abs($draggable.outerHeight()-32) <= 2, 'outerHeight fits tests');
-	  */
-		
-		return ret;
+    /*
+     * * between browser, phantom versions (windows/linux) there is a lot of difference here
+     * lets try if we need this assertions, or if the tests will adapt graceful
+     * test.assertEquals(124, $draggable.outerWidth(), 'outerWidth fits test');
+     * test.assertTrue(Math.abs($draggable.outerHeight()-32) <= 2, 'outerHeight fits tests');
+     */
+    
+    return ret;
   };
 
   test("dragsDistance on Element", function() {
@@ -51,7 +51,7 @@ define(['psc-tests-assert','Psc/UI/Dragger'], function(t) {
   });
   
   test("drags To Certain Position", function () {
-		var that = setup(this), drag = this.drag, $draggable = this.$draggable, oldPos = this.oldPos, pos;
+    var that = setup(this), drag = this.drag, $draggable = this.$draggable, oldPos = this.oldPos, pos;
     
     drag.toPosition($draggable, 200, 200, 'top left'); // das top left ist einfacher zu testen als center
 
@@ -62,16 +62,16 @@ define(['psc-tests-assert','Psc/UI/Dragger'], function(t) {
   });
   
   test("drags onto an Element acceptance with droppable", function () {
-		var that = setup(this);
+   var that = setup(this);
     // margin-top als sicherheitsabstand :)
     $droppable = $('<div style="margin-top: 20px; width: 200px; border: 1px solid red"><p>not dropped</p></div>');
     that.$fixture.append($droppable);
     
-		$droppable.droppable({
-			drop: function(event, ui) {
-				$(this).addClass("ui-state-highlight").find("p").html("dropped");
-			}
-		});
+  $droppable.droppable({
+    drop: function(event, ui) {
+      $(this).addClass("ui-state-highlight").find("p").html("dropped");
+    }
+  });
     
     this.assertEquals('not dropped',$droppable.find('p').text());
     drag.toElement($draggable, $droppable);
