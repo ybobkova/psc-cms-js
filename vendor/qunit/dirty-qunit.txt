@@ -1,0 +1,1 @@
+the window.load event attachment for QUnit.load() is removed in the .js file

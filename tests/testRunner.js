@@ -1,4 +1,4 @@
-define(["require", "jquery", "psc-cms", "qunit", "joose", "jqwidgets-global", "jqwidgets"], function (require, $) {
+define(["jquery", "psc-cms", "qunit", "joose", "jqwidgets-global", "jqwidgets"], function ($) {
     // Send messages to the parent PhantomJS process via alert! Good times!!
     function sendMessage() {
       var args = [].slice.call(arguments);
@@ -44,19 +44,24 @@ define(["require", "jquery", "psc-cms", "qunit", "joose", "jqwidgets-global", "j
       });
     }
     
-    // we dont set autostart to false, we load() qunit and then do autostart
+    QUnit.begin(function() {
+       console.log('QUnit Loading..');
+    });
+    
     QUnit.config.reorder = false;
+    QUnit.config.autostart = false;
+    QUnit.load(); 
     // we load qunit later because it cannot attach to window on load when its loaded asynchronously
 
     return {
       run: function (test) {
         if (test instanceof Array) {
           require(test, function () {
-            QUnit.load(); 
+            QUnit.start();
           });
         } else {
           require(["../tests/"+test], function () {
-            QUnit.load(); 
+            QUnit.start(); 
           });
         }
       }

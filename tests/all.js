@@ -7,6 +7,7 @@ define(function () {
     "/tests/Psc/UI/AutoCompleteTest.js",
     "/tests/Psc/UI/SpinnerTest.js",
     "/tests/Psc/LoaderTest.js",
+    "/tests/Psc/CMS/FastItemTest.js",
 /*    
   "/tests/CoMun/CalendarEventTest.js",
   "/tests/CoMun/CityTest.js",
@@ -14,7 +15,7 @@ define(function () {
   "/tests/Psc/AjaxFormHandlerTest.js",
   "/tests/Psc/AjaxHandlerTest.js",
   "/tests/Psc/CMS/ComboDropBoxableTest.js",
-  "/tests/Psc/CMS/ItemTest.js",
+  
   "/tests/Psc/CMS/TabOpenableTest.js",
   "/tests/Psc/CalendarCalculationTest.js",
   "/tests/Psc/CalendarEventTest.js",
