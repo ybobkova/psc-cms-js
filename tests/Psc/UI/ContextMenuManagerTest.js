@@ -16,7 +16,7 @@ define(['psc-tests-assert','Psc/UI/ContextMenuManager','Psc/UI/Menu'], function(
           menuOpen = true;
         },
         close: function() {
-          menuOpen = false
+          menuOpen = false;
         }
       }
     });

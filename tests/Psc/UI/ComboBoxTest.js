@@ -97,12 +97,12 @@ define(['psc-tests-assert','Psc/UI/ComboBox','Psc/UI/AutoComplete'], function(t)
     expect(4); // +1 wegen loadFixture
     var autoComplete = comboBox.getAutoComplete(), $autoComplete = autoComplete.unwrap();
     
-    $autoComplete.simulate("focus")['val']("gira").keydown();
+    $autoComplete.simulate("focus").val("gira").keydown();
     stop(); // stop for -open
 
     // select is triggered
     comboBox.getEventManager().on('combo-box-select', function(e, item) {
-      this.assertTrue(item != undefined, "item is set in select-handler"); //(3)
+      this.assertNotUndefined(item, "item is set in select-handler"); //(3)
     });
     
     comboBox.getEventManager().on('combo-box-selected', function(e, item) {
@@ -151,7 +151,7 @@ define(['psc-tests-assert','Psc/UI/ComboBox','Psc/UI/AutoComplete'], function(t)
       this.assertEquals('notintags', search, 'search term is given in event');
     });
 
-    $autoComplete.simulate("focus")['val']("notintags").keydown(); // simulate ist immer asynchron (anders als simulate click: hä?!)
+    $autoComplete.simulate("focus").val("notintags").keydown(); // simulate ist immer asynchron (anders als simulate click: hä?!)
     stop();
   }));
   
@@ -178,7 +178,7 @@ define(['psc-tests-assert','Psc/UI/ComboBox','Psc/UI/AutoComplete'], function(t)
       this.assertEquals('Tag: Protest', $autoComplete.val(), 'Protest Tag is in val() of input');
     });
 
-    $autoComplete.simulate("focus")['val']("Prot").keydown();
+    $autoComplete.simulate("focus").val("Prot").keydown();
   }));
   
   asyncTest("set correct initial value when selected is set", setupDefault(function () {

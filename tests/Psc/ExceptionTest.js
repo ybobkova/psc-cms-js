@@ -73,7 +73,7 @@ define(['psc-tests-assert','Psc/Exception','Psc/InvalidArgumentException','Psc/A
     
     var notThrown = function () {
       var t = 1+3;
-    }
+    };
     
     // stürzt ab im IE
     //this.assertException(null, thrown, 'Our nice Message');

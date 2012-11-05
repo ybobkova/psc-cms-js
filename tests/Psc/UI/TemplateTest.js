@@ -2,7 +2,7 @@ define(['psc-tests-assert','Psc/UI/Template','Psc/Test/DoublesManager'], functio
   
   module("Psc.UI.Template");
   
-  var setup = function () {
+  var setup = function(test) {
     var $template = $('<script type="x-jquery-tmpl"><span id="comments-count">${count} Comments</span></script>');
     $('#qunit-fixture').append($template);
     
@@ -10,7 +10,7 @@ define(['psc-tests-assert','Psc/UI/Template','Psc/Test/DoublesManager'], functio
       jQueryTemplate: $template
     });
     
-    return {template: template, $template: $template};
+    return t.setup(test, {template: template, $template: $template});
   };
 
   test("acceptance", function() {

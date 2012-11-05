@@ -30,15 +30,15 @@ define(['psc-tests-assert','Psc/Date','Psc/Test/DoublesManager'], function(t) {
   });
   
   test("our date has not a 0 based month index and gives a full year", function () {
-		setup(this);
+    setup(this);
     
     this.assertEquals(this.nativeDate.getMonth()+1, this.date.getMonth());
     this.assertEquals(this.nativeDate.getFullYear(), this.date.getYear());
-  })
+  });
   
   test("addDate adds a Date to the currentDate", function () {
-		setup(this);
-		
+    setup(this);
+
     var now = Psc.Date.create({ day: 17,  month: 9, year: 2012 });
     var copy = now.add({});
     var addedMonth = now.add({months: 1});
@@ -55,8 +55,8 @@ define(['psc-tests-assert','Psc/Date','Psc/Test/DoublesManager'], function(t) {
   });
   
   test("equalsDate equals in Date", function () {
-		setup(this);
-		
+    setup(this);
+
     var date1 = Psc.Date.create({ day: 17,  month: 9, year: 2012, hours: 11 }),
         date2 = Psc.Date.create({ day: 17,  month: 9, year: 2012, hours: 12 });
         
@@ -64,8 +64,7 @@ define(['psc-tests-assert','Psc/Date','Psc/Test/DoublesManager'], function(t) {
   });
   
   test("getFirstDayOfMonth / getLastDayOfMonth", function () {
-		setup(this);
-		
+    setup(this);
     var sep = Psc.Date.create({ day: 17,  month: 9, year: 2012 });
     var feb = Psc.Date.create({ day: 2,  month: 2, year: 2012 });
     
@@ -76,35 +75,34 @@ define(['psc-tests-assert','Psc/Date','Psc/Test/DoublesManager'], function(t) {
   });
   
   test("date can format the time", function () {
-		setup(this);
-		
-  	this.assertEquals('13:35:50',
+    setup(this);
+    this.assertEquals('13:35:50',
                  (new Psc.Date({date: new Date(2012, 1 - 1, 1, 13, 35, 50)})).format('$hh:ii:ss'),
                  'Format date hh:ii:ss'
                  );
-  	this.assertEquals('01:9:1',
+   this.assertEquals('01:9:1',
                  (new Psc.Date({date: new Date(2012, 1 - 1, 1, 1, 9, 1)})).format('$hh:i:s'),
                  'Format date hh:i:s'
                 );
-  	this.assertEquals('1:9:1',
+   this.assertEquals('1:9:1',
                  (new Psc.Date({date: new Date(2012, 1 - 1, 1, 1, 9, 1)})).format('$h:i:s'),
                  'Format date h:i:s'
                 );
-  	this.assertEquals('1.1.2012 14:09:01',
+   this.assertEquals('1.1.2012 14:09:01',
                  (new Psc.Date({date: new Date(2012, 1 - 1, 1, 14, 9, 1)})).format('$d.m.yy hh:ii:ss'),
                  'Format date d.m.yy hh:ii:ss'
                 );
   });
   
   test("copy copies exactly", function () {
-		setup(this);
+    setup(this);
     var me = new Psc.Date();
     var copy = me.copy();
     
     this.assertTrue(me.equals(copy));
   });
   
-  test("Date.create can create AjaxFormat of Psc\DateTime\DateTime ", function () {
+  test("Date.create can create AjaxFormat of Psc.DateTime.DateTime ", function () {
     setup(this);
     
     var date = Psc.Date.create({

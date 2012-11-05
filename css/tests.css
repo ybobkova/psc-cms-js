@@ -1,3 +1,8 @@
+/* for the dragger test, this has to be fixed */
+body {
+  font-size: 12px;
+}
+
 #visible-fixture {
   margin: 10px;
   padding: 5px;

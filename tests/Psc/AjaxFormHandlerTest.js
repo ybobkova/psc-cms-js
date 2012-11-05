@@ -1,6 +1,4 @@
-define(['psc-tests-assert','text!fixtures/form.html', 'require', 'Psc/AjaxFormHandler','Psc/FormRequest','Psc/Exception',
-        
-        ], function (t, html, require) {
+define(['psc-tests-assert','text!fixtures/form.html', 'require', 'Psc/AjaxFormHandler','Psc/FormRequest','Psc/Exception'], function (t, html, require) {
 
   module("Psc.AjaxFormHandler");
   

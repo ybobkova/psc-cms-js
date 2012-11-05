@@ -2,10 +2,10 @@ define(['psc-tests-assert','Psc/UI/Group'], function(t) {
   
   module("Psc.UI.Group");
   
-  var setup = function () {
+  var setup = function(test) {
     var group = new Psc.UI.Group({ });
     
-    return {group: group};
+    return t.setup(test, {group: group});
   };
 
   test("acceptance", function() {

@@ -2,10 +2,10 @@ define(['psc-tests-assert','tiptoi/GameCreater'], function(t) {
   
   module("tiptoi.GameCreater");
   
-  var setup = function () {
+  var setup = function(test) {
     var gameCreater = new tiptoi.GameCreater({ });
     
-    return {gameCreater: gameCreater};
+    return t.setup(test, {gameCreater: gameCreater});
   };
 
   test("acceptance", function() {

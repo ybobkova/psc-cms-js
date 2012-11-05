@@ -7,10 +7,11 @@ define(['psc-tests-assert','Psc/Numbers'], function(t) {
   module("Psc.Numbers");
 
   test("acceptance", function() {
-    var r;
+    var that = setup(this), r;
+    
     for (var i = 1; i <= 120; i++) {
-      r = Psc.Numbers.randomInt(-1,100)
-      this.assertTrue(r >= -1 && r <= 100, ''+r+' is in range');
+      r = Psc.Numbers.randomInt(-1,100);
+      that.assertTrue(r >= -1 && r <= 100, ''+r+' is in range');
     }
   });
 });

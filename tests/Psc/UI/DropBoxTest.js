@@ -1,56 +1,9 @@
-define(['psc-tests-assert','Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable'], function(t) {
+define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
+        'Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable'
+       ], function(t, html) {
+  
+  module("Psc.UI.DropBox");
 
-  var loadFixture = function(assertions) {
-    return function () {
-      $.get('/js/fixtures/dropbox.php', function (html) {
-        //var $fixture = $('#qunit-fixture').html(html);
-        var $fixture = $('#visible-fixture').html(html);
-        var $dropBox = $fixture.find('.psc-cms-ui-drop-box');
-        this.assertEquals($dropBox.length,1,'self-test: Fixture hat div.psc-cms-ui-drop-box im html des Ajax Requests');
-        
-        this.assertions($dropBox);
-      }, 'html');
-    };
-  };
-  
-  var setupDefault = function(testBody) {
-    return loadFixture(function ($dropBox) {
-      var dropBox = new Psc.UI.DropBox({
-        widget: $dropBox,
-        name: 'tags'
-      });
-      
-      testBody(dropBox, $dropBox);
-    });
-  };
-  
-  var setupHTMLButtons = function (testBody) {
-    return loadFixture(function ($dropBox) {
-      
-      // erstelle einen assigned button und füge ihn hinzu
-      var $button = $('<button class="psc-cms-ui-button psc-guid-4fbf432195ba0 assigned-item">Button 10</button>');
-      $dropBox.append($button);
-  
-      new Psc.CMS.Item({ // linked sich selbst an $button
-        traits: [Psc.CMS.DropBoxButtonable],
-        tab: {"id":"test-button-10-form","label":"Button 10 Tab","url":"egal"},
-        button: {"label":"Button 10","fullLabel":"Button 10","mode":2},
-        identifier: 10,
-        entityName: "default-button",
-        widget: $button
-      });
-      
-      $button.button({});
-      
-      var dropBox = new Psc.UI.DropBox({
-        widget: $dropBox,
-        name: 'tags'
-      });
-
-      testBody(dropBox, $dropBox, $button);
-    });
-  };
-  
   var defaultButton = Class({
     does: Psc.UI.DropBoxButton,
     
@@ -79,150 +32,189 @@ define(['psc-tests-assert','Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item
     }
   });
   
-  var defaultButtons = [];
-  var button2, button3, button4;
-  module("Psc.UI.DropBox", {
-    setup: function () {
-      defaultButtons.push(button2 = new defaultButton({id: 2}));
-      defaultButtons.push(button3 = new defaultButton({id: 3}));
-      defaultButtons.push(button4 = new defaultButton({id: 4}));
+  var setup = function(test, withButton) {
+    var defaultButtons = [];
+    var button2, button3, button4;
+
+    defaultButtons.push(button2 = new defaultButton({id: 2}));
+    defaultButtons.push(button3 = new defaultButton({id: 3}));
+    defaultButtons.push(button4 = new defaultButton({id: 4}));
+
+    var $fixture = $('#visible-fixture').html(html);
+    var $dropBox = $fixture.find('.psc-cms-ui-drop-box');
+    
+    var dropBox = new Psc.UI.DropBox({
+      widget: $dropBox,
+      name: 'tags'
+    });
+    
+    var ret =  {
+      defaultButtons: defaultButtons,
+      button2: button2,
+      button3: button3,
+      button4: button4,
+      $fixture: $fixture,
+      $dropBox: $dropBox,
+      dropBox: dropBox
+    };
+
+
+    if (withButton) {
+      // erstelle einen assigned button und füge ihn hinzu
+      var $button = $('<button class="psc-cms-ui-button psc-guid-4fbf432195ba0 assigned-item">Button 10</button>');
+      $dropBox.append($button);
+  
+      new Psc.CMS.Item({ // linked sich selbst an $button
+        traits: [Psc.CMS.DropBoxButtonable],
+        tab: {"id":"test-button-10-form","label":"Button 10 Tab","url":"egal"},
+        button: {"label":"Button 10","fullLabel":"Button 10","mode":2},
+        identifier: 10,
+        entityName: "default-button",
+        widget: $button
+      });
+      
+      $button.button({});
+      
+      // override
+      ret.dropBox = new Psc.UI.DropBox({
+        widget: $dropBox,
+        name: 'tags'
+      });
+
+      ret.$button = $button;
     }
+
+    test = t.setup(test, ret);
+    test.assertEquals($dropBox.length,1,'self-test: Fixture hat div.psc-cms-ui-drop-box im html des Ajax Requests');
+    
+    return test;
+  };
+
+  test("acceptance", function() {
+    var that = setup(this, true);
+    
+    this.assertSame(that.dropBox, that.$dropBox.data('joose'), 'joose is linked to $dropBox');
+    
+    that.$dropBox.hasClass('ui-widget-content ui-corner-all');
+    
+    that.dropBox.addButton(that.button2);
+    that.dropBox.addButton(that.button3);
+    that.dropBox.addButton(that.button4);
   });
 
-  asyncTest("acceptance", setupDefault(function(dropBox, $dropBox) {
-    start();
-    this.assertSame(dropBox, $dropBox.data('joose'),'joose is linked to $dropBox');
+  test("adds a button", function() {
+    var that = setup(this);
+    this.assertEquals(0, that.$dropBox.find('button.psc-cms-ui-button').length, 'dropbox is empty before');
     
-    $dropBox.hasClass('ui-widget-content ui-corner-all');
+    that.dropBox.addButton(that.button2);
     
-    dropBox.addButton(button2);
-    dropBox.addButton(button3);
-    dropBox.addButton(button4);
-  }));
-
-  asyncTest("adds a button", setupDefault(function(dropBox, $dropBox) {
-    start();
-    this.assertEquals(0, $dropBox.find('button.psc-cms-ui-button').length, 'dropbox is empty before');
-    
-    dropBox.addButton(button2);
-    
-    var $button2 = $dropBox.find('button.psc-cms-ui-button');
+    var $button2 = that.$dropBox.find('button.psc-cms-ui-button');
     this.assertEquals(1, $button2.length, 'dropbox has 1 button with psc-cms-ui-button class in it');
     
     this.assertEquals('Button 2',$button2.text(), 'Button in Dropbox shows the correct label');
     this.assertTrue($button2.hasClass('assigned-item'),' Button has the class assigned-item ');
-  }));
+  });
   
-  asyncTest("removes an added button", setupDefault(function(dropBox, $dropBox) {
+  test("removes an added button", function() {
+    var that = setup(this);
     var $button3;
     
-    start();
-    this.assertEquals(0, $dropBox.find('button.psc-cms-ui-button').length, 'dropbox is empty before');
+    this.assertEquals(0, that.$dropBox.find('button.psc-cms-ui-button').length, 'dropbox is empty before');
     
-    dropBox.addButton(button3);
-    $button3 = $dropBox.find('button.psc-cms-ui-button');
-    this.assertEquals(1, $dropBox.find('button.psc-cms-ui-button').length, 'dropbox has 1 button');
+    that.dropBox.addButton(that.button3);
+    $button3 = that.$dropBox.find('button.psc-cms-ui-button');
+    this.assertEquals(1, that.$dropBox.find('button.psc-cms-ui-button').length, 'dropbox has 1 button');
     
-    dropBox.removeButton($button3);
+    that.dropBox.removeButton($button3);
     
-    this.assertEquals(0, $dropBox.find('button.psc-cms-ui-button').length, 'dropbox is empty after');
-  }));
+    this.assertEquals(0, that.$dropBox.find('button.psc-cms-ui-button').length, 'dropbox is empty after');
+  });
   
-  asyncTest("removes button on click", setupDefault(function(dropBox, $dropBox) {
-    start();
+  test("removes button on click", function() {
+    var that = setup(this);
     
-    dropBox.addButton(button4);
-    $button4 = $dropBox.find('button.psc-cms-ui-button');
-    
+    that.dropBox.addButton(that.button4);
+    $button4 = that.$dropBox.find('button.psc-cms-ui-button');
     $button4.simulate('click');
     
-    this.assertEquals(0, $dropBox.find('button.psc-cms-ui-button').length, 'button is removed');
-  }));
+    this.assertEquals(0, that.$dropBox.find('button.psc-cms-ui-button').length, 'button is removed');
+  });
 
-  asyncTest("serializes all added buttons", setupDefault(function(dropBox, $dropBox) {
-    start();
+  test("serializes all added buttons", function() {
+    var that = setup(this);
+
+    that.dropBox.setName('buttons');
     
-    dropBox.setName('buttons');
-    
-    dropBox.addButton(button2);
-    dropBox.addButton(button3);
-    dropBox.addButton(button4);
+    that.dropBox.addButton(that.button2);
+    that.dropBox.addButton(that.button3);
+    that.dropBox.addButton(that.button4);
     
     var data = {};
-    dropBox.serialize(data);
+    that.dropBox.serialize(data);
 
     this.assertEquals({'buttons': [2,3,4]}, data);
-    
-  }));
+  });
 
   // das könnte ein schönerer unit test sein für den nächsten serializes test
-  asyncTest("has button from html without adding", setupHTMLButtons(function(dropBox, $dropBox, $button) {
-    this.assertTrue(dropBox.hasButton($button), 'drop box has the button from html');
-    start();
-  }));
-
-  asyncTest("serializes all added and from html buttons", setupHTMLButtons(function(dropBox, $dropBox) {
-    start();
+  test("has button from html without adding", function () {
+    var that = setup(this, true);
     
-    dropBox.setName('buttons');
-    dropBox.addButton(button2);
+    this.assertTrue(that.dropBox.hasButton(that.$button), 'drop box has the button from html');
+  });
+
+  test("serializes all added and from html buttons", function() {
+    var that = setup(this, true);
+    
+    that.dropBox.setName('buttons');
+    that.dropBox.addButton(that.button2);
     
     var data = {};
-    dropBox.serialize(data);
+    that.dropBox.serialize(data);
 
     this.assertEquals({'buttons': [10,2]}, data); // nummer 10 ist aus dem html
-  }));
+  });
 
 
-  asyncTest("triggers drop-box-multiple-violated on second button when multiple is false", setupDefault(function(dropBox, $dropBox) {
-    this.assertFalse(dropBox.isMultiple(), 'dropbox is multiple');
+  test("triggers drop-box-multiple-violated on second button when multiple is false", function() {
+    var that = setup(this);
+    this.assertFalse(that.dropBox.isMultiple(), 'dropbox is multiple');
     
-    dropBox.addButton(button2);
+    that.dropBox.addButton(that.button2);
     
     var multipleTriggered = false;
-    dropBox.getEventManager().off('drop-box-multiple-violated'); // kein alert im test
-    dropBox.getEventManager().on('drop-box-multiple-violated', function (e, vioButton) {
+    that.dropBox.getEventManager().off('drop-box-multiple-violated'); // kein alert im test
+    that.dropBox.getEventManager().on('drop-box-multiple-violated', function (e, vioButton) {
       e.preventDefault();
       e.stopImmediatePropagation();
-      this.assertSame(button2, vioButton, 'violated button equals addded button2');
+      that.assertSame(that.button2, vioButton, 'violated button equals addded that.button2');
       multipleTriggered = true;
     });
     
-    dropBox.addButton(button2);
+    that.dropBox.addButton(that.button2);
     
     this.assertTrue(multipleTriggered, 'multiple was triggered after adding the same button twice');
-    start();
-  }));
+  });
   
-  asyncTest("can be enabled and disabled", setupDefault(function(dropBox, $dropBox) {
-    start();
-    fail("todo");
-  }));
+  test("items are sortable", function() {
+    var that = setup(this);
 
-  asyncTest("items can be sortable", setupDefault(function(dropBox, $dropBox) {
-    start();
-    this.assertNotUndefined($dropBox.data('sortable'));
-  }));
+    this.assertNotUndefined(that.$dropBox.data('sortable'));
+  });
 
 
-  asyncTest("has button after adding", setupDefault(function(dropBox, $dropBox) {
-    dropBox.addButton(button3);
+  test("has button after adding", function() {
+    var that = setup(this);
+
+    that.dropBox.addButton(that.button3);
+    this.assertTrue(that.dropBox.hasButton(that.button3), 'has button 3 as Joose Object');
     
-    this.assertTrue(dropBox.hasButton(button3), 'has button 3 as Joose Object');
-    
-    $button3 = dropBox.unwrap().find('button.psc-cms-ui-button');
-    this.assertTrue(dropBox.hasButton($button3), 'has button 3 as jquery');
-    start();
-  }));
+    $button3 = that.dropBox.unwrap().find('button.psc-cms-ui-button');
+    this.assertTrue(that.dropBox.hasButton($button3), 'has button 3 as jquery');
+  });
   
-  asyncTest("cann be connected with other drop boxes", setupDefault(function(dropBox, $dropBox) {
-    fail('todo');
-    start();
-  }));
-
-  asyncTest("when sorted in connectedWith, hashes button (has) on sortable stop", setupDefault(function(dropBox, $dropBox) {
-    fail('todo');
-    start();
-  }));
-
+  test("when sorted in connectedWith, hashes button (has) on sortable stop", function() {
+    var that = setup(this);
+    
+    that.fail('todo');
+  });
 });

@@ -2,7 +2,7 @@ define(['psc-tests-assert','Psc/UI/ResizableImage'], function(t) {
   
   module("Psc.UI.ResizableImage");
   
-  var setup = function () {
+  var setup = function(test) {
     var $widget = $('<div class="right" style="width: 50%"/>');
     $('#visible-fixture').empty().append($widget);
     
@@ -11,7 +11,7 @@ define(['psc-tests-assert','Psc/UI/ResizableImage'], function(t) {
       widget: $widget
     });
     
-    return {resizableImage: resizableImage, $widget: $widget};
+    return t.setup(test, {resizableImage: resizableImage, $widget: $widget});
   };
 
   test("source refreshing", function() {

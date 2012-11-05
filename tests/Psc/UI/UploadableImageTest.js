@@ -2,7 +2,7 @@ define(['psc-tests-assert','Psc/UI/UploadableImage','Psc/Test/DoublesManager','P
   
   module("Psc.UI.UploadableImage");
   
-  var setup = function () {
+  var setup = function(test) {
     var dm = new Psc.Test.DoublesManager();
     
     var $widget, $widgetEmpty;
@@ -24,7 +24,7 @@ define(['psc-tests-assert','Psc/UI/UploadableImage','Psc/Test/DoublesManager','P
       widget: $widgetEmpty
     });
     
-    return {uploadService: uploadService, image: image, emptyImage: emptyImage};
+    return t.setup(test, {uploadService: uploadService, image: image, emptyImage: emptyImage});
   };
 
   test("image with url shows resizable image", function() {

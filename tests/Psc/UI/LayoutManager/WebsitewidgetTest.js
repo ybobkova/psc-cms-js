@@ -2,11 +2,11 @@ define(['psc-tests-assert','Psc/UI/LayoutManager/Websitewidget','Psc/Test/Double
   
   module("Psc.UI.LayoutManager.Websitewidget");
   
-  var setup = function () {
+  var setup = function(test) {
     //var dm = new Psc.Test.DoublesManager();
     var websitewidget = new Psc.UI.LayoutManager.Websitewidget({ });
     
-    return {websitewidget: websitewidget};
+    return t.setup(test, {websitewidget: websitewidget});
   };
 
   test("acceptance", function() {

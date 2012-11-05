@@ -39,7 +39,7 @@ define(['psc-tests-assert','Psc/UI/FormFields', 'Psc/UI/FormReader', 'Psc/UI/For
     this.assertEquals({
         'field1': 'value1',
         'field2': 'value2',
-        'field3': 'links',
+        'field3': 'links'
       },
       this.formFields.readFrom($form),
       'formFields read correctly the fields from the formreader'

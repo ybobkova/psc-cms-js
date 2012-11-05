@@ -1,91 +1,88 @@
-define(['psc-tests-assert','Psc/UI/Main','Psc/UI/Dragger','Psc/UI/Tabs','Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable'], function(t) {
+define(['psc-tests-assert',
+        'text!fixtures/dropBoxes-connected.html',
+        'js/main',
+        'Psc/UI/DropBox', 'Psc/UI/Dragger','Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable', 'Psc/UI/WidgetWrapper'
+       ], function(t, html, main) {
   
-  var main, $dropbox1, $dropbox2, dropBox1, dropBox2, drag;
+  var setup =  function (test, ready) {
+    var $dropBox1, $dropBox2, dropBox1, dropBox2, drag, $fixture;
+      
+    main.getEventManager().setLogging(true);
+    
+    $fixture = $('#visible-fixture').empty().append(html);
+      
+    $dropBox1 = $fixture.find('div#drop-box1 div.psc-cms-ui-drop-box');
+    $dropBox2 = $fixture.find('div#drop-box2 div.psc-cms-ui-drop-box');
+    
+    console.log('read');
+    dropBox1 = Psc.UI.WidgetWrapper.unwrapWidget($dropBox1, Psc.UI.DropBox);
+    dropBox2 = Psc.UI.WidgetWrapper.unwrapWidget($dropBox2, Psc.UI.DropBox);
 
-  module("Psc.UI.DropBox ConnectWithTest", {
-    setup: function () {
-      main = fixtures.getMain();
-      
-      main.getEventManager().setLogging(true);
-      
-      stop();
-      $.get('/js/fixtures/dropboxes.connected.php', function (html) {
-        $fixture = $('#visible-fixture').empty();
-        $fixture.append(html);
-        
-        $dropBox1 = $fixture.find('div#drop-box1 div.psc-cms-ui-drop-box');
-        $dropBox2 = $fixture.find('div#drop-box2 div.psc-cms-ui-drop-box');
-        
-        $.psc.resolve(main);
-        
-        // führe alle inline elemente aus
-        $.when( main.getLoader().finished() ).then(function () {
-          dropBox1 = $dropBox1.data('joose');
-          dropBox2 = $dropBox2.data('joose');
-          
-          drag = new Psc.UI.Dragger();
-          
-          start();
-        });
-      });
-    }, teardown: function  () {
-      delete main, dropBox1, dropBox2, $dropBox1, $dropBox2;
-      $.psc.reset();
-    }
-  });
+    drag = new Psc.UI.Dragger();
+    
+    return t.setup(test, {
+      drag: drag,
+      $fixture: $fixture,
+      main: main,
+      dropBox1: dropBox1,
+      dropBox2: dropBox2,
+      $dropBox1: $dropBox1,
+      $dropBox2: $dropBox2
+    });
+  };
   
-  asyncTest("fixture test: drop boxes are loaded from js, with buttons", function () {
-    this.assertEquals(1, $dropBox1.length);
-    this.assertEquals(1, $dropBox2.length);
+  test("fixture test: drop boxes are loaded from js, with buttons", function () {
+    var that = setup(this);
+    this.assertEquals(1, that.$dropBox1.length);
+    this.assertEquals(1, that.$dropBox2.length);
     
-    this.assertInstanceOf(Psc.UI.DropBox, dropBox1, 'dropBox1 is a UI DropBox');
-    this.assertInstanceOf(Psc.UI.DropBox, dropBox2, 'dropBox2 is a UI DropBox');
+    this.assertInstanceOf(Psc.UI.DropBox, that.dropBox1, 'that.dropBox1 is a UI that.dropBox');
+    this.assertInstanceOf(Psc.UI.DropBox, that.dropBox2, 'that.dropBox2 is a UI that.dropBox');
     
-    this.assertEquals(1, ($button1 = $dropBox1.find('button.psc-cms-ui-button')).length, 'button is in dropBox1');
-    this.assertEquals(1, ($button2 = $dropBox2.find('button.psc-cms-ui-button')).length, 'button is in dropbox2');
+    this.assertEquals(1, ($button1 = that.$dropBox1.find('button.psc-cms-ui-button')).length, 'button is in that.dropBox1');
+    this.assertEquals(1, ($button2 = that.$dropBox2.find('button.psc-cms-ui-button')).length, 'button is in that.dropBox2');
 
-    this.assertTrue(dropBox1.hasButton($button1),'db1 has button1');
-    this.assertTrue(dropBox2.hasButton($button2), 'db2 has button2');
+    this.assertTrue(that.dropBox1.hasButton($button1),'db1 has button1');
+    this.assertTrue(that.dropBox2.hasButton($button2), 'db2 has button2');
     
     // connected hier über Kreuz connecten geht nicht (witziger weise)
-    this.assertEquals('div.psc-cms-ui-drop-box', dropBox1.unwrap().sortable('option', 'connectWith'), 'dropbox1 is connected to all');
-    this.assertEquals('div.psc-cms-ui-drop-box', dropBox2.isConnectedWith(), 'dropbox1 is connected to all');
-    start();
+    this.assertEquals('div.psc-cms-ui-drop-box', that.dropBox1.unwrap().sortable('option', 'connectWith'), 'that.dropBox1 is connected to all');
+    this.assertEquals('div.psc-cms-ui-drop-box', that.dropBox2.isConnectedWith(), 'that.dropBox1 is connected to all');
   });
   
-  asyncTest("sorting from box1 to box2 changes DOM", function () {
-    $button2 = $dropBox2.find('button.psc-cms-ui-button');
+  test("sorting from box1 to box2 changes DOM", function () {
+    var that = setup(this);
+    $button2 = that.$dropBox2.find('button.psc-cms-ui-button');
     
-    drag.toElement($button2, $dropBox1);
+    drag.toElement($button2, that.$dropBox1);
     
-    this.assertTrue(dropBox1.hasButton($button2), 'dropbox1 has received button2');
-    this.assertEquals(2, $dropBox1.find('button.psc-cms-ui-button').length, 'has now 2 buttons');
-    this.assertFalse(dropBox2.hasButton($button2), 'dropbox2 has given button2 away');
-    this.assertEquals(0, $dropBox2.find('button.psc-cms-ui-button').length, 'has now 0 buttons');
-    start();
+    this.assertTrue(that.dropBox1.hasButton($button2), 'that.dropBox1 has received button2');
+    this.assertEquals(2, that.$dropBox1.find('button.psc-cms-ui-button').length, 'has now 2 buttons');
+    this.assertFalse(that.dropBox2.hasButton($button2), 'that.dropBox2 has given button2 away');
+    this.assertEquals(0, that.$dropBox2.find('button.psc-cms-ui-button').length, 'has now 0 buttons');
   });
   
-  asyncTest("after sorting new buttons can be deleted", function () {
-    $button2 = $dropBox2.find('button.psc-cms-ui-button');
-    $button1 = $dropBox1.find('button.psc-cms-ui-button');
+  test("after sorting new buttons can be deleted", function () {
+    var that = setup(this);
+    $button2 = that.$dropBox2.find('button.psc-cms-ui-button');
+    $button1 = that.$dropBox1.find('button.psc-cms-ui-button');
     
-    drag.toElement($button2, $dropBox1);
-    this.assertTrue(dropBox1.hasButton($button2),'dropbox1 has received button2');
+    drag.toElement($button2, that.$dropBox1);
+    this.assertTrue(that.dropBox1.hasButton($button2),'that.dropBox1 has received button2');
     
     // entfernt beide aus der box
-    dropBox1.removeButton($button1);
+    that.dropBox1.removeButton($button1);
     $button2.simulate('click');
     
-    this.assertEquals(0, $dropBox1.find('button').length, 'kein button mehr da');
-    this.assertFalse(dropBox1.hasButton($button2), 'button2 can be removed');
-    start();
+    this.assertEquals(0, that.$dropBox1.find('button').length, 'kein button mehr da');
+    this.assertFalse(that.dropBox1.hasButton($button2), 'button2 can be removed');
   });
   
   
-  asyncTest("after sorting new buttons can be deleted", function () {
-    $button2 = $dropBox2.find('button.psc-cms-ui-button');
+  test("after sorting new buttons can be deleted", function () {
+    var that = setup(this);
+    $button2 = that.$dropBox2.find('button.psc-cms-ui-button');
     
-    
-    drag.toElement($button2, $dropBox1);
+    drag.toElement($button2, that.$dropBox1);
   });
 });

@@ -2,7 +2,7 @@ define(['psc-tests-assert','Psc/UI/ResizableImage','Psc/UI/SingleImage','Psc/Tes
   
   module("Psc.UI.SingleImage");
   
-  var setup = function () {
+  var setup = function(test) {
     var dm = new Psc.Test.DoublesManager();
     var uploadService = dm.getUploadService();
     
@@ -25,7 +25,7 @@ define(['psc-tests-assert','Psc/UI/ResizableImage','Psc/UI/SingleImage','Psc/Tes
       formName: 'im1'
     });
     
-    return {image: image, emptyImage: emptyImage, $container: $container, uploadService: uploadService};
+    return t.setup(test, {image: image, emptyImage: emptyImage, $container: $container, uploadService: uploadService});
   };
 
   test("html is build with image", function() {

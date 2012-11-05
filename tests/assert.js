@@ -58,7 +58,7 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 		},
 		
 		assertContains: function(expected, actual, message) {
-			var result = actual.search(expected) > 0;
+			var result = actual.search(expected) !== -1;
 			QUnit.push( result, actual, expected, this.formatMessage(message) || "string/object contains "+this.debug(expected), result);
 		},
 	
@@ -123,18 +123,18 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 		// expected muss der Constructor sein, kein String!
 		assertInstanceOf: function(expected, actual, message) {
 			if (!Joose.O.isClass(expected)) {
-				fail(this.debug(expected)+" is NOT a valid Class. Is this a Constructor-Function?");
+				this.fail(this.debug(expected)+" is NOT a valid Class. Is this a Constructor-Function?");
 				return;
 			}
 			if (!Joose.O.isInstance(actual)) {
-				fail(this.debug(actual)+" is not an object-instance");
+				this.fail(this.debug(actual)+" is not an object-instance");
 				return;
 			}
 			
 			var result = actual instanceof expected;
 			// hier ist das diff überflüssig
 			
-			return QUnit.push(result, "Instance of Class "+String(actual.meta.name), "Instance of Class "+String(expected), this.formatMessage(message || String(actual)+" is instanceof '"+String(expected)+"'", result));
+			QUnit.push(result, "Instance of Class "+String(actual.meta.name), "Instance of Class "+String(expected), this.formatMessage(message || String(actual)+" is instanceof '"+String(expected)+"'", result));
 		},
 			
 	

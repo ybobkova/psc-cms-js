@@ -5,9 +5,6 @@ define(["require", "jquery", "psc-cms", "qunit", "joose", "jqwidgets-global", "j
       alert(JSON.stringify(args));
     }
 
-    QUnit.config.autostart = false;
-    QUnit.config.reorder = false;
-  
     // do the same as the phantom bridge would do, but do it here, after we required qunit
     if (window._phantom) {
     
@@ -47,17 +44,19 @@ define(["require", "jquery", "psc-cms", "qunit", "joose", "jqwidgets-global", "j
       });
     }
     
-    QUnit.load(); // because qunit cannot attach to window on load when its loaded asynchronously
-      
+    // we dont set autostart to false, we load() qunit and then do autostart
+    QUnit.config.reorder = false;
+    // we load qunit later because it cannot attach to window on load when its loaded asynchronously
+
     return {
       run: function (test) {
         if (test instanceof Array) {
           require(test, function () {
-            QUnit.start();
+            QUnit.load(); 
           });
         } else {
           require(["../tests/"+test], function () {
-            QUnit.start();
+            QUnit.load(); 
           });
         }
       }

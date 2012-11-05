@@ -2,11 +2,11 @@ define(['psc-tests-assert','Psc/UI/FormReader','Psc/UI/FormBuilder'], function(t
   
   module("Psc.UI.FormReader");
   
-  var setup = function () {
+  var setup = function(test) {
     var formReader = new Psc.UI.FormReader({ });
     var formBuilder = new Psc.UI.FormBuilder({ });
     
-    return {formReader: formReader, formBuilder: formBuilder};
+    return t.setup(test, {formReader: formReader, formBuilder: formBuilder});
   };
 
   test("read with [] in names (yagni: not yet implemented)", function() {

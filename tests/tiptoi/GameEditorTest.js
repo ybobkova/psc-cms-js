@@ -2,7 +2,7 @@ define(['psc-tests-assert','tiptoi/GameEditor'], function(t) {
   
   module("tiptoi.GameEditor");
   
-  var setup = function () {
+  var setup = function(test) {
     var service = new (Class({
       has: {
         pulledCalled: {is: 'rw', required: false, isPrivate: false, init: false}
@@ -35,7 +35,7 @@ define(['psc-tests-assert','tiptoi/GameEditor'], function(t) {
       widget: $widget
     });
     
-    return {gameEditor: gameEditor, $grid: $widget.find('div.game-files'), '$fixture': $('#visible-fixture')};
+    return t.setup(test, {gameEditor: gameEditor, $grid: $widget.find('div.game-files'), '$fixture': $('#visible-fixture')});
   };
 
   test("acceptance", function() {

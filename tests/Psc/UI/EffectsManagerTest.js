@@ -1,10 +1,6 @@
 define(['psc-tests-assert','Psc/UI/EffectsManager'], function(t) {
   
-  module("Psc.UI.EffectsManager", {
-    setup: function () {
-      
-    }
-  });
+  module("Psc.UI.EffectsManager");
 
   asyncTest("blinkCallbackGetsCalled", function() {
     var effectsManager = new Psc.UI.EffectsManager({ });
@@ -12,7 +8,7 @@ define(['psc-tests-assert','Psc/UI/EffectsManager'], function(t) {
     var cb = function () {
       start();
       this.assertTrue(true, "Callback has been run");
-    }
+    };
     
     effectsManager.blink($('#qunit-fixture'), '#880022', cb);
   });

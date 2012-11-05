@@ -7,6 +7,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   
   var mapToUrl = function(files, baseUrl) {
     return grunt.util._.map(
@@ -37,7 +38,8 @@ module.exports = function(grunt) {
     },
 
     jshint: {
-      files: ['Gruntfile.js', 'lib/**/*.js','tests/**/*.js']
+      files: ['Gruntfile.js', 'lib/**/*.js', 'tests/**/*.js'],
+      tests: ['tests/**/*.js']
     },
     
     connect: {
@@ -80,9 +82,20 @@ module.exports = function(grunt) {
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js'
       }
     }
+    
+    /**
+     * watch geht leider aus denselben gründen nicht, warum komodo nicht an den error stream rankommt
+    watch: {
+      tests: {
+        files: '*.js',
+        tasks: ['jshint']
+      }
+    }
+    */
   });
 
   // Default task.
+  grunt.registerTask('watch-pack', ['watch:tests']);
   grunt.registerTask('pack', ['jshint', 'requirejs']);
   grunt.registerTask('default', ['jshint', 'connect', 'qunit', 'requirejs']);
   grunt.registerTask('test', ['connect', 'qunit']);

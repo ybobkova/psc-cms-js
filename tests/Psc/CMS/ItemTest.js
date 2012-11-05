@@ -45,8 +45,7 @@ define(['psc-tests-assert','Psc/CMS/Item','Psc/UI/Tab','Psc/Code','Psc/CMS/TabOp
     // wrapper kann jetzt auch roles
     
     start();
-  })
-
+  });
 
   asyncTest("is role", function() {
     start();

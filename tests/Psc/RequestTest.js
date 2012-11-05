@@ -10,11 +10,11 @@ define(['psc-tests-assert','Psc/Request'], function () {
     this.assertEquals('/entities/person/12/form', request.getUrl());
     
     this.assertException("Psc.WrongValueException", function () {
-      request.setFormat('blubb')
+      request.setFormat('blubb');
     });
   
     this.assertException("Psc.WrongValueException", function () {
-      request.setMethod('PUD')
+      request.setMethod('PUD');
     });
   });
   

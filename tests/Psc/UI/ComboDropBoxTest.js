@@ -1,16 +1,8 @@
 define(['psc-tests-assert','Psc/UI/ComboDropBox'], function(t) {
   
-  module("Psc.UI.ComboDropBox", {
-    setup: function () {
-      
-    }
-  });
-
-  test("acceptance", function() {
+  module("Psc.UI.ComboDropBox");
+  
+  test("when combobox triggers combo-box-selected item is added to dropbox", function () {
     expect(0);
-    //var comboDropBox = new Psc.UI.ComboDropBox({ });
-  
   });
-  
-  test("when combobox triggers combo-box-selected item is added to dropbox")
 });

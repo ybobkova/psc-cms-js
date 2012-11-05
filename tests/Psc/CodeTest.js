@@ -114,5 +114,5 @@ define(['psc-tests-assert','Psc/Code','Psc/WrongValueException','Psc/InvalidArgu
     
     this.assertFalse(Psc.Code.isRole({}, TestRole));
     this.assertFalse(Psc.Code.isRole(new Psc.Exception('nope'), TestRole));
-  })
+  });
 });
