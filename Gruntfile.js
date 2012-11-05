@@ -95,10 +95,10 @@ module.exports = function(grunt) {
   });
 
   // Default task.
-  grunt.registerTask('watch-pack', ['watch:tests']);
   grunt.registerTask('pack', ['jshint', 'requirejs']);
   grunt.registerTask('default', ['jshint', 'connect', 'qunit', 'requirejs']);
   grunt.registerTask('test', ['connect', 'qunit']);
+  grunt.registerTask('travis', ['jshint', 'connect', 'qunit']);
 
   grunt.registerMultiTask("update-tests", "updates the index for test files", function() {
     var filepaths = grunt.file.expandFiles(grunt.util._.pluck(this.files, 'src'));
