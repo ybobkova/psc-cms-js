@@ -1,12 +1,13 @@
 define(['psc-tests-assert','Psc/UI/ErrorPane'], function(t) {
   
-  module("Psc.UI.ErrorPane", {
-    setup: function () {
-      
-    }
-  });
+  var setup = function(test) {
+    return t.setup(test);
+  };
+  
+  module("Psc.UI.ErrorPane");
 
   test("acceptance", function() {
+    setup(this);
     var errorPane = new Psc.UI.ErrorPane({
       container: $('#qunit-fixture'),
       label: 'some',
@@ -22,6 +23,7 @@ define(['psc-tests-assert','Psc/UI/ErrorPane'], function(t) {
   });
   
   test("can be removed", function () {
+    setup(this);
     var errorPane = new Psc.UI.ErrorPane({
       container: $('#qunit-fixture'),
       label: 'some',

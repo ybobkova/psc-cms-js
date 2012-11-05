@@ -1,17 +1,20 @@
 define(['psc-tests-assert','Psc/UI/WidgetWrapper'], function(t) {
   
   module("Psc.UI.WidgetWrapper");
+  
+  var setup = function(test) {
+    return t.setup(test);
+  };
 
   test("acceptance", function() {
+    setup(this);
     var $widget;
     var widgetWrapper = new Psc.UI.WidgetWrapper({ widget: $widget = $('#qunit-fixture') });
   
     this.assertSame($widget, widgetWrapper.unwrap(), 'unwrap returns $widget');
   });
   
-  test("can unwrap statically", function() {
-    fail("todo");
-    //var widgetWrapper = new Psc.UI.WidgetWrapper({ widget: $widget = $('#qunit-fixture') });
-    
+  test("TODO: can unwrap statically", function() {
+    expect(0);
   });
 });

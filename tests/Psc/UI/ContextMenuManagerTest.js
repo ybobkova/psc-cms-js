@@ -1,7 +1,12 @@
 define(['psc-tests-assert','Psc/UI/ContextMenuManager','Psc/UI/Menu'], function(t) {
   module("Psc.UI.ContextMenuManager");
+  
+  var setup = function(test) {
+    return t.setup(test);
+  };
 
   test("acceptance", function() {
+    setup(this);
     var manager = new Psc.UI.ContextMenuManager({ });
   
     var $anchor = $('<span class="ui-icon-gear"></span>');
@@ -54,6 +59,7 @@ define(['psc-tests-assert','Psc/UI/ContextMenuManager','Psc/UI/Menu'], function(
   
   
   test("manager cleans up his mess", function() {
+    setup(this);
     var manager = new Psc.UI.ContextMenuManager({ });
   
     var $anchor = $('<span class="ui-icon-gear"></span>');

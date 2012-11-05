@@ -44,10 +44,6 @@ define(["jquery", "psc-cms", "qunit", "joose", "jqwidgets-global", "jqwidgets"],
       });
     }
     
-    QUnit.begin(function() {
-       console.log('QUnit Loading..');
-    });
-    
     QUnit.config.reorder = false;
     QUnit.config.autostart = false;
     QUnit.load(); 

@@ -1,12 +1,13 @@
 define(['psc-tests-assert','Psc/GuidManager'], function(t) {
   
-  module("Psc.GuidManager", {
-    setup: function () {
-      
-    }
-  });
+  module("Psc.GuidManager");
+  
+  var setup = function(test) {
+    return t.setup(test);
+  };
 
   test("testBlankCreation does not collide", function() {
+    setup(this);
     var manager = new Psc.GuidManager({});
     
     var guids = {}, guid;

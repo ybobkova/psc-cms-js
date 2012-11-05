@@ -1,35 +1,39 @@
 define(['psc-tests-assert','Psc/ResponseMetaReader', 'Psc/Response'], function(t) {
-  var responseMetaReader;
   
-  module("Psc.ResponseMetaReader", {
-    setup: function () {
-      var metaJSON = JSON.stringify({
-        tab: {
-          identifier: 17,
-          type: 'entities-person',
-          label: 'Other Person',
-          url: '/entities/person/17',
-          data: {
-            contextId: 22
-          }
-        },
-        warnings: ['was casted to int', 'was trimmed']
-      });
-    
-      var response = new Psc.Response({
-        code: 200,
-        body: 'not necessary content',
-        header: {
-          'X-Psc-Cms-Meta': metaJSON,
-          'Content-Type': 'text/html; charset=utf-8'
+  module("Psc.ResponseMetaReader");
+  
+  var setup = function (test) {
+    var metaJSON = JSON.stringify({
+      tab: {
+        identifier: 17,
+        type: 'entities-person',
+        label: 'Other Person',
+        url: '/entities/person/17',
+        data: {
+          contextId: 22
         }
-      });
+      },
+      warnings: ['was casted to int', 'was trimmed']
+    });
+  
+    var response = new Psc.Response({
+      code: 200,
+      body: 'not necessary content',
+      header: {
+        'X-Psc-Cms-Meta': metaJSON,
+        'Content-Type': 'text/html; charset=utf-8'
+      }
+    });
     
-      responseMetaReader = new Psc.ResponseMetaReader({response: response});
-    }
-  });
+    return t.setup(test, {
+      metaJSON: metaJSON,
+      response: response,
+      responseMetaReader: new Psc.ResponseMetaReader({response: response})
+    });
+  };
 
   test("hasReturnsTrueOrFalseOnExistingPaths", function() {
+    var that = setup(this), responseMetaReader = this.responseMetaReader;
     this.assertTrue(responseMetaReader.has(['tab']), 'has [tab]');
     this.assertTrue(responseMetaReader.has(['tab','type']), 'has [tab,type]');
     this.assertTrue(responseMetaReader.has(['warnings']), 'has [warnings]');
@@ -38,6 +42,7 @@ define(['psc-tests-assert','Psc/ResponseMetaReader', 'Psc/Response'], function(t
   });
     
   test("getReturnsNullOrValueOnExistingPaths", function() {
+    var that = setup(this), responseMetaReader = this.responseMetaReader;
     this.assertEquals({
         identifier: 17,
         type: 'entities-person',
@@ -61,6 +66,7 @@ define(['psc-tests-assert','Psc/ResponseMetaReader', 'Psc/Response'], function(t
   });
   
   test("invalidArgumentExceptionOnBullshitInput", function() {
+    var that = setup(this), responseMetaReader = this.responseMetaReader;
     
     this.assertException("Psc.InvalidArgumentException", function () {
       responseMetaReader.get('blubb');

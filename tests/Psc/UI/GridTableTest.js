@@ -1,14 +1,9 @@
 define(['psc-tests-assert','Psc/UI/GridTable','Psc/Table','Psc/UI/WidgetWrapper'], function(t) {
-  var table, grid, $fixture;
+
+  module("Psc.UI.GridTable");
   
   var setup = function (test) {
-    return t.setup(test);
-  };
-  
-  module("Psc.UI.GridTable", {
-    setup: function () {
-      
-      table = new Psc.Table({
+    var table = new Psc.Table({
         columns: [
                   {name:"number", type: "String", label: 'Sound No.'},
                   {name:"sound", type: "String", label: 'Sound'},
@@ -36,24 +31,27 @@ define(['psc-tests-assert','Psc/UI/GridTable','Psc/Table','Psc/UI/WidgetWrapper'
             ['2-STA_0616', 'Ein Altstadtgebäude', [11013,11040,11042]],
             ['2-STA_0617', 'Der Fernsehturm', [11045]]
           ]
-      });
-      
-      grid = new Psc.UI.GridTable({
-        table: table,
-        name: 'agrid'
-      });
+    });
+    
+    var grid = new Psc.UI.GridTable({
+      table: table,
+      name: 'agrid'
+    });
 
-      $fixture = $('#visible-fixture');
-      $fixture.html(grid.attach(grid.html()));
-    }
-  });
+    var $fixture = $('#visible-fixture');
+    $fixture.html(grid.attach(grid.html()));
 
+    return t.setup(test, { $fixture: $fixture, grid: grid, table: table} );
+  };
+  
   test("acceptance", function() {
+    var that = setup(this), $fixture = this.$fixture;
     this.assertEquals(20+1, $fixture.find('table tr').length, '20+1 Zeilen der Tabelle erwartet');
     this.assertEquals('Das Hotel', $fixture.find('table tr:eq(10) td.sound').text(), 'Hotel ist in Zeile 10');
   });
   
   test("empty function empties the whole table with data", function () {
+    var that = setup(this), grid = this.grid, $fixture = this.$fixture;
     /* geil wäre so was wie
       
       beginTransaction()
@@ -71,6 +69,7 @@ define(['psc-tests-assert','Psc/UI/GridTable','Psc/Table','Psc/UI/WidgetWrapper'
   });
 
   test("appendRow adds a new Row to the end of the table", function () {
+    var that = setup(this), grid = this.grid, $fixture = this.$fixture;
     grid.appendRow(['2-TEST_0001', 'Die S-Bahn-Station', [11046]]);
     
     this.assertEquals(20+1+1, $fixture.find('table tr').length);
@@ -80,6 +79,7 @@ define(['psc-tests-assert','Psc/UI/GridTable','Psc/Table','Psc/UI/WidgetWrapper'
   });
   
   test("insertRow adds a new Row at rowNum i to the table and shifts the other rows down", function () {
+    var that = setup(this), grid = this.grid, $fixture = this.$fixture;
     grid.insertRow(['2-TEST_0001', 'Die S-Bahn-Station', [11046]], 2);
     this.assertEquals(20+1+1, $fixture.find('table tr').length);
     // wir fügen in zeile 2 ein. diese hat auch den index 2 (wegen der headerzeile)
@@ -89,16 +89,17 @@ define(['psc-tests-assert','Psc/UI/GridTable','Psc/Table','Psc/UI/WidgetWrapper'
   });
   
   test("insertRow(0) adds a new Row to the beginning of the table and shifts the other rows down", function () {
+    var that = setup(this), grid = this.grid, $fixture = this.$fixture;
     grid.insertRow(['2-TEST_0001', 'Die S-Bahn-Station', [11046]], 1);
     this.assertEquals(20+1+1, $fixture.find('table tr').length);
+    
     // wir fügen in zeile 1 ein. diese hat auch den index 1 (wegen der headerzeile)
     this.assertEquals(1, $fixture.find('table tr:eq(1) td:contains("Die S-Bahn-Station")').length);
-    
     this.assertEquals('Die S-Bahn-Station', grid.getCell(1, 'sound'),  'Data repräsentation was synchronized');
   });
 
-
   test("attached grid can be serialized", function () {
+    var that = setup(this), grid = this.grid, $fixture = this.$fixture;
     var $grid = $fixture.find('table');
     this.assertTrue($grid.hasClass('psc-cms-ui-grid-table'));
     
@@ -108,6 +109,5 @@ define(['psc-tests-assert','Psc/UI/GridTable','Psc/Table','Psc/UI/WidgetWrapper'
     joose.serialize(data);
     
     this.assertEquals(grid.getExport(), data.agrid);
-    
   });
 });

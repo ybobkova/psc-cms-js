@@ -170,8 +170,6 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 			return test;
 		}
 	};
-  
 
-	// $.extend({}, baseAssertions, helpers);  
   return helpers;
 });

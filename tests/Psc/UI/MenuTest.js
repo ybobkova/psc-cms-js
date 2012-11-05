@@ -1,7 +1,13 @@
 define(['psc-tests-assert','Psc/UI/Menu'], function(t) {
+  
   module("Psc.UI.Menu");
+  
+  var setup = function(test) {
+    return t.setup(test);
+  };
 
   test("acceptance", function() {
+    setup(this);
     var html = "<ul>\n"+
     "		<li><a href='#pinn'>Permanent Anpinnen</a></li>\n"+
     "		<li><a href='#close-all'>Alle Tabs Schließen</a></li>\n"+

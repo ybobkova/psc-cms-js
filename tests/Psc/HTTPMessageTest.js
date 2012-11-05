@@ -1,7 +1,12 @@
-define(['psc-tests-assert','Psc/HTTPMessage'], function () {
+define(['psc-tests-assert','Psc/HTTPMessage'], function (t) {
   module("Psc.HTTPMessage");
   
+  var setup = function (test) {
+    t.setup(test);
+  };
+  
   test("parsesHeaderFromString", function() {
+    var that = setup(this);
     var message = new Psc.HTTPMessage({ });
     
     var headerString = "Date: Mon, 19 Mar 2012 06:48:32 GMT\r\nServer: Apache/2.2.22 (Win32) PHP/5.3.10\r\nX-Powered-By: PHP/5.3.10\r\nPragma: no-cache\r\nCache-Control: private, no-cache\r\nVary: Accept\r\nContent-Length: 50\r\nKeep-Alive: timeout=5, max=91\r\nConnection: Keep-Alive\r\nContent-Type: text/html; charset=utf-8\r";
@@ -23,6 +28,7 @@ define(['psc-tests-assert','Psc/HTTPMessage'], function () {
   });
   
   test("setsAndGetsAndDeletesHeaderFields", function() {
+    var that = setup(this);
     var message = new Psc.HTTPMessage({});
     
     this.assertEquals(null, message.getHeaderField('Content-Type'));

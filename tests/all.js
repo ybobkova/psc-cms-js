@@ -8,7 +8,7 @@ define(function () {
     "/tests/Psc/UI/SpinnerTest.js",
     "/tests/Psc/LoaderTest.js",
     "/tests/Psc/CMS/FastItemTest.js",
-/*    
+
   "/tests/CoMun/CalendarEventTest.js",
   "/tests/CoMun/CityTest.js",
   "/tests/CoMun/CurverTest.js",
@@ -40,7 +40,7 @@ define(function () {
   
   "/tests/Psc/UI/ButtonTest.js",
   "/tests/Psc/UI/CalendarTest.js",
-  "/tests/Psc/UI/CodeEditorTest.js",
+  //"/tests/Psc/UI/CodeEditorTest.js",
   "/tests/Psc/UI/ComboBoxTest.js",
   "/tests/Psc/UI/ComboDropBoxTest.js",
   "/tests/Psc/UI/CommentsTest.js",
@@ -106,7 +106,6 @@ define(function () {
   "/tests/tiptoi/ProgramRunnerTest.js",
   "/tests/tiptoi/SoundImporterTest.js",
   "/tests/tiptoi/SoundTest.js",
-*/
   
     "/tests/tiptoi/cpuTest.js"
   ];

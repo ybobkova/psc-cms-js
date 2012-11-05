@@ -1,7 +1,13 @@
 define(['psc-tests-assert','Psc/UI/Tab'], function(t) {
+  
   module("Psc.UI.Tab");
+  
+  var setup = function(test) {
+    return t.setup(test);
+  };
 
   test("construct", function() {
+    setup(this);
     var tab = new Psc.UI.Tab({
       id: 'entity-persons-17',
       label: 'Philipp S',
@@ -13,14 +19,4 @@ define(['psc-tests-assert','Psc/UI/Tab'], function(t) {
     this.assertEquals('Philipp S', tab.getLabel());
     this.assertEquals('/entities/persons/17/form', tab.getUrl());
   });
-  
-  //test("empty url not allowed", function () {
-  //  raises(function () {
-  //    new Psc.UI.Tab({
-  //      id: 'some-valid-thingy',
-  //      label: 'some sophisticated < label',
-  //      url: null // missing
-  //    });
-  //  });
-  //});
 });

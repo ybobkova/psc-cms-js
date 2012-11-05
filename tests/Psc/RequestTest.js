@@ -1,7 +1,13 @@
-define(['psc-tests-assert','Psc/Request'], function () {
+define(['psc-tests-assert','Psc/Request'], function (t) {
+  
   module("Psc.Request");
   
+  var test = function(test) {
+    return t.setup(test);
+  };
+  
   test("construct", function() {
+    setup(this);
     var request = new Psc.Request({
       url: '/entities/person/12/form',
       method: 'PUT'
@@ -19,6 +25,7 @@ define(['psc-tests-assert','Psc/Request'], function () {
   });
   
   test("bodyConstruct", function () {
+    setup(this);
     var request = new Psc.Request({
       url: '/echo/',
       method: 'POST',
@@ -32,6 +39,7 @@ define(['psc-tests-assert','Psc/Request'], function () {
   });
   
   test("headerIsEmptyAtStart", function () {
+    setup(this);
     var request = new Psc.Request({
       url: '/entities/person/12/form',
       method: 'POST'
@@ -42,6 +50,7 @@ define(['psc-tests-assert','Psc/Request'], function () {
   });
   
   test("requestGetsandSetsHeaderFields", function() {
+    setup(this);
     var request = new Psc.Request({
       url: '/entities/person/12/form',
       method: 'POST'
@@ -55,6 +64,7 @@ define(['psc-tests-assert','Psc/Request'], function () {
   });
   
   test("setMethodSetsXRequestMethodHeader", function() {
+    setup(this);
     var request = new Psc.Request({
       url: '/entities/person/12/form',
       method: 'PUT'
@@ -67,6 +77,7 @@ define(['psc-tests-assert','Psc/Request'], function () {
 
   
   test("cleans QuestionMark in URL when GET Request", function () {
+    setup(this);
     var request = new Psc.Request({
       url: '/entities/search/?',
       method: 'GET'
@@ -77,6 +88,7 @@ define(['psc-tests-assert','Psc/Request'], function () {
   
   
   test("handles null values for jquery param serializiation", function () {
+    setup(this);
     expect(0);
     var body = {
           table: [
@@ -96,8 +108,6 @@ define(['psc-tests-assert','Psc/Request'], function () {
     });
     
     console.log(request.getBody());
-    
     console.log(JSON.stringify(request.getBody()));
   });
-  
 });

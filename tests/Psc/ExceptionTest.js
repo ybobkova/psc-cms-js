@@ -1,28 +1,22 @@
-define(['psc-tests-assert','Psc/Exception','Psc/InvalidArgumentException','Psc/AjaxException'], function () {
+define(['psc-tests-assert','Psc/Exception','Psc/InvalidArgumentException','Psc/AjaxException'], function (t) {
+  
   module("Psc.Exception");
   
-  //test("bootstrap: global object identifier", function () {
-  //  var id = psc_globals_objectid;
-  //  var o = {some: 'object'};
-  //  
-  //  Psc_applyGOID(o);
-  //  
-  //  this.assertEquals(id+1, o.goid);
-  //  
-  //  Psc_applyGOID(o);
-  //  this.assertEquals(id+2, o.goid);
-  //});
-
   test("copy an object with extend", function () {
-    expect(0);
+    t.setup(this);
     var body = {autocomplete: 'true'};
     
     var mb = $.extend({}, body, {search: 'blubb'});
     
-    console.log(mb);
+    this.assertEquals(
+      mb, {
+      autocomplete: 'true',
+      search: 'blubb'
+    });
   });
   
   test("construct", function() {
+    t.setup(this);
     var e = new Psc.Exception('This will be shown');
     
     this.assertEquals('Psc.Exception',e.getName());
@@ -35,12 +29,14 @@ define(['psc-tests-assert','Psc/Exception','Psc/InvalidArgumentException','Psc/A
   // ich brauchte das hier zu demo zwekcen
   
   test("ajaxExceptionConstruct", function () {
+    t.setup(this);
     var e = new Psc.AjaxException('error', 'interner fehler beim ajaxrequest');
     
     this.assertEquals('error', e.getTextStatus());
   });
   
   test("selftest", function() {
+    t.setup(this);
     var e = new Psc.InvalidArgumentException('one',false);
     
     this.assertInstanceOf(Psc.Exception, e);
@@ -64,6 +60,7 @@ define(['psc-tests-assert','Psc/Exception','Psc/InvalidArgumentException','Psc/A
   });
   
   test("selftestAssertException", function() {
+    t.setup(this);
     expect(0);
     var thrown = function () {
       throw new (Class({

@@ -1,55 +1,55 @@
-define(['psc-tests-assert','Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function(t) {
-  var tab = new Psc.UI.Tab({
-    id: 'entity-persons-17',
-    label: 'Philipp S',
-    url: '/entities/persons/17/form'
-  });
-  var otherTab = new Psc.UI.Tab({
-    id: 'entity-persons-19',
-    label: 'IS',
-    url: '/entities/persons/19/form'
-  });
-  
-  var loadFixture = function(assertions) {
-    return function () {
-      $.get('/js/fixtures/tabs.php', function (html) {
-        var $fixture = $('#qunit-fixture').html(html);
-        var $tabs = $fixture.find('div.psc-cms-ui-tabs');
-        this.assertEquals($tabs.length,1,'self-test: Fixture hat div.psc-cms-ui-tabs im html des Ajax Requests');
-      
-        var tabs = new Psc.UI.Tabs({ widget: $tabs });
-        this.assertSame($tabs, tabs.unwrap());
-        
-        this.assertions($tabs, tabs);
-      }, 'html');
-    };
-  };
+define(['psc-tests-assert','text!fixtures/tabs.html','Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function(t, html) {
   
   module("Psc.UI.Tabs");
   
-  asyncTest("tab parsing", loadFixture(function ($tabs, tabs) {
+  var setup = function(test) {
+    var tab = new Psc.UI.Tab({
+      id: 'entity-persons-17',
+      label: 'Philipp S',
+      url: '/entities/persons/17/form'
+    });
+    
+    var otherTab = new Psc.UI.Tab({
+      id: 'entity-persons-19',
+      label: 'IS',
+      url: '/entities/persons/19/form'
+    });
+
+    var $fixture = $('#qunit-fixture').html(html);
+    var $tabs = $fixture.find('div.psc-cms-ui-tabs');
+    test.assertEquals($tabs.length,1,'self-test: Fixture hat div.psc-cms-ui-tabs im html des Ajax Requests');
+      
+    var tabs = new Psc.UI.Tabs({ widget: $tabs });
+    test.assertSame($tabs, tabs.unwrap());
+    
+    return t.setup(test, { tabs: tabs, tab: tab, otherTab: tab});
+  };
+  
+  test("tab parsing", function() {
+    setup(this);
     var welcome;
     // check welcome tab (parsing)
-    this.assertInstanceOf(Psc.UI.Tab, welcome = tabs.tab({index: 0}));
+    this.assertInstanceOf(Psc.UI.Tab, welcome = this.tabs.tab({index: 0}));
     this.assertEquals('Willkommen', welcome.getLabel());
     this.assertEquals('tab-content0', welcome.getId());
     this.assertFalse(welcome.isClosable(),'welcome cannot be closed');
     
-    this.assertEquals(0, tabs.getIndex());
-    this.assertEquals(1, tabs.count());
-    start();
-  }));
+    this.assertEquals(0, this.tabs.getIndex());
+    this.assertEquals(1, this.tabs.count());
+  });
     
-  asyncTest("has", loadFixture(function ($tabs, tabs) {
+  test("has", function() {
+    var that = setup(this), tabs = this.tabs;
     // has
     this.assertFalse(tabs.has(),'has with empty');
     this.assertFalse(tabs.has({index: null}),'has() returns false with null as index');
     this.assertFalse(tabs.has({index: 2}),'has() returns false with not-existing index');
     this.assertTrue(tabs.has({index: 0}),'has() returns true with existing index');
-    start();
-  }));
+  });
   
-  asyncTest("add a tab and get his index", loadFixture(function ($tabs, tabs) {
+  test("add a tab and get his index", function() {
+    var that = setup(this), tabs = this.tabs, tab = this.tab;
+    
     tabs.add(tab);
     this.assertTrue(tab.isClosable(),'normal tab is closable');    
     
@@ -63,19 +63,19 @@ define(['psc-tests-assert','Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function(t
     
     // but not another
     this.assertFalse(tabs.has(otherTab));
-    start();
-  }));
+  });
   
   
-  asyncTest("close and isClosable", loadFixture(function ($tabs, tabs) {
+  test("close and isClosable", function() {
+    var that = setup(this), tabs = this.tabs, tab = this.tab;
     tabs.add(tab);
     this.assertTrue(tab.isClosable(),'normal tab is closable');
     
     this.assertFalse(tabs.tab({index:0}).isClosable(), 'welcome tab is not closable');
-    start();
-  }));
+  });
   
-  asyncTest("search for a tab", loadFixture(function ($tabs, tabs) {
+  asyncTest("search for a tab", function() {
+    var that = setup(this), tabs = this.tabs, tab = this.tab;
     tabs.add(tab);
     
     // search
@@ -91,11 +91,10 @@ define(['psc-tests-assert','Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function(t
     raises(function () {
       tabs.tab({index: -1});
     });
-    start();
-  }));
+  });
   
-  asyncTest("search for tab with special chars", loadFixture(function ($tabs, tabs) {
-    start();
+  test("search for tab with special chars", function() {
+    var that = setup(this), tabs = this.tabs;
     var spTab = new Psc.UI.Tab({"id":"entities-user-info@ps-webforge.comd-form",
           "label":"Psc\\Doctrine\\Entity<Entities\\User> [info@ps-webforge.comd]",
           "url":"\/entities\/user\/info@ps-webforge.comd\/form"}
@@ -103,9 +102,11 @@ define(['psc-tests-assert','Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function(t
     
     tabs.add(spTab);
     this.assertSame(spTab, tabs.tab({id: 'entities-user-info@ps-webforge.comd-form'}));
-  }));
+  });
     
-  asyncTest("select a tab and open adds and selects tabs", loadFixture(function ($tabs, tabs) {
+  test("select a tab and open adds and selects tabs", function() {
+    var that = setup(this), tabs = this.tabs, tab = this.tab;
+    
     tabs.add(tab);
     var selected = function() {
       return $tabs.tabs('option','selected');
@@ -132,12 +133,10 @@ define(['psc-tests-assert','Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function(t
     //  "open" the second selects it
     tabs.open(otherTab);
     this.assertEquals(2, selected(),'tab was selected the second time');
-    start();
-  }));
+  });
   
-  asyncTest("has searches by id not by reference", loadFixture(function ($tabs, tabs) {
-    start();
-    tabs.add(tab);
+  test("has searches by id not by reference", function() {
+    var that = setup(this), tabs = this.tabs, tab = this.tab;
     
     var sameTab = new Psc.UI.Tab({
       id: tab.getId(),
@@ -146,9 +145,11 @@ define(['psc-tests-assert','Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function(t
     });
     
     this.assertTrue(tabs.has(sameTab), 'sameTab is (with the same id) in tabs');
-  }));
+  });
   
-  asyncTest("mark tabs unsaved and saved. ", loadFixture(function ($tabs, tabs) {
+  test("mark tabs unsaved and saved. ", function() {
+    var that = setup(this), tabs = this.tabs, tab = this.tab, otherTab = this.otherTab;
+    
     tabs.add(tab);
     tabs.add(otherTab);
     
@@ -166,11 +167,11 @@ define(['psc-tests-assert','Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function(t
     // close from click (otherTab), otherTab wurde ganz sicher hinzugefügt, d.h. die eventhandler klappen auch für sich veränderne elemente
     $tabs.find('ul li a[href="#entity-persons-19"]').nextAll('span.ui-icon-close').trigger('click');
     this.assertEquals(1, tabs.count(),'count ist jetzt 1 nachdem auf close gelickt wurde');
-    start();
-  }));
+  });
   
-  asyncTest("tabsAll closes (nearly) all tabs", loadFixture(function ($tabs, tabs) {
-    start();
+  test("tabsAll closes (nearly) all tabs", function() {
+    var that = setup(this), tabs = this.tabs, tab = this.tab, otherTab = this.otherTab;
+    
     tabs.add(tab);
     tabs.add(otherTab);
     this.assertEquals(3, tabs.count(),'3 tabs are there (1 fixture + 2 real)'); // 3 denn auch welcome
@@ -178,11 +179,11 @@ define(['psc-tests-assert','Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function(t
     tabs.closeAll();
     this.assertEquals(1, tabs.count(),'1 tabs is avaible after closeAll() because it is not closable');
     this.assertFalse(tabs.tab({index:0}).isClosable(), 'tab is really not closable');
-  }));
+  });
   
-  asyncTest("tabs gets added with contextMenu", loadFixture(function ($tabs, tabs) {
+  test("tabs gets added with contextMenu", function() {
+    var that = setup(this), tabs = this.tabs, tab = this.tab, otherTab = this.otherTab;
     tabs.add(tab);
-    start();
     
     this.assertEquals(2, tabs.count(),'tabs count is 2');
     var $li = $tabs.find('li:has(a[href="#entity-persons-17"])');
@@ -193,10 +194,9 @@ define(['psc-tests-assert','Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function(t
     var menu = tabs.getContextMenuManager().get($span);
     
     this.assertInstanceOf(Psc.UI.Menu, menu);
-  }));
+  });
   
-  asyncTest("tabs gets parsed with contextMenu", loadFixture(function ($tabs, tabs) {
-    start();
+  test("tabs gets parsed with contextMenu", function() {
     // nehme das fixture aus index.php (denn dashat 3 tabs sogar buttons)
     tabs = new Psc.UI.Tabs({ widget: fixtures.loadHTML('ui-tabs') });
     $tabs = tabs.unwrap();
@@ -209,13 +209,13 @@ define(['psc-tests-assert','Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function(t
     this.assertInstanceOf(Psc.UI.Menu, menu);
     
     $span.trigger('click');
-  }));
+  });
   
-  test("tabs trigger remote-tab-loaded after loading a remote tab with success", function() {
-    fail('todo');
+  test("TODO: tabs trigger remote-tab-loaded after loading a remote tab with success", function() {
+    expect(0);
   });
 
-  test("tabs trigger remote-tab-load before loading a remote tab", function() {
-    fail('todo');
+  test("TODO: tabs trigger remote-tab-load before loading a remote tab", function() {
+    expect(0);
   });
 });

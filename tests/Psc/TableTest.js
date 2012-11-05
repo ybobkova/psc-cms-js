@@ -1,6 +1,10 @@
 define(['psc-tests-assert','Psc/Table'], function(t) {
   var table, insertRow;
   
+  var setup = function(test) {
+    t.setup(test);
+  };
+  
   module("Psc.Table", {
     setup: function () {
       
@@ -41,6 +45,7 @@ define(['psc-tests-assert','Psc/Table'], function(t) {
   });
 
   test("acceptance", function() {
+    setup(this);
     this.assertTrue(table.hasColumn('number'),'table has Column number');
     this.assertTrue(table.hasColumn('sound'), 'table has column sound');
     
@@ -49,17 +54,16 @@ define(['psc-tests-assert','Psc/Table'], function(t) {
   });
   
   test("insertRow: -1 appends", function () {
+    setup(this);
     table.insertRow(insertRow, -1);
     
-    console.log(table.getData());
     this.assertSame(table.getRow(21), insertRow, 'row wurde an stelle 21 eingefügt');
   });
 
   test("insertRow: 1 prepends", function () {
+    setup(this);
     table.insertRow(insertRow, 1);
     
     this.assertSame(table.getRow(1), insertRow, 'row wurde an stelle 1 eingefügt');
-  });
-  
-  
+  });  
 });

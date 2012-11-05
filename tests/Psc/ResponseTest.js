@@ -1,12 +1,14 @@
-define(['psc-tests-assert','Psc/Response'], function () {
-  module("Psc.Response", {
-    setup: function () {
-      this.headerString = "Date: Mon, 19 Mar 2012 06:48:32 GMT\r\nServer: Apache/2.2.22 (Win32) PHP/5.3.10\r\nX-Powered-By: PHP/5.3.10\r\nPragma: no-cache\r\nCache-Control: private, no-cache\r\nVary: Accept\r\nContent-Length: 50\r\nKeep-Alive: timeout=5, max=91\r\nConnection: Keep-Alive\r\nContent-Type: text/html; charset=utf-8\r";
-    }
-  });
+define(['psc-tests-assert','Psc/Response'], function (t) {
+  module("Psc.Response");
+  
+  var setup = function (test) {
+    return t.setup(test, {
+      headerString: "Date: Mon, 19 Mar 2012 06:48:32 GMT\r\nServer: Apache/2.2.22 (Win32) PHP/5.3.10\r\nX-Powered-By: PHP/5.3.10\r\nPragma: no-cache\r\nCache-Control: private, no-cache\r\nVary: Accept\r\nContent-Length: 50\r\nKeep-Alive: timeout=5, max=91\r\nConnection: Keep-Alive\r\nContent-Type: text/html; charset=utf-8\r"
+    });
+  };
   
   test("construct", function() {
-    
+    setup(this);
     var response = new Psc.Response({code: 200, reason: 'OK'});
     
     this.assertEquals(200, response.getCode());
@@ -17,12 +19,14 @@ define(['psc-tests-assert','Psc/Response'], function () {
   });
   
   test("convertsCodeToInt", function() {
+    setup(this);
     var response = new Psc.Response({code: "200", reason: 'OK'});
     
     this.assertEquals(200, response.getCode());
   });
   
   test("parsesStringHeader", function() {
+    setup(this);
     var response = new Psc.Response({
       code: 200,
       reason: 'OK',
