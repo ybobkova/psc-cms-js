@@ -1,9 +1,16 @@
-<div id="drop-box1">
-  <div class="psc-cms-ui-drop-box psc-guid-50938abfe7e32"><button class="psc-cms-ui-button psc-guid-50938abfe7d35 assigned-item">Tag</button>
+<div id="drop-box1"><div class="psc-cms-ui-drop-box psc-guid-5098eec581397"><button class="psc-cms-ui-button psc-guid-5098eec5811b8 assigned-item">Tag1</button>
+
 <script type="text/javascript">
-require(['js/main'], function (main) {
-  require(['jquery', 'Psc/CMS/FastItem'], function (jQuery) {
-    var j = new Psc.CMS.FastItem({
+requireLoad(['jquery'], function (main, jQuery) {
+  jQuery('button.psc-guid-5098eec5811b8')
+  .button({})
+});
+</script>
+
+</div>
+<script type="text/javascript">
+requireLoad(['jquery', 'Psc/UI/DropBox','Psc/CMS/FastItem'], function (main, jQuery) {
+    new Psc.CMS.FastItem({
       'label': "Psc\\Doctrine\\Entity<Psc\\Doctrine\\TestEntities\\Tag> [1]",
       'value': 1,
       'ac': {"label": "Psc\\Doctrine\\Entity<Psc\\Doctrine\\TestEntities\\Tag> [1]"},
@@ -13,43 +20,31 @@ require(['js/main'], function (main) {
       'entityName': "tag",
       'link': {},
       'delete': {"url": "\/entities\/tag\/1","method": "DELETE"},
-      'widget': jQuery('button.psc-guid-50938abfe7d35')
+      'widget': jQuery('button.psc-guid-5098eec5811b8')
     });
-  });
-});
-</script>
 
-<script type="text/javascript">
-require(['js/main'], function (main) {
-  require(['jquery'], function (jQuery) {
-jQuery('button.psc-guid-50938abfe7d35')
-  .button({})  });
-});
-</script>
-
-</div>
-<script type="text/javascript">
-require(['js/main'], function (main) {
-  require(['jquery', 'Psc/UI/DropBox'], function (jQuery) {
-    console.log('exec');
     var j = new Psc.UI.DropBox({
-      'widget': jQuery('div.psc-guid-50938abfe7e32'),
+      'widget': jQuery('div.psc-guid-5098eec581397'),
       'name': "act0",
       'connectWith': "div.psc-cms-ui-drop-box",
       'multiple': true
-    });
-  });
+    });});
+</script>
+</div><div id="drop-box2"><div class="psc-cms-ui-drop-box psc-guid-5098eec582764"><button class="psc-cms-ui-button psc-guid-5098eec5825a7 assigned-item">Psc\Doctrine\Entity<Psc\Doctrine\TestEntities\Tag> [2]</button>
+<script type="text/javascript">
+</script>
+
+<script type="text/javascript">
+requireLoad(['jquery'], function (main, jQuery) {
+  jQuery('button.psc-guid-5098eec5825a7')
+    .button({})
 });
 </script>
+
 </div>
-
-
-<div id="drop-box2">
-  <div class="psc-cms-ui-drop-box psc-guid-50938abfe88bd"><button class="psc-cms-ui-button psc-guid-50938abfe87ad assigned-item">Tag</button>
 <script type="text/javascript">
-require(['js/main'], function (main) {
-  require(['jquery', 'Psc/CMS/FastItem'], function (jQuery) {
-    var j = new Psc.CMS.FastItem({
+requireLoad(['jquery', 'Psc/UI/DropBox','Psc/CMS/FastItem'], function (main, jQuery) {
+    new Psc.CMS.FastItem({
       'label': "Psc\\Doctrine\\Entity<Psc\\Doctrine\\TestEntities\\Tag> [2]",
       'value': 2,
       'ac': {"label": "Psc\\Doctrine\\Entity<Psc\\Doctrine\\TestEntities\\Tag> [2]"},
@@ -59,31 +54,14 @@ require(['js/main'], function (main) {
       'entityName': "tag",
       'link': {},
       'delete': {"url": "\/entities\/tag\/2","method": "DELETE"},
-      'widget': jQuery('button.psc-guid-50938abfe87ad')
+      'widget': jQuery('button.psc-guid-5098eec5825a7')
     });
-  });
-});
-</script>
 
-<script type="text/javascript">
-require(['js/main'], function (main) {
-  require(['jquery'], function (jQuery) {
-jQuery('button.psc-guid-50938abfe87ad')
-  .button({})  });
-});
-</script>
-
-</div>
-<script type="text/javascript">
-require(['js/main'], function (main) {
-  require(['jquery', 'Psc/UI/DropBox'], function (jQuery) {
     var j = new Psc.UI.DropBox({
-      'widget': jQuery('div.psc-guid-50938abfe88bd'),
+      'widget': jQuery('div.psc-guid-5098eec582764'),
       'name': "act1",
       'connectWith': "div.psc-cms-ui-drop-box",
       'multiple': true
-    });
-  });
-});
+    });});
 </script>
 </div>

@@ -1,9 +1,9 @@
-define(['psc-tests-assert','Psc/UI/Dialog'], function(t) {
-  var dialog, constructSubmitted = false;
+define(['psc-tests-assert'], function(t) {
   
-  module("Radios Test");
+  module("Visible-Tests: Radios Test");
 
   test("radios work in IE", function() {
+    expect(0);
     var html = $('<div class="radios-wrapper psc-guid-radios-wrapper-for-38db7ac4aa11f6f6f40c727e363c82a6 ui-buttonset" id="radios-wrapper-for-38db7ac4aa11f6f6f40c727e363c82a6">'+
       '<input type="radio" checked="checked" value="fx" name="type" id="38db7ac4aa11f6f6f40c727e363c82a6-1" class="ui-helper-hidden-accessible"> <label for="38db7ac4aa11f6f6f40c727e363c82a6-1" class="ui-state-active ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" aria-pressed="true" role="button" aria-disabled="false"><span class="ui-button-text">FX</span></label>'+
       '<input type="radio" value="text" name="type" id="38db7ac4aa11f6f6f40c727e363c82a6-2" class="ui-helper-hidden-accessible"> <label for="38db7ac4aa11f6f6f40c727e363c82a6-2" aria-pressed="false" class="ui-button ui-widget ui-state-default ui-button-text-only" role="button" aria-disabled="false"><span class="ui-button-text">Sprache</span></label>'+

@@ -3,7 +3,9 @@ define(['psc-tests-assert','Psc/UI/Group'], function(t) {
   module("Psc.UI.Group");
   
   var setup = function(test) {
-    var group = new Psc.UI.Group({ });
+    var group = new Psc.UI.Group({
+      label: 'empty'
+    });
     
     return t.setup(test, {group: group});
   };
@@ -11,6 +13,6 @@ define(['psc-tests-assert','Psc/UI/Group'], function(t) {
   test("acceptance", function() {
     setup(this);
   
-    // this.group.doSomething();
+    this.assertEquals(1, this.group.html().length);
   });
 });

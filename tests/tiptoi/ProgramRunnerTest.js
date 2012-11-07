@@ -1,25 +1,26 @@
 define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','tiptoi/InputProvider', 'Psc/Code'], function(t) {
-  var tiptoiMain, main, programRunner, program1, played = [];
   
-  module("tiptoi.Main", {
-    setup: function () {
-        programRunner = new tiptoi.ProgramRunner({
-         soundPlayer: new tiptoi.SimpleSoundPlayer({
-          onPlay: function (sounds) {
-            $.each(sounds, function (i, sound) {
-              played.push(sound.getContent());
-            });
-          }
-        }),
-        inputProvider: new tiptoi.InputProvider({
-          sequence: [77]
-        })
-      });
+  
+  module("tiptoi.ProgramRunner");
+  
+  var setup = function (test) {
+    var programRunner, played = [];
+    
+    programRunner = new tiptoi.ProgramRunner({
+      soundPlayer: new tiptoi.SimpleSoundPlayer({
+        onPlay: function (sounds) {
+          $.each(sounds, function (i, sound) {
+            played.push(sound.getContent());
+          });
+        }
+      }),
+      inputProvider: new tiptoi.InputProvider({
+        sequence: [77]
+      })
+    });
 
-    }, teardown: function () {
-      played = []; // warum muss das in teardown und geht nicht in setup?
-    }
-  });
+    return t.setup(test, { programRunner: programRunner, played: played});
+  };
   
   var p = function (code) {
     return new tiptoi.Program({code: code});
@@ -72,12 +73,14 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     */
 
   asyncTest("a program can play sounds", function () {
+    var that = setup(this), programRunner = this.programRunner, played = this.played;
+    
     $.when( programRunner.run(p(
       "playSound('2-TEST-001');"+
       "tiptoi.end()"
       ))
     ).then(function () {
-      this.assertEquals(["2-TEST-001"], played);
+      that.assertEquals(["2-TEST-001"], played);
       start();
     }, function (error) {
       fail("program failed");
@@ -85,7 +88,9 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     });
   });
   
-  asyncTest("a program can have sounds", function () {
+  test("a program can have sounds", function () {
+    var that = setup(this), programRunner = this.programRunner, played = this.played;
+    
     var program = new tiptoi.Program({
       code: "not necessary",
       name: "my label"
@@ -94,10 +99,11 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     program.setSound('aPlaceHolder', sound = new tiptoi.Sound({number: '2-STA_0596', content: 'Die Universität'}));
     
     this.assertEquals({aPlaceHolder: sound}, program.getSounds());
-    start();
   });
 
   asyncTest("a program can have complex code", function () {
+    var that = setup(this), programRunner = this.programRunner, played = this.played;
+    
     var status = programRunner.run(p(
       "var count = 0;"+
       "if (count === 0) {"+
@@ -109,12 +115,13 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     ));
     
     status.done(function () {
-      this.assertEquals(['2-TEST-002'], played);
+      that.assertEquals(['2-TEST-002'], played);
       start();
     });
   });
 
   asyncTest("a program can wait for input", function () {
+    var that = setup(this), programRunner = this.programRunner, played = this.played;
     var log = '';
     
     // ich verstehe nicht, warum ich hier mir einen eigenen programmrunner bauen muss,
@@ -142,19 +149,19 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     ));
     
     status.progress(function (cpu) {
-      this.assertInstanceOf(tiptoi.cpu, cpu, 'notify param is a tiptoi.tiptoi instance');
+      that.assertInstanceOf(tiptoi.cpu, cpu, 'notify param is a tiptoi.tiptoi instance');
       log += 'yay up it goes';
     });
     
     status.done(function () {
-      this.assertEquals(['this should not be allowed', 'i waited for 77'], played);
-      
-      this.assertEquals(log, 'yay up it goes');
+      that.assertEquals(['this should not be allowed', 'i waited for 77'], played);
+      that.assertEquals(log, 'yay up it goes');
       start();
     });
   });
 
   asyncTest("tiptoi triggers events while waiting", function () {
+    var that = setup(this), programRunner = this.programRunner, played = this.played;
     var input = false, waiting = false;
     
     var status = programRunner.run(p(
@@ -169,20 +176,21 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
       });
 
       cpu.on('tiptoi-input-given', function (e, inputType, inputValue) {
-        this.assertEquals('OID', inputType);
+        that.assertEquals('OID', inputType);
         input = inputValue;
       });
       
     });
     
     status.done(function () {
-      this.assertTrue(waiting,'tiptoi-waiting-for-input was triggered');
-      this.assertEquals(77, input,'tiptoi-input-given was triggered');
+      that.assertTrue(waiting,'tiptoi-waiting-for-input was triggered');
+      that.assertEquals(77, input,'tiptoi-input-given was triggered');
       start();
     });
   });
   
   asyncTest("a program can have a timer", function () {
+    var that = setup(this), programRunner = this.programRunner;
     var log = '';
     var played = [];
     
@@ -209,17 +217,18 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     ));
     
     status.done(function () {
-      this.assertEquals(['will be played before', 'timer ran out'], played);
+      that.assertEquals(['will be played before', 'timer ran out'], played);
       start();
     });
     
     status.fail(function (e) {
-      fail("runner rejected: "+e.message);
+      that.fail("runner rejected: "+e.message);
       start();
     });
   });
   
   asyncTest("a program has the A helper", function () {
+    var that = setup(this), programRunner = this.programRunner, played = this.played;
     var status = programRunner.run(pCode(
       "var oids = [9999001, 9999002, 9999005];",
       "if (A.contains(oids, 9999002)) {",
@@ -238,12 +247,13 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     ));
 
     status.done(function () {
-      this.assertEquals(['contains','contains-not'], played);
+      that.assertEquals(['contains','contains-not'], played);
       start();
     });
   });
 
   asyncTest("the program A helper removes elements from arrays", function () {
+    var that = setup(this), programRunner = this.programRunner, played = this.played;
     var status = programRunner.run(pCode(
       "var oids = [9999001, 9999002, 9999002, 9999005];",
       // remove first occurence
@@ -268,16 +278,19 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     ));
 
     status.done(function () {
-      this.assertEquals(['1:contains','2:contains-not'], played);
+      that.assertEquals(['1:contains','2:contains-not'], played);
       start();
     });
     
     status.fail(function(e) {
       console.log(e);
+      that.fail(e);
+      start();
     });
   });
     
   asyncTest("a program can read sounds table", function () {
+    var that = setup(this), programRunner = this.programRunner, played = this.played;
     var mainTable = [
       {number: '1-TEST_001', sound: 'Was ist grün und lebt auf dem Baum?', correctOID: 9999004},
       {number: '1-TEST_004', sound: 'Wieviele Mäuse kann ein Bussard verspeisen?', correctOID: 9999004}
@@ -295,13 +308,14 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     var status = programRunner.run(program);
     
     status.done(function () {
-      this.assertEquals(['1-TEST_004', '1-TEST_001'], played);
+      that.assertEquals(['1-TEST_004', '1-TEST_001'], played);
       start();
     });
     
   });
   
   asyncTest("program can make syntax errors", function () {
+    var that = setup(this), programRunner = this.programRunner, played = this.played;
     var status = programRunner.run(pCode(
       'thisFunctionDoesNotExists();'
     ));
@@ -312,7 +326,7 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     });
 
     status.fail(function (error) {
-      this.assertNotUndefined(error, 'some error message is set');
+      that.assertNotUndefined(error, 'some error message is set');
       ok('fail is called');
       start();
     });
@@ -328,7 +342,7 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
       return;
     }
     
-    fail("not caught");
+    that.fail("not caught");
     start();
   });
 });

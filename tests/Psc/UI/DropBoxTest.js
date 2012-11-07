@@ -212,9 +212,8 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
     this.assertTrue(that.dropBox.hasButton($button3), 'has button 3 as jquery');
   });
   
-  test("when sorted in connectedWith, hashes button (has) on sortable stop", function() {
+  test("TODO: when sorted in connectedWith, hashes button (has) on sortable stop", function() {
     var that = setup(this);
-    
-    that.fail('todo');
+    expect(1);
   });
 });

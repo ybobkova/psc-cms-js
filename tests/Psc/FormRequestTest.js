@@ -2,10 +2,12 @@ define(['psc-tests-assert', 'text!fixtures/form.html', 'Psc/FormRequest'], funct
   module("Psc.FormRequest");
   
   test("parsesURLAndMethodFromCMSForm", function() {
+    t.setup(this);
+    
     var $form = $(html);
     var formRequest = new Psc.FormRequest({ form: $form});
       
-    this.assertEquals('/js/fixtures/ajax/http.form.saved.php', formRequest.getUrl());
+    this.assertEquals('response.html', formRequest.getUrl());
     this.assertEquals('PUT',formRequest.getMethod());
   });
 });

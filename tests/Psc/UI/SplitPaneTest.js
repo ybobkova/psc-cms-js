@@ -9,6 +9,7 @@ define(['psc-tests-assert','Psc/UI/SplitPane'], function(t) {
   };
 
   test("acceptance", function() {
+    expect(0);
     setup(this);
   
     // this.splitPane.doSomething();

@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/GridTableEditor','Psc/Table','Psc/UI/GridTable','Psc/CMS/Service'], function(t) {
+define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table','Psc/UI/GridTable','Psc/CMS/Service'], function(t) {
   
   module("Psc.UI.GridTableEditor");
   

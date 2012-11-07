@@ -1,16 +1,13 @@
-define(['psc-tests-assert','tiptoi/GameSimulator','tiptoi/ProgramRunner','tiptoi/SimpleSoundPlayer','tiptoi/InteractiveInputProvider','Psc/EventManager','tiptoi/HTMLOutput'], function(t) {
+define(['psc-tests-assert','jquery-simulate','tiptoi/GameSimulator','tiptoi/ProgramRunner','tiptoi/SimpleSoundPlayer','tiptoi/InteractiveInputProvider','Psc/EventManager','tiptoi/HTMLOutput'], function(t) {
   
   var $startButton = $('<button class="psc-cms-ui-button psc-guid-4fe1b397df398 ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" role="button" aria-disabled="false"><span class="ui-button-icon-primary ui-icon ui-icon-play"></span><span class="ui-button-text">Spiel starten</span></button>').button({icons: {primary: 'ui-icon-play'}});
-  
   var $output = $('<fieldset style="font-size: 80%" class="ui-corner-all ui-widget-content psc-cms-ui-group"><legend>Game Output Log</legend><div class="content">Auf "Spiel Starten" klicken, um das Spiel zu simulieren.<br>Die Ausgabe des tiptoi wird hier angezeigt.<br>Während des Spieles kann auf die Buttons / Kästchen im OID Layout geklickt werden, um zu "tippen".</div></fieldset>');
-  
   var $fixture = $('#visible-fixture');
-  
   var $oidLayout = $('<div class="oid-layout-container"></div>');
   
   module("tiptoi.GameSimulator");
   
-  var setupHTML = function () {
+  var setupHTML = function (test) {
     $fixture
       .empty()
       .append($output)
@@ -22,11 +19,14 @@ define(['psc-tests-assert','tiptoi/GameSimulator','tiptoi/ProgramRunner','tiptoi
       layout: $oidLayout
     });
     
+    t.setup(test);
+    
     return gameSimulator;
   };
 
   asyncTest("acceptance", function() {
-    var gameSimulator = setupHTML(), evm = gameSimulator.getEventManager();
+    var that = this;
+    var gameSimulator = setupHTML(this), evm = gameSimulator.getEventManager();
     var listening = false, gotInput = false, gotStart = false, gotEnd = false;
     
     gameSimulator.setProgram(new tiptoi.Program({
@@ -44,23 +44,23 @@ define(['psc-tests-assert','tiptoi/GameSimulator','tiptoi/ProgramRunner','tiptoi
     
     // wenn der interactive input provider das hier triggered, erwartet er, dass geklickt wird
     evm.on('input-provider-listening', function () {
-      start();
+      
       var oid = 17121;
       
-      this.assertEquals(
+      that.assertEquals(
         "Spiel „runsAndWaitsForOneInput“ startet"+
-        "PlaySound „game start“ (null)"+
+        "„game start“ (null)"+
         "tiptoi wartet auf input...",
         
         $output.text(),
         'text hält bei wartet auf input...'
       );
       
-      
-      stop();
-      //alert('input provider asynchron: interaction erforderlich. ich sende jetzt eine oid: '+17121);
       listening = true;
+      stop();
       $oidLayout.trigger('tiptoi-tip', [{'oid': oid}]);
+      
+      start();
     });
     
     evm.on('input-provider-got-input', function () {
@@ -79,19 +79,23 @@ define(['psc-tests-assert','tiptoi/GameSimulator','tiptoi/ProgramRunner','tiptoi
       // expect: outputbox hat die beidne playsounds
       
       // assertions nach allem:
-      this.assertTrue(listening, 'Input provider listening was triggered from input-provider');
-      this.assertTrue(gotInput, 'got Input was triggered from input-provider');
-      this.assertTrue(gotStart, 'tiptoi Program wurde gestartet');
-      this.assertTrue(gotEnd, 'tiptoi Program lief erfolgreich durch');
+      that.assertTrue(listening, 'Input provider listening was triggered from input-provider');
+      that.assertTrue(gotInput, 'got Input was triggered from input-provider');
+      that.assertTrue(gotStart, 'tiptoi Program wurde gestartet');
+      that.assertTrue(gotEnd, 'tiptoi Program lief erfolgreich durch');
       
-      this.assertEquals("Spiel „runsAndWaitsForOneInput“ startet"+
-                   "PlaySound „game start“ (null)"+
-                   "tiptoi wartet auf input..."+
-                   "getippt wurde: OID: 17121"+
-                   "PlaySound „i waited for 17121“ (null)"+
-                   "Spiel beendet", $output.text(),
-                   'text ist komplett'
-                  );
+      that.assertEquals(
+        "Spiel „runsAndWaitsForOneInput“ startet"+
+        "„game start“ (null)"+
+        //"tiptoi wartet auf input..."+
+        "getippt wurde: 17121 undefined"+
+        "„i waited for 17121“ (null)"+
+        "Spiel beendet",
+        
+        $output.text(),
+        
+        'text ist komplett'
+      );
     });
     
     
@@ -100,8 +104,8 @@ define(['psc-tests-assert','tiptoi/GameSimulator','tiptoi/ProgramRunner','tiptoi
     
   });
   
-  
   test("flashing is going on my nerves", function() {
+    t.setup(this);
     expect(0);
     var $el = $('<p>tiptoi waiting for input</p>').css('color', '#000000');
     $('#visible-fixture').html($el);
@@ -112,10 +116,6 @@ define(['psc-tests-assert','tiptoi/GameSimulator','tiptoi/ProgramRunner','tiptoi
       $el.stop(true).queue(function (e) {
         $el.css('opacity',1);
       });
-      
-
-    }, 600);
-    
-    
+    }, 600);    
   });
 });

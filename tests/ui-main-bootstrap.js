@@ -1,9 +1,8 @@
 /*
  * this bootstrap is a fake bootstrap for tests, which creates a main with fixture contents
  */
-define(['jquery','joose','Psc/UI/Main','Psc/UI/Tabs'], function ($) {
-  
-  var $cmsContent = $('<div />').append('<div class="psc-cms-ui-tabs" />');
+define(['jquery', 'text!fixtures/tabs-for-main.html', 'joose', 'Psc/UI/Main', 'Psc/UI/Tabs'], function ($, htmlTabs) {
+  var $cmsContent = $('<div />').append(htmlTabs);
   
   var $tabs = $cmsContent.find('div.psc-cms-ui-tabs:eq(0)'); // das erste tabs objekt wird unser main tab
   var main = new Psc.UI.Main({
@@ -14,6 +13,11 @@ define(['jquery','joose','Psc/UI/Main','Psc/UI/Tabs'], function ($) {
   
   main.attachHandlers();
   main.getEventManager().setLogging(true);
+  
+  window.requireLoad = function(requirements, payload) {
+    requirements.unshift('js/main');
+    main.getLoader().onRequire(requirements, payload);
+  };
   
   return main;
 });

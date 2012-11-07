@@ -2,7 +2,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
   
   module("Psc.UI.LayoutManager");
   
-  var setup = function (params) {
+  var setup = function (test, params) {
     var dbm = new Psc.Test.DoublesManager();
     var $fixture = $('#visible-fixture').empty();
     var $html = $('<div class="psc-cms-ui-splitpane psc-cms-ui-serializable psc-cms-ui-layout-manager">'+
@@ -25,7 +25,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
       uploadService: dbm.getUploadService()
     }, params || []));
     
-    return {
+    return t.setup(test, {
       assertWidget: function (assert, $widget) {
         m = function (msg) {
           return '[widget: '+assert.type+'] '+msg;
@@ -40,9 +40,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
       uploadService: layoutManager.getUploadService(),
       '$fixture': $fixture,
       layoutManager: layoutManager
-    };
-    
-    
+    });
   };
 
   test("create List without content creates a widget with an empty textarea", function() {
@@ -71,7 +69,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
     this.assertEquals("", $ta.val());
   });
 
-    test("createWidget sends content parameter to subclass", function() {
+  test("createWidget sends content parameter to subclass", function() {
     setup(this);
   
     var widget = this.layoutManager.createWidget('paragraph', 'mycontent');
@@ -163,7 +161,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
   });
   
   test("layoutManager unserializes widgets on init", function () {
-    $.extend(this, setup({
+    setup(this, {
       serializedWidgets: [
         {type: 'headline', label: "Überschrift", content:"the headline", level: 2},
         {type: 'paragraph', label: "Absatz", content:"content of paragraph 1"},
@@ -171,7 +169,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
         {type: 'li', label: "Aufzählung", content:["list1", "list2"]},
         {type: 'paragraph', label: "Absatz", content:"content of paragraph 2"}
       ]
-    }));
+    });
     
     this.assertEquals(5, this.layoutManager.getWidgets().length);
   });
