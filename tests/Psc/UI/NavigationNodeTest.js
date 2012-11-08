@@ -1,69 +1,66 @@
-define(['psc-tests-assert','Psc/UI/NavigationNode'], function(t) {
+define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(t) {
   
   module("Psc.UI.NavigationNode");
   
-  var setup =  function () {
+  var setup =  function (test) {
       var node = new Psc.UI.NavigationNode({
         id: 2,
         title: {en: 'home', de: 'Startseite'},
         parent: null,
-        level: 0,
+        depth: 0,
         locale: 'en',
         languages: ['de','en'],
         pageId: 17
       });
       
-      return {node: node};
+      return t.setup(test, {node: node});
   };
   
-  var setupWithHTML = function () {
+  var setupWithHTML = function (test) {
     var $fs = $('<fieldset />').addClass('psc-cms-ui-navigation');
     $('#visible-fixture').empty().append($fs);
     
-    var vars = $.extend(setup(), {
-        container: $fs
-      }
-    );
+    setup(test);
+
+    test.container = $fs;
     
-    vars.$html = vars.node.html();
-    $fs.append(vars.$html);
+    test.$html = test.node.html();
+    $fs.append(test.$html);
     
-    vars.$edit = vars.$html.find('.edit');
-    
-    return vars;
+    return test;
   };
 
   test("acceptance", function() {
+    var that = setup(this);
     var node = new Psc.UI.NavigationNode({
       id: 2,
       title: {en: 'BMW', de: 'Bayrische Motoren Werke'},
       parent: null,
-      level: 0,
+      depth: 0,
       locale: 'en',
       pageId: 17,
       languages: ['de','en']
     });
     
     this.assertTrue(node.html().is('li'), 'html() output is a <li>');
-    this.assertEquals('editBMW 17', node.html().text());
+    this.assertEquals('BMW', node.html().find('span.title').text());
     
     this.assertEquals('blubb', node.setParent('blubb').getParent(), 'blubb equals');
   });
   
   test("html has the poppy edit - button", function () {
-    $.extend(this, setupWithHTML());
+    var that = setupWithHTML(this);
     
-    var $html = this.node.html(), $edit = $html.find('button');
+    var $html = this.node.html(), $buttons = $html.find('button');
     this.container.append($html);
     
-    this.assertEquals(1, $edit.length, 'edit button is in html');
-    this.assertSame(this.$edit[0], $edit[0]);
+    this.assertEquals(3, $buttons.length, '3 buttons are in html');
   });
 
   test("edit opens a popup", function () {
-    $.extend(this, setupWithHTML());
+    var that = setupWithHTML(this);
     
-    this.$edit.simulate('click');
+    this.$html.find('button.edit').simulate('click');
     
     var dialog = this.node.getDialog();
     this.assertTrue(dialog.isOpen(), 'dialog is there and open');
@@ -71,19 +68,19 @@ define(['psc-tests-assert','Psc/UI/NavigationNode'], function(t) {
   });
   
   test("popup has input fields", function () {
-    $.extend(this, setupWithHTML());
+    var that = setupWithHTML(this);
     
     this.node.openEditDialog();
     var dialog = this.node.getDialog(), $dialog = dialog.unwrap();
     
     var $textInputs = $dialog.find('input[type="text"]');
     
-    this.assertEquals(this.node.getLanguages().length, $textInputs.length, 'inputs title de, inputs title fr are there');
+    this.assertEquals(this.node.getLanguages().length+1, $textInputs.length, 'inputs title de, inputs title fr are there, img is there');
     dialog.close();
   });
   
   test("popup submit updates node on close", function () {
-    $.extend(this, setupWithHTML());
+    var that = setupWithHTML(this);
     
     this.node.openEditDialog();
     var dialog = this.node.getDialog(), $dialog = dialog.unwrap();
@@ -102,7 +99,7 @@ define(['psc-tests-assert','Psc/UI/NavigationNode'], function(t) {
   
   
   test("refreshTitle updates li", function () {
-    $.extend(this, setupWithHTML());
+    var that = setupWithHTML(this);
     
     this.assertEquals('home', this.$html.find('span.title').text());
     

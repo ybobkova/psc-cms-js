@@ -11,6 +11,7 @@ if (mb_substr($testName, 0, -4) !== 'Test') {
   <title>Run <?= $testName ?></title>
   <link rel="stylesheet" href="/vendor/qunit/qunit-1.10.0.css">
   <link rel="stylesheet" href="/vendor/jqwidgets/styles/jqx.base.css" type="text/css" />
+  <link rel="stylesheet" href="/vendor/jquery-ui/css/smoothness/jquery-ui-1.8.22.custom.css" type="text/css" />
   <link rel="stylesheet" href="/css/tests.css" type="text/css" />
   
 </head>

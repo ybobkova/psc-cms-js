@@ -3,7 +3,7 @@ define(['psc-tests-assert',
         'Psc/UI/DropBox', 'Psc/UI/Dragger','Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable', 'Psc/UI/WidgetWrapper'
        ], function(t, html) {
   
-  module('Psc.UI.DropBox (connectWith)')
+  module('Psc.UI.DropBox (connectWith)');
   
   var setup =  function (test, ready) {
     var $dropBox1, $dropBox2, dropBox1, dropBox2, drag, $fixture, d = $.Deferred();

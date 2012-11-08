@@ -68,4 +68,22 @@ define(['psc-tests-assert','Psc/UI/Dialog'], function(t) {
     this.assertTrue(this.constructSubmitted, 'event was triggerd');
     dialog.close();
   });
+  
+  test("buttons are labeled when open with default buttons", function() {
+    // this was regression for ui 1.8.22
+    var that = setup(this);
+    this.dialog.open();
+    
+    var $dialog = this.dialog.unwrap().parent('.ui-dialog');
+    
+    this.assertEquals(1, $dialog.length, 'parent .ui-dialog is found');
+    var $buttons = $dialog.find('.ui-dialog-buttonset button');
+    
+    this.assertEquals(2, $buttons.length, 'two buttons are in the set');
+    
+    this.assertEquals('abbrechen', $($buttons.get(0)).text());
+    this.assertEquals('Ok', $($buttons.get(1)).text());
+    
+    this.dialog.close();
+  });
 });

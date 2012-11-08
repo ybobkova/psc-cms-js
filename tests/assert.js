@@ -98,6 +98,33 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 			var result = actual !== undefined;
 			QUnit.push( result, actual, "something not undefined", this.formatMessage(message || this.debug(actualObject)+"["+actualAttribute+"] equals value ", result) );
 		},
+
+		/**
+		 *
+		 * @TODO chainable would be nice!
+		 * assertjQuery(object).length(3).hasClass('blubb);
+		 */
+		assertjQuery: function(actualObject, message) {
+			this.assertAttributeNotUndefined('jquery', actualObject, message || 'actual is a jquery object [in assertjQuery]');
+		},
+		
+		assertjQueryLength: function(expectedLength, jQueryObject, message) {
+			this.assertjQuery(jQueryObject, 'actual is a jquery object [in assertJQueryLength]');
+			
+			var actualLength = jQueryObject.length;
+			var result = actualLength === expectedLength;
+			QUnit.push( result, actualLength, expectedLength, this.formatMessage(message || "$('"+jQueryObject.selector+"').length equals expected length ", result) );
+			return jQueryObject;
+		},
+		
+		assertjQueryHasClass: function(expectedClass, jQueryObject, message) {
+			this.assertjQuery(jQueryObject, 'actual is a jquery object [in assertJQueryHasClass]');
+			
+			var actualClasses = jQueryObject.attr('class');
+			var result = jQueryObject.hasClass(expectedClass);
+			QUnit.push( result, actualClasses, expectedClass, this.formatMessage(message || "$('"+jQueryObject.selector+"').hasClass('"+expectedClass+"') ", result) );
+			return jQueryObject;
+		},
 	
 		fail: function(message) {
 			//QUnit.push( false, message , sourceFromStacktrace(2));

@@ -121,7 +121,7 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
   });
 
   asyncTest("a program can wait for input", function () {
-    var that = setup(this), programRunner = this.programRunner, played = this.played;
+    var that = setup(this), played = this.played;
     var log = '';
     
     // ich verstehe nicht, warum ich hier mir einen eigenen programmrunner bauen muss,
@@ -190,7 +190,7 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
   });
   
   asyncTest("a program can have a timer", function () {
-    var that = setup(this), programRunner = this.programRunner;
+    var that = setup(this);
     var log = '';
     var played = [];
     
