@@ -3,7 +3,7 @@ define(['psc-tests-assert','Psc/EventManager','tiptoi/ConsoleOutput'], function(
   module("tiptoi.ConsoleOutput");
   
   var setup = function(test) {
-    return t.setup(test)
+    return t.setup(test);
   };
 
   test("acceptance", function() {

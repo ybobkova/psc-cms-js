@@ -24,7 +24,7 @@ define(['psc-tests-assert','Psc/CMS/ComboDropBoxable','Psc/UI/DropBoxButton','Ps
     });
     
     return t.setup(test, {comboDropBoxable: comboDropBoxable});
-  }
+  };
 
   test("acceptance", function() {
     setup(this);

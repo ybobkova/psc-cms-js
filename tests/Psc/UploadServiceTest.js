@@ -74,7 +74,6 @@ define(['psc-tests-assert','Psc/UploadService','Psc/Request','Psc/Test/DoublesMa
     
     this.uploadService.openSingleDialog(this.request);
   
-    var that = this;
     var param = {files: [{name: 'test', fileSize: 123}]};
     var dialog = this.uploadService.getSingleDialog();
     var $file = dialog.unwrap().find('form input[type="file"]');
