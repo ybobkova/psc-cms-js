@@ -1,4 +1,4 @@
-define(['psc-tests-assert','text!fixtures/tabs.html','Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function(t, html) {
+define(['psc-tests-assert','text!fixtures/tabs.html','text!fixtures/tabs-for-main.html','Psc/UI/Tabs','Psc/UI/Tab','Psc/UI/Menu'], function(t, html, tabsHtml) {
   
   module("Psc.UI.Tabs");
   
@@ -17,12 +17,13 @@ define(['psc-tests-assert','text!fixtures/tabs.html','Psc/UI/Tabs','Psc/UI/Tab',
 
     var $fixture = $('#qunit-fixture').html(html);
     var $tabs = $fixture.find('div.psc-cms-ui-tabs');
-    test.assertEquals($tabs.length,1,'self-test: Fixture hat div.psc-cms-ui-tabs im html des Ajax Requests');
-      
     var tabs = new Psc.UI.Tabs({ widget: $tabs });
+    var ret = t.setup(test, { tabs: tabs, tab: tab, otherTab: otherTab});
+    
+    test.assertEquals($tabs.length,1,'self-test: Fixture hat div.psc-cms-ui-tabs im html des Ajax Requests');
     test.assertSame($tabs, tabs.unwrap());
     
-    return t.setup(test, { tabs: tabs, tab: tab, otherTab: tab});
+    return ret;
   };
   
   test("tab parsing", function() {
@@ -62,7 +63,7 @@ define(['psc-tests-assert','text!fixtures/tabs.html','Psc/UI/Tabs','Psc/UI/Tab',
     this.assertTrue(tabs.has(tab));
     
     // but not another
-    this.assertFalse(tabs.has(otherTab));
+    this.assertFalse(tabs.has(this.otherTab));
   });
   
   
@@ -74,7 +75,7 @@ define(['psc-tests-assert','text!fixtures/tabs.html','Psc/UI/Tabs','Psc/UI/Tab',
     this.assertFalse(tabs.tab({index:0}).isClosable(), 'welcome tab is not closable');
   });
   
-  asyncTest("search for a tab", function() {
+  test("search for a tab", function() {
     var that = setup(this), tabs = this.tabs, tab = this.tab;
     tabs.add(tab);
     
@@ -105,7 +106,7 @@ define(['psc-tests-assert','text!fixtures/tabs.html','Psc/UI/Tabs','Psc/UI/Tab',
   });
     
   test("select a tab and open adds and selects tabs", function() {
-    var that = setup(this), tabs = this.tabs, tab = this.tab;
+    var that = setup(this), tabs = this.tabs, $tabs = tabs.unwrap(), tab = this.tab;
     
     tabs.add(tab);
     var selected = function() {
@@ -119,24 +120,26 @@ define(['psc-tests-assert','text!fixtures/tabs.html','Psc/UI/Tabs','Psc/UI/Tab',
     this.assertEquals(1, selected(), 'nativer index entspricht nicht dem erwarteten');
     
     // "open" a new tab. the first one just adds it
-    tabs.open(otherTab);
-    this.assertEquals(2, tabs.getIndex(otherTab));
+    tabs.open(this.otherTab);
+    this.assertEquals(2, tabs.getIndex(this.otherTab));
     
     // tab is not selected
     this.assertEquals(1, selected(), 'nativer index ist noch 1');
     // tab is added
     this.assertEquals(3, tabs.count()); // tab,othertab,welcome
-    this.assertTrue(tabs.has(otherTab),'has() gibt für den open tab true zurück');
+    this.assertTrue(tabs.has(this.otherTab),'has() gibt für den open tab true zurück');
     // native test isSelected?
     this.assertEquals(1, $tabs.find('ul li a[href="#entity-persons-19"]').length,' tab wurde geöffnet und hinzugefügt (dom)');
     
     //  "open" the second selects it
-    tabs.open(otherTab);
+    tabs.open(this.otherTab);
     this.assertEquals(2, selected(),'tab was selected the second time');
   });
   
   test("has searches by id not by reference", function() {
     var that = setup(this), tabs = this.tabs, tab = this.tab;
+    
+    tabs.add(tab);
     
     var sameTab = new Psc.UI.Tab({
       id: tab.getId(),
@@ -148,7 +151,7 @@ define(['psc-tests-assert','text!fixtures/tabs.html','Psc/UI/Tabs','Psc/UI/Tab',
   });
   
   test("mark tabs unsaved and saved. ", function() {
-    var that = setup(this), tabs = this.tabs, tab = this.tab, otherTab = this.otherTab;
+    var that = setup(this), tabs = this.tabs, $tabs = tabs.unwrap(), tab = this.tab, otherTab = this.otherTab;
     
     tabs.add(tab);
     tabs.add(otherTab);
@@ -182,7 +185,7 @@ define(['psc-tests-assert','text!fixtures/tabs.html','Psc/UI/Tabs','Psc/UI/Tab',
   });
   
   test("tabs gets added with contextMenu", function() {
-    var that = setup(this), tabs = this.tabs, tab = this.tab, otherTab = this.otherTab;
+    var that = setup(this), tabs = this.tabs, $tabs = tabs.unwrap(), tab = this.tab, otherTab = this.otherTab;
     tabs.add(tab);
     
     this.assertEquals(2, tabs.count(),'tabs count is 2');
@@ -197,15 +200,16 @@ define(['psc-tests-assert','text!fixtures/tabs.html','Psc/UI/Tabs','Psc/UI/Tab',
   });
   
   test("tabs gets parsed with contextMenu", function() {
+    var that = setup(this);
     // nehme das fixture aus index.php (denn dashat 3 tabs sogar buttons)
-    tabs = new Psc.UI.Tabs({ widget: fixtures.loadHTML('ui-tabs') });
-    $tabs = tabs.unwrap();
+    this.tabs = new Psc.UI.Tabs({ widget: $(tabsHtml) });
+    var $tabs = this.tabs.unwrap();
     
     var $li = $tabs.find('li:has(a[href="#tabs-3"])');
     var $span = $li.find('span.options');
     this.assertEquals(1, $span.length, '.options span in fixture gefunden');
     
-    var menu = tabs.getContextMenuManager().get($span);
+    var menu = this.tabs.getContextMenuManager().get($span);
     this.assertInstanceOf(Psc.UI.Menu, menu);
     
     $span.trigger('click');

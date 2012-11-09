@@ -1,19 +1,17 @@
 define(['psc-tests-assert','tiptoi/InputProvider'], function(t) {
   
-  module("tiptoi.InputProvider", {
-    setup: function () {
-      
-    }
-  });
+  module("tiptoi.InputProvider");
 
   asyncTest("acceptance for getInput", function() {
+    var that = t.setup(this);
+    
     expect(2);
     var inputProvider = new tiptoi.InputProvider({
       sequence: [77]
     });
     
     $.when( inputProvider.getInput() ).then(function (input) {
-      this.assertEquals(77, input);
+      that.assertEquals(77, input);
       start();
     });
     

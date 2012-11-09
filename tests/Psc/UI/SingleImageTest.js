@@ -34,7 +34,7 @@ define(['psc-tests-assert','Psc/UI/ResizableImage','Psc/UI/SingleImage','Psc/Tes
     var $widget = this.image.unwrap(), $img;
     
     this.assertEquals(1, ($img = $widget.find('img')).length);
-    this.assertEquals('/js/fixtures/normalImage.jpg', $img.attr('src'));
+    this.assertEquals('/js/fixtures/normalImage.jpg', $img.attr('src').substring(0, 28));
   });
   
   test("if emtpy url is set a placeholder is used for image", function() {

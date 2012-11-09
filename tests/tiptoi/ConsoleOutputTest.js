@@ -1,13 +1,17 @@
-define(['psc-tests-assert','tiptoi/ConsoleOutput'], function(t) {
+define(['psc-tests-assert','Psc/EventManager','tiptoi/ConsoleOutput'], function(t) {
   
-  module("tiptoi.ConsoleOutput", {
-    setup: function () {
-      
-    }
-  });
+  module("tiptoi.ConsoleOutput");
+  
+  var setup = function(test) {
+    return t.setup(test)
+  };
 
   test("acceptance", function() {
-    var consoleOutput = new tiptoi.ConsoleOutput({ });
-  
+    setup(this);
+    expect(0);
+    
+    var consoleOutput = new tiptoi.ConsoleOutput({
+      eventManager: new Psc.EventManager({})
+    });
   });
 });

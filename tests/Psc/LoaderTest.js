@@ -1,40 +1,10 @@
-define(['psc-tests-assert','Psc/Loader','text!fixtures/loading.html','js/main','jquery'], function(t, loaderClass, html, main, $) {
+define(['psc-tests-assert','Psc/Loader','text!fixtures/loading.html','jquery'], function(t, loaderClass, html, $) {
   
   module("Psc.Loader");
   
   var setup = function(test) {
     return t.setup(test);
   };
-  
-  asyncTest("require nesting is a nice thing?", function () {
-    var that = setup(this);
-    var log = [];
-    
-    require(['js/main'], function () {
-      log.push("main");
-      
-      that.assertEquals(['after-require', 'main'], log);
-      start();
-    });
-    
-    log.push("after-require");
-    
-  });
-
-  asyncTest("when is just a nicer thing", function () {
-    var that = setup(this);
-    var log = [];
-    
-    $.when(main).then( function () {
-      log.push("main");
-
-      start();
-    });
-    
-    log.push("after-require");
-    that.assertEquals(['main', 'after-require'], log);
-    
-  });
   
   asyncTest("loader with no jobs still returns a promise", function () {
     expect(4);
@@ -58,6 +28,11 @@ define(['psc-tests-assert','Psc/Loader','text!fixtures/loading.html','js/main','
 
   asyncTest("script tags are all loaded in ANY order (BC change?)", function() {
     var that = setup(this);
+    var loader = new Psc.Loader();
+    
+    window.requireLoad = function (requirements, payload) {
+      loader.onRequire(requirements, payload);
+    };
     
     // this executes all inline script tags, which require main and then attach to the main.loader
     $('#qunit-fixture').empty().append(html);
@@ -70,7 +45,7 @@ define(['psc-tests-assert','Psc/Loader','text!fixtures/loading.html','js/main','
      * the proplem here is, that the inline scripts will return instantly when the require("main") is executed
      * so that the second require for main.getLoader().onRequire gets not executed before we do finished() here
      */
-    $.when( main.getLoader().finished() ).then(function(loader, jobsDone) {
+    $.when( loader.finished() ).then(function(loader, jobsDone) {
       that.assertInstanceOf(Psc.Loader, loader, 'resolved argument #1 is a loader');
       that.assertEquals(4, jobsDone, 'all jobs are sent as done from loader');
       that.assertContains('block1', testResult);

@@ -33,6 +33,10 @@
      */
     require(["/lib/main.js"], function () {
       require(["../tests/testRunner","../tests/all"], function (runner, tests) {
+        for(var t in tests) {
+          t = tests[t];
+          $('body').append('<p><a target="_blank" href="?t='+t.substring(7,t.length-7)+'">'+t.substring(7,t.length-3)+'</a></p>');
+        }
         runner.run(tests);
       });
     });

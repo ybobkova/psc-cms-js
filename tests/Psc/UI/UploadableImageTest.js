@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/UploadableImage','Psc/Test/DoublesManager','Psc/UI/ResizableImage'], function(t) {
+define(['psc-tests-assert','jquery-simulate','Psc/UI/UploadableImage','Psc/Test/DoublesManager','Psc/UI/ResizableImage'], function(t) {
   
   module("Psc.UI.UploadableImage");
   
@@ -51,14 +51,14 @@ define(['psc-tests-assert','Psc/UI/UploadableImage','Psc/Test/DoublesManager','P
   });
   
   test("if dbl clicked on div in image (resizable image or placeholder) the uploadService is invoked", function () {
-    setup(this);
+    var that = setup(this);
     
     var doTest = function ($html, uploadService, debug) {
       var $image = $html.find('.psc-cms-ui-uploadable-image');
       $image.simulate('dblclick');
       
       var dialog = uploadService.getSingleDialog();
-      this.assertTrue(dialog.isOpen());
+      that.assertTrue(dialog.isOpen());
       
       dialog.close();
       
@@ -66,7 +66,7 @@ define(['psc-tests-assert','Psc/UI/UploadableImage','Psc/Test/DoublesManager','P
       //this.assertNotUndefined(request,'ajax service request has been invoked '+debug);
     };
     
-    doTest(this.image.unwrap(), this.uploadService, 'for image');
+    doTest(this.image.unwrap(), this.image.getUploadService(), 'for image');
     doTest(this.emptyImage.unwrap(), this.uploadService, 'for placeholder');
     
   });

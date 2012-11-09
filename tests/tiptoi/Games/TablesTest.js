@@ -1,13 +1,13 @@
 define(['psc-tests-assert','tiptoi/Main','tiptoi/GameTester', 'tiptoi/Program', 'tiptoi/cpu','tiptoi/InputProvider', 'Psc/Code','tiptoi/Sound'], function(t) {
   
+  module("tiptoi/Games/Tables Test");
   
-  module("Games Tables Test", {
-    setup: function () {
-      
-    }
-  });
+  var setup = function(test) {
+    return t.setup(test);
+  };
 
   asyncTest("tables have a choose random row function", function() {
+    var that = setup(this);
     var gameTester = new tiptoi.GameTester({
     });
 
@@ -30,7 +30,7 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/GameTester', 'tiptoi/Program', 
       
     status.done(function () {
       Psc.Code.info('gespielt wurde', gameTester.getPlayedSounds());
-      this.assertEquals(['1-TEST_001'], gameTester.getPlayedNumbers(), 'der random sound aus der row wurde abgespielt');
+      that.assertEquals(['1-TEST_001'], gameTester.getPlayedNumbers(), 'der random sound aus der row wurde abgespielt');
       start();
     });
   });

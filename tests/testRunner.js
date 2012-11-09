@@ -46,6 +46,7 @@ define(["jquery", "psc-cms", "qunit", "joose", "jqwidgets-global", "jqwidgets"],
     
     QUnit.config.reorder = false;
     QUnit.config.autostart = false;
+    QUnit.config.autorun = false;
     QUnit.load(); 
     // we load qunit later because it cannot attach to window on load when its loaded asynchronously
 

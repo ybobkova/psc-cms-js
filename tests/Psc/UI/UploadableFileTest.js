@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/UploadableFile','Psc/Test/DoublesManager'], function(t) {
+define(['psc-tests-assert','jquery-simulate','Psc/UI/UploadableFile','Psc/Test/DoublesManager'], function(t) {
   
   module("Psc.UI.UploadableFile");
   
@@ -12,6 +12,7 @@ define(['psc-tests-assert','Psc/UI/UploadableFile','Psc/Test/DoublesManager'], f
       .append($widgetEmpty = $('<div class="empty"/>'));
     
     var uploadService = dm.getUploadService();
+    
     var file = new Psc.UI.UploadableFile({
       uploadService: uploadService,
       id: 2,
@@ -32,7 +33,7 @@ define(['psc-tests-assert','Psc/UI/UploadableFile','Psc/Test/DoublesManager'], f
   };
 
   test("placeholder has button, on click starts upload dialog", function () {
-    setup(this);
+    var that = setup(this);
     
     var $button = this.emptyFile.unwrap().find('button');
     this.assertEquals(1, $button.length, 'button ist vorhanden für upload');
@@ -48,14 +49,14 @@ define(['psc-tests-assert','Psc/UI/UploadableFile','Psc/Test/DoublesManager'], f
   });
     
   test("placeholder ", function () {
-    setup(this);
+    var that = setup(this);
     
     var doTest = function ($html, uploadService, debug) {
       var $image = $html.find('.psc-cms-ui-uploadable-image');
       $image.simulate('dblclick');
       
       var dialog = uploadService.getSingleDialog();
-      this.assertTrue(dialog.isOpen());
+      that.assertTrue(dialog.isOpen());
       
       dialog.close();
       
@@ -63,8 +64,7 @@ define(['psc-tests-assert','Psc/UI/UploadableFile','Psc/Test/DoublesManager'], f
       //this.assertNotUndefined(request,'ajax service request has been invoked '+debug);
     };
     
-    doTest(this.image.unwrap(), this.uploadService, 'for image');
-    doTest(this.emptyImage.unwrap(), this.uploadService, 'for placeholder');
-    
+    doTest(that.file.unwrap(), that.uploadService, 'for image');
+    doTest(that.emptyFile.unwrap(), that.uploadService, 'for placeholder');
   });
 });

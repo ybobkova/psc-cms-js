@@ -1,6 +1,11 @@
 define(['psc-tests-assert','tiptoi/GameTable','tiptoi/Sound'], function(t) {
   
   module("tiptoi.GameTable");
+  
+  var setup = function (test) {
+    return t.setup(test);
+  };
+  
   var createTable = function () {
     var gameTable = new tiptoi.GameTable({
       name: 'main',
@@ -28,6 +33,7 @@ define(['psc-tests-assert','tiptoi/GameTable','tiptoi/Sound'], function(t) {
   };
 
   test("calculates Blocks correctly", function() {
+    setup(this);
     var gameTable = createTable();
     
     this.assertEquals(4, gameTable.getBlocksNum());
@@ -35,6 +41,7 @@ define(['psc-tests-assert','tiptoi/GameTable','tiptoi/Sound'], function(t) {
   });
 
   test("returns a Block with all rows", function() {
+    setup(this);
     var gameTable = createTable();
     
     this.assertEquals([
@@ -48,6 +55,7 @@ define(['psc-tests-assert','tiptoi/GameTable','tiptoi/Sound'], function(t) {
   });
   
   test("returns a random row", function () {
+    setup(this);
     var gameTable = createTable();
     
     var row = gameTable.chooseNotYetUsedRandomRow();
@@ -58,6 +66,7 @@ define(['psc-tests-assert','tiptoi/GameTable','tiptoi/Sound'], function(t) {
   });
 
   test("returns a random row never twice", function () {
+    setup(this);
     var gameTable = createTable();
     var usedRows = [];
     var row;
@@ -79,6 +88,7 @@ define(['psc-tests-assert','tiptoi/GameTable','tiptoi/Sound'], function(t) {
   });
 
   test("returns a random block never twice", function () {
+    setup(this);
     var gameTable = createTable();
     var usedBlocks = [];
     var block;

@@ -1,4 +1,9 @@
 <?php
+if (!isset($_GET['t'])) {
+  require 'all.html';
+  exit;
+}
+
 $testName = str_replace('.', '/', $_GET['t']);
 
 if (mb_substr($testName, 0, -4) !== 'Test') {

@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/CalendarEvent'], function(t) {
+define(['psc-tests-assert','jquery-simulate','Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/CalendarEvent'], function(t) {
   
   module("Psc.UI.Calendar");
   
@@ -12,7 +12,7 @@ define(['psc-tests-assert','Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/Cale
       region: 'de'
     });
     
-    t.setup(test, {
+    return t.setup(test, {
       calendar: calendar,
       $widget: $widget,
       findEvent: function (title, searchInDate, calendarInstance) {
@@ -58,7 +58,7 @@ define(['psc-tests-assert','Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/Cale
       
       that.assertEquals(7, $row.find('td').length);
       $row.find('td').each(function (tdIndex) {
-        this.assertTrue(parseInt($(this).text(), 10) > 0, 'td '+rowIndex+':'+tdIndex+' in first row of month grid has a number in it');
+        that.assertTrue(parseInt($(this).text(), 10) > 0, 'td '+rowIndex+':'+tdIndex+' in first row of month grid has a number in it');
       });
     });
   });
@@ -113,7 +113,7 @@ define(['psc-tests-assert','Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/Cale
     
     var myEvent;
     this.calendar.addEvent(myEvent = new Psc.CalendarEvent({
-      title: 'Team-Meeting',
+      i18nTitle: {de: 'Team-Meeting'},
       start: Psc.Date.create({year: 2012, month: 9, day: 18, hours: 10, minutes: 0}),
       end: Psc.Date.create({year: 2012, month: 9, day: 18, hours: 14, minutes: 0})
     }));
@@ -130,7 +130,7 @@ define(['psc-tests-assert','Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/Cale
     this.calendar.setDisplayDate(now).refresh();
 
     this.calendar.addEvent(myEvent = new Psc.CalendarEvent({
-      title: 'Dienstreise',
+      i18nTitle: {de: 'Dienstreise'},
       allDay: true,
       color: '#9a9cff',
       start: Psc.Date.create({year: 2012, month: 8, day: 1}),
@@ -154,7 +154,7 @@ define(['psc-tests-assert','Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/Cale
 
     var mySpanEvent;
     this.calendar.addEvent(mySpanEvent = new Psc.CalendarEvent({
-      title: 'Dienstreise',
+      i18nTitle: {de: 'Dienstreise'},
       allDay: true,
       color: '#9a9cff',
       start: Psc.Date.create({year: 2012, month: 9, day: 1}),
@@ -172,7 +172,7 @@ define(['psc-tests-assert','Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/Cale
     this.assertEquals(1, $endEvent.length);
 
     this.calendar.addEvent(new Psc.CalendarEvent({
-      title: 'Team-Workshop',
+      i18nTitle: {de: 'Team-Workshop'},
       allDay: true,
       color: '#ff0000',
       start: Psc.Date.create({year: 2012, month: 9, day: 10}),
@@ -181,7 +181,7 @@ define(['psc-tests-assert','Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/Cale
 
     var longRun;
     this.calendar.addEvent(longRun = new Psc.CalendarEvent({
-      title: 'sehr lange Dienstreise',
+      i18nTitle: {de: 'sehr lange Dienstreise'},
       allDay: true,
       color: '#aaaaff',
       start: Psc.Date.create({year: 2012, month: 8, day: 31}),
@@ -189,7 +189,7 @@ define(['psc-tests-assert','Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/Cale
     }));
 
     this.calendar.addEvent(new Psc.CalendarEvent({
-      title: 'ka',
+      i18nTitle: {de: 'ka'},
       color: '#330000',
       start: Psc.Date.create({year: 2012, month: 9, day: 20, hours: 13}),
       end: Psc.Date.create({year: 2012, month: 10, day: 1, hours: 15})
@@ -197,7 +197,7 @@ define(['psc-tests-assert','Psc/UI/Calendar','Psc/Test/DoublesManager','Psc/Cale
 
     var inBetweenEvent;
     this.calendar.addEvent(inBetweenEvent = new Psc.CalendarEvent({
-      title: 'ka2',
+      i18nTitle: {de: 'ka2'},
       color: '#aa0000',
       start: Psc.Date.create({year: 2012, month: 9, day: 6, hours: 13}),
       end: Psc.Date.create({year: 2012, month: 9, day: 7, hours: 15})

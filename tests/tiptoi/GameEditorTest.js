@@ -2,7 +2,7 @@ define(['psc-tests-assert','tiptoi/GameEditor'], function(t) {
   
   module("tiptoi.GameEditor");
   
-  var setup = function(test) {
+  var setup = function(test, options) {
     var service = new (Class({
       has: {
         pulledCalled: {is: 'rw', required: false, isPrivate: false, init: false}
@@ -29,24 +29,34 @@ define(['psc-tests-assert','tiptoi/GameEditor'], function(t) {
       '<div class="game-editor"><fieldset><div class="content game-files"></div></fieldset></div>'
     );
     
-    var gameEditor = new tiptoi.GameEditor({
+    var gameEditor = new tiptoi.GameEditor($.extend({
       service: service,
       apiUrl: '/upload-manager/api/game/102',
-      widget: $widget
-    });
+      widget: $widget,
+      hasFiles: true
+    }, options||{}));
     
     return t.setup(test, {gameEditor: gameEditor, $grid: $widget.find('div.game-files'), '$fixture': $('#visible-fixture')});
   };
 
-  test("acceptance", function() {
+  test("whe hasFiles is true the table is rendered and service is pulled", function() {
     setup(this);
     
     var grid = this.gameEditor.getFiles(), $table;
     
-    this.assertEquals(1, ($table = this.$fixture.find('div.game-files table')).length, 'table is rendered in html');
+    this.assertjQueryLength(1, $table = this.$fixture.find('div.game-files table'));
     this.assertTrue(this.gameEditor.getService().pulledCalled, 'service was called for uploaded files');
     
     var row1 = grid.getRow(1);
     this.assertEquals(1, grid.getRows().length);
+  });
+
+  test("whe hasFiles is false the table is not rendered and service is not pulled", function() {
+    setup(this, { hasFiles: false });
+    
+    var grid = this.gameEditor.getFiles(), $table;
+    
+    this.assertjQueryLength(0, $table = this.$fixture.find('div.game-files table'));
+    this.assertFalse(this.gameEditor.getService().pulledCalled, 'service was not called for uploaded files');
   });
 });

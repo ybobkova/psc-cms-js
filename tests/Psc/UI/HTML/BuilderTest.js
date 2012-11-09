@@ -6,7 +6,7 @@ define(['psc-tests-assert','Psc/UI/HTML/Builder','Psc/Test/DoublesManager'], fun
     //var dm = new Psc.Test.DoublesManager();
     var builder = new Psc.UI.HTML.Builder({ });
     
-    $.extend(test, {builder: builder});
+    t.setup(test, {builder: builder});
   };
 
   test("buildStyle for CSS Properties inline", function() {

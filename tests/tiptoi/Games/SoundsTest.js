@@ -1,13 +1,14 @@
 define(['psc-tests-assert','tiptoi/Main','tiptoi/GameTester', 'tiptoi/Program', 'tiptoi/cpu','tiptoi/InputProvider', 'Psc/Code'], function(t) {
   
+  module("tiptoi/games/Sounds Test");
   
-  module("Games Sound Test", {
-    setup: function () {
-      
-    }
-  });
+  var setup = function (test) {
+    return t.setup(test);
+  };
 
   asyncTest("this.sounds is set", function() {
+    var that = setup(this);
+    
     var gameTester = new tiptoi.GameTester({
     });
     
@@ -30,12 +31,13 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/GameTester', 'tiptoi/Program', 
       
     status.done(function () {
       Psc.Code.info('gespielt wurde', gameTester.getPlayedSounds());
-      this.assertEquals(['1-TEST_0002'], gameTester.getPlayedNumbers(), 'der test sound wurde abgespielt');
+      that.assertEquals(['1-TEST_0002'], gameTester.getPlayedNumbers(), 'der test sound wurde abgespielt');
       start();
     });
   });
   
   asyncTest("common sounds are set and merged with own sounds", function () {
+    var that = setup(this);
     var gameTester = new tiptoi.GameTester({}), program = gameTester.prg(
       'sounds merged',
       
@@ -50,7 +52,7 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/GameTester', 'tiptoi/Program', 
     
     status.done(function () {
       Psc.Code.info('gespielt wurde', gameTester.getPlayedSounds());
-      this.assertEquals(['1-TEST_0002', '091104ak009'], gameTester.getPlayedNumbers());
+      that.assertEquals(['1-TEST_0002', '091104ak009'], gameTester.getPlayedNumbers());
       start();
     });
   });

@@ -2,7 +2,7 @@ define(['psc-tests-assert','Psc/UploadService','Psc/Request','Psc/Test/DoublesMa
   
   module("Psc.UploadService");
   
-  var setup = function (dataCallback) {
+  var setup = function (test, dataCallback) {
     var dbm = new Psc.Test.DoublesManager();
     
     var exceptionProcessor = dbm.getExceptionProcessor();
@@ -18,10 +18,10 @@ define(['psc-tests-assert','Psc/UploadService','Psc/Request','Psc/Test/DoublesMa
     
     var request =  new Psc.Request({
         method: 'POST',
-        url: "/my/test/url"
+        url: "/erroneous/request"
     });
     
-    return {uploadService: uploadService, exceptionProcessor: exceptionProcessor, ajaxService: ajaxService, request: request};
+    return t.setup(test, {uploadService: uploadService, exceptionProcessor: exceptionProcessor, ajaxService: ajaxService, request: request});
   };
 
   test("openSingleDialog opens a single dialog with a form and a file input in it", function() {
@@ -70,7 +70,7 @@ define(['psc-tests-assert','Psc/UploadService','Psc/Request','Psc/Test/DoublesMa
   });
 
   asyncTest("openSingleDialog submits the upload file and closes the dialog on error", function() {
-    setup(this);
+    var that = setup(this);
     
     this.uploadService.openSingleDialog(this.request);
   
@@ -82,8 +82,8 @@ define(['psc-tests-assert','Psc/UploadService','Psc/Request','Psc/Test/DoublesMa
     $file.fileupload({
         always: function (e, data) {
           start();
-          this.assertFalse(dialog.isOpen(), 'dialog is closed on error');
-          this.assertNotUndefined(that.exceptionProcessor.getException(), 'exception was raised');
+          that.assertFalse(dialog.isOpen(), 'dialog is closed on error');
+          that.assertNotUndefined(that.exceptionProcessor.getException(), 'exception was raised');
         }
     });
     
