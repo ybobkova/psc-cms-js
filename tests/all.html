@@ -31,7 +31,7 @@
      * now the main is loaded first, then in the second step the runner and all its deps are loaded in the last step the test is run
      * (thats three nested requires)
      */
-    require(["/lib/main.js"], function () {
+    require(["/lib/boot.js"], function (boot) {
       require(["../tests/testRunner","../tests/all"], function (runner, tests) {
         for(var t in tests) {
           t = tests[t];
