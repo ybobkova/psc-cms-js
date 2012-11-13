@@ -27,7 +27,7 @@ if (mb_substr($testName, 0, -4) !== 'Test') {
   
   <script src="/vendor/require.js"></script>
   <script>
-    require(["/lib/main.js"], function () {
+    require(["/lib/boot.js"], function () {
       require(["../tests/testRunner"], function (runner) {
         runner.run('<?= $testName ?>');
       });
