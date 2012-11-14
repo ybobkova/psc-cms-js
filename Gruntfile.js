@@ -131,7 +131,7 @@ module.exports = function(grunt) {
       grunt.file.write(htmlPath, testCode({
         testTitle: 'single test for: '+test.replace('/\/g', '.'),
         testName: test+"Test"
-      }))
+      }));
       
     });
     
