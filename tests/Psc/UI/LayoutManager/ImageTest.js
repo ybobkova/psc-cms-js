@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/LayoutManager/Image','Psc/UI/ResizableImage','Psc/Test/DoublesManager'], function(t) {
+define(['psc-tests-assert','require','Psc/UI/LayoutManager/Image','Psc/UI/ResizableImage','Psc/Test/DoublesManager'], function(t, require) {
   
   module("Psc.UI.ResizableImage");
   
@@ -12,7 +12,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager/Image','Psc/UI/ResizableImage',
     var image = new Psc.UI.LayoutManager.Image({
       uploadService: uploadService,
       label: 'Bild',
-      url: '/js/fixtures/normalImage.jpg',
+      url: require.toUrl('fixtures/img/normalImage.jpg'),
       caption: null,
       align: null
     });

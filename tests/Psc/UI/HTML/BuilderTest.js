@@ -13,16 +13,14 @@ define(['psc-tests-assert','Psc/UI/HTML/Builder','Psc/Test/DoublesManager'], fun
     setup(this);
     
     var style = this.builder.buildStyle({
-      'background-color': 'red',
-      color: '#000001',
+      'font-family': 'Verdana',
       width: '100px'
     });
     
     var div = '<div style="'+style+'"></div>';
     
     var $div = $(div);
-    this.assertEquals('rgb(255, 0, 0)', $div.css('background-color'), 'style is '+style);
-    this.assertEquals('rgb(0, 0, 1)', $div.css('color'), style);
+    this.assertEquals('Verdana', $div.css('font-family'), style);
     this.assertEquals('100px', $div.css('width'), style);
   });
 });

@@ -47,24 +47,4 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/UploadableFile','Psc/Test/D
     
     dialog.close();
   });
-    
-  test("placeholder ", function () {
-    var that = setup(this);
-    
-    var doTest = function ($html, uploadService, debug) {
-      var $image = $html.find('.psc-cms-ui-uploadable-image');
-      $image.simulate('dblclick');
-      
-      var dialog = uploadService.getSingleDialog();
-      that.assertTrue(dialog.isOpen());
-      
-      dialog.close();
-      
-      //var request = uploadService.getAjaxService().getRequest();
-      //this.assertNotUndefined(request,'ajax service request has been invoked '+debug);
-    };
-    
-    doTest(that.file.unwrap(), that.uploadService, 'for image');
-    doTest(that.emptyFile.unwrap(), that.uploadService, 'for placeholder');
-  });
 });

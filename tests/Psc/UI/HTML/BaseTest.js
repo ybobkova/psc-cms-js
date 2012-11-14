@@ -26,6 +26,8 @@ define(['psc-tests-assert','Psc/UI/HTML/Base'], function(t) {
       'title': 'my title'
     });
     
-    this.assertEquals('<div title="my title" class="ui-widget ui-row"></div>', $('#qunit-fixture').empty().append($div).html());
+    this.assertTrue($div.hasClass('ui-widget'));
+    this.assertTrue($div.hasClass('ui-row'));
+    this.assertEquals("my title", $div.attr('title'));
   });
 });
