@@ -55,6 +55,9 @@ module.exports = function(grunt) {
         mapToUrl('tests/tiptoi/**/*.html', 'http://localhost:8000/'),
         mapToUrl('tests/CoMun/**/*.html', 'http://localhost:8000/')
       ],
+      dropBox: [
+        mapToUrl('tests/Psc/UI/DropBox/*.html', 'http://localhost:8000/')
+      ],
       options: {
         timeout: 12000,
         inject: false

@@ -24,7 +24,7 @@ define(['psc-tests-assert',
     };
       
     main.getEventManager().setLogging(true);
-    $fixture = $('#visible-fixture').empty().append(html);
+    $fixture = $('#qunit-fixture').empty().append(html); // nicht visible nehmen das klappt in phantom nich
     
     $.when( main.getLoader().finished() ).then(function () {
       $dropBox1 = $fixture.find('div#drop-box1 div.psc-cms-ui-drop-box');

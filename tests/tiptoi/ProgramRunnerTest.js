@@ -1,6 +1,5 @@
 define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program', 'tiptoi/cpu','tiptoi/InputProvider', 'Psc/Code'], function(t) {
   
-  
   module("tiptoi.ProgramRunner");
   
   var setup = function (test) {
@@ -283,7 +282,6 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     });
     
     status.fail(function(e) {
-      console.log(e);
       that.fail(e);
       start();
     });

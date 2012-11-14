@@ -59,7 +59,6 @@ define(['psc-tests-assert','tiptoi/cpu','tiptoi/InputProvider','tiptoi/Timer'], 
     });
     
     this.cpu.waitForInputWithTimer(timer, function (input) {
-      console.log('stop timer');
       timer.stop();
       ok("input given right in time");
       that.assertEquals(7, input);
