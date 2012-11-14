@@ -1,5 +1,7 @@
 <?php
 
+require_once "D:\www\psc-cms\Umsetzung\base\src\auto.prepend.php";
+
 use Psc\UI\DropBox2;
 use Psc\HTML\HTML;
 

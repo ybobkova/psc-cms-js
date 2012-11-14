@@ -1,67 +1,17 @@
-<div id="drop-box1"><div class="psc-cms-ui-drop-box psc-guid-5098eec581397"><button class="psc-cms-ui-button psc-guid-5098eec5811b8 assigned-item">Tag1</button>
-
-<script type="text/javascript">
-requireLoad(['jquery'], function (main, jQuery) {
-  jQuery('button.psc-guid-5098eec5811b8')
-  .button({})
-});
-</script>
-
+<div id="drop-box1"><div class="psc-cms-ui-drop-box psc-guid-50a376e0d126f"><button class="psc-cms-ui-button psc-guid-50a376e0d0855 assigned-item" data-widget="button" data-widget-options="{}">Tag: Sound</button>
 </div>
 <script type="text/javascript">
-requireLoad(['jquery', 'Psc/UI/DropBox','Psc/CMS/FastItem'], function (main, jQuery) {
-    new Psc.CMS.FastItem({
-      'label': "Psc\\Doctrine\\Entity<Psc\\Doctrine\\TestEntities\\Tag> [1]",
-      'value': 1,
-      'ac': {"label": "Psc\\Doctrine\\Entity<Psc\\Doctrine\\TestEntities\\Tag> [1]"},
-      'button': {"label": "Psc\\Doctrine\\Entity<Psc\\Doctrine\\TestEntities\\Tag> [1]","fullLabel": "Psc\\Doctrine\\Entity<Psc\\Doctrine\\TestEntities\\Tag> [1]","mode": 1,"leftIcon": null,"rightIcon": null},
-      'tab': {"id": "entities-tag-1-form","label": "Psc\\Doctrine\\Entity<Psc\\Doctrine\\TestEntities\\Tag> [1]","url": "\/entities\/tag\/1\/form"},
-      'identifier': 1,
-      'entityName': "tag",
-      'link': {},
-      'delete': {"url": "\/entities\/tag\/1","method": "DELETE"},
-      'widget': jQuery('button.psc-guid-5098eec5811b8')
-    });
+requireLoad(['jquery', 'Psc/UI/DropBox', 'Psc/CMS/FastItem'], function (main, jQuery) { // main is unshifted automatically
+  var j = new Psc.UI.DropBox(  {'name': "act0", 'connectWith': "div.psc-cms-ui-drop-box", 'multiple': true, 'widget': jQuery('div.psc-guid-50a376e0d126f'), 'button0': new Psc.CMS.FastItem(  {'label': "Tag: Sound", 'value': 1, 'ac': {'label': "Tag: Sound"}, 'button': {'label': "Tag: Sound", 'fullLabel': "Tag: Sound", 'mode': 1, 'leftIcon': undefined, 'rightIcon': undefined}, 'tab': {'id': "entities-tag-1-form", 'label': "Tag: Sound", 'url': "\/entities\/tag\/1\/form"}, 'identifier': 1, 'entityName': "tag", 'link': {'0': "Tag: Sound"}, 'delete': {'url': "\/entities\/tag\/1", 'method': "DELETE"}, 'widget': jQuery('button.psc-guid-50a376e0d0855')})});
 
-    var j = new Psc.UI.DropBox({
-      'widget': jQuery('div.psc-guid-5098eec581397'),
-      'name': "act0",
-      'connectWith': "div.psc-cms-ui-drop-box",
-      'multiple': true
-    });});
-</script>
-</div><div id="drop-box2"><div class="psc-cms-ui-drop-box psc-guid-5098eec582764"><button class="psc-cms-ui-button psc-guid-5098eec5825a7 assigned-item">Psc\Doctrine\Entity<Psc\Doctrine\TestEntities\Tag> [2]</button>
-<script type="text/javascript">
-</script>
-
-<script type="text/javascript">
-requireLoad(['jquery'], function (main, jQuery) {
-  jQuery('button.psc-guid-5098eec5825a7')
-    .button({})
 });
 </script>
-
+</div><div id="drop-box2"><div class="psc-cms-ui-drop-box psc-guid-50a376e1049e5"><button class="psc-cms-ui-button psc-guid-50a376e104666 assigned-item" data-widget="button" data-widget-options="{}">Tag: Promo</button>
 </div>
 <script type="text/javascript">
-requireLoad(['jquery', 'Psc/UI/DropBox','Psc/CMS/FastItem'], function (main, jQuery) {
-    new Psc.CMS.FastItem({
-      'label': "Psc\\Doctrine\\Entity<Psc\\Doctrine\\TestEntities\\Tag> [2]",
-      'value': 2,
-      'ac': {"label": "Psc\\Doctrine\\Entity<Psc\\Doctrine\\TestEntities\\Tag> [2]"},
-      'button': {"label": "Psc\\Doctrine\\Entity<Psc\\Doctrine\\TestEntities\\Tag> [2]","fullLabel": "Psc\\Doctrine\\Entity<Psc\\Doctrine\\TestEntities\\Tag> [2]","mode": 1,"leftIcon": null,"rightIcon": null},
-      'tab': {"id": "entities-tag-2-form","label": "Psc\\Doctrine\\Entity<Psc\\Doctrine\\TestEntities\\Tag> [2]","url": "\/entities\/tag\/2\/form"},
-      'identifier': 2,
-      'entityName': "tag",
-      'link': {},
-      'delete': {"url": "\/entities\/tag\/2","method": "DELETE"},
-      'widget': jQuery('button.psc-guid-5098eec5825a7')
-    });
+requireLoad(['jquery', 'Psc/UI/DropBox', 'Psc/CMS/FastItem'], function (main, jQuery) { // main is unshifted automatically
+  var j = new Psc.UI.DropBox(  {'name': "act1", 'connectWith': "div.psc-cms-ui-drop-box", 'multiple': true, 'widget': jQuery('div.psc-guid-50a376e1049e5'), 'button0': new Psc.CMS.FastItem(  {'label': "Tag: Promo", 'value': 2, 'ac': {'label': "Tag: Promo"}, 'button': {'label': "Tag: Promo", 'fullLabel': "Tag: Promo", 'mode': 1, 'leftIcon': undefined, 'rightIcon': undefined}, 'tab': {'id': "entities-tag-2-form", 'label': "Tag: Promo", 'url': "\/entities\/tag\/2\/form"}, 'identifier': 2, 'entityName': "tag", 'link': {'0': "Tag: Promo"}, 'delete': {'url': "\/entities\/tag\/2", 'method': "DELETE"}, 'widget': jQuery('button.psc-guid-50a376e104666')})});
 
-    var j = new Psc.UI.DropBox({
-      'widget': jQuery('div.psc-guid-5098eec582764'),
-      'name': "act1",
-      'connectWith': "div.psc-cms-ui-drop-box",
-      'multiple': true
-    });});
+});
 </script>
 </div>

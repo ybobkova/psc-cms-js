@@ -1,5 +1,5 @@
 define(['psc-tests-assert',
-        'text!fixtures/dropBoxes-connected.html',
+        'text!fixtures/dropboxes-connected.html', // change to php for quick and dirty acceptance while dev
         'Psc/UI/DropBox', 'Psc/UI/Dragger','Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable', 'Psc/UI/WidgetWrapper'
        ], function(t, html) {
   
