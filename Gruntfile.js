@@ -52,7 +52,7 @@ module.exports = function(grunt) {
     qunit: {
       all: [mapToUrl('tests/*/**.html', 'http://localhost:8000/')],
       options: {
-        timeout: 5000,
+        timeout: 12000,
         inject: false
       }
     },
