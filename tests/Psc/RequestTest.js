@@ -2,7 +2,7 @@ define(['psc-tests-assert','Psc/Request'], function (t) {
   
   module("Psc.Request");
   
-  var test = function(test) {
+  var setup = function(test) {
     return t.setup(test);
   };
   
@@ -107,7 +107,5 @@ define(['psc-tests-assert','Psc/Request'], function (t) {
       format: 'json'
     });
     
-    console.log(request.getBody());
-    console.log(JSON.stringify(request.getBody()));
   });
 });

@@ -44,7 +44,7 @@ define(['psc-tests-assert','Psc/AjaxHandler', 'Psc/Request'], function (t) {
     });
     
     req.done(function() {
-      fail('done is called');
+      that.fail('done is called');
       start();
     });
   });

@@ -13,7 +13,7 @@ define(['psc-tests-assert','Psc/UI/ContextMenuManager','Psc/UI/Menu'], function(
     $anchor.appendTo($('#qunit-fixture'));
     
     var menuOpen = false;
-    var menuMockClass = Class({
+    var MenuMockClass = Joose.Class({
       isa: Psc.UI.Menu,
       
       after: {
@@ -25,7 +25,7 @@ define(['psc-tests-assert','Psc/UI/ContextMenuManager','Psc/UI/Menu'], function(
         }
       }
     });
-    var menu = new menuMockClass({
+    var menu = new MenuMockClass({
       items: {
         'pinn': 'Permanent Anpinnen',
         'close-all': 'Alle Tabs Schließen',
@@ -36,7 +36,7 @@ define(['psc-tests-assert','Psc/UI/ContextMenuManager','Psc/UI/Menu'], function(
     manager.register($anchor, menu);
     this.assertSame(menu, manager.get($anchor));
     
-    raises(function () {
+    QUnit.raises(function () {
       manager.get($('body'));
     });
     

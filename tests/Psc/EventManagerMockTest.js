@@ -3,19 +3,19 @@ define(['psc-tests-assert','Psc/EventManagerMock'], function(t) {
   module("Psc.EventManagerMock");
 
   test("onlyAllowedEventsWillBeTriggered", function() {
-    t.setup(this);
+    var that = t.setup(this);
     
     var eventManagerMock = new Psc.EventManagerMock({
       allow: ['allowed1'],
       denySilent: false
     });
     
-    raises(function () {
+    QUnit.raises(function () {
       eventManagerMock.triggerEvent('denied1');
     });
     
     eventManagerMock.on('denied1', function(e) {
-      fail('denied1 was called');
+      that.fail('denied1 was called');
     });
     
     var called = false;

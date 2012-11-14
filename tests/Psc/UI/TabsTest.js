@@ -83,13 +83,13 @@ define(['psc-tests-assert','text!fixtures/tabs.html','text!fixtures/tabs-for-mai
     this.assertSame(tab, tabs.tab({id: 'entity-persons-17'}));
     this.assertSame(tab, tabs.tab({index: tabs.getIndex()}));
     
-    raises(function () {
+    QUnit.raises(function () {
       tabs.tab({id: 'none'});
     });
-    raises(function () {
+    QUnit.raises(function () {
       tabs.tab({index: 2});
     });
-    raises(function () {
+    QUnit.raises(function () {
       tabs.tab({index: -1});
     });
   });

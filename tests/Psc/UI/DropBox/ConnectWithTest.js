@@ -61,6 +61,7 @@ define(['psc-tests-assert',
       that.assertInstanceOf(Psc.UI.DropBox, that.dropBox1, 'that.dropBox1 is a UI that.dropBox');
       that.assertInstanceOf(Psc.UI.DropBox, that.dropBox2, 'that.dropBox2 is a UI that.dropBox');
       
+      var $button1, $button2;
       that.assertEquals(1, ($button1 = that.$dropBox1.find('button.psc-cms-ui-button')).length, 'button is in that.dropBox1');
       that.assertEquals(1, ($button2 = that.$dropBox2.find('button.psc-cms-ui-button')).length, 'button is in that.dropBox2');
   
@@ -90,6 +91,8 @@ define(['psc-tests-assert',
   
   asyncTest("after sorting new buttons can be deleted", function () {
     $.when(setup(this)).then(function (that) {
+      var $button1, $button2;
+      
       $button2 = that.$dropBox2.find('button.psc-cms-ui-button');
       $button1 = that.$dropBox1.find('button.psc-cms-ui-button');
       

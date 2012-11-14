@@ -18,7 +18,7 @@ define(['psc-tests-assert','tiptoi/InputProvider'], function(t) {
     // second time gets rejected
     stop();
     $.when( inputProvider.getInput() ).then(function () {
-      fail("getInput() darf nicht succeden weil sequence leer ist");
+      that.fail("getInput() darf nicht succeden weil sequence leer ist");
       start();
     }, function () {
       ok("get Input hat keinen input mehr");

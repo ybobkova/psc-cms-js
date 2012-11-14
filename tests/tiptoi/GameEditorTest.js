@@ -3,7 +3,7 @@ define(['psc-tests-assert','tiptoi/GameEditor'], function(t) {
   module("tiptoi.GameEditor");
   
   var setup = function(test, options) {
-    var service = new (Class({
+    var service = new (Joose.Class({
       has: {
         pulledCalled: {is: 'rw', required: false, isPrivate: false, init: false}
       },

@@ -1,3 +1,4 @@
+/*globals testResult*/
 define(['psc-tests-assert','Psc/Loader','text!fixtures/loading.html','jquery'], function(t, loaderClass, html, $) {
   
   module("Psc.Loader");
@@ -57,7 +58,6 @@ define(['psc-tests-assert','Psc/Loader','text!fixtures/loading.html','jquery'], 
     }, function (loader, e) {
       that.fail('queue was rejected');
       start();
-      console.log(e);
     });
     
   });

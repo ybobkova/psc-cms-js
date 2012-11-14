@@ -27,7 +27,6 @@ define(['psc-tests-assert','jquery','text!fixtures/entitygridpanel.html','js/mai
       
       var gridPanels = main.getRegistered('GridPanel');
       if (!gridPanels.length) {
-        console.log(gridPanels);
         throw 'One GridPanel must be registered in main';
       }
       var gridPanel = gridPanels[0];
@@ -158,7 +157,7 @@ define(['psc-tests-assert','jquery','text!fixtures/entitygridpanel.html','js/mai
         start();
       });
     
-      if ($rows.length == 1) {
+      if ($rows.length === 1) {
         $openButton.trigger('click');
       } else {
         start(2);

@@ -27,7 +27,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
     
     return t.setup(test, {
       assertWidget: function (assert, $widget) {
-        m = function (msg) {
+        var m = function (msg) {
           return '[widget: '+assert.type+'] '+msg;
         };
         
@@ -64,7 +64,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
     
     this.assertWidget({type:'paragraph'}, $widget);
     
-    $ta = $widget.find('div.widget-content textarea');
+    var $ta = $widget.find('div.widget-content textarea');
     this.assertEquals(1, $ta.length, 'textarea muss im paragraph sein');
     this.assertEquals("", $ta.val());
   });

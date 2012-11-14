@@ -1,3 +1,4 @@
+/*globals alert:true*/
 define(["jquery", "qunit", "joose", "jqwidgets-global", "jqwidgets"], function ($) {
     // Send messages to the parent PhantomJS process via alert! Good times!!
     function sendMessage() {

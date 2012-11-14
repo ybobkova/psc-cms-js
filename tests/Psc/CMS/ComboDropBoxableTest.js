@@ -27,7 +27,7 @@ define(['psc-tests-assert','Psc/CMS/ComboDropBoxable','Psc/UI/DropBoxButton','Ps
   };
 
   test("acceptance", function() {
-    setup(this);
+    var that = setup(this), tab;
     this.assertInstanceOf(Psc.UI.Tab, tab = this.comboDropBoxable.getTab());
     this.assertDoesRole(Psc.UI.DropBoxButton, this.comboDropBoxable.getDropBoxButton());
     

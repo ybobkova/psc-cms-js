@@ -181,7 +181,7 @@ define(['psc-tests-assert','Psc/UI/Navigation'], function(t) {
     /**
      * reduziert den flat array zu einem Array nur mit den werten label und depth
      */
-    reduce = function(flat, attr) {
+    var reduce = function(flat, attr) {
       var ret = [];
       $.each(flat, function (i, node) {
         ret.push({
@@ -194,9 +194,8 @@ define(['psc-tests-assert','Psc/UI/Navigation'], function(t) {
       return ret;
     };
     
-
-    data = {};
-    flat = navigation.serialize(data);
+    var data = {};
+    var flat = navigation.serialize(data);
     
 
     this.assertEquals(10,flat.length, 'all items are included in flat');

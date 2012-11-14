@@ -63,7 +63,7 @@ define(['psc-tests-assert','Psc/Exception','Psc/InvalidArgumentException','Psc/A
     t.setup(this);
     expect(0);
     var thrown = function () {
-      throw new (Class({
+      throw new (Joose.Class({
         isa: Psc.Exception
       }))('Our nice Message');
     };

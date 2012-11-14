@@ -21,7 +21,7 @@ define(['psc-tests-assert','Psc/UI/FormReader','Psc/UI/FormBuilder'], function(t
     
     var $form = fb.build();
     
-    raises(function () {
+    QUnit.raises(function () {
     
     this.assertEquals({
         title: {

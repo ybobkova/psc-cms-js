@@ -9,14 +9,14 @@ define(['psc-tests-assert','Psc/EventManager'], function(t) {
   };
   
   test("new Instance does not get triggered", function() {
-    setup(this);
+    var that = setup(this);
     
     var manager1 = new Psc.EventManager();
     var manager2 = new Psc.EventManager();
     var called = false;
     
     manager1.on('testEvent', function(e) {
-      fail('manager1 on must not be called');
+      that.fail('manager1 on must not be called');
     });
 
     manager2.on('testEvent', function(e) {
@@ -50,7 +50,7 @@ define(['psc-tests-assert','Psc/EventManager'], function(t) {
   
   test("firstArgumentFromTriggerEventHasToBeAString", function() {
     var that = setup(this);
-    raises(
+    QUnit.raises(
       function () {
         // first param should be a string not the object -.-
         that.eventManager.triggerEvent({idiot:true}, ['var1']);
@@ -95,7 +95,7 @@ define(['psc-tests-assert','Psc/EventManager'], function(t) {
 
     eventManager.on('test', function (e) {
       eventCount++; // does never happen
-      fail('second test handler is called');
+      that.fail('second test handler is called');
     });
     
     eventManager.triggerEvent('test');
@@ -114,17 +114,17 @@ define(['psc-tests-assert','Psc/EventManager'], function(t) {
 
     eventManager.on('test', function (e) {
       eventCount++; // does never happen
-      fail('first test handler is called');
+      that.fail('first test handler is called');
     });
 
     eventManager.on('test2', function (e) {
       eventCount++; // does never happen
-      fail('second test handler is called');
+      that.fail('second test handler is called');
     });
 
     eventManager.on('test3', function (e) {
       eventCount++; // does never happen
-      fail('third test handler is called');
+      that.fail('third test handler is called');
     });
     
     eventManager.triggerEvent('test');

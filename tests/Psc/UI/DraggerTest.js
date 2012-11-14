@@ -4,7 +4,7 @@ define(['psc-tests-assert','Psc/UI/Dragger'], function(t) {
   module("Psc.UI.Dragger");
   
   var setup =  function (test) {
-    drag = new Psc.UI.Dragger({ });
+    var drag = new Psc.UI.Dragger({ });
       
     // absolute + relative positionierung noch nicht gebraucht
     // vll mach ich mal features zu relativen elementen
@@ -20,13 +20,13 @@ define(['psc-tests-assert','Psc/UI/Dragger'], function(t) {
     
     $('#visible-fixture').empty().append($draggerDiv);
       
-    $draggable = $('<button></button>').button({label: 'i am draggable'});
+    var $draggable = $('<button></button>').button({label: 'i am draggable'});
     $fixture.empty().append($draggable);
     $draggable.draggable({
       cancel: false
     });
       
-    oldPos = $draggable.offset();
+    var oldPos = $draggable.offset();
      
     var ret = t.setup(test, {drag: drag, $draggable: $draggable, oldPos: oldPos, $fixture: $fixture});
 
@@ -64,17 +64,17 @@ define(['psc-tests-assert','Psc/UI/Dragger'], function(t) {
   test("drags onto an Element acceptance with droppable", function () {
    var that = setup(this);
     // margin-top als sicherheitsabstand :)
-    $droppable = $('<div style="margin-top: 20px; width: 200px; border: 1px solid red"><p>not dropped</p></div>');
+    var $droppable = $('<div style="margin-top: 20px; width: 200px; border: 1px solid red"><p>not dropped</p></div>');
     that.$fixture.append($droppable);
     
-  $droppable.droppable({
-    drop: function(event, ui) {
-      $(this).addClass("ui-state-highlight").find("p").html("dropped");
-    }
-  });
+    $droppable.droppable({
+      drop: function(event, ui) {
+        $(this).addClass("ui-state-highlight").find("p").html("dropped");
+      }
+    });
     
     this.assertEquals('not dropped',$droppable.find('p').text());
-    drag.toElement($draggable, $droppable);
+    that.drag.toElement(that.$draggable, $droppable);
     this.assertEquals('dropped',$droppable.find('p').text());
   });
 });

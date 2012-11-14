@@ -82,7 +82,7 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
       that.assertEquals(["2-TEST-001"], played);
       start();
     }, function (error) {
-      fail("program failed");
+      that.fail("program failed");
       start();
     });
   });
@@ -319,7 +319,7 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     ));
     
     status.done(function () {
-      fail('done should not be called on syntax error');
+      that.fail('done should not be called on syntax error');
       start();
     });
 
@@ -331,6 +331,8 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
   });
 
   asyncTest("program should be given to run()", function () {
+    var that = setup(this), programRunner = this.programRunner;
+    
     try {
       programRunner.run('bullshit');
       

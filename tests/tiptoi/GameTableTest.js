@@ -66,7 +66,7 @@ define(['psc-tests-assert','tiptoi/GameTable','tiptoi/Sound'], function(t) {
   });
 
   test("returns a random row never twice", function () {
-    setup(this);
+    var that = setup(this);
     var gameTable = createTable();
     var usedRows = [];
     var row;
@@ -75,7 +75,7 @@ define(['psc-tests-assert','tiptoi/GameTable','tiptoi/Sound'], function(t) {
       row = gameTable.chooseNotYetUsedRandomRow();
       
       if (Joose.A.exists(usedRows, row)) {
-        fail("Zeile wurde bereits vorher ausgegeben");
+        that.fail("Zeile wurde bereits vorher ausgegeben");
       } else {
         this.assertNotUndefined(row.sound);
         usedRows.push(row);
@@ -88,7 +88,7 @@ define(['psc-tests-assert','tiptoi/GameTable','tiptoi/Sound'], function(t) {
   });
 
   test("returns a random block never twice", function () {
-    setup(this);
+    var that = setup(this);
     var gameTable = createTable();
     var usedBlocks = [];
     var block;
@@ -97,7 +97,7 @@ define(['psc-tests-assert','tiptoi/GameTable','tiptoi/Sound'], function(t) {
       block = gameTable.chooseNotYetUsedRandomBlock();
       
       if (Joose.A.exists(usedBlocks, block)) {
-        fail("Zeile wurde bereits vorher ausgegeben");
+        that.fail("Zeile wurde bereits vorher ausgegeben");
       } else {
         this.assertNotUndefined(block[0].sound);
         usedBlocks.push(block);

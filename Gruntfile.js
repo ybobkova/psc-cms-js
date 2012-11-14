@@ -39,7 +39,32 @@ module.exports = function(grunt) {
 
     jshint: {
       files: ['Gruntfile.js', 'lib/**/*.js', 'tests/**/*.js'],
-      tests: ['tests/**/*.js']
+      tests: ['tests/**/*.js'],
+      options: {
+        curly: false, /* dont blame for missing curlies around ifs */
+        eqeqeq: true,
+        immed: true,
+        latedef: true,
+        devel: false,
+        newcap: true,
+        noarg: true,
+        sub: true,
+        undef: true,
+        boss: true,
+        eqnull: true,
+        browser: true,
+        jquery: true,
+        globals: {
+          $: true,
+          Joose: true,
+          define: true, require: true,
+          
+          Psc: true,
+          tiptoi: true,
+          CoMun: true,
+          QUnit: true, module: true, stop: true, start: true, ok: true, asyncTest: true, test: true, expect: true
+        }
+      }
     },
     
     connect: {

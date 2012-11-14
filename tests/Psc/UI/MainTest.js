@@ -47,16 +47,16 @@ define(['psc-tests-assert','text!fixtures/tabs-for-main.html','Psc/UI/Main','Psc
   
   test("constructNeedsTabsAsUIObject", function() {
     setup(this);
-    raises(function() {
+    QUnit.raises(function() {
       new Psc.UI.Main({tabs: null});
     });
 
-    raises(function() {
+    QUnit.raises(function() {
       new Psc.UI.Main({tabs: $()});
     });
   });
 
-  var responseMetaMock = Class({
+  var ResponseMetaMock = Joose.Class({
     isa: Psc.ResponseMetaReader,
       
     has: {
@@ -76,7 +76,7 @@ define(['psc-tests-assert','text!fixtures/tabs-for-main.html','Psc/UI/Main','Psc
     var $form = $('<form></form>');
     var tabHook;
     // wir injecten hier direkt die meta-daten die sonst aus der Response gelesen würden
-    var meta = new responseMetaMock({ data: {
+    var meta = new ResponseMetaMock({ data: {
       data: {
         tab: {
           id: 'new-tab-id',
@@ -110,7 +110,7 @@ define(['psc-tests-assert','text!fixtures/tabs-for-main.html','Psc/UI/Main','Psc
     var $form = $('<form></form>');
     var tabHook = function () { return false; };
     // wir injecten hier direkt die meta-daten die sonst aus der Response gelesen würden
-    var meta = new responseMetaMock({ data: {
+    var meta = new ResponseMetaMock({ data: {
       data: {
         tab: {
           id: 'new-tab-id',
@@ -137,7 +137,7 @@ define(['psc-tests-assert','text!fixtures/tabs-for-main.html','Psc/UI/Main','Psc
     var $form = $('<form></form>').appendTo(tabs.unwrap().find('#tabs-3'));
     var tabHook;
     // wir injecten hier direkt die meta-daten die sonst aus der Response gelesen würden
-    var meta = new responseMetaMock({ data: {
+    var meta = new ResponseMetaMock({ data: {
       data: {
         tab: {
           close: true

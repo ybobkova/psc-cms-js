@@ -43,7 +43,7 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 				return false;
 			};
 			
-			return raises(block, assert, debugMessage);
+			return QUnit.raises(block, assert, debugMessage);
 			//ok(false, "Es wurde eine Exception "+expectedException+" erwartet. Aber keine gecatched");
 		},
 		
@@ -168,10 +168,10 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 		// expected muss der Constructor sein, kein String!
 		assertDoesRole: function(expectedRole, actual, message) {
 			if (!Joose.O.isClass(expectedRole)) {
-				fail(this.debug(expected)+" is NOT a valid Class. Is this a Constructor-Function for a Role?");
+				this.fail(this.debug(expectedRole)+" is NOT a valid Class. Is this a Constructor-Function for a Role?");
 			}
 			if (!Joose.O.isInstance(actual)) {
-				fail(this.debug(actual)+" is not an object-instance");
+				this.fail(this.debug(actual)+" is not an object-instance");
 			}
 			
 			var result = Psc.Code.isRole(actual, expectedRole);

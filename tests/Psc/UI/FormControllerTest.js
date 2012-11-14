@@ -14,7 +14,7 @@ define(['psc-tests-assert','Psc/UI/FormController', 'Psc/EventManagerMock','Psc/
     var that = setup(this);
     var deferred = $.Deferred();
     var response = new Psc.Response({code: 200, reason: 'OK'});
-    var ajaxFormHandlerClass = Class({
+    var AjaxFormHandlerClass = Joose.Class({
       isa: Psc.AjaxFormHandler,
       
       override: {
@@ -27,7 +27,7 @@ define(['psc-tests-assert','Psc/UI/FormController', 'Psc/EventManagerMock','Psc/
     
     var formController = new Psc.UI.FormController({
       form: that.$form,
-      ajaxFormHandler: new ajaxFormHandlerClass({}),
+      ajaxFormHandler: new AjaxFormHandlerClass({}),
       eventManager: that.evm
     });
     
@@ -47,7 +47,7 @@ define(['psc-tests-assert','Psc/UI/FormController', 'Psc/EventManagerMock','Psc/
     
     var deferred = $.Deferred();
     var response = new Psc.Response({code: 404, reason: 'Not Found'});
-    var ajaxFormHandlerClass = Class({
+    var AjaxFormHandlerClass = Joose.Class({
       isa: Psc.AjaxFormHandler,
       
       override: {
@@ -60,7 +60,7 @@ define(['psc-tests-assert','Psc/UI/FormController', 'Psc/EventManagerMock','Psc/
     
     var formController = new Psc.UI.FormController({
       form: that.$form,
-      ajaxFormHandler: new ajaxFormHandlerClass({}),
+      ajaxFormHandler: new AjaxFormHandlerClass({}),
       eventManager: that.evm
     });
     
@@ -113,7 +113,7 @@ define(['psc-tests-assert','Psc/UI/FormController', 'Psc/EventManagerMock','Psc/
     expect(4);
     
     var deferred = $.Deferred();
-    var ajaxFormHandlerMock = Class({
+    var AjaxFormHandlerMock = Joose.Class({
       isa: Psc.AjaxFormHandler,
       
       override: {
@@ -129,7 +129,7 @@ define(['psc-tests-assert','Psc/UI/FormController', 'Psc/EventManagerMock','Psc/
 
     var formController = new Psc.UI.FormController({
       form: that.$form,
-      ajaxFormHandler: new ajaxFormHandlerMock({})
+      ajaxFormHandler: new AjaxFormHandlerMock({})
     });
     
     formController.onSerialization(function ($serForm, data) {

@@ -4,7 +4,7 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
   
   module("Psc.UI.DropBox");
 
-  var defaultButton = Class({
+  var DefaultButton = Joose.Class({
     does: Psc.UI.DropBoxButton,
     
     has: {
@@ -33,12 +33,12 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
   });
   
   var setup = function(test, withButton) {
-    var defaultButtons = [];
+    var DefaultButtons = [];
     var button2, button3, button4;
 
-    defaultButtons.push(button2 = new defaultButton({id: 2}));
-    defaultButtons.push(button3 = new defaultButton({id: 3}));
-    defaultButtons.push(button4 = new defaultButton({id: 4}));
+    DefaultButtons.push(button2 = new DefaultButton({id: 2}));
+    DefaultButtons.push(button3 = new DefaultButton({id: 3}));
+    DefaultButtons.push(button4 = new DefaultButton({id: 4}));
 
     var $fixture = $('#visible-fixture').html(html);
     var $dropBox = $fixture.find('.psc-cms-ui-drop-box');
@@ -49,7 +49,7 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
     });
     
     var ret =  {
-      defaultButtons: defaultButtons,
+      DefaultButtons: DefaultButtons,
       button2: button2,
       button3: button3,
       button4: button4,
@@ -134,7 +134,7 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
     var that = setup(this);
     
     that.dropBox.addButton(that.button4);
-    $button4 = that.$dropBox.find('button.psc-cms-ui-button');
+    var $button4 = that.$dropBox.find('button.psc-cms-ui-button');
     $button4.simulate('click');
     
     this.assertEquals(0, that.$dropBox.find('button.psc-cms-ui-button').length, 'button is removed');
@@ -208,7 +208,7 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
     that.dropBox.addButton(that.button3);
     this.assertTrue(that.dropBox.hasButton(that.button3), 'has button 3 as Joose Object');
     
-    $button3 = that.dropBox.unwrap().find('button.psc-cms-ui-button');
+    var $button3 = that.dropBox.unwrap().find('button.psc-cms-ui-button');
     this.assertTrue(that.dropBox.hasButton($button3), 'has button 3 as jquery');
   });
   

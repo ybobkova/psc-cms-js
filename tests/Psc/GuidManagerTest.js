@@ -7,7 +7,7 @@ define(['psc-tests-assert','Psc/GuidManager'], function(t) {
   };
 
   test("testBlankCreation does not collide", function() {
-    setup(this);
+    var that = setup(this);
     var manager = new Psc.GuidManager({});
     
     var guids = {}, guid;
@@ -16,7 +16,7 @@ define(['psc-tests-assert','Psc/GuidManager'], function(t) {
       this.assertTrue(guid.length > 0);
 
       if (guids[guid]) {
-        fail('guid '+guid+' wurde vorher vom manager erzeugt. Schlüsselkollision!');
+        that.fail('guid '+guid+' wurde vorher vom manager erzeugt. Schlüsselkollision!');
       } else {
         guids[guid] = true;
       }

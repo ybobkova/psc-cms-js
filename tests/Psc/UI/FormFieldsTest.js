@@ -5,7 +5,7 @@ define(['psc-tests-assert','Psc/UI/FormFields', 'Psc/UI/FormReader', 'Psc/UI/For
   var setup = function(test) {
     //var dm = new Psc.Test.DoublesManager();
     
-    var formReader = new (Class({
+    var formReader = new (Joose.Class({
       isa: Psc.UI.FormReader,
       
       override: {

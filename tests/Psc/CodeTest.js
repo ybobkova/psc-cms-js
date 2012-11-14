@@ -1,3 +1,4 @@
+/*globals TestRole*/
 define(['psc-tests-assert','Psc/Code','Psc/WrongValueException','Psc/InvalidArgumentException','Psc/Request'], function (t) {
   
   module("Psc.Code");
@@ -94,7 +95,7 @@ define(['psc-tests-assert','Psc/Code','Psc/WrongValueException','Psc/InvalidArgu
     });
 
     Joose.A.each(failureValues, function (data) {
-      raises(function () {
+      QUnit.raises(function () {
         Psc.Code.isInstanceOf(data[0], data[1]);
       });
     });
@@ -102,13 +103,13 @@ define(['psc-tests-assert','Psc/Code','Psc/WrongValueException','Psc/InvalidArgu
   
   test("isRole", function () {
     t.setup(this);
-    Role("TestRole", {});
+    Joose.Role("TestRole", {});
     
-    var objectClass = Class({
+    var ObjectClass = Joose.Class({
       does: TestRole
     });
     
-    var object = new objectClass();
+    var object = new ObjectClass();
     
     this.assertTrue(Psc.Code.isRole(object, TestRole));
     

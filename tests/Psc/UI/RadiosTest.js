@@ -17,7 +17,7 @@ define(['psc-tests-assert'], function(t) {
     
     $form.append($('<button>test</button>').button({text:"test"}).click(function (e) {
       e.preventDefault();
-      console.log($form.formSerialize());
+      $form.formSerialize();
     }));
     
     $('#visible-fixture').append($form);

@@ -7,7 +7,7 @@ define(['psc-tests-assert','Psc/CMS/TabOpenable','Psc/CMS/Item','Psc/UI/Tab'], f
   };
 
   test("acceptance", function() {
-    setup(this);
+    var that = setup(this), tab;
     
     var tabOpenable = new Psc.CMS.Item({
       trait: Psc.CMS.TabOpenable,
