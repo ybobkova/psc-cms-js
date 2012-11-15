@@ -1,4 +1,4 @@
-define(['psc-tests-assert','text!fixtures/combobox.html', 'jquery-simulate', 'Psc/UI/ComboBox', 'Psc/UI/AutoComplete'], function(t, html) {
+define(['psc-tests-assert','text!fixtures/combobox.html', 'jquery-simulate', 'Psc/UI/ComboBox', 'Psc/UI/WidgetWrapper', 'Psc/UI/AutoComplete'], function(t, html) {
 
   var setup = function(test, items) {
     var $fixture = $('#qunit-fixture').html(html);
@@ -236,5 +236,25 @@ define(['psc-tests-assert','text!fixtures/combobox.html', 'jquery-simulate', 'Ps
       
       start();
     }, 200); // keine lust den ajax zu mocken
+  });
+  
+  asyncTest("regression1", function () {
+    var that = setup(this);
+    require(['text!fixtures/combobox.reg1.html'], function(html) {
+      var $fixture = $('#visible-fixture');
+      
+      window.requireLoad = function (requirements, body) {
+        require(requirements, function () {
+          body({}, jQuery); // load combobox
+          
+          var $comboBox = that.assertjQueryLength(1, $fixture.find('.psc-cms-ui-combo-box'));
+          that.assertInstanceOf(Psc.UI.ComboBox, Psc.UI.WidgetWrapper.unwrapWidget($comboBox));
+          
+          start();
+        });
+      };
+      
+      $fixture.empty().append(html);
+    });
   });
 });
