@@ -4,15 +4,19 @@ define(
    'text!fixtures/tiptoi/tito-editor.html',
    'text!fixtures/tiptoi/FEE-Game1.html',
    'text!fixtures/tiptoi/FEE-Game1.sync.tito',
+   'text!fixtures/tiptoi/sync-exception.txt',
    'jquery-simulate',
    'tiptoi/TitoGameEditor',
-   'Psc/AjaxResponse'
+   'Psc/AjaxResponse',
+   'Psc/Response'
    ],
-  function(t, titoSourceCode, html, titoHighlighted, syncedTito) {
+  function(t, titoSourceCode, html, titoHighlighted, syncedTito, syncExceptionText) {
   
   module("tiptoi.TitoGameEditor");
   
   var setup = function(test, options) {
+    options = options || {};
+    
     var $widget = $('#visible-fixture').empty().html(html);
     
     var service = new (Joose.Class({
@@ -46,14 +50,22 @@ define(
                 code: 200
               }));
             } else if (request.getUrl() === '/api/product/test/tito/synchronize') {
-              d.resolve(new Psc.AjaxResponse({
-                request: request,
-                body: {
-                  tito: syncedTito,
-                  log: "alles hat geklappt"
-                },
-                code: 200
-              }));
+              if (options.synchronizeResponse) {
+                if (options.synchronizeResponse.getCode() === 200) {
+                  d.resolve(options.synchronizeResponse);
+                } else {
+                  d.reject(options.synchronizeResponse);
+                }
+              } else {
+                d.resolve(new Psc.AjaxResponse({
+                  request: request,
+                  body: {
+                    tito: syncedTito,
+                    log: "alles hat geklappt"
+                  },
+                  code: 200
+                }));
+              }
             } else {
               d.reject(new Psc.AjaxResponse({
                 request: request,
@@ -71,7 +83,8 @@ define(
     var editor = new tiptoi.TitoGameEditor({
         service: service,
         widget: $widget,
-        tito: titoSourceCode
+        tito: titoSourceCode,
+        gameNum: 1
     });
     
     return t.setup(test, {
@@ -118,5 +131,27 @@ define(
       }
     
     });
+  });
+  
+  asyncTest("when synchronize response does not work a dialog is shown", function () {
+    var that = setup(this, {
+      synchronizeResponse: new Psc.Response({
+        body: syncExceptionText,
+        code: 500,
+        header: {
+          'X-Psc-CMS-Error-Message': "In der Datenbank wurde '2-EAE_0620' als Nummer gefunden, es wurde jedoch '2-DRA_0736' angegeben.. #8761 Text: 'Probiere es einfach noch mal' D:\\www\\tiptoi\\Umsetzung\\base\\src\\tiptoi\\SoundPersister.php:289",
+          'X-Psc-CMS-Error': 'true'
+        }
+      })
+    });
+
+    var $button = that.assertjQueryLength(1, that.$widget.find('button.psc-cms-ui-button.sync-button'), 'sync button is found');
+
+    //start();
+    $button.simulate('click');
+    
+    //that.evm.on('code-loaded', function () {
+      // @TODO assert open dialog?
+    //});
   });
 });

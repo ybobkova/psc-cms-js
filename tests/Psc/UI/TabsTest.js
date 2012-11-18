@@ -222,4 +222,28 @@ define(['psc-tests-assert','text!fixtures/tabs.html','text!fixtures/tabs-for-mai
   test("TODO: tabs trigger remote-tab-load before loading a remote tab", function() {
     expect(0);
   });
+  
+  test("tabs stores pinned tabs in sessionStorage (just a small acceptance here)", function () {
+    var that = setup(this);
+    
+    // hack
+    sessionStorage.removeItem('psc-cms-ui-pinned-tabs');
+    
+    this.assertEquals(0, this.tabs.getPinnedTabs().length, 'there are no tabs pinned');
+    this.tabs.pinn(this.tab);
+    
+    // has added
+    this.assertEquals(1, this.tabs.getPinnedTabs().length, 'there is one tab pinned');
+    this.assertEquals(this.tab.getExport(), this.tabs.getPinnedTabs()[0], 'the tab is exported');
+    
+    // does not add twice
+    this.tabs.pinn(this.tab);
+    this.assertEquals(1, this.tabs.getPinnedTabs().length, 'there is still only one tab pinned');
+    
+    this.tabs.pinn(this.otherTab);
+    this.assertEquals(2, this.tabs.getPinnedTabs().length, 'there is still only one tab pinned');
+    
+    this.tabs.unpinn(this.tab);
+    this.assertEquals(1, this.tabs.getPinnedTabs().length, 'there is still only one tab pinned');
+  });
 });
