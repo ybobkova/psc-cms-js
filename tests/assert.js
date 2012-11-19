@@ -116,6 +116,15 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 			QUnit.push( result, actualLength, expectedLength, this.formatMessage(message || "$('"+jQueryObject.selector+"').length equals expected length ", result) );
 			return jQueryObject;
 		},
+
+		assertjQueryLengthGT: function(expectedLength, jQueryObject, message) {
+			this.assertjQuery(jQueryObject, 'actual is a jquery object [in assertJQueryLength]');
+			
+			var actualLength = jQueryObject.length;
+			var result = actualLength > expectedLength;
+			QUnit.push( result, actualLength, expectedLength, this.formatMessage(message || "$('"+jQueryObject.selector+"').length > expected length ", result) );
+			return jQueryObject;
+		},
 		
 		assertjQueryHasClass: function(expectedClass, jQueryObject, message) {
 			this.assertjQuery(jQueryObject, 'actual is a jquery object [in assertJQueryHasClass]');

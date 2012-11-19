@@ -7,6 +7,8 @@ define(
    'text!fixtures/tiptoi/sync-exception.txt',
    'jquery-simulate',
    'tiptoi/TitoGameEditor',
+   'Psc/UI/WidgetWrapper',
+   'Psc/CMS/FastItem',
    'Psc/AjaxResponse',
    'Psc/Response'
    ],
@@ -94,13 +96,23 @@ define(
     });
   };
 
-  asyncTest("tito is displayed in pre", function() {
+  asyncTest("tito is displayed in pre, buttons are cms fastitems", function() {
     var that = setup(this);
     
     that.evm.on('code-loaded', function () {
       var $pre = that.assertjQueryLength(1, that.$widget.find('div.content pre'));
     
       that.assertContains('#!tito', $pre.text());
+      
+      // buttons
+      var $buttons = that.assertjQueryLengthGT(2, $pre.find('.psc-cms-ui-button'), 'there are more than 2 buttons in the code');
+      
+      $buttons.each(function () {
+        var $button = $(this);
+        var item = Psc.UI.WidgetWrapper.unwrapWidget($button, Psc.CMS.FastItem);
+        
+      });
+      
       start();
     });
   });
@@ -120,7 +132,6 @@ define(
 
         start();
         $button.simulate('click');
-        
       } else {
         var $pre = that.assertjQueryLength(1, that.$widget.find('div.content pre'));
         
@@ -129,7 +140,6 @@ define(
         
         start();
       }
-    
     });
   });
   
@@ -147,11 +157,17 @@ define(
 
     var $button = that.assertjQueryLength(1, that.$widget.find('button.psc-cms-ui-button.sync-button'), 'sync button is found');
 
-    //start();
-    $button.simulate('click');
+    var initialLoad = true;
     
-    //that.evm.on('code-loaded', function () {
-      // @TODO assert open dialog?
-    //});
+    that.evm.on('error', function (e, response, dialog) {
+      that.assertTrue(dialog.isOpen(), 'dialog is open');
+      
+      dialog.close();
+      that.assertEquals(500, response.getCode());
+      
+      start();
+    });
+
+    $button.simulate('click');
   });
 });
