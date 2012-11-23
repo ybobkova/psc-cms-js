@@ -137,3 +137,8 @@ fieldset.psc-cms-ui-navigation  li .button-panel { position: absolute; top: 0px;
 .ui-dialog .dialog-content {
   height: 100%;
 }
+
+/* contextmenu */
+.psc-cms-ui-context-menu {
+  z-index: 9999;
+}
