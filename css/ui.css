@@ -16,6 +16,14 @@
   cursor: pointer;
 }
 
+/* damit beim initialisieren die buttons genauso viel platz einnehmen, wie sie
+ * nach dem initialisieren haben
+ * z. B. für buttons in accordions
+ */
+button.psc-cms-ui-button {
+  min-height: 29px;
+}
+
 #content div.psc-cms-ui-buttonset {
   margin-bottom: 10px;
 }
@@ -141,4 +149,9 @@ fieldset.psc-cms-ui-navigation  li .button-panel { position: absolute; top: 0px;
 /* contextmenu */
 .psc-cms-ui-context-menu {
   z-index: 9999;
+}
+
+/* layout manager */
+.lm-downloadslist li {
+  margin-bottom: 10px;
 }

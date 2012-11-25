@@ -98,6 +98,14 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 			var result = actual !== undefined;
 			QUnit.push( result, actual, "something not undefined", this.formatMessage(message || this.debug(actualObject)+"["+actualAttribute+"] equals value ", result) );
 		},
+    
+    
+    assertLength: function (expectedLength, actualCountable, message) {
+			var actual = actualCountable.length
+			var result = actual === expectedLength;
+			QUnit.push( result, actual, expectedLength, this.formatMessage(message || "actualCountable .length equals expected length ", result) );
+      return actualCountable;
+    },
 
 		/**
 		 *
@@ -134,6 +142,16 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 			QUnit.push( result, actualClasses, expectedClass, this.formatMessage(message || "$('"+jQueryObject.selector+"').hasClass('"+expectedClass+"') ", result) );
 			return jQueryObject;
 		},
+
+    assertjQueryIs: function(expectedExpression, jQueryObject, message) {
+			this.assertjQuery(jQueryObject, 'actual is a jquery object [in assertJQueryIs]');
+			
+			var actual = jQueryObject.is(expectedExpression);
+			var result = actual === true;
+			QUnit.push( result, actual, true, this.formatMessage(message || "$('"+jQueryObject.selector+"').is("+expectedExpression+") ", result) );
+			return jQueryObject;
+		},
+
 	
 		fail: function(message) {
 			//QUnit.push( false, message , sourceFromStacktrace(2));
