@@ -1,6 +1,6 @@
 define(['psc-tests-assert','jquery-simulate','Psc/UI/Dialog','Psc/UI/WidgetWrapper','Psc/UI/LayoutManager/Downloadslist','Psc/Test/DoublesManager'], function(t) {
   
-  module("Psc.UI.ResizableImage");
+  module("Psc.UI.LayoutManager.Downloadslist");
   
   var setup = function(test) {
     var dm = new Psc.Test.DoublesManager();
@@ -124,7 +124,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/Dialog','Psc/UI/WidgetWrapp
       var button1 = rows[0][2];
       
       evm.on('select-file', function (e, file) {
-        that.assertAttributeEquals('jobs.xlsx', 'name', file);
+        that.assertAttributeEquals('jobs.xlsx', 'originalName', file);
         that.assertAttributeEquals('/api/files/jobs.xlsx', 'url', file);
         
         setTimeout(function () {
