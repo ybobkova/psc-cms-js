@@ -101,7 +101,7 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
     
     
     assertLength: function (expectedLength, actualCountable, message) {
-			var actual = actualCountable.length
+			var actual = actualCountable.length;
 			var result = actual === expectedLength;
 			QUnit.push( result, actual, expectedLength, this.formatMessage(message || "actualCountable .length equals expected length ", result) );
       return actualCountable;

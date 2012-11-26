@@ -16,7 +16,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/Dialog','Psc/UI/WidgetWrapp
         d.resolve(
           [
            {
-            "name":"jobs.xlsx",
+            "originalName":"jobs.xlsx",
             "size":9126,
             id: 26,
             description: 'a list of current jobs',
@@ -24,7 +24,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/Dialog','Psc/UI/WidgetWrapp
             "url":"/api/files/jobs.xlsx"
             },
            {
-            "name":"businessreport.pdf",
+            "originalName":"businessreport.pdf",
             "size":3459,
             id: 27,
             description: null,
@@ -37,7 +37,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/Dialog','Psc/UI/WidgetWrapp
       }, 200);
       
       return d.promise();
-    }
+    };
     
     var list = new Psc.UI.LayoutManager.Downloadslist({
       label: 'Download-Liste',
