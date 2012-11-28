@@ -10,10 +10,9 @@ define(['psc-tests-assert', 'fixtures/navigation.comun.flat', 'jquery-simulate',
       content: $widget
     });
     
-    var tabs = [];
     var uiController = {
       openTab: function (entityName, identifier) {
-        tabs.push({
+        test.openedTabs.push({
           name: entityName,
           id: identifier
         });
@@ -28,7 +27,7 @@ define(['psc-tests-assert', 'fixtures/navigation.comun.flat', 'jquery-simulate',
       flat: flat
     });
     
-    return t.setup(test, {pages: pages, $widget: $widget, tabs: tabs});
+    return t.setup(test, {pages: pages, $widget: $widget, openedTabs: []});
   };
 
   test("jqxMenu is created in widget", function() {
@@ -48,7 +47,7 @@ define(['psc-tests-assert', 'fixtures/navigation.comun.flat', 'jquery-simulate',
       
       stop();
       setTimeout(function afterEventNotDefaultPrevented() {
-        that.assertEquals([{name: 'page', id: 20}], that.tabs, 'uiController openTab should be called');
+        that.assertEquals([{name: 'page', id: 20}], that.openedTabs, 'uiController openTab should be called');
         
         start();
       }, 20); 
