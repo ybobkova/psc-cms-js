@@ -38,8 +38,7 @@ module.exports = function(grunt) {
     },
 
     jshint: {
-      files: ['Gruntfile.js', 'lib/**/*.js', 'tests/**/*.js'],
-      tests: ['tests/**/*.js'],
+      files: ['Gruntfile.js', 'lib/**/*.js', '!lib/ClassTemplate.js', 'tests/**/*.js', '!tests/testTemplate.js'],
       options: {
         curly: false, /* dont blame for missing curlies around ifs */
         eqeqeq: true,
