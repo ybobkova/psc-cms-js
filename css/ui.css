@@ -112,14 +112,14 @@ div.psc-cms-ui-error-pane fieldset.psc-cms-ui-group div.content {
 }
 
 /* navigation */
-xxfieldset.psc-cms-ui-navigation ul li {
+fieldset.psc-cms-ui-navigation ul li {
   position: relative;
   height: 20px;
   width: auto;
   margin: 0 3px 3px;
   padding: 0.4em 0.4em 0.4em 1.5em;
 }
-xxfieldset.psc-cms-ui-navigation  li .button-panel { position: absolute; top: 0px; right: 0px; }
+fieldset.psc-cms-ui-navigation  li .button-panel { position: absolute; top: 0px; right: 0px; }
 
 /* resizable image und handles von ui */
 .psc-cms-ui-resizable-image .ui-resizable-handle {
