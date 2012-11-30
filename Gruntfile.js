@@ -16,7 +16,9 @@ module.exports = function(grunt) {
         return baseUrl+file;
       }
     );
-  };  
+  };
+  
+  var port = 40000 + Math.round(1000 * Math.random());
 
   // Project configuration.
   grunt.initConfig({
@@ -68,19 +70,19 @@ module.exports = function(grunt) {
     
     connect: {
       options: {
-        port: 8000,
+        port: port,
         base: '.'
       }
     },
     
     qunit: {
       all: [
-        mapToUrl('tests/Psc/**/*.html', 'http://localhost:8000/'),
-        mapToUrl('tests/tiptoi/**/*.html', 'http://localhost:8000/'),
-        mapToUrl('tests/CoMun/**/*.html', 'http://localhost:8000/')
+        mapToUrl('tests/Psc/**/*.html', 'http://localhost:'+port+'/'),
+        mapToUrl('tests/tiptoi/**/*.html', 'http://localhost:'+port+'/'),
+        mapToUrl('tests/CoMun/**/*.html', 'http://localhost:'+port+'/')
       ],
       dropBox: [
-        mapToUrl('tests/Psc/UI/DropBox/*.html', 'http://localhost:8000/')
+        mapToUrl('tests/Psc/UI/DropBox/*.html', 'http://localhost:'+port+'/')
       ],
       options: {
         timeout: 12000,
