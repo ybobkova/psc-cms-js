@@ -18,7 +18,8 @@ module.exports = function(grunt) {
     );
   };
   
-  var port = 40000 + Math.round(1000 * Math.random());
+  //var port = 40000 + Math.round(1000 * Math.random());
+  var port = 8001;
 
   // Project configuration.
   grunt.initConfig({
