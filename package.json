@@ -10,7 +10,7 @@
   ],
   "version": "0.1.0",
   "scripts": {
-    "test": "grunt --verbose travis"
+    "test": "sudo grunt --verbose travis"
   },
   "devDependencies": {
     "grunt": ">=0.4",
