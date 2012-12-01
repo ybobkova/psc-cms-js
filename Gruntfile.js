@@ -78,12 +78,12 @@ module.exports = function(grunt) {
     
     qunit: {
       all: [
-        mapToUrl('tests/Psc/**/*.html', 'http://localhost:'+port+'/'),
-        mapToUrl('tests/tiptoi/**/*.html', 'http://localhost:'+port+'/'),
-        mapToUrl('tests/CoMun/**/*.html', 'http://localhost:'+port+'/')
+        mapToUrl('tests/Psc/**/*.html', 'http://127.0.0.1:'+port+'/'),
+        mapToUrl('tests/tiptoi/**/*.html', 'http://127.0.0.1:'+port+'/'),
+        mapToUrl('tests/CoMun/**/*.html', 'http://127.0.0.1:'+port+'/')
       ],
       dropBox: [
-        mapToUrl('tests/Psc/UI/DropBox/*.html', 'http://localhost:'+port+'/')
+        mapToUrl('tests/Psc/UI/DropBox/*.html', 'http://127.0.0.1:'+port+'/')
       ],
       options: {
         timeout: 12000,
