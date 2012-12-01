@@ -13,7 +13,7 @@
     "grunt": ">=0.4"
   },
   "scripts": {
-    "test": "grunt --verbose travis"
+    "test": "grunt --debug travis"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.1.0",
