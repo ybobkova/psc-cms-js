@@ -18,8 +18,7 @@ module.exports = function(grunt) {
     );
   };
   
-  //var port = 40000 + Math.round(1000 * Math.random());
-  var port = 8001;
+  var port = 8000;
 
   // Project configuration.
   grunt.initConfig({
@@ -69,13 +68,6 @@ module.exports = function(grunt) {
       }
     },
     
-    connect: {
-      options: {
-        port: port,
-        base: '.'
-      }
-    },
-    
     qunit: {
       all: [
         mapToUrl('tests/Psc/**/*.html', 'http://127.0.0.1:'+port+'/'),
@@ -115,7 +107,7 @@ module.exports = function(grunt) {
         src: ['dist/<%= pkg.name %>-<%= pkg.version %>.js'],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js'
       }
-    }
+    },
     
     /**
      * watch geht leider aus denselben gründen nicht, warum komodo nicht an den error stream rankommt
@@ -126,13 +118,20 @@ module.exports = function(grunt) {
       }
     }
     */
+    connect: {
+      options: {
+        hostname: "127.0.0.1",
+        port: 8000,
+        base: '.'
+      }
+    }
   });
 
   // Default task.
   grunt.registerTask('pack', ['jshint', 'requirejs']);
   grunt.registerTask('default', ['jshint', 'connect', 'qunit', 'requirejs']);
   grunt.registerTask('test', ['connect', 'qunit']);
-  grunt.registerTask('travis', ['connect', 'qunit']);
+  grunt.registerTask('travis', ['jshint', 'connect', 'qunit']);
   
   grunt.registerTask("create-class", "crates a new Class Stub", function (className, isa, traits) {
     var _ = grunt.util._;
