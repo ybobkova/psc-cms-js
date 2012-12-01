@@ -132,7 +132,7 @@ module.exports = function(grunt) {
   grunt.registerTask('pack', ['jshint', 'requirejs']);
   grunt.registerTask('default', ['jshint', 'connect', 'qunit', 'requirejs']);
   grunt.registerTask('test', ['connect', 'qunit']);
-  grunt.registerTask('travis', ['jshint', 'connect', 'qunit']);
+  grunt.registerTask('travis', ['connect']);
   
   grunt.registerTask("create-class", "crates a new Class Stub", function (className, isa, traits) {
     var _ = grunt.util._;
