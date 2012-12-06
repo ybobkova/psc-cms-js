@@ -1,5 +1,5 @@
 /*globals TestRole*/
-define(['psc-tests-assert','Psc/Code','Psc/WrongValueException','Psc/InvalidArgumentException','Psc/Request'], function (t) {
+define(['psc-tests-assert','stacktrace','Psc/Code','Psc/WrongValueException','Psc/InvalidArgumentException','Psc/Request'], function (t, printStackTrace) {
   
   module("Psc.Code");
   
@@ -25,6 +25,23 @@ define(['psc-tests-assert','Psc/Code','Psc/WrongValueException','Psc/InvalidArgu
     this.assertException("Psc.WrongValueException", function () {
       Psc.Code.value('wrong', 'a1','a2','a3');
     });
+    
+  });
+  
+  test("stacktrace thingy", function () {
+    t.setup(this);
+    
+    var thiswillfail = function () {
+      a++;
+    };
+    
+    try {
+      thiswillfail();
+    } catch (e) {
+      var stack = printStackTrace({e: e});
+      
+      this.assertTrue(stack.length > 2);
+    }
     
   });
   
