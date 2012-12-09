@@ -71,6 +71,8 @@ table.psc-cms-ui-grid { }
 table.psc-cms-ui-grid { margin: 20px 0; }
 table.psc-cms-ui-grid { margin: 1em 0; border-collapse: collapse; }
 table.psc-cms-ui-grid td, table.psc-cms-ui-grid th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+table.psc-cms-ui-grid td.align-right { text-align: right; }
+table.psc-cms-ui-grid td.align-center { text-align: center; }
 
 /* Entity-Grid */
 fieldset.psc-cms-ui-entity-grid-panel-container small.with-selected { display: inline-block; margin-right: 12px; }
