@@ -95,5 +95,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
     var $dialog = $('body').find('.ui-dialog:visible');
     
     this.assertEquals(1, $dialog.length, 'Ein Dialog wurde geöffnet');
+    
+    this.editor.getDialog().close();
   });
 });
