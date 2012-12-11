@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -10,7 +10,7 @@ License: http://jqwidgets.com/license/
             var visualRows = startvisibleindex;
             var self = this;
             var groupHashCodes = new Array();
-            for (iGroupColumn = 0; iGroupColumn < self.groups.length; iGroupColumn++) {
+            for (var iGroupColumn = 0; iGroupColumn < self.groups.length; iGroupColumn++) {
                 groupHashCodes[iGroupColumn] = self.generatekey();
             }
             var grouprecords = new Array();
@@ -33,7 +33,7 @@ License: http://jqwidgets.com/license/
             var hassortdata = this.sortdata != null;
             var data = hassortdata ? this.sortdata : this.records;
 
-            for (obj = startindex; obj < endindex; obj++) {
+            for (var obj = startindex; obj < endindex; obj++) {
                 var item = {};
 
                 if (!hassortdata) {
@@ -51,7 +51,7 @@ License: http://jqwidgets.com/license/
 
                 var itemKeysHierarchy = new Array();
                 var keys = 0;
-                for (iGroupColumn = 0; iGroupColumn < groupslength; iGroupColumn++) {
+                for (var iGroupColumn = 0; iGroupColumn < groupslength; iGroupColumn++) {
                     var group = self.groups[iGroupColumn];
                     var value = item[group];
 
@@ -69,7 +69,7 @@ License: http://jqwidgets.com/license/
                 var lookupKey = "";
                 var iLevel = -1;
 
-                for (q = 0; q < itemKeysHierarchy.length; q++) {
+                for (var q = 0; q < itemKeysHierarchy.length; q++) {
                     iLevel++;
                     var itemKey = itemKeysHierarchy[q].value;
                     var columnHash = itemKeysHierarchy[q].hash;
@@ -145,7 +145,7 @@ License: http://jqwidgets.com/license/
             };
 
             var loopitems = function (self, group, visualRows) {
-                for (m = 0; m < group.subItems.length; m++) {
+                for (var m = 0; m < group.subItems.length; m++) {
                     group.subItems[m].visibleindex = startvisibleindex + visualRows;
                     self.rows[visualRows] = group.subItems[m];
                     self.loadedrecords[visualRows] = group.subItems[m];
@@ -213,7 +213,7 @@ License: http://jqwidgets.com/license/
             this.rows = new Array();
             var visualRows = 0;
 
-            for (i = 0; i < grouprecordslength; i++) {
+            for (var i = 0; i < grouprecordslength; i++) {
                 var group = grouprecords[i];
                 this.loadedrootgroups[i] = group;
                 this.loadedgroups[this.loadedgroups.length] = group;
@@ -237,7 +237,7 @@ License: http://jqwidgets.com/license/
                 var visualrows = 0;
                 var hashRowGroups = new Array();
                 var groupHashCodes = new Array();
-                for (iGroupColumn = 0; iGroupColumn < self.groups.length; iGroupColumn++) {
+                for (var iGroupColumn = 0; iGroupColumn < self.groups.length; iGroupColumn++) {
                     groupHashCodes[iGroupColumn] = self.generatekey();
                 }
                 var i = 0;
@@ -247,7 +247,7 @@ License: http://jqwidgets.com/license/
                     end = this.totalrecords;
                 }
 
-                for (obj = start; obj < end; obj++) {
+                for (var obj = start; obj < end; obj++) {
                     var item = $.extend({}, self.sortedgroups[obj]);
                     id = item[self.uniqueId];
 
@@ -257,7 +257,7 @@ License: http://jqwidgets.com/license/
 
                         var itemKeysHierarchy = new Array();
                         var keys = 0;
-                        for (iGroupColumn = 0; iGroupColumn < self.groups.length; iGroupColumn++) {
+                        for (var iGroupColumn = 0; iGroupColumn < self.groups.length; iGroupColumn++) {
                             var group = self.groups[iGroupColumn];
                             var value = item[group];
 
@@ -275,7 +275,7 @@ License: http://jqwidgets.com/license/
                         var lookupKey = "";
                         var iLevel = -1;
 
-                        for (q = 0; q < itemKeysHierarchy.length; q++) {
+                        for (var q = 0; q < itemKeysHierarchy.length; q++) {
                             iLevel++;
                             var itemKey = itemKeysHierarchy[q].value;
                             var columnHash = itemKeysHierarchy[q].hash;
@@ -290,8 +290,10 @@ License: http://jqwidgets.com/license/
                                 parentItem = { group: itemKey, subItems: new Array(), subGroups: new Array(), level: 0 };
                                 grouprecords[grouprecordsindex++] = parentItem;
                                 var initialgroup = self.loadedgroupsByKey[itemKey];
-                                parentItem.visibleindex = initialgroup.visibleindex;
-                                parentItem.uniqueid = initialgroup.uniqueid;
+                                if (initialgroup != undefined) {
+                                    parentItem.visibleindex = initialgroup.visibleindex;
+                                    parentItem.uniqueid = initialgroup.uniqueid;
+                                }
                             }
                             else {
                                 var subItem = { group: itemKey, subItems: new Array(), subGroups: new Array(), parentItem: parentItem, level: parentItem.level + 1 };
@@ -318,7 +320,7 @@ License: http://jqwidgets.com/license/
                 };
 
                 var loopitems = function (self, group, visualrows) {
-                    for (m = 0; m < group.subItems.length; m++) {
+                    for (var m = 0; m < group.subItems.length; m++) {
                         rows[visualrows] = $.extend({}, group.subItems[m]);
                         visualrows++;
                     }
@@ -375,7 +377,7 @@ License: http://jqwidgets.com/license/
                 }
 
                 var parentgroup = 0;
-                for (i = 0; i < grouprecords.length; i++) {
+                for (var i = 0; i < grouprecords.length; i++) {
                     var group = grouprecords[i];
 
                     if (anysubitems(group)) {
@@ -413,7 +415,8 @@ License: http://jqwidgets.com/license/
                 if (groupslength > 0) {
                     $.each(this.groups, function (index) {
                         var groupcolumn = this;
-                        var text = me._getColumnText(this);
+                        var groupcolumninfo = me._getColumnText(this);
+                        var text = groupcolumninfo.label;
                         var group = me._rendergroupcolumn(text, groupcolumn);
                         group.addClass(me.toThemeProperty('jqx-grid-group-column'));
                         me.groupsheaderdiv.append(group);
@@ -473,6 +476,9 @@ License: http://jqwidgets.com/license/
         addgroup: function (datafield) {
             if (datafield) {
                 var self = this;
+                if (self.groups !== self.dataview.groups) {
+                    self.dataview.groups = self.groups;
+                }
                 self.groups[self.groups.length] = datafield;
                 self.refreshgroups();
                 this._raiseEvent(12, { type: "Add", index: self.groups[self.groups.length], groups: self.groups });
@@ -484,6 +490,9 @@ License: http://jqwidgets.com/license/
             if (index != undefined && index != null && index >= 0 && index <= this.groups.length) {
                 if (datafield) {
                     var self = this;
+                    if (self.groups !== self.dataview.groups) {
+                        self.dataview.groups = self.groups;
+                    }
                     self.groups.splice(index, 0, datafield);
                     self.refreshgroups();
                     this._raiseEvent(12, { type: "Insert", index: index, groups: self.groups });
@@ -510,12 +519,25 @@ License: http://jqwidgets.com/license/
         removegroupat: function (index) {
             if (index >= 0 && index != null && index != undefined) {
                 var self = this;
+                if (self.groups !== self.dataview.groups) {
+                    self.dataview.groups = self.groups;
+                }
                 self.groups.splice(index, 1);
                 self.refreshgroups();
                 this._raiseEvent(12, { type: "Remove", index: index, groups: self.groups });
                 return true;
             }
             return false;
+        },
+
+        cleargroups: function()
+        {
+            var self = this;
+            self.groups = [];
+            self.dataview.groups = self.groups;
+            self.refreshgroups();
+            this._raiseEvent(12, { type: "Clear", groups: self.groups });
+            return true;
         },
 
         // removes a group by datafield
@@ -686,7 +708,13 @@ License: http://jqwidgets.com/license/
                 this.expandedgroups[group.uniqueid] = { expanded: expanded, group: group };
                 this._setsubgroupsvisibility(this, group, !expanded, applytosubgroups);
                 if (update) {
+                    var scrollBarVisibility = this.vScrollBar[0].style.visibility;
                     this.rendergridcontent(true, false);
+                    if (scrollBarVisibility != this.vScrollBar[0].style.visibility) {
+                        this._updatecolumnwidths();
+                        this._updatecellwidths();
+                        this._renderrows(this.virtualsizeinfo);
+                    }
                 }
 
                 if (undefined == this.suspendgroupevents || this.suspendgroupevents == false) {
@@ -705,7 +733,7 @@ License: http://jqwidgets.com/license/
         },
 
         _setgroupitemsvisibility: function (self, group, hidden) {
-            for (m = 0; m < group.subItems.length; m++) {
+            for (var m = 0; m < group.subItems.length; m++) {
                 self._setrowvisibility(group.subItems[m].visibleindex, hidden, false);
             }
         },
@@ -838,8 +866,12 @@ License: http://jqwidgets.com/license/
                         self.dragcolumnicon.removeClass(self.toThemeProperty('jqx-grid-drag-icon'));
                         self.dragcolumnicon.addClass(self.toThemeProperty('jqx-grid-dragcancel-icon'));
                     }
-
-                    return false;
+                    if (touchdevice) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        return false;
+                    }
+                    //   return false;
                 }
             });
 
@@ -909,13 +941,13 @@ License: http://jqwidgets.com/license/
                             self.dropline = null;
                         }
                     }
-                    return false;
+                    //  return false;
                 }
             });
         },
 
         _getGroupIndexByDataField: function (datafield) {
-            for (i = 0; i < this.groups.length; i++) {
+            for (var i = 0; i < this.groups.length; i++) {
                 if (this.groups[i] == datafield)
                     return i;
             }
@@ -923,7 +955,7 @@ License: http://jqwidgets.com/license/
         },
 
         _isColumnInGroups: function (column) {
-            for (i = 0; i < this.groups.length; i++) {
+            for (var i = 0; i < this.groups.length; i++) {
                 if (this.groups[i] == column)
                     return true;
             }
@@ -1099,9 +1131,9 @@ License: http://jqwidgets.com/license/
             }
 
             this.addHandler(column, mousedown, function (event) {
-                if (me._isColumnInGroups(record.datafield)) {
+                if (me._isColumnInGroups(record.displayfield)) {
                     if (column.css('cursor') != 'col-resize') {
-                        return false;
+                        return true;
                     }
                     else return true;
                 }
@@ -1125,9 +1157,9 @@ License: http://jqwidgets.com/license/
             });
 
             this.addHandler(column, mousemove, function (event) {
-                if (me._isColumnInGroups(record.datafield))
+                if (me._isColumnInGroups(record.displayfield))
                     if (column.css('cursor') != 'col-resize') {
-                        return false;
+                        return true;
                     }
                     else return true;
 
@@ -1146,7 +1178,7 @@ License: http://jqwidgets.com/license/
                         var yoffset = Math.abs(mousemove.top - me.dragmousedown.top);
                         if (xoffset > 3 || yoffset > 3) {
                             me._createdragcolumn(column, mousemove, true);
-                            $.data(me.dragcolumn[0], 'datarecord', record.datafield);
+                            $.data(me.dragcolumn[0], 'datarecord', record.displayfield);
                         }
                     }
                 }
@@ -1203,8 +1235,7 @@ License: http://jqwidgets.com/license/
             return group;
         },
 
-        //[optimize]
-        _rendergroup: function (groupslength, tablerow, renderrow, columnstart, columnend, renderedrows) {
+        _rendergroup: function (groupslength, tablerow, renderrow, columnstart, columnend, renderedrows, tablewidth) {
             var visualrow = tablerow;
             var tablecell = tablerow.cells[renderrow.level];
             var expanded = this._findgroupstate(renderrow.uniqueid);
@@ -1217,28 +1248,52 @@ License: http://jqwidgets.com/license/
                 }
             }
 
-            var text = this._getColumnText(this.groups[renderrow.level]);
+            var text = this._getColumnText(this.groups[renderrow.level]).label;
             var indentwidth = this.groupindentwidth;
             var indent = this.rowdetails && this.showrowdetailscolumn ? (1 + groupslength) * indentwidth : (groupslength) * indentwidth;
-            var width = $(visualrow).width() - indent;
-            $(visualrow.cells[renderrow.level + 1]).width(width);
-            $(visualrow.cells[renderrow.level + 1]).removeClass(this.toThemeProperty('jqx-grid-cell-filter'));
-            $(visualrow.cells[renderrow.level + 1]).removeClass(this.toThemeProperty('jqx-grid-cell-sort'));
+            var width = tablewidth - indent;
+            var cellToRender = visualrow.cells[renderrow.level + 1];
+            var m = 2;
+            while (cellToRender != undefined && cellToRender.style.display == 'none' && m < 10) {
+                cellToRender = visualrow.cells[renderrow.level + m];
+                m++;
+            }
+
+            var $cellToRender = $(cellToRender);
+            cellToRender.style.width = parseInt(width) + 'px';
+            if (cellToRender.className.indexOf('jqx-grid-cell-filter') != -1) {
+                $cellToRender.removeClass(this.toThemeProperty('jqx-grid-cell-filter'));
+            }
+            if (cellToRender.className.indexOf('jqx-grid-cell-sort') != -1) {
+                $cellToRender.removeClass(this.toThemeProperty('jqx-grid-cell-sort'));
+            }
 
             if (this.groupsrenderer != null) {
-                var groupdata = { group: renderrow.group, level: renderrow.level, groups: renderrow.bounddata.subGroups, rows: renderrow.bounddata.subItems };
+                var groupdata = { group: renderrow.group, level: renderrow.level, subGroups: renderrow.bounddata.subGroups, subItems: renderrow.bounddata.subItems, groupcolumn: this._getColumnText(this.groups[renderrow.level]).column };
                 var html = this.groupsrenderer(text + ': ' + renderrow.group, renderrow.group, expanded, groupdata);
                 if (html) {
-                    visualrow.cells[renderrow.level + 1].innerHTML = html;
+                    cellToRender.innerHTML = html;
                 }
                 else {
                     var count = renderrow.bounddata.subItems.length > 0 ? renderrow.bounddata.subItems.length : renderrow.bounddata.subGroups.length;
-                    visualrow.cells[renderrow.level + 1].innerHTML = '<div class="' + this.toThemeProperty('jqx-grid-groups-row') + '" style="position: absolute;"><span>' + text + ': </span>' + '<span class="' + this.toThemeProperty('jqx-grid-groups-row-details') + '">' + renderrow.group + ' (' + count + ')' + '</span></div>';
+                    cellToRender.innerHTML = '<div class="' + this.toThemeProperty('jqx-grid-groups-row') + '" style="position: absolute;"><span>' + text + ': </span>' + '<span class="' + this.toThemeProperty('jqx-grid-groups-row-details') + '">' + renderrow.group + ' (' + count + ')' + '</span></div>';
                 }
             }
             else {
+                var column = this._getcolumnbydatafield(this.groups[renderrow.level]);
+                var value = renderrow.group;
+                if (column.cellsformat) {
+                    if ($.jqx.dataFormat) {
+                        if ($.jqx.dataFormat.isDate(value)) {
+                            value = $.jqx.dataFormat.formatdate(value, column.cellsformat, this.gridlocalization);
+                        }
+                        else if ($.jqx.dataFormat.isNumber(value)) {
+                            value = $.jqx.dataFormat.formatnumber(value, column.cellsformat, this.gridlocalization);
+                        }
+                    }
+                }
                 var count = renderrow.bounddata.subItems.length > 0 ? renderrow.bounddata.subItems.length : renderrow.bounddata.subGroups.length;
-                visualrow.cells[renderrow.level + 1].innerHTML = '<div class="' + this.toThemeProperty('jqx-grid-groups-row') + '" style="position: absolute;"><span>' + text + ': </span>' + '<span class="' + this.toThemeProperty('jqx-grid-groups-row-details') + '">' + renderrow.group + ' (' + count + ')' + '</span></div>';
+                cellToRender.innerHTML = '<div class="' + this.toThemeProperty('jqx-grid-groups-row') + '" style="position: absolute;"><span>' + text + ': </span>' + '<span class="' + this.toThemeProperty('jqx-grid-groups-row-details') + '">' + value + ' (' + count + ')' + '</span></div>';
             }
         }
     });

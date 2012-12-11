@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -72,6 +72,7 @@ License: http://jqwidgets.com/license/
             this.groupName = '';
             this.keyboardCheck = true;
             this.enableHover = true;
+            this.hasInput = true;
             // 'checked' is triggered when the checkbox is checked.
             // 'unchecked' is triggered when the checkbox is unchecked.
             // 'indeterminate' is triggered when the checkbox's ckecked property is going to be null.
@@ -83,6 +84,7 @@ License: http://jqwidgets.com/license/
         },
 
         createInstance: function (args) {
+            this.init = true;
             var me = this;
             this.setSize();
             this.propertyChangeMap['width'] = function (instance, key, oldVal, value) {
@@ -121,8 +123,22 @@ License: http://jqwidgets.com/license/
                 this.checked = true;
             }
 
+            this._addInput();
             this._render();
             this._addHandlers();
+            this.init = false;
+        },
+
+        _addInput: function()
+        {
+            if (this.hasInput) {
+                var name = this.host.attr('name');
+                if (!name) name = this.element.id;
+                this.input = $("<input type='hidden'/>");
+                this.host.append(this.input);
+                this.input.attr('name', name);
+                this.input.val(this.checked);
+            }
         },
 
         refresh: function (initialRefresh) {
@@ -161,7 +177,7 @@ License: http://jqwidgets.com/license/
                     me.toggle();
                     if (me.updated) {
                         event.owner = me;
-                        me.updated(event, me.checked);
+                        me.updated(event, me.checked, me.oldChecked);
                     }
                     event.preventDefault();
                     return false;
@@ -196,7 +212,6 @@ License: http://jqwidgets.com/license/
             this.addHandler(this.host, 'mouseup', function (event) {
                 if (!me.disabled && me.enableContainerClick) {
                     event.preventDefault();
-                    return false;
                 }
             });
 
@@ -355,6 +370,9 @@ License: http://jqwidgets.com/license/
 
             this._raiseEvent('0', true);
             this._raiseEvent('3', { checked: true });
+            if (this.input != undefined) {
+                this.input.val(this.checked);
+            }
         },
 
         // unchecks the checkbox.
@@ -374,6 +392,9 @@ License: http://jqwidgets.com/license/
 
             this._raiseEvent('1');
             this._raiseEvent('3', { checked: false });
+            if (this.input != undefined) {
+                this.input.val(this.checked);
+            }
         },
 
         // sets the indeterminate state.
@@ -393,6 +414,9 @@ License: http://jqwidgets.com/license/
 
             this._raiseEvent('2');
             this._raiseEvent('3', { checked: null });
+            if (this.input != undefined) {
+                this.input.val(this.checked);
+            }
         },
 
         // toggles the check state.
@@ -411,6 +435,7 @@ License: http://jqwidgets.com/license/
                 return;
             }
 
+            this.oldChecked = this.checked;
             if (this.checked == true) {
                 this.checked = this.hasThreeStates ? null : false;
             }
@@ -419,6 +444,9 @@ License: http://jqwidgets.com/license/
             }
 
             this.updateStates();
+            if (this.input != undefined) {
+                this.input.val(this.checked);
+            }
         },
 
         // updates check states depending on the value of the 'checked' property.
@@ -466,12 +494,11 @@ License: http://jqwidgets.com/license/
         },
 
         destroy: function () {
-            this._removeHandlers();
-            this.host.removeClass();
             this.host.remove();
         },
 
         _raiseEvent: function (id, args) {
+            if (this.init) return;
             var evt = this.events[id];
             var event = new jQuery.Event(evt);
             event.owner = this;
@@ -517,10 +544,12 @@ License: http://jqwidgets.com/license/
                 }
             }
 
-            if (key == 'disable') {
-                if (value) {
-                    object.disable();
-                } else object.enable();
+            if (key == 'disabled') {
+                if (value != oldvalue) {
+                    if (value) {
+                        object.disable();
+                    } else object.enable();
+                }
             }
         }
     });

@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -30,7 +30,7 @@ License: http://jqwidgets.com/license/
             this.onSuccess = null;
             this.ownerElement = null;
             this._events = ['validationError', 'validationSuccess'];
-            this._margin = 5;
+            this.hintPositionOffset = 5;
             this._inputHint = [];
 
         },
@@ -46,7 +46,7 @@ License: http://jqwidgets.com/license/
             this.hide();
         },
 
-        validate: function () {
+        validate: function (result) {
             var valid = true,
                 temp,
                 minTop = Infinity,
@@ -56,9 +56,45 @@ License: http://jqwidgets.com/license/
                 invalid = [],
                 minTopElement;
             this.updatePosition();
+            var me = this;
+            var ruleFuncsCount = 0;
+      
             for (var i = 0; i < this.rules.length; i += 1) {
-                temp = this._validateRule(this.rules[i]);
-                if (!temp) {
+                if (typeof this.rules[i].rule === 'function') {
+                    ruleFuncsCount++;
+                }
+            }
+            this.positions = new Array();
+            for (var i = 0; i < this.rules.length; i += 1) {
+               var input = $(this.rules[i].input);
+               if (typeof this.rules[i].rule === 'function') {
+                   var validate = function (isValid, rule) {
+                       temp = isValid;
+                       if (false == temp) {
+                           valid = false;
+                           var input = $(rule.input);
+                           tempElement = $(rule.input);
+                           invalid.push(tempElement);
+                           currentTop = tempElement.offset().top;
+                           if (minTop > currentTop) {
+                               minTop = currentTop;
+                               topElement = tempElement;
+                           }
+                       }
+                       ruleFuncsCount--;
+                       if (ruleFuncsCount == 0) {
+                           if (typeof result === 'function') {
+                               me._handleValidation(valid, minTop, topElement, invalid);
+                               if (result) result(valid);
+                           }
+                       }
+                   }
+                   this._validateRule(this.rules[i], validate);
+               }
+               else {
+                   temp = this._validateRule(this.rules[i]);
+               }
+                if (false == temp) {
                     valid = false;
                     tempElement = $(this.rules[i].input);
                     invalid.push(tempElement);
@@ -68,14 +104,21 @@ License: http://jqwidgets.com/license/
                         topElement = tempElement;
                     }
                 }
+           }
+
+            if (ruleFuncsCount == 0) {
+                this._handleValidation(valid, minTop, topElement, invalid);
+                return valid;
             }
-            this._handleValidation(valid, minTop, topElement, invalid);
-            return valid;
+            else {
+                return undefined;
+            }
         },
 
         validateInput: function (input) {
             var rules = this._getRulesForInput(input),
                 valid = true;
+
             for (var i = 0; i < rules.length; i += 1) {
                 if (!this._validateRule(rules[i])) {
                     valid = false;
@@ -101,10 +144,11 @@ License: http://jqwidgets.com/license/
 
         updatePosition: function () {
             var rule;
+            this.positions = new Array();
             for (var i = 0; i < this.rules.length; i += 1) {
                 rule = this.rules[i];
                 if (rule.hint) {
-                    this._hintLayout(rule.hint, $(rule.input), rule.position);
+                    this._hintLayout(rule.hint, $(rule.input), rule.position,rule);
                 }
             }
         },
@@ -119,19 +163,42 @@ License: http://jqwidgets.com/license/
             return rules;
         },
 
-        _validateRule: function (rule) {
+        _validateRule: function (rule, validate) {
             var input = $(rule.input),
                 hint,
                 valid = true;
-            if (typeof rule.rule === 'function' && !rule.rule.call(this, input)) {
+            var me = this;
+            var commit = function (isValid) {
+                if (!isValid) {
+                    hint = rule.hintRender.apply(me, [rule.message, input]);
+                    me._hintLayout(hint, input, rule.position, rule);
+                    me._showHint(hint);
+                    rule.hint = hint;
+                    me._removeLowPriorityHints(rule);
+                    if (validate) validate(false, rule);
+                }
+                else {
+                    me._hideHintByRule(rule);
+                    if (validate) validate(true, rule);
+                }
+            }
+
+            var ruleResult = false;
+            if (typeof rule.rule === 'function') {
+                ruleResult = rule.rule.call(this, input, commit);
+                if (ruleResult == true && validate) validate(true, rule);
+            }
+
+            if (typeof rule.rule === 'function' && ruleResult == false) {
                 if (typeof rule.hintRender === 'function' && !rule.hint && !this._higherPriorityActive(rule) && input.is(':visible')) {
                     hint = rule.hintRender.apply(this, [rule.message, input]);
-                    this._hintLayout(hint, input, rule.position);
+                    this._hintLayout(hint, input, rule.position, rule);
                     this._showHint(hint);
                     rule.hint = hint;
                     this._removeLowPriorityHints(rule);
                 }
                 valid = false;
+                if (validate) validate(false, rule);
             } else {
                 this._hideHintByRule(rule);
             }
@@ -144,6 +211,10 @@ License: http://jqwidgets.com/license/
             if (rule) {
                 hint = rule.hint;
                 if (hint) {
+                    if (this.positions[Math.round(hint.offset().top) + "_" + Math.round(hint.offset().left)]) {
+                        this.positions[Math.round(hint.offset().top) + "_" + Math.round(hint.offset().left)] = null;
+                    }
+
                     if (this.animation === 'fade') {
                         hint.fadeOut(this.animationDuration, function () {
                             hint.remove();
@@ -331,7 +402,7 @@ License: http://jqwidgets.com/license/
                 }
                 func = this['_' + validation];
                 if (func) {
-                    rule.rule = function (input) {
+                    rule.rule = function (input, commit) {
                         return func.apply(this, [input].concat(parameters));
                     };
                 } else {
@@ -387,6 +458,16 @@ License: http://jqwidgets.com/license/
 
                 var re = /\d/;
                 return !re.test(text);
+            });
+        },
+
+        _startWithLetter: function (input) {
+            return this._validateText(input, function (text) {
+                if (text == "")
+                    return true;
+
+                var re = /\d/;
+                return !re.test(text.substring(0, 1));
             });
         },
 
@@ -519,9 +600,9 @@ License: http://jqwidgets.com/license/
             return hint;
         },
 
-        _hintLayout: function (hint, input, position) {
+        _hintLayout: function (hint, input, position, rule) {
             var pos;
-            pos = this._getPosition(input, position, hint);
+            pos = this._getPosition(input, position, hint, rule);
             hint.css({
                 position: 'absolute',
                 left: pos.left,
@@ -539,9 +620,11 @@ License: http://jqwidgets.com/license/
             }
         },
 
-        _getPosition: function (input, position, hint) {
+        _getPosition: function (input, position, hint, rule) {
             var offset = input.offset(),
                 top, left;
+            var width = input.outerWidth();
+            var height = input.outerHeight();
 
             if (this.ownerElement != null) {
                 offset = { left: 0, top: 0 };
@@ -549,27 +632,44 @@ License: http://jqwidgets.com/license/
                 offset.left = parseInt(offset.left) + input.position().left;
             }
 
+            if (rule && rule.hintPositionRelativeElement) {
+                var $hintPositionRelativeElement = $(rule.hintPositionRelativeElement);
+                offset =  $hintPositionRelativeElement.offset();
+                width = $hintPositionRelativeElement.width();
+                height = $hintPositionRelativeElement.height();
+            }
+
             if (position.indexOf('top') >= 0) {
-                top = offset.top - input.outerHeight();
+                top = offset.top - height;
             } else if (position.indexOf('bottom') >= 0) {
-                top = offset.top + hint.outerHeight() + this._margin;
+                top = offset.top + hint.outerHeight() + this.hintPositionOffset;
             } else {
                 top = offset.top;
             }
             if (position.indexOf('center') >= 0) {
-                left = offset.left + this._margin + (input.outerWidth() - hint.outerWidth()) / 2;
+                left = offset.left + this.hintPositionOffset + (width - hint.outerWidth()) / 2;
             } else if (position.indexOf('left') >= 0) {
-                left = offset.left - hint.outerWidth() - this._margin;
+                left = offset.left - hint.outerWidth() - this.hintPositionOffset;
             } else if (position.indexOf('right') >= 0) {
-                left = offset.left + input.outerWidth() + this._margin;
+                left = offset.left + width + this.hintPositionOffset;
             } else {
-                left = offset.left + this._margin;
+                left = offset.left + this.hintPositionOffset;
             }
             if (position.indexOf(':') >= 0) {
                 position = position.split(':')[1].split(',');
                 left += parseInt(position[0], 10);
                 top += parseInt(position[1], 10);
             }
+            if (!this.positions) this.positions = new Array();
+            if (this.positions[Math.round(top) + "_" + Math.round(left)]) {
+                if (this.positions[Math.round(top) + "_" + Math.round(left)].top == top) top += input.outerHeight();
+            }
+
+            this.positions[Math.round(top) + "_" + Math.round(left)] = {
+                left: left,
+                top: top
+            };
+
             return {
                 left: left,
                 top: top
@@ -590,7 +690,7 @@ License: http://jqwidgets.com/license/
             if (position.indexOf('top') >= 0) {
                 top = hH - aH;
             } else if (position.indexOf('bottom') >= 0) {
-                top = -aH;
+                top = -aH/2;
             } else {
                 top = (hH - aH) / 2 - aH / 2;
             }

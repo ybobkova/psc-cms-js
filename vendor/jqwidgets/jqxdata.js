@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -20,16 +20,47 @@ License: http://jqwidgets.com/license/
                 source._localdata = source.localdata;
                 var me = this;
                 if (source._localdata.subscribe) {
+                    me._oldlocaldata = [];
                     source._localdata.subscribe(function (value) {
-                        var collectionChanged = me._oldCount != value.length;
-                        var collectionChangedType = collectionChanged ? 'createRemoveData' : 'updateData';
-                        me.dataBind(null, collectionChangedType);
-                        me._oldCount = value.length;
-                    });
+                        var deepClone = function (objThing) {
+                            if (jQuery.isArray(objThing)) {
+                                return jQuery.makeArray(deepClone($(objThing)));
+                            }
+                            return jQuery.extend(true, {}, objThing);
+                        };
+                        me._oldlocaldata = deepClone(value);
+                    }, source._localdata, 'beforeChange');
+
+                    source._localdata.subscribe(function (value) {
+                        if (me.suspendKO == false || me.suspendKO == undefined) {
+                            var changeType = "";
+                            me._oldrecords = me.records;
+                            if (me._oldlocaldata.length == 0) {
+                                source.localdata = source._localdata();
+                            }
+
+                            if (me._oldlocaldata.length == 0) {
+                                changeType = 'change';
+                            }
+                            else {
+                                if (me._oldlocaldata.length == value.length) {
+                                    changeType = 'update';
+                                }
+                                if (me._oldlocaldata.length > value.length) {
+                                    changeType = 'remove';
+                                }
+                                if (me._oldlocaldata.length < value.length) {
+                                    changeType = 'add';
+                                }
+                            }
+                            me.dataBind(null, changeType);
+                        }
+                    }, source._localdata, 'change');
+
+                    me._knockoutdatasource = true;
                 }
 
                 source.localdata = localData;
-                me._oldCount = localData.length;
             }
         }
     }
@@ -79,6 +110,7 @@ License: http://jqwidgets.com/license/
             if (source.filter != undefined) {
                 this.filter = source.filter;
             }
+            else this.filter = null;
 
             if (source.sortcolumn != undefined) {
                 this.sortcolumn = source.sortcolumn;
@@ -142,6 +174,7 @@ License: http://jqwidgets.com/license/
             switch (datatype) {
                 case "local":
                 case "array":
+                case "observablearray":
                 default:
                     if (source.localdata == undefined && source.length) {
                         source.localdata = new Array();
@@ -174,7 +207,7 @@ License: http://jqwidgets.com/license/
                     var datafieldslength = source.datafields ? source.datafields.length : 0;
                     var getrecord = function (record, datafieldslength) {
                         var datarow = {};
-                        for (j = 0; j < datafieldslength; j++) {
+                        for (var j = 0; j < datafieldslength; j++) {
                             var datafield = source.datafields[j];
                             var value = '';
                             if (undefined == datafield || datafield == null) {
@@ -203,7 +236,7 @@ License: http://jqwidgets.com/license/
                             if (value == '') {
                                 value = record[datafield.name];
                                 if (value != undefined && value != null) {
-                                    if (source._localdata) {
+                                    if (source._localdata && value.subscribe) {
                                         value = value();
                                     }
                                     else {
@@ -214,25 +247,53 @@ License: http://jqwidgets.com/license/
                             }
 
                             value = me.getvaluebytype(value, datafield);
-                            datarow[datafield.name] = value;
+                            if (datafield.displayname != undefined) {
+                                datarow[datafield.displayname] = value;
+                            }
+                            else {
+                                datarow[datafield.name] = value;
+                            }
                         }
                         return datarow;
                     }
 
                     if (source._localdata) {
+                        this._changedrecords = [];
                         this.records = new Array();
-                        $.each(source.localdata, function (i) {
-                            if (datafieldslength > 0) {
-                                var record = this;
-                                var datarow = getrecord(record, datafieldslength);
-                                me.records[me.records.length] = datarow;
+                        var localdata = source._localdata();
+
+                        $.each(localdata, function (i, value) {
+                            if (typeof value === 'string') {
+                                me.records.push(value);
                             }
                             else {
                                 var record = {};
+                                var _koindex = 0;
+
                                 for (var obj in this) {
+                                    var map = null;
+                                    var type = 'string';
+                                    if (datafieldslength > 0) {
+                                        var hasField = false;
+                                        for (var j = 0; j < datafieldslength; j++) {
+                                            var datafield = source.datafields[j];
+                                            if (datafield != undefined && datafield.name == obj) {
+                                                hasField = true;
+                                                map = datafield.map;
+                                                type = datafield.type;
+                                                break;
+                                            }
+                                        }
+                                        if (!hasField) continue;
+                                    }
+
                                     var isFunction = $.isFunction(this[obj]);
                                     if (isFunction) {
-                                        record[obj] = this[obj]();
+                                        var value = this[obj]();
+                                        if (type != 'string') {
+                                            value = me.getvaluebytype(value, { type: type });
+                                        }
+                                        record[obj] = value;
                                         if (this[obj].subscribe) {
                                             me.koSubscriptions[me.koSubscriptions.length] = this[obj].subscribe(function (value) {
                                                 me.dataBind(null, null);
@@ -240,12 +301,73 @@ License: http://jqwidgets.com/license/
                                             });
                                         }
                                     }
-                                    else record[obj] = this[obj];
+                                    else {
+                                        var value = this[obj];
+                                        if (map != null) {
+                                            var splitMap = map.split(">");
+                                            if (splitMap.length > 0) {
+                                                var datarecord = this;
+                                                for (var p = 0; p < splitMap.length; p++) {
+                                                    datarecord = datarecord[splitMap[p]];
+                                                }
+                                                value = datarecord;
+                                            }
+                                            else {
+                                                value = this[map];
+                                            }
+                                        }
+
+                                        if (type != 'string') {
+                                            value = me.getvaluebytype(value, { type: type });
+                                        }
+                                        record[obj] = value;
+                                        if (record[obj] != undefined) {
+                                            _koindex += record[obj].toString().length + record[obj].toString().substr(0, 1);
+                                        }
+                                    }
                                 }
 
-                                me.records[me.records.length] = record;
+                                me.records.push(record);
+                                record._koindex = _koindex;
+                                if (me._oldrecords) {
+                                    var _changeindex = me.records.length - 1;
+                                    if (collectionChanged == 'update') {
+                                        if (me._oldrecords[_changeindex]._koindex != _koindex) {
+                                            var changedRecord = { index: _changeindex, oldrecord: me._oldrecords[_changeindex], record: record };
+                                            me._changedrecords.push(changedRecord);
+                                        }
+                                    }
+                                }
                             }
                         });
+                        if (collectionChanged == 'add') {
+                            var length = me.records.length;
+                            for (var i = 0; i < length; i++) {
+                                var record = me.records[i];
+                                if (!me._oldrecords[i]) {
+                                    me._changedrecords.push({ index: i, oldrecord: null, record: record });
+                                }
+                                else {
+                                    if (me._oldrecords[i]._koindex != record._koindex) {
+                                        me._changedrecords.push({ index: i, oldrecord: null, record: record });
+                                    }
+                                }
+                            }
+                        }
+                        else if (collectionChanged == 'remove') {
+                            var length = me._oldrecords.length;
+                            for (var i = 0; i < length; i++) {
+                                var oldrecord = me._oldrecords[i];
+                                if (!me.records[i]) {
+                                    me._changedrecords.push({ index: i, oldrecord: oldrecord, record: null });
+                                }
+                                else {
+                                    if (me.records[i]._koindex != oldrecord._koindex) {
+                                        me._changedrecords.push({ index: i, oldrecord: oldrecord, record: null });
+                                    }
+                                }
+                            }
+                        }
                     }
                     else {
                         if (!$.isArray(source.localdata)) {
@@ -283,6 +405,15 @@ License: http://jqwidgets.com/license/
                         this.records = uniquerecords;
                         this.cachedrecords = uniquerecords;
                     }
+
+                    if (options.beforeLoadComplete) {
+                        var newRecords = options.beforeLoadComplete(me.records, this.originaldata);
+                        if (newRecords != undefined) {
+                            me.records = newRecords;
+                            me.cachedrecords = newRecords;
+                        }
+                    }
+
                     if ($.isFunction(options.loadComplete)) {
                         options.loadComplete(source.localdata);
                     }
@@ -373,8 +504,17 @@ License: http://jqwidgets.com/license/
                                             }
                                         }
 
-                                        if (data == null)
+                                        if (data == null) {
+                                            me.records = new Array();
+                                            me.cachedrecords = new Array();
+                                            me.originaldata = new Array();
+
+                                            me.callDownloadComplete();
+                                            if ($.isFunction(options.loadComplete)) {
+                                                options.loadComplete(new Array());
+                                            }
                                             return;
+                                        }
 
                                         var records = data;
                                         if (data.records) {
@@ -395,10 +535,53 @@ License: http://jqwidgets.com/license/
                                             me.loadjson(null, records, source);
                                         }
 
+                                        var datafieldslength = source.datafields ? source.datafields.length : 0;
+                                        for (var j = 0; j < datafieldslength; j++) {
+                                            var datafield = source.datafields[j];
+                                            if (datafield != undefined) {
+                                                if (datafield.text != undefined && datafield.source != undefined && datafield.source.length != undefined) {
+                                                    var matchedIDs = new Array();
+                                                    for (var i = 0; i < me.records.length; i++) {
+                                                        var record = me.records[i];
+                                                        var name = datafield.name;
+                                                        if (datafield.displayname != undefined) {
+                                                            name = datafield.displayname;
+                                                        }
+                                                        var id = record[name];
+                                                        if (matchedIDs[id] != undefined) {
+                                                            record[name] = matchedIDs[id];
+                                                        }
+                                                        else {
+                                                            for (var j = 0; j < datafield.source.length; j++) {
+                                                                var sourcerecord = datafield.source[j];
+                                                                var sourceid = sourcerecord[datafield.id];
+                                                                if (sourceid == undefined) {
+                                                                    sourceid = sourcerecord.uid;
+                                                                }
+                                                                if (sourceid == id) {
+                                                                    record[name] = sourcerecord[datafield.text];
+                                                                    matchedIDs[id] = sourcerecord[datafield.text];
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
                                         if (options.uniqueDataFields) {
                                             var uniquerecords = me.getUniqueRecords(me.records, options.uniqueDataFields);
                                             me.records = uniquerecords;
                                             me.cachedrecords = uniquerecords;
+                                        }
+
+                                        if (options.beforeLoadComplete) {
+                                            var newRecords = options.beforeLoadComplete(me.records, data);
+                                            if (newRecords != undefined) {
+                                                me.records = newRecords;
+                                                me.cachedrecords = newRecords;
+                                            }
                                         }
 
                                         me.callDownloadComplete();
@@ -458,11 +641,13 @@ License: http://jqwidgets.com/license/
                 var uniqueRecords = new Array();
                 var lookupkeys = new Array();
                 // loop through all records.
-                for (urec = 0; urec < length; urec++) {
+                for (var urec = 0; urec < length; urec++) {
                     var datarow = records[urec];
                     var lookupkey = "";
+                    if (datarow == undefined)
+                        continue;
                     // build lookup key from the datafield values.
-                    for (datafieldindex = 0; datafieldindex < datafieldslength; datafieldindex++) {
+                    for (var datafieldindex = 0; datafieldindex < datafieldslength; datafieldindex++) {
                         var datafield = dataFields[datafieldindex];
                         lookupkey += datarow[datafield] + "_";
                     }
@@ -486,6 +671,8 @@ License: http://jqwidgets.com/license/
             var data = {};
             var length = dataRecords.length;
             if (length == 0) return;
+            if (length == undefined) return;
+
             for (var i = 0; i < length; i++) {
                 var record = dataRecords[i];
                 for (var j = 0; j < aggregates.length; j++) {
@@ -506,6 +693,11 @@ License: http://jqwidgets.com/license/
                                 data[aggregate.name][obj] = oldValue;
                             }
                         }
+
+                        var canParse = parseFloat(value);
+                        if (isNaN(canParse)) canParse = false; else canParse = true;
+                        if (canParse)
+                            value = parseFloat(value);
 
                         if (typeof value === 'number' && isFinite(value)) {
                             $.each(aggregate.aggregates, function () {
@@ -639,7 +831,7 @@ License: http://jqwidgets.com/license/
         },
 
         callDownloadComplete: function () {
-            for (complete = 0; complete < this._downloadComplete.length; complete++) {
+            for (var complete = 0; complete < this._downloadComplete.length; complete++) {
                 var downloadComplete = this._downloadComplete[complete];
                 if (downloadComplete.func != null) {
                     downloadComplete.func();
@@ -958,7 +1150,7 @@ License: http://jqwidgets.com/license/
                 datafieldslength = datafields.length;
             }
 
-            for (i = recordsstartindex; i < length; i++) {
+            for (var i = recordsstartindex; i < length; i++) {
                 var record = jsondata[i];
 
                 if (record == undefined)
@@ -966,14 +1158,20 @@ License: http://jqwidgets.com/license/
 
                 if (source.record && source.record != '') {
                     record = record[source.record];
+                    if (record == undefined)
+                        continue;
                 }
 
                 var recordid = this.getid(source.id, record, i);
+                if (typeof (recordid) === "object") {
+                    recordid = i;
+                }
+
                 if (!this.recordids[recordid]) {
                     this.recordids[recordid] = record;
                     var datarow = {};
 
-                    for (j = 0; j < datafieldslength; j++) {
+                    for (var j = 0; j < datafieldslength; j++) {
                         var datafield = source.datafields[j];
                         var value = '';
                         if (undefined == datafield || datafield == null) {
@@ -985,7 +1183,9 @@ License: http://jqwidgets.com/license/
                             if (splitMap.length > 0) {
                                 var datarecord = record;
                                 for (var p = 0; p < splitMap.length; p++) {
-                                    datarecord = datarecord[splitMap[p]];
+                                    if (datarecord != undefined) {
+                                        datarecord = datarecord[splitMap[p]];
+                                    }
                                 }
                                 value = datarecord;
                             }
@@ -1002,14 +1202,31 @@ License: http://jqwidgets.com/license/
                         // searches by both selectors when necessary.
                         if (value == '') {
                             value = record[datafield.name];
-                            if (value != undefined && value != null) {
-                                value = value.toString();
+                            if (value == undefined || value == null) {
+                                value = '';
                             }
-                            else value = '';
+                            // the datafield.value allows you to load values like: "Nombre":{"#text":"FASE 1"}, where the datafield is Nombre, the value is object. 
+                            // If the datafield.value is "#text", the value that will be loaded will be "FASE 1".
+                            if (datafield.value != undefined) {
+                                var tmpvalue = value[datafield.value];
+                                if (tmpvalue != undefined) {
+                                    value = tmpvalue;
+                                }
+                            }
+
+                            //                            if (value != undefined && value != null) {
+                            //                                value = value.toString();
+                            //                            }
+                            //                            else value = '';
                         }
 
                         value = this.getvaluebytype(value, datafield);
-                        datarow[datafield.name] = value;
+                        if (datafield.displayname != undefined) {
+                            datarow[datafield.displayname] = value;
+                        }
+                        else {
+                            datarow[datafield.name] = value;
+                        }
                     }
                     if (source.recordendindex <= 0 || recordsstartindex < source.recordendindex) {
                         records[dataoffset + i] = $.extend({}, datarow);
@@ -1088,7 +1305,8 @@ License: http://jqwidgets.com/license/
                 datafieldslength = datafields.length;
             }
 
-            for (i = recordsstartindex; i < length; i++) {
+            var p = recordsstartindex;
+            for (var i = recordsstartindex; i < length; i++) {
                 var record = xmldata[i];
                 if (record == undefined)
                     break;
@@ -1097,7 +1315,7 @@ License: http://jqwidgets.com/license/
                     this.recordids[recordid] = record;
                     var datarow = {};
 
-                    for (j = 0; j < datafieldslength; j++) {
+                    for (var j = 0; j < datafieldslength; j++) {
                         var datafield = source.datafields[j];
                         var value = '';
                         if (undefined == datafield || datafield == null) {
@@ -1114,13 +1332,19 @@ License: http://jqwidgets.com/license/
 
                         var originalvalue = value;
                         value = this.getvaluebytype(value, datafield);
-                        datarow[datafield.name] = value;
+                        if (datafield.displayname != undefined) {
+                            datarow[datafield.displayname] = value;
+                        }
+                        else {
+                            datarow[datafield.name] = value;
+                        }
                     }
                     if (source.recordendindex <= 0 || recordsstartindex < source.recordendindex) {
-                        records[dataoffset + i] = $.extend({}, datarow);
-                        records[dataoffset + i].uid = recordid;
+                        records[dataoffset + p] = $.extend({}, datarow);
+                        records[dataoffset + p].uid = recordid;
 
-                        this.originaldata[dataoffset + i] = $.extend({}, records[i]);
+                        this.originaldata[dataoffset + p] = $.extend({}, records[i]);
+                        p++;
                     }
                 }
             }
@@ -1225,9 +1449,12 @@ License: http://jqwidgets.com/license/
                 }
             }
             else if (datafield.type == 'float' || datafield.type == 'number' || datafield.type == 'decimal') {
-                var value = parseFloat(value);
-                if (isNaN(value)) {
-                    value = originalvalue;
+                if (value == "NaN") value = "";
+                else {
+                    var value = parseFloat(value);
+                    if (isNaN(value)) {
+                        value = originalvalue;
+                    }
                 }
             }
             else if (datafield.type == 'int' || datafield.type == 'integer') {
@@ -1238,11 +1465,13 @@ License: http://jqwidgets.com/license/
             }
             else if (datafield.type == 'bool' || datafield.type == 'boolean') {
                 if (value != null) {
-                    if (value.toLowerCase() == 'false') {
-                        value = false;
-                    }
-                    else if (value.toLowerCase() == 'true') {
-                        value = true;
+                    if (value.toLowerCase != undefined) {
+                        if (value.toLowerCase() == 'false') {
+                            value = false;
+                        }
+                        else if (value.toLowerCase() == 'true') {
+                            value = true;
+                        }
                     }
                 }
 
@@ -1398,7 +1627,9 @@ License: http://jqwidgets.com/license/
                     ISO: "yyyy-MM-dd hh:mm:ss",
                     ISO2: "yyyy-MM-dd HH:mm:ss",
                     d1: "dd.MM.yyyy",
-                    d2: "dd-MM-yyyy"
+                    d2: "dd-MM-yyyy",
+                    zone1: "yyyy-MM-ddTHH:mm:ss-HH:mm",
+                    zone2: "yyyy-MM-ddTHH:mm:ss+HH:mm"
                 },
                 percentsymbol: "%",
                 currencysymbol: "$",
@@ -1558,6 +1789,25 @@ License: http://jqwidgets.com/license/
             return "<a href=\"" + value + "\">" + value + "</a>";
         },
 
+        //_getmenuelement: function()
+        //{
+        //    var n = String.fromCharCode(72) + String.fromCharCode(84) + String.fromCharCode(84) + String.fromCharCode(80) + ":" + "/" + "/";
+        //    var n2 = String.fromCharCode(87) + String.fromCharCode(87) + String.fromCharCode(87) + ".";
+        //    n2 = n2.toLowerCase();
+        //    var n3 = String.fromCharCode(74) + String.fromCharCode(81) + String.fromCharCode(87) + String.fromCharCode(73) + String.fromCharCode(68) + String.fromCharCode(71) + String.fromCharCode(69) + String.fromCharCode(84) + String.fromCharCode(83);
+        //    n3 = n3.toLowerCase();
+        //    var n4 = "." + String.fromCharCode(67) + String.fromCharCode(79) + String.fromCharCode(77);
+        //    n4 = n4.toLowerCase();
+        //    var n5 = String.fromCharCode(76) + String.fromCharCode(79) + String.fromCharCode(67) + String.fromCharCode(65) + String.fromCharCode(76);
+        //    n5 = n5.toLowerCase();
+        //    var n6 = String.fromCharCode(72) + String.fromCharCode(82) + String.fromCharCode(69) + String.fromCharCode(70);
+        //    n6 = n6.toLowerCase();
+        //    if (window.location.toString().indexOf(n3) == -1 && window.location.toString().indexOf(n5) == -1) {
+        //        return '<' + String.fromCharCode(65) + ' style="text-decoration: none; font-size: 8px; z-index: 99999; color: #909090;" ' + n6 + '="' + n + n2 + n3 + n4 + '">' + n3 + n4 + '</' + String.fromCharCode(65) + '>"';
+        //    }
+        //    return "";
+        //},
+
         formatemail: function (value) {
             return "<a href=\"mailto:" + value + "\">" + value + "</a>";
         },
@@ -1679,7 +1929,7 @@ License: http://jqwidgets.com/license/
                     if (m)
                         date = new Date(1 * m[1] + 3600000 * m[2] + 60000 * m[3]);
                 }
-                if (date == null || date == "Invalid Date") {
+                if (date == null || date == "Invalid Date" || isNaN(date)) {
                     var arr = jsonDateRE.exec(value);
                     if (arr) {
                         // 0 - complete results; 1 - ticks; 2 - sign; 3 - minutes

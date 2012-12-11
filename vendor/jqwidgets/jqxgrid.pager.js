@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -74,9 +74,9 @@ License: http://jqwidgets.com/license/
                     return;
                 }
 
-                this.pagershowrowscombo.jqxDropDownList({ source: source, keyboardSelection: false, autoDropDownHeight: true, width: 44, height: 16, theme: this.theme });
+                this.pagershowrowscombo.jqxDropDownList({ source: source, enableBrowserBoundsDetection: true, keyboardSelection: false, autoDropDownHeight: true, width: 44, height: 16, theme: this.theme });
                 var selectedindex = 0;
-                for (i = 0; i < source.length; i++) {
+                for (var i = 0; i < source.length; i++) {
                     if (this.pagesize >= source[i]) {
                         selectedindex = i;
                     }
@@ -94,6 +94,10 @@ License: http://jqwidgets.com/license/
                 this.pagershowrowscombo.unbind('select');
                 this.pagershowrowscombo.bind('select', function (event) {
                     if (event.args) {
+                        if (me.editcell != null && me.endcelledit) {
+                            me.endcelledit(me.editcell.row, me.editcell.column, true, false);
+                        }
+
                         var index = event.args.index;
                         var recordindex = me.dataview.pagenum * me.dataview.pagesize;
                         var pagesize = source[index];
@@ -243,7 +247,7 @@ License: http://jqwidgets.com/license/
             }
             removeHandlers(this, this.pagerrightbutton);
             removeHandlers(this, this.pagerleftbutton);
-
+            var me = this;
             this.addHandler(this.pagerrightbutton, 'mouseenter', function () {
                 rightarrow.addClass(me.toThemeProperty('icon-arrow-right-hover'));
             });
@@ -326,6 +330,9 @@ License: http://jqwidgets.com/license/
                                 this.updatebounddata('pagechanged');
                                 this._raiseEvent(9, { pagenum: pagenum, pagesize: this.dataview.pagesize });
                                 this.updatepagerdetails();
+                                if (this.autosavestate) {
+                                    if (this.savestate) this.savestate();
+                                }
                                 return;
                             }
                         }
@@ -336,6 +343,8 @@ License: http://jqwidgets.com/license/
 
                     this._updatepageviews();
                     this.tableheight = null;
+                    this._updatecolumnwidths();
+                    this._updatecellwidths();
                     this._renderrows(this.virtualsizeinfo);
                     this.updatepagerdetails();
                     if (this.autoheight) {
@@ -353,6 +362,9 @@ License: http://jqwidgets.com/license/
                     }
 
                     this._raiseEvent(9, { pagenum: pagenum, pagesize: this.dataview.pagesize });
+                    if (this.autosavestate) {
+                        if (this.savestate) this.savestate();
+                    }
                 }
             }
         },
@@ -425,7 +437,7 @@ License: http://jqwidgets.com/license/
         _updatepagedview: function (totalrows, virtualheight, currentheight) {
             var self = this;
             var rowslength = this.dataview.rows.length;
-            for (i = 0; i < rowslength; i++) {
+            for (var i = 0; i < rowslength; i++) {
                 var index = this.dataview.rows[i].visibleindex;
                 var rowinfo = { index: index, height: this.heights[index], hidden: this.hiddens[index], details: this.details[index] }
                 if (this.heights[index] == undefined) {

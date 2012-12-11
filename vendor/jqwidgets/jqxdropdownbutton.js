@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -301,21 +301,27 @@ License: http://jqwidgets.com/license/
             });
 
             this.addHandler($(document), 'mousedown.' + this.element.id, self.closeOpenedDropDown, { me: this, popup: this.container, id: this.element.id });
-            if (window.frameElement) {
+            if (document.referrer != "" || window.frameElement) {
                 if (window.top != null) {
-                    var eventHandle = function (event) {
-                        if (self.isOpened()) {
-                            var data = { me: self, popup: self.container, id: self.element.id };
-                            event.data = data;
-                            //self.closeOpenedDropDown(event);
+                    if (window.parent && document.referrer) {
+                        parentLocation = document.referrer;
+                    }
+
+                    if (parentLocation.indexOf(document.location.host) != -1) {
+                        var eventHandle = function (event) {
+                            if (self.isOpened()) {
+                                var data = { me: self, popup: self.container, id: self.element.id };
+                                event.data = data;
+                                //self.closeOpenedDropDown(event);
+                            }
+                        };
+
+                        if (window.top.document.addEventListener) {
+                            window.top.document.addEventListener('mousedown', eventHandle, false);
+
+                        } else if (window.top.document.attachEvent) {
+                            window.top.document.attachEvent("on" + 'mousedown', eventHandle);
                         }
-                    };
-
-                    if (window.top.document.addEventListener) {
-                        window.top.document.addEventListener('mousedown', eventHandle, false);
-
-                    } else if (window.top.document.attachEvent) {
-                        window.top.document.attachEvent("on" + 'mousedown', eventHandle);
                     }
                 }
             }
@@ -418,12 +424,29 @@ License: http://jqwidgets.com/license/
                     offset.left = hostLeft - hOffset + 2;
                 }
             }
+            if (offset.left < 0) {
+                offset.left = parseInt(this.host.offset().left) + 'px'
+            }
 
             if (offset.top + dpHeight > viewHeight) {
                 offset.top -= Math.abs(dpHeight + inputHeight);
             }
 
             return offset;
+        },
+
+        _getBodyOffset: function () {
+            var top = 0;
+            var left = 0;
+            if ($('body').css('border-top-width') != '0px') {
+                top = parseInt($('body').css('border-top-width'));
+                if (isNaN(top)) top = 0;
+            }
+            if ($('body').css('border-left-width') != '0px') {
+                left = parseInt($('body').css('border-left-width'));
+                if (isNaN(left)) left = 0;
+            }
+            return { left: left, top: top };
         },
 
         // shows the popup.
@@ -435,12 +458,20 @@ License: http://jqwidgets.com/license/
             var top = parseInt(this._findPos(this.host[0])[1]) + parseInt(this.host.outerHeight()) - 1 + 'px';
             var left = parseInt(this.host.offset().left) + 'px';
             var isMobileBrowser = $.jqx.mobile.isSafariMobileBrowser();
+            var hasTransform = $.jqx.utilities.hasTransform(this.host);
 
             this.ishiding = false;
 
             this.tempSelectedIndex = this.selectedIndex;
 
-            if (isMobileBrowser != null && isMobileBrowser) {
+            if ($('body').css('border-top-width') != '0px') {
+                top = parseInt(top) + this._getBodyOffset().top + 'px';
+            }
+            if ($('body').css('border-left-width') != '0px') {
+                left = parseInt(left) + this._getBodyOffset().left + 'px';
+            }
+
+            if (hasTransform || (isMobileBrowser != null && isMobileBrowser)) {
                 left = $.jqx.mobile.getLeftPos(this.element);
                 top = $.jqx.mobile.getTopPos(this.element) + parseInt(this.host.outerHeight());
             }

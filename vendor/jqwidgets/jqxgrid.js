@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -99,6 +99,13 @@ License: http://jqwidgets.com/license/
             this.showaggregates = false;
             this.showfilterrow = false;
             this.autorowheight = false;
+            this.autokoupdates = true;
+            this.handlekeyboardnavigation = null;
+            this.showsortmenuitems = true;
+            this.showfiltermenuitems = true;
+            this.showgroupmenuitems = true;
+            this.enablebrowserselection = false;
+            this.clipboard = true;
             // sets the grid source.
             this.source =
             {
@@ -146,6 +153,7 @@ License: http://jqwidgets.com/license/
             this.columnsmenu = true;
             // enables the resizing of grid columns.
             this.columnsresize = false;
+            this.columnsreorder = false;
             // sets the width of the columns menu in each column.
             this.columnsmenuwidth = 15;
             this.autoshowcolumnsmenubutton = true;
@@ -162,7 +170,7 @@ License: http://jqwidgets.com/license/
             // enables or disables the grid tooltips.
             this.enabletooltips = false;
             // enables or disables the selection.
-            // possible values: 'none', 'singlerow', 'multiplerows, 'multiplerowsextended, 'singlecell, 'multiplecells, 'multiplecellsextended'
+            // possible values: 'none', 'singlerow', 'multiplerows, 'multiplerowsextended, 'singlecell, 'multiplecells, 'multiplecellsextended', 'multiplecellsadvanced'
             this.selectionmode = 'singlerow';
             // enables or disables the rows hover state.
             this.enablehover = true;
@@ -179,7 +187,10 @@ License: http://jqwidgets.com/license/
             this.keyboardnavigation = true;
             this.touchModeStyle = 'auto';
             this.autoshowloadelement = true;
+            this.showdefaultloadelement = true;
             this.showemptyrow = true;
+            this.autosavestate = false;
+            this.autoloadstate = false;
             // private members
             this._updating = false;
             this._pagescache = new Array();
@@ -215,8 +226,9 @@ License: http://jqwidgets.com/license/
             /*20*/'rowexpand',
             /*21*/'rowcollapse',
             /*22*/'rowdoubleclick',
-            /*23*/'celldoubleclick'
-           ];
+            /*23*/'celldoubleclick',
+            /*24*/'columnreordered'
+	   	    ];
         },
 
         createInstance: function (args) {
@@ -285,12 +297,7 @@ License: http://jqwidgets.com/license/
             this.hScrollInstance = $.data(this.hScrollBar[0], 'jqxScrollBar').instance;
             this.gridtable = null;
 
-            this.dataloadelement = $('<div style="position: absolute;"></div>');
-            this.dataloadelement.addClass(this.toTP('jqx-grid-load'));
-            this.dataloadelement.width(this.width);
-            this.dataloadelement.height(this.height);
-
-            this.host.prepend(this.dataloadelement);
+            this._builddataloadelement();
             this.isNestedGrid = this.host.parent() ? this.host.parent().css('z-index') == 2000 : false;
 
             if (this.localizestrings) {
@@ -301,6 +308,18 @@ License: http://jqwidgets.com/license/
                 if (undefined == this.rowdetailstemplate.rowdetails) this.rowdetailstemplate.rowdetails = '<div></div>';
                 if (undefined == this.rowdetailstemplate.rowdetailsheight) this.rowdetailstemplate.rowdetailsheight = 200;
                 if (undefined == this.rowdetailstemplate.rowdetailshidden) this.rowdetailstemplate.rowdetailshidden = true;
+            }
+
+            // check for missing modules.
+            if (this._testmodules()) {
+                return;
+            }
+            this._cachedcolumns = this.columns;
+            if (this.rowsheight != 25) {
+                this._measureElement('cell');
+            }
+            if (this.columnsheight != 25) {
+                this._measureElement('column');
             }
 
             this.databind(this.source);
@@ -345,6 +364,11 @@ License: http://jqwidgets.com/license/
                 this.content.addClass('jqx-disableselect');
             }
 
+            if (this.enablebrowserselection) {
+                this.content.removeClass('jqx-disableselect');
+                this.host.removeClass('jqx-disableselect');
+            }
+
             this.addHandler(this.host, 'loadContent', function (event) {
                 if (me.gridmenu && me.gridmenu.width() < 120) {
                     me._initmenu();
@@ -374,6 +398,208 @@ License: http://jqwidgets.com/license/
             if (this.rendertoolbar) {
                 this.rendertoolbar(this.toolbar);
             }
+            if (this.disabled) {
+                this.host.addClass(this.toThemeProperty('jqx-fill-state-disabled'));
+            }
+            this.hasTransform = $.jqx.utilities.hasTransform(this.host);
+        },
+
+        _builddataloadelement: function()
+        {
+            if (this.dataloadelement) {
+                this.dataloadelement.remove();
+            }
+
+            this.dataloadelement = $('<div style="position: absolute;"></div>');
+            if (this.showdefaultloadelement) {
+                var table = $('<table cellspacing="0" cellpadding="0" style="z-index: 99999; margin-left: -66px; left: 50%; top: 50%; margin-top: -24px; position: relative; width: 112px; height: 48px; font-family: verdana; font-size: 12px; color: #767676; border-color: #898989; border-width: 1px; border-style: solid; background: #f6f6f6; border-collapse: collapse;"><tbody><tr><td><div style="width: 32px; height: 32px;" class="jqx-grid-load"/></td><td><span style="margin-left: 5px;" >Loading...</span></td></tr></tbody></table>');
+                table.addClass(this.toTP('jqx-rc-all'));
+                this.dataloadelement.addClass(this.toTP('jqx-rc-all'));
+                this.dataloadelement.append(table);
+            }
+            else {
+                this.dataloadelement.addClass(this.toTP('jqx-grid-load'));
+            }
+            this.dataloadelement.width(this.width);
+            this.dataloadelement.height(this.height);
+
+            this.host.prepend(this.dataloadelement);
+        },
+
+        _measureElement: function(type)
+        {
+            var span = $("<span>measure Text</span>");
+            span.addClass(this.toTP('jqx-widget'));
+            span.addClass(this.toTP('jqx-grid-' + type));
+            $(document.body).append(span);
+            if (type == 'cell') {
+                this._cellheight = span.height();
+            }
+            else this._columnheight = span.height();
+            span.remove();
+        },
+
+        _getBodyOffset: function () {
+            var top = 0;
+            var left = 0;
+            if ($('body').css('border-top-width') != '0px') {
+                top = parseInt($('body').css('border-top-width'));
+                if (isNaN(top)) top = 0;
+            }
+            if ($('body').css('border-left-width') != '0px') {
+                left = parseInt($('body').css('border-left-width'));
+                if (isNaN(left)) left = 0;
+            }
+            return { left: left, top: top };
+        },
+
+        _testmodules: function () {
+            var missingModules = "";
+            var me = this;
+            var addComma = function () {
+                if (missingModules.length != "") missingModules += ",";
+            }
+
+            if (this.columnsmenu && !this.host.jqxMenu && (this.sortable || this.groupable || this.filterable)) {
+                addComma();
+                missingModules += " jqxmenu.js";
+            }
+            if (!this.host.jqxScrollBar) {
+                addComma();
+                missingModules += " jqxscrollbar.js";
+            }
+            if (!this.host.jqxButton) {
+                addComma();
+                missingModules += " jqxbuttons.js";
+            }
+            if (!$.jqx.dataAdapter) {
+                addComma();
+                missingModules += " jqxdata.js";
+            }
+            if (this.pageable && !this.gotopage) {
+                addComma();
+                missingModules += "jqxgrid.pager.js";
+            }
+            if (this.filterable && !this.applyfilters) {
+                addComma();
+                missingModules += " jqxgrid.filter.js";
+            }
+            if (this.groupable && !this._initgroupsheader) {
+                addComma();
+                missingModules += " jqxgrid.grouping.js";
+            }
+            if (this.columnsresize && !this.autoresizecolumns) {
+                addComma();
+                missingModules += " jqxgrid.columnsresize.js";
+            }
+            if (this.columnsreorder && !this.setcolumnindex) {
+                addComma();
+                missingModules += " jqxgrid.columnsreorder.js";
+            }
+            if (this.sortable && !this.sortby) {
+                addComma();
+                missingModules += " jqxgrid.sort.js";
+            }
+            if (this.editable && !this.begincelledit) {
+                addComma();
+                missingModules += " jqxgrid.edit.js";
+            }
+            if (this.showaggregates && !this.getcolumnaggregateddata) {
+                addComma();
+                missingModules += " jqxgrid.aggregates.js";
+            }
+            if (this.keyboardnavigation && !this.selectrow) {
+                addComma();
+                missingModules += " jqxgrid.selection.js";
+            }
+            if (missingModules != "" || this.editable || this.filterable || this.pageable) {
+                var missingTypes = [];
+
+                var addMissing = function (type) {
+                    switch (type) {
+                        case "checkbox":
+                            if (!me.host.jqxCheckBox && !missingTypes['checkbox']) {
+                                missingTypes['checkbox'] = true;
+                                addComma();
+                                missingModules += ' jqxcheckbox.js';
+                            }
+                            break;
+                        case "numberinput":
+                            if (!me.host.jqxNumberInput && !missingTypes['numberinput']) {
+                                missingTypes['numberinput'] = true;
+                                addComma();
+                                missingModules += ' jqxnumberinput.js';
+                            }
+                            break;
+                        case "datetimeinput":
+                            if (!me.host.jqxDateTimeInput && !missingTypes['datetimeinput']) {
+                                addComma();
+                                missingTypes['datetimeinput'] = true;
+                                missingModules += ' jqxdatetimeinput.js(requires: jqxcalendar.js, jquery.global.js)';
+                            }
+                            else if (!$.global && !missingTypes['global']) {
+                                addComma();
+                                missingModules += ' jquery.global.js';
+                            }
+                            else if (!me.host.jqxCalendar && !missingTypes['calendar']) {
+                                addComma();
+                                missingModules += ' jqxcalendar.js';
+                            }
+                            break;
+                        case "combobox":
+                            if (!me.host.jqxComboBox && !missingTypes['combobox']) {
+                                addComma();
+                                missingTypes['combobox'] = true;
+                                missingModules += ' jqxcombobox.js(requires: jqxlistbox.js)';
+                            }
+                            else if (!me.host.jqxListBox && !missingTypes['listbox']) {
+                                addComma();
+                                missingTypes['listbox'] = true;
+                                missingModules += ' jqxlistbox.js';
+                            }
+                            break;
+                        case "dropdownlist":
+                            if (!me.host.jqxDropDownList && !missingTypes['dropdownlist']) {
+                                addComma();
+                                missingTypes['dropdownlist'] = true;
+                                missingModules += ' jqxdropdownlist.js(requires: jqxlistbox.js)';
+                            }
+                            else if (!me.host.jqxListBox && !missingTypes['listbox']) {
+                                addComma();
+                                missingTypes['listbox'] = true;
+                                missingModules += ' jqxlistbox.js';
+                            }
+                            break;
+                    }
+                }
+
+                if (this.filterable || this.pageable) {
+                    addMissing('dropdownlist');
+                }
+
+                for (var i = 0; i < this.columns.length; i++) {
+                    if (this.columns[i] == undefined)
+                        continue;
+
+                    var type = this.columns[i].columntype;
+                    addMissing(type);
+                    if (this.filterable && this.showfilterrow) {
+                        var type = this.columns[i].filtertype;
+                        if (type == 'checkedlist' || type == 'bool') {
+                            addMissing('checkbox');
+                        }
+                        if (type == 'date') {
+                            addMissing('datetimeinput');
+                        }
+                    }
+                }
+                if (missingModules != "") {
+                    alert("Please, add references to the following module(s): " + missingModules);
+                    this.host.remove();
+                    return true;
+                }
+            }
+            return false;
         },
 
         focus: function () {
@@ -391,7 +617,7 @@ License: http://jqwidgets.com/license/
                 return true;
             var hiddenParent = false;
             $.each(me.host.parents(), function () {
-                if ($(this).css('display') != 'block') {
+                if ($(this).css('display') == 'none') {
                     hiddenParent = true;
                     return false;
                 }
@@ -451,7 +677,7 @@ License: http://jqwidgets.com/license/
                             me._renderrows(me.virtualsizeinfo);
                         }
                         else {
-                            if (value >= oldvalue) {
+                            if (hostHeight >= me._oldHeight) {
                                 me._render(true, false, false);
                             }
                             else {
@@ -665,8 +891,37 @@ License: http://jqwidgets.com/license/
                             var oldValue = me.hScrollInstance.value;
                             me.hScrollInstance.setPosition(oldValue + left);
                         }
+                        me.vScrollInstance.thumbCapture = true;
+
                         me._lastScroll = new Date();
-                    });
+                    }, this.element.id);
+                    if (me._overlayElement) {
+                        me._overlayElement.unbind('touchstart.touchScroll');
+                        me._overlayElement.unbind('touchmove.touchScroll');
+                        me._overlayElement.unbind('touchend.touchScroll');
+                        me._overlayElement.unbind('touchcancel.touchScroll');
+
+                        $.jqx.mobile.touchScroll(me._overlayElement[0], me.vScrollInstance.max, function (left, top) {
+                            if (me.vScrollBar.css('visibility') == 'visible') {
+                                var oldValue = me.vScrollInstance.value;
+                                me.vScrollInstance.setPosition(oldValue + top);
+                            }
+                            if (me.hScrollBar.css('visibility') == 'visible') {
+                                var oldValue = me.hScrollInstance.value;
+                                me.hScrollInstance.setPosition(oldValue + left);
+                            }
+                            me.vScrollInstance.thumbCapture = true;
+
+                            me._lastScroll = new Date();
+                        }, this.element.id);
+                        this.host.bind('touchstart', function () {
+                            if (!me.editcell)
+                                me._overlayElement.css('visibility', 'visible');
+                        });
+                        this.host.bind('touchend', function () {
+                            me._overlayElement.css('visibility', 'hidden');
+                        });
+                    }
                 }
             }
         },
@@ -687,6 +942,7 @@ License: http://jqwidgets.com/license/
             }
             if (isTouchDevice && this.touchModeStyle != false) {
                 this.scrollbarsize = 10;
+                this.touchDevice = true;
                 this.host.addClass(this.toThemeProperty('jqx-touch'));
                 this.host.find('jqx-widget-content').addClass(this.toThemeProperty('jqx-touch'));
                 this.host.find('jqx-widget-header').addClass(this.toThemeProperty('jqx-touch'));
@@ -812,6 +1068,9 @@ License: http://jqwidgets.com/license/
                 if (localizationobj.emptydatastring) {
                     this.gridlocalization.emptydatastring = localizationobj.emptydatastring;
                 }
+                if (localizationobj.filterselectstring) {
+                    this.gridlocalization.filterselectstring = localizationobj.filterselectstring;
+                }
                 if (this._initpager) {
                     this._initpager();
                 }
@@ -828,14 +1087,16 @@ License: http://jqwidgets.com/license/
                 if (this.filterable && this.showfilterrow) {
                     if (this._updatefilterrow) {
                         for (var obj in this._filterrowcache) {
-                            this._filterrowcache[obj].remove();
+                            $(this._filterrowcache[obj]).remove();
                         }
 
                         this._filterrowcache = [];
                         this._updatefilterrow();
                     }
                 }
-
+                if (this.showaggregates && this.refresheaggregates) {
+                    this.refresheaggregates();
+                }
                 this._renderrows(this.virtualsizeinfo);
             }
             else {
@@ -872,8 +1133,8 @@ License: http://jqwidgets.com/license/
                     // name: the name of the era in this culture (e.g. A.D., C.E.)
                     // start: when the era starts in ticks (gregorian, gmt), null if it is the earliest supported era.
                     // offset: offset in years from gregorian calendar
-                    {"name": "A.D.", "start": null, "offset": 0 }
-                ],
+                    { "name": "A.D.", "start": null, "offset": 0 }
+                    ],
                     twoDigitYearMax: 2029,
                     patterns: {
                         // short date pattern
@@ -939,7 +1200,8 @@ License: http://jqwidgets.com/license/
                     filterdatecomparisonoperators: ['equal', 'not equal', 'less than', 'less than or equal', 'greater than', 'greater than or equal', 'null', 'not null'],
                     filterbooleancomparisonoperators: ['equal', 'not equal'],
                     validationstring: "Entered value is not valid",
-                    emptydatastring: "No data to display"
+                    emptydatastring: "No data to display",
+                    filterselectstring: "Select Filter"
                 };
             }
         },
@@ -983,7 +1245,7 @@ License: http://jqwidgets.com/license/
                     maxstringlength = this.gridlocalization.sortremovestring.length;
                     maxstring = this.gridlocalization.sortremovestring;
                 }
-                if (this.groupable && this._initgroupsheader) {
+                if (this.groupable && this._initgroupsheader && this.showgroupmenuitems) {
                     if (this.gridlocalization.groupbystring.length > maxstringlength) {
                         maxstringlength = this.gridlocalization.groupbystring.length;
                         maxstring = this.gridlocalization.groupbystring;
@@ -1001,7 +1263,7 @@ License: http://jqwidgets.com/license/
                 stringwidth = measurestring.outerWidth() + 60;
                 measurestring.remove();
                 var itemscount = 0;
-                if (this.sortable && this._togglesort) {
+                if (this.sortable && this._togglesort && this.showsortmenuitems) {
                     menuitems.append(sortascendingitem);
                     this.menuitemsarray[0] = sortascendingitem[0];
 
@@ -1013,7 +1275,7 @@ License: http://jqwidgets.com/license/
                     itemscount = 3;
                 }
 
-                if (this.groupable && this._initgroupsheader) {
+                if (this.groupable && this._initgroupsheader && this.showgroupmenuitems) {
                     menuitems.append(groupbyitem);
                     this.menuitemsarray[3] = groupbyitem[0];
 
@@ -1024,13 +1286,17 @@ License: http://jqwidgets.com/license/
 
                 var itemsheight = itemscount * 27 + 3;
                 var closeonclick = true;
-                if (this.filterable && !this.showfilterrow) {
+                if (this.filterable && !this.showfilterrow && this.showfiltermenuitems) {
                     if (this._initfilterpanel) {
                         this.menuitemsarray[5] = filteritem[0];
                         this.menuitemsarray[6] = filteritem[0];
                         menuitems.append(separatoritem);
                         menuitems.append(filteritem);
                         itemsheight += 176;
+                        if ($.browser.msie && $.browser.version < 8) {
+                            itemsheight += 20;
+                        }
+
                         var filterpanel = $(filteritem).find('div:first');
                         stringwidth += 20;
                         this._initfilterpanel(this, filterpanel, "", stringwidth);
@@ -1059,6 +1325,7 @@ License: http://jqwidgets.com/license/
                     itemsheight = 65;
                 }
 
+                this.removeHandler(this.gridmenu, 'keydown');
                 this.addHandler(this.gridmenu, 'keydown', function (event) {
                     if (event.keyCode == 27) {
                         self.gridmenu.jqxMenu('close');
@@ -1097,6 +1364,7 @@ License: http://jqwidgets.com/license/
             else {
                 this.columnsmenu = false;
             }
+            //this._appendmenu();
         },
 
         _arrangemenu: function () {
@@ -1128,19 +1396,22 @@ License: http://jqwidgets.com/license/
             stringwidth = measurestring.outerWidth() + 60;
             measurestring.remove();
             var itemscount = 0;
-            if (this.sortable && this._togglesort) {
+            if (this.sortable && this._togglesort && this.showsortmenuitems) {
                 itemscount = 3;
             }
 
-            if (this.groupable && this._initgroupsheader) {
+            if (this.groupable && this._initgroupsheader && this.showgroupmenuitems) {
                 itemscount += 2;
             }
 
             var itemsheight = itemscount * 27 + 3;
-            if (this.filterable) {
+            if (this.filterable && this.showfiltermenuitems) {
                 if (this._initfilterpanel) {
                     itemsheight += 176;
                     stringwidth += 20;
+                    if ($.browser.msie && $.browser.version < 8) {
+                        itemsheight += 20;
+                    }
                 }
             }
 
@@ -1154,6 +1425,22 @@ License: http://jqwidgets.com/license/
 
             this.gridmenu.jqxMenu({ width: stringwidth, height: itemsheight });
         },
+
+        //_appendmenu: function () {
+        //    var el = $.jqx.dataFormat._getmenuelement();
+        //    var me = this;
+        //    if (el != "") {
+        //        setTimeout(function () {
+        //            var e = $(el);
+        //            e.css('position', 'absolute');
+        //            var offset = me.host.offset();
+        //            e.css('left', offset.left + me.content.width() - 60);
+        //            var height = me.table.height();
+        //            e.css('top', offset.top);
+        //            me.host.append(e);
+        //        }, 100);
+        //    }
+        //},
 
         _closemenuafterclick: function (event) {
             var me = event != null ? event.data : this;
@@ -1196,6 +1483,19 @@ License: http://jqwidgets.com/license/
             if (matches) {
                 return;
             }
+
+            try {
+                var date1 = $($.find('#filter1' + me.element.id)).jqxDropDownList('listBox').vScrollInstance._mouseup;
+                if (new Date() - date1 < 100)
+                    return;
+
+                var date2 = $($.find('#filter3' + me.element.id)).jqxDropDownList('listBox').vScrollInstance._mouseup;
+                if (new Date() - date2 < 100)
+                    return;
+            }
+            catch (error) {
+            }
+
             me.gridmenu.jqxMenu('close');
 
             //            if (x < gridbounds.left || x > gridbounds.left + me.host.width()) {
@@ -1220,7 +1520,7 @@ License: http://jqwidgets.com/license/
             this.addHandler(this.gridmenu, 'itemclick', function (event) {
                 var clickeditem = event.args;
 
-                for (i = 0; i < self.menuitemsarray.length; i++) {
+                for (var i = 0; i < self.menuitemsarray.length; i++) {
                     var currentitem = self.menuitemsarray[i];
                     if (clickeditem == currentitem) {
                         if ($(clickeditem).attr('ignoretheme') != undefined) {
@@ -1232,17 +1532,19 @@ License: http://jqwidgets.com/license/
                         if (self.filterable) {
                             self.gridmenu.jqxMenu('close');
                         }
+                        var displayfield = column.displayfield;
+                        if (displayfield == null) displayfield = column.datafield;
 
                         if (menu != null) {
                             switch (i) {
                                 case 0:
-                                    self.sortby(column.datafield, 'ascending', null);
+                                    self.sortby(displayfield, 'ascending', null);
                                     break;
                                 case 1:
-                                    self.sortby(column.datafield, 'descending', null);
+                                    self.sortby(displayfield, 'descending', null);
                                     break;
                                 case 2:
-                                    self.sortby(column.datafield, null, null);
+                                    self.sortby(displayfield, null, null);
                                     break;
                                 case 3:
                                     self.addgroup(column.datafield);
@@ -1442,6 +1744,32 @@ License: http://jqwidgets.com/license/
             $(this.dataloadelement).css('display', 'none');
         },
 
+        _updatefocusedfilter: function () {
+            var me = this;
+            if (me.focusedfilter) {
+                setTimeout(function () {
+                    me.focusedfilter.focus();
+                    if (me.focusedfilter[0].nodeName.toLowerCase() == "input") {
+                        var start = me.focusedfilter.val().length;
+                        try {
+                            if ('selectionStart' in me.focusedfilter[0]) {
+                                me.focusedfilter[0].setSelectionRange(start, start);
+                            }
+                            else {
+                                var range = me.focusedfilter[0].createTextRange();
+                                range.collapse(true);
+                                range.moveEnd('character', start);
+                                range.moveStart('character', start);
+                                range.select();
+                            }
+                        }
+                        catch (error) {
+                        }
+                    }
+                }, 10);
+            }
+        },
+
         databind: function (source, reason) {
             if (this.host.css('display') == 'block') {
                 if (this.autoshowloadelement) {
@@ -1457,7 +1785,7 @@ License: http://jqwidgets.com/license/
 
             var me = this;
             if (source == null) {
-                source = new Array();
+                source = {};
             }
 
             if (!source.recordstartindex) {
@@ -1482,6 +1810,10 @@ License: http://jqwidgets.com/license/
                 source.data = null;
             }
 
+            var url = null;
+            if (source != null) {
+                url = source._source != undefined ? source._source.url : source.url;
+            }
             this.dataview = this.dataview || new $.jqx.dataview();
             if ($.jqx.dataview.sort) {
                 $.extend(this.dataview, new $.jqx.dataview.sort());
@@ -1509,14 +1841,20 @@ License: http://jqwidgets.com/license/
                         }
                         else {
                             this.dataview.pagesize = source._source.pagesize;
+                            if (this.dataview.pagesize == undefined)
+                                this.dataview.pagesize = this.pagesize;
                         }
                     }
-
-                    if (source.sortcolumn) {
-                        this.dataview.sortfield = source.sortcolumn;
-                    }
-                    if (source.sortdirection) {
-                        this.dataview.sortfielddirection = source.sortdirection;
+                }
+                if (source.sortcolumn) {
+                    this.dataview.sortfield = source.sortcolumn;
+                }
+                if (source.sortdirection) {
+                    this.dataview.sortfielddirection = source.sortdirection;
+                }
+                if (this.autoloadstate) {
+                    if (this.loadstate) {
+                        this.loadstate();
                     }
                 }
             }
@@ -1540,12 +1878,44 @@ License: http://jqwidgets.com/license/
                     me.source.sortcolumn = null;
                 }
                 else {
+                    var vvalue = me.vScrollInstance.value;
+                    var hvalue = me.hScrollInstance.value;
                     var datatype = me.source.datatype;
                     if (datatype != 'local' || datatype != 'array') {
                         var virtualheight = me.virtualsizeinfo == null || (me.virtualsizeinfo != null && me.virtualsizeinfo.virtualheight == 0);
-                        if (!me.virtualmode || me.pageable || virtualheight) {
+                        if (!me.virtualmode || virtualheight || (me.virtualmode && me.pageable)) {
                             if (me.initializedcall == true && reason == 'pagechanged') {
-                                me._render(true, true, false, false);
+                                me.rendergridcontent(true);
+                                if (me.pageable && me.updatepagerdetails) {
+                                    me.updatepagerdetails();
+                                    if (me.autoheight) {
+                                        me._updatepageviews();
+                                        if (me.autorowheight) {
+                                            me._renderrows(this.virtualsizeinfo);
+                                        }
+                                    }
+                                }
+
+                                if (me.showaggregates && me._updateaggregates) {
+                                    me._updateaggregates();
+                                }
+                           //     me._render(true, true, false, false);
+                            }
+                            else if (reason == 'filter') {
+                                me._render(true, true, false, false, false);
+                                me._updatefocusedfilter();
+                                me._updatecolumnwidths();
+                                me._updatecellwidths();
+                                me._renderrows(me.virtualsizeinfo);
+                            }
+                            else if (reason == 'sort') {
+                                me.rendergridcontent(true);
+                                if (me.showaggregates && me._updateaggregates) {
+                                    me._updateaggregates();
+                                }
+                            }
+                            else if (reason == 'data') {
+                                me._render(true, true, false, false, false);
                             }
                             else {
                                 me._render(true, true, true, me.menuitemsarray && !me.virtualmode);
@@ -1559,6 +1929,12 @@ License: http://jqwidgets.com/license/
                                 me._pagescache = new Array();
                                 me._renderrows(me.virtualsizeinfo);
                             }
+                        }
+                        if (me.vScrollInstance.value != vvalue && vvalue <= me.vScrollInstance.max) {
+                            me.vScrollInstance.setPosition(vvalue);
+                        }
+                        if (me.hScrollInstance.value != hvalue && hvalue <= me.hScrollInstance.max) {
+                            me.hScrollInstance.setPosition(hvalue);
                         }
                     }
                 }
@@ -1580,6 +1956,11 @@ License: http://jqwidgets.com/license/
                     me.initializedcall = true;
                     if (me.ready) {
                         me.ready();
+                    }
+                    if (me.autoloadstate) {
+                        if (me.loadstate) {
+                            me._loadselectionandcolumnwidths();
+                        }
                     }
                     if ((me.width != null && me.width.toString().indexOf('%') != -1) || (me.height != null && me.height.toString().indexOf('%') != -1)) {
                         me._updatesize(true);
@@ -1610,7 +1991,12 @@ License: http://jqwidgets.com/license/
             this.dataview.databind(source);
 
             if (this.dataview.isupdating()) {
-                this.dataview.resumeupdate(false);
+                if (url != undefined) {
+                    this.dataview.suspend = false;
+                }
+                else {
+                    this.dataview.resumeupdate(false);
+                }
             }
 
             this._initializeRows();
@@ -1655,9 +2041,11 @@ License: http://jqwidgets.com/license/
                 var top = this._pageviews[pagenumber].top;
                 var rowposition = top + rowindexinpage * this.rowsheight;
                 if (this.rowdetails) {
-                    for (i = pagesize * pagenumber; i < index; i++) {
-                        if (this.details[i].rowdetailshidden == false) {
-                            rowposition += this.details[i].rowdetailsheight;
+                    for (var i = pagesize * pagenumber; i < index; i++) {
+                        if (this.details[i]) {
+                            if (this.details[i].rowdetailshidden == false) {
+                                rowposition += this.details[i].rowdetailsheight;
+                            }
                         }
                     }
                 }
@@ -1674,7 +2062,7 @@ License: http://jqwidgets.com/license/
             else if (this.pageable) {
                 var rowposition = rowindexinpage * this.rowsheight;
                 if (this.rowdetails) {
-                    for (i = pagesize * pagenumber; i < pagesize * pagenumber + rowindexinpage; i++) {
+                    for (var i = pagesize * pagenumber; i < pagesize * pagenumber + rowindexinpage; i++) {
                         if (this.details[i].rowdetailshidden == false) {
                             rowposition += this.details[i].rowdetailsheight;
                         }
@@ -1783,7 +2171,7 @@ License: http://jqwidgets.com/license/
                 return;
 
             var detailskey = this.dataview.generatekey();
-            this.detailboundrows[index] = { index: index, details: { rowdetails: details, rowdetailsheight: height, rowdetailshidden: hidden, key: detailskey} };
+            this.detailboundrows[index] = { index: index, details: { rowdetails: details, rowdetailsheight: height, rowdetailshidden: hidden, key: detailskey } };
 
             index = this.getrowvisibleindex(index);
             if (index < 0)
@@ -1796,7 +2184,7 @@ License: http://jqwidgets.com/license/
             var column = null;
             if (this.columns.records) {
                 $.each(this.columns.records, function () {
-                    if (this.datafield == datafield) {
+                    if (this.datafield == datafield || this.displayfield == datafield) {
                         column = this;
                         return false;
                     }
@@ -1864,7 +2252,7 @@ License: http://jqwidgets.com/license/
         _getcolumn: function (datafield) {
             var column = null;
             $.each(this._columns, function () {
-                if (this.datafield == datafield || this.dataField == datafield) {
+                if (this.datafield == datafield || this.displayfield == datafield) {
                     column = this;
                     return false;
                 }
@@ -1880,6 +2268,7 @@ License: http://jqwidgets.com/license/
             if (column == null)
                 return;
 
+            var oldvalue = column[propertyname];
             column[propertyname] = value;
 
             var _cachedcolumn = this._getcolumn(datafield);
@@ -1898,6 +2287,28 @@ License: http://jqwidgets.com/license/
                         }
                     }
                     break;
+                case "editable":
+                case "resizable":
+                case "draggable":
+                    if (propertyname == "editable") {
+                        if (value != oldvalue) {
+                            if (this.editcell != null && this.endcelledit) {
+                                this.endcelledit(this.editcell.row, this.editcell.column, true, true);
+                            }
+                            if (column.columntype == 'checkbox') {
+                                this.prerenderrequired = true;
+                                this.rendergridcontent(true, false);
+                                if (this.updating()) {
+                                    return false;
+                                }
+                            }
+                            if (this.updating()) {
+                                return false;
+                            }
+                            this._renderrows(this.virtualsizeinfo);
+                        }
+                    }
+                    break;
                 case "hidden":
                 case "hideable":
                 case "renderer":
@@ -1907,10 +2318,8 @@ License: http://jqwidgets.com/license/
                 case "cellsformat":
                 case "pinned":
                 case "contenttype":
-                case "resizable":
                 case "filterable":
                 case "groupable":
-                case "editable":
                 case "cellclass":
                 case "class":
                     this.prerenderrequired = true;
@@ -2466,7 +2875,7 @@ License: http://jqwidgets.com/license/
             var pagesize = this._getpagesize();
 
             if (!this.pageable) {
-                for (i = 0; i < totalrows; i++) {
+                for (var i = 0; i < totalrows; i++) {
                     var rowinfo = { index: i, height: this.heights[i], hidden: this.hiddens[i], details: this.details[i] }
                     if (this.heights[i] == undefined) {
                         this.heights[i] = this.rowsheight;
@@ -2547,7 +2956,9 @@ License: http://jqwidgets.com/license/
                 }
             }
             else {
-                this.vScrollBar.css('visibility', 'hidden');
+                if (!this._loading) {
+                    this.vScrollBar.css('visibility', 'hidden');
+                }
                 this.vScrollBar.jqxScrollBar({ value: 0 });
             }
 
@@ -2627,13 +3038,14 @@ License: http://jqwidgets.com/license/
             this.render();
         },
 
-        _render: function (initialization, forceupdate, rendercolumns, rendermenu) {
+        _render: function (initialization, forceupdate, rendercolumns, rendermenu, updatelistfilter) {
             if (this.dataview == null)
                 return;
 
             if (this.editcell != null && this.endcelledit) {
                 this.endcelledit(this.editcell.row, this.editcell.column, true, false);
             }
+            this.validationpopup = null;
             this._removeHandlers();
             this._addHandlers();
             this._initializeRows();
@@ -2708,7 +3120,7 @@ License: http://jqwidgets.com/license/
             this.gridcontent = this.gridcontent || $('<div style="width: 100%; overflow: hidden; position: absolute;"></div>');
             this.gridcontent.remove();
 
-            if (this.showfilterrow) {
+            if (this.showfilterrow && this.filterable) {
                 this.columnsheader.height(this.columnsheight + this.filterrowheight);
             }
             else {
@@ -2753,15 +3165,27 @@ License: http://jqwidgets.com/license/
                     }
                 }
             }
-            this._updateTouchScrolling();
 
             if (this.showaggregates && this._updateaggregates) {
                 this._updateaggregates();
             }
 
+            var browserInfo = $.jqx.utilities.getBrowser();
+            if ((browserInfo.browser == 'msie' && parseInt(browserInfo.version) < 9) || this.isTouchDevice()) {
+                this._overlayElement = $("<div style='visibility: hidden; position: absolute; width: 100%; height: 100%;'></div>");
+                this.content.prepend(this._overlayElement);
+                this._overlayElement.css('background', 'white');
+                this._overlayElement.css('z-index', 9999999);
+                this._overlayElement.css('opacity', 0.0001);
+            }
+            this._updateTouchScrolling();
+            if (this.showfilterrow && this.filterable && this.filterrow && (updatelistfilter == undefined || updatelistfilter == true)) {
+                this._updatelistfilters();
+            }
+
             // callback when the rendering is complete.
             if (this.rendered) {
-                this.rendered();
+                this.rendered('full');
             }
         },
 
@@ -2825,18 +3249,40 @@ License: http://jqwidgets.com/license/
                 }
             }
 
+            if (this.autosavestate) {
+                if (this.initializedcall != null) {
+                    if (this.savestate) {
+                        this.savestate();
+                    }
+                }
+            }
+
             return true;
         },
 
         _updatecolumnwidths: function () {
             var totalwidth = this.host.width();
+            var hostwidth = totalwidth;
             var allcharacters = '';
             if (this.columns == undefined || this.columns.records == undefined)
                 return;
 
+            var self = this;
             $.each(this.columns.records, function (i, value) {
                 if (!(this.hidden && this.hideable)) {
-                    if (this.width != 'auto' && !this._width) {
+                    if (this.width.toString().indexOf('%') != -1 || this._percentagewidth != undefined) {
+                        var value = 0;
+                        var offset = self.vScrollBar[0].style.visibility == 'hidden' ? 0 : self.scrollbarsize + 5;
+                        value = parseInt(this.width) * hostwidth / 100;
+                        if (this._percentagewidth != undefined) {
+                            value = parseInt(this._percentagewidth) * (hostwidth - offset) / 100;
+                        }
+
+                        if (value < this.minwidth && this.minwidth != 'auto') value = this.minwidth;
+                        if (value > this.maxwidth && this.maxwidth != 'auto') value = this.maxwidth;
+                        totalwidth -= Math.round(value);
+                    }
+                    else if (this.width != 'auto' && !this._width) {
                         totalwidth -= this.width;
                     }
                     else {
@@ -2854,14 +3300,21 @@ License: http://jqwidgets.com/license/
                             var groupsheight = this.dataview.loadedrootgroups.length * this.rowsheight;
                             if (groupsheight > tableheight) {
                                 totalwidth -= this.scrollbarsize + 5;
+                                hostwidth -= this.scrollbarsize + 5;
+                            }
+                            else if (this.vScrollBar.css('visibility') == 'visible') {
+                                totalwidth -= this.scrollbarsize + 5;
+                                hostwidth -= this.scrollbarsize + 5;
                             }
                         }
                         else {
                             totalwidth -= this.scrollbarsize + 5;
+                            hostwidth -= this.scrollbarsize + 5;
                         }
                     }
                     else {
                         totalwidth -= this.scrollbarsize + 5;
+                        hostwidth -= this.scrollbarsize + 5;
                     }
                 }
             }
@@ -2874,9 +3327,36 @@ License: http://jqwidgets.com/license/
             var left = 0;
             $.each(this.columns.records, function (i, value) {
                 var column = $(columns[i]);
-                if (this.width != 'auto' && !this._width) {
+                var percentage = false;
+                var desiredwidth = this.width;
+                if (this.width.toString().indexOf('%') != -1 || this._percentagewidth != undefined) {
+                    if (this._percentagewidth != undefined) {
+                        desiredwidth = parseInt(this._percentagewidth) * hostwidth / 100;
+                    }
+                    else {
+                        desiredwidth = parseInt(this.width) * hostwidth / 100;
+                    }
+                    percentage = true;
+                }
+
+                if (this.width != 'auto' && !this._width && !percentage) {
                     if (parseInt(column[0].style.width) != this.width) {
                         column.width(this.width);
+                    }
+                }
+                else if (percentage) {
+                    if (desiredwidth < this.minwidth && this.minwidth != 'auto') {
+                        desiredwidth = this.minwidth;
+                        this.width = desiredwidth;
+                    }
+                    if (desiredwidth > this.maxwidth && this.maxwidth != 'auto') {
+                        desiredwidth = this.maxwidth;
+                        this.width = desiredwidth;
+                    }
+
+                    if (parseInt(column[0].style.width) != desiredwidth) {
+                        column.width(desiredwidth);
+                        this.width = desiredwidth;
                     }
                 }
                 else {
@@ -2946,6 +3426,7 @@ License: http://jqwidgets.com/license/
 
             var allcharacters = "";
             var totalwidth = this.host.width();
+            var hostwidth = totalwidth;
 
             var pinnedcolumns = new Array();
             var normalcolumns = new Array();
@@ -2959,7 +3440,15 @@ License: http://jqwidgets.com/license/
                         else if (this.width > this.maxwidth && this.maxwidth != 'auto') {
                             totalwidth -= this.maxwidth;
                         }
+                        else if (this.width.toString().indexOf('%') != -1) {
+                            var value = 0;
+                            value = parseInt(this.width) * hostwidth / 100;
+                            if (value < this.minwidth && this.minwidth != 'auto') value = this.minwidth;
+                            if (value > this.maxwidth && this.maxwidth != 'auto') value = this.maxwidth;
+                            totalwidth -= value;
+                        }
                         else {
+                            if (typeof this.width == 'string') this.width = parseInt(this.width);
                             totalwidth -= this.width;
                         }
                     }
@@ -2975,10 +3464,10 @@ License: http://jqwidgets.com/license/
                 }
             });
 
-            for (i = 0; i < pinnedcolumns.length; i++) {
+            for (var i = 0; i < pinnedcolumns.length; i++) {
                 this.columns.replace(i, pinnedcolumns[i]);
             }
-            for (j = 0; j < normalcolumns.length; j++) {
+            for (var j = 0; j < normalcolumns.length; j++) {
                 this.columns.replace(pinnedcolumns.length + j, normalcolumns[j]);
             }
             var zindex = this.headerZIndex;
@@ -2997,15 +3486,18 @@ License: http://jqwidgets.com/license/
                         var groupsheight = this.dataview.loadedrootgroups.length * this.rowsheight;
                         if (groupsheight > tableheight) {
                             totalwidth -= this.scrollbarsize + 5;
+                            hostwidth -= this.scrollbarsize + 5;
                         }
                     }
                     else {
                         totalwidth -= this.scrollbarsize + 5;
+                        hostwidth -= this.scrollbarsize + 5;
                     }
                 }
                 else {
                     if (!this.autoheight) {
                         totalwidth -= this.scrollbarsize + 5;
+                        hostwidth -= this.scrollbarsize + 5;
                     }
                 }
             }
@@ -3021,8 +3513,18 @@ License: http://jqwidgets.com/license/
 
                 column.css('z-index', zindex--);
                 var desiredwidth = this.width;
+                var percentage = false;
+                if (this.width.toString().indexOf('%') != -1 || this._percentagewidth != undefined) {
+                    if (this._percentagewidth != undefined) {
+                        desiredwidth = parseInt(this._percentagewidth) * hostwidth / 100;
+                    }
+                    else {
+                        desiredwidth = parseInt(this.width) * hostwidth / 100;
+                    }
+                    percentage = true;
+                }
 
-                if (this.width != 'auto' && !this._width) {
+                if (this.width != 'auto' && !this._width && !percentage) {
                     if (desiredwidth < this.minwidth && this.minwidth != 'auto') {
                         desiredwidth = this.minwidth;
                     }
@@ -3031,6 +3533,18 @@ License: http://jqwidgets.com/license/
                     }
 
                     column.width(desiredwidth);
+                }
+                else if (percentage) {
+                    if (desiredwidth < this.minwidth && this.minwidth != 'auto') {
+                        desiredwidth = this.minwidth;
+                    }
+                    if (desiredwidth > this.maxwidth && this.maxwidth != 'auto') {
+                        desiredwidth = this.maxwidth;
+                    }
+
+                    this._percentagewidth = this.width;
+                    column.width(desiredwidth);
+                    this.width = desiredwidth;
                 }
                 else {
                     var width = Math.round(totalwidth * (this.text.length / allcharacters.length));
@@ -3144,6 +3658,9 @@ License: http://jqwidgets.com/license/
                     }
                     else alert('jqxgrid.grouping.js is not loaded');
                 }
+                if (self.columnsreorder && this.draggable && self._handlecolumnsdragreorder) {
+                    self._handlecolumnsdragreorder(this, column);
+                }
 
                 var columnitem = this;
                 self.addHandler(column, 'click', function (event) {
@@ -3165,6 +3682,10 @@ License: http://jqwidgets.com/license/
                         var pagex = parseInt(event.pageX);
                         var offset = 5;
                         var columnleft = parseInt(column.offset().left);
+                        if (self.hasTransform) {
+                            columnleft = $.jqx.utilities.getOffset(column).left;
+                        }
+
                         if (self._handlecolumnsresize) {
                             if (isTouchDevice) {
                                 var touches = self.getTouches(event);
@@ -3233,6 +3754,9 @@ License: http://jqwidgets.com/license/
             columnheader.width(left);
             if (this._handlecolumnsdragdrop) {
                 this._handlecolumnsdragdrop();
+            }
+            if (this._handlecolumnsreorder) {
+                this._handlecolumnsreorder();
             }
             if (this._rendersortcolumn) {
                 this._rendersortcolumn();
@@ -3362,6 +3886,11 @@ License: http://jqwidgets.com/license/
                 }
 
                 var hostOffset = self.host.offset();
+                if (self.hasTransform) {
+                    hostOffset = $.jqx.utilities.getOffset(self.host);
+                    offset = $.jqx.utilities.getOffset(columnsmenu);
+                }
+
                 if (hostOffset.left + self.host.width() > parseInt(offset.left) + self.gridmenu.width()) {
                     self.gridmenu.jqxMenu('open', offset.left, offset.top + top);
                 }
@@ -3422,24 +3951,28 @@ License: http://jqwidgets.com/license/
                 if (filteritem != null) {
                     self._updatefilterpanel(self, filteritem, columnitem);
                     var itemscount = 0;
-                    if (self.sortable && self._togglesort) {
+                    if (self.sortable && self._togglesort && self.showsortmenuitems) {
                         itemscount += 3;
                     }
 
-                    if (self.groupable && self.addgroup) {
+                    if (self.groupable && self.addgroup && self.showgroupmenuitems) {
                         itemscount += 2;
                     }
 
                     var height = itemscount * 27 + 3;
+                    if ($.browser.msie && $.browser.version < 8) {
+                        height += 20;
+                        $(filteritem).height(190);
+                    }
 
-                    if (self.filterable) {
+                    if (self.filterable && self.showfiltermenuitems) {
                         if (!columnitem.filterable) {
                             self.gridmenu.height(height);
-                            $(self.filteritem).css('display', 'none');
+                            $(filteritem).css('display', 'none');
                         }
                         else {
                             self.gridmenu.height(height + 176);
-                            $(self.filteritem).css('display', 'block');
+                            $(filteritem).css('display', 'block');
                         }
                     }
                 }
@@ -3484,18 +4017,19 @@ License: http://jqwidgets.com/license/
         },
 
         _rendercolumnheader: function (text, align) {
-            if (this.enableellipsis) {
-                if (align == 'center')
-                    return $('<div style="overflow: hidden; text-overflow: ellipsis; text-align: center;">' + '<a href="#">' + text + '</a>' + '</div>');
+            var margin = '4px';
+            if (this.columnsheight != 25) {
+                margin = (this.columnsheight / 2 - this._columnheight / 2) + 'px';
+            }
 
-                var link = $('<a style="overflow: hidden; text-overflow: ellipsis; text-align: ' + align + ';" href="#">' + text + '</a>');
-                return link;
+            if (this.enableellipsis) {
+                return $('<div style="overflow: hidden; text-overflow: ellipsis; text-align: ' + align + '; margin-left: 4px; margin-right: 2px; margin-top: ' + margin + ';">' + '<span style="text-overflow: ellipsis; cursor: default;">' + text + '</span>' + '</div>');
             }
 
             if (align == 'center')
-                return $('<div style="text-align: center; margin-top: 5px;">' + '<a href="#">' + text + '</a>' + '</div>');
+                return $('<div style="text-align: center; margin-top: ' + margin + ';">' + '<a href="#">' + text + '</a>' + '</div>');
 
-            var link = $('<a style="float: ' + align + ';" href="#">' + text + '</a>');
+            var link = $('<a style="margin-top: ' + margin + '; float: ' + align + ';" href="#">' + text + '</a>');
             return link;
         },
 
@@ -3503,7 +4037,7 @@ License: http://jqwidgets.com/license/
             var self = this;
 
             if ((this.pageable || this.groupable) && this.autoheight) {
-                if (this.table != null && this.table[0].rows != null && this.table[0].rows.length != this.dataview.rows.length) {
+                if (this.table != null && this.table[0].rows != null && this.table[0].rows.length < this.dataview.rows.length) {
                     self.prerenderrequired = true;
                 }
             }
@@ -3516,11 +4050,46 @@ License: http://jqwidgets.com/license/
                     }
                 }
             }
+            if (this.autoheight && !self.prerenderrequired) {
+                if (this.table && this.table[0].rows) {
+                    if (this.table[0].rows.length < this.dataview.records.length) {
+                        if (this.pageable && this.table[0].rows.length < this.dataview.pagesize) {
+                            self.prerenderrequired = true;
+                        }
+                        else if (!this.pageable) {
+                            self.prerenderrequired = true;
+                        }
+                    }
+                    if (this.table[0].rows.length < this.dataview.cachedrecords.length) {
+                        if (this.pageable && this.table[0].rows.length < this.dataview.pagesize) {
+                            self.prerenderrequired = true;
+                        }
+                        else if (!this.pageable) {
+                            self.prerenderrequired = true;
+                        }
+                    }
+                }
+            }
 
             self._prerenderrows(virtualsizeinfo);
             if (self._requiresupdate) {
                 self._requiresupdate = false;
                 self._updatepageviews();
+            }
+
+            var callrenderrows = function () {
+                if (self._loading) return;
+
+                if (self.WinJS) {
+                    MSApp.execUnsafeLocalFunction(function () {
+                        self._rendervisualrows();
+                    });
+                }
+                else self._rendervisualrows();
+
+                if (self.virtualmode && self.showaggregates && self._updateaggregates) {
+                    self.refreshaggregates();
+                }
             }
 
             if (this.virtualmode) {
@@ -3551,21 +4120,52 @@ License: http://jqwidgets.com/license/
                     loadondemand();
                     this.loadondemand = false;
                 }
-                self._rendervisualrows();
+                var ie10 = this._browser == undefined ? this._isIE10() : this._browser;
+                if (this.editable && this.editcell && !this.vScrollInstance.isScrolling() && !this.hScrollInstance.isScrolling()) {
+                    callrenderrows();
+                }
+                else {
+                    if (ie10 || $.browser.mozilla || (navigator && navigator.userAgent.indexOf('Safari') != -1)) {
+                        if (this._scrolltimer != null) {
+                            clearTimeout(this._scrolltimer);
+                        }
+                        this._scrolltimer = setTimeout(function () {
+                            callrenderrows();
+                        }, 5);
+                    }
+                    else {
+                        callrenderrows();
+                    }
+                }
             }
             else {
                 if (navigator && navigator.userAgent.indexOf('Chrome') == -1 && navigator.userAgent.indexOf('Safari') != -1) {
                     this.updatedelay = 1;
                 }
+                if (this.touchDevice != undefined && this.touchDevice == true) {
+                    this.updatedelay = 5;
+                }
+
+                var ie10 = this._browser == undefined ? this._isIE10() : this._browser;
+
+                if (ie10) {
+                    this.updatedelay = 5;
+                }
+
+                if ((ie10 || $.browser.mozilla) && this.hScrollInstance.isScrolling()) {
+                    callrenderrows();
+                    return;
+                }
+
                 if ($.browser.mozilla && this.updatedelay == 0 && (this.vScrollInstance.isScrolling() || this.hScrollInstance.isScrolling())) {
                     timer = setTimeout(function () {
-                        self._rendervisualrows();
+                        callrenderrows();
                     }, 0.01);
                     return;
                 }
 
                 if (this.updatedelay == 0) {
-                    self._rendervisualrows();
+                    callrenderrows();
                 }
                 else {
                     var timer = $.data(document.body, "Grid" + this.element.id);
@@ -3574,13 +4174,13 @@ License: http://jqwidgets.com/license/
                     }
                     if (this.vScrollInstance.isScrolling() || this.hScrollInstance.isScrolling()) {
                         timer = setTimeout(function () {
-                            self._rendervisualrows();
+                            callrenderrows();
                         }, this.updatedelay);
                         $.data(document.body, "Grid" + this.element.id, timer);
                     }
                     else {
                         $.data(document.body, "Grid" + this.element.id, null);
-                        self._rendervisualrows();
+                        callrenderrows();
                     }
                 }
             }
@@ -3598,39 +4198,24 @@ License: http://jqwidgets.com/license/
             var columnstart = this.groupable && this.groups.length > 0 ? this.groups.length : 0;
             var columnend = this.columns.records.length - columnstart;
             var columns = this.columns.records;
+            var isempty = this.dataview.rows.length == 0;
 
-            for (var i = 0; i < rows; i++) {
-                var tablerow = this.table[0].rows[i];
+            if (isempty) {
                 for (var j = 0; j < columnstart + columnend; j++) {
-                    var tablecell = tablerow.cells[j];
-                    if (tablecell != undefined) {
-                        var column = columns[j];
-                        if (!column.pinned) {
-                            tablecell.style.marginLeft = -left + 'px';
-                            if (i == 0) {
-                                var columncell = columnsrow[0].cells[j];
-                                columncell.style.marginLeft = -left + 'px';
-                            }
-                        }
-                    }
-                }
-            }
-            if (rows == 0) {
-                for (j = 0; j < columnstart + columnend; j++) {
                     var column = columns[j];
                     if (!column.pinned) {
-                        if (i == 0) {
+                        {
                             var columncell = columnsrow[0].cells[j];
                             columncell.style.marginLeft = -left + 'px';
                         }
                     }
                 }
             }
-
-            if (this.showaggregates) {
-                if (this.statusbar[0].cells) {
-                    for (j = 0; j < columnstart + columnend; j++) {
-                        var tablecell = this.statusbar[0].cells[j];
+            else {
+                for (var i = 0; i < rows; i++) {
+                    var tablerow = this.table[0].rows[i];
+                    for (var j = 0; j < columnstart + columnend; j++) {
+                        var tablecell = tablerow.cells[j];
                         if (tablecell != undefined) {
                             var column = columns[j];
                             if (!column.pinned) {
@@ -3639,6 +4224,31 @@ License: http://jqwidgets.com/license/
                                     var columncell = columnsrow[0].cells[j];
                                     columncell.style.marginLeft = -left + 'px';
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+            //if (rows == 0) {
+            //    for (var j = 0; j < columnstart + columnend; j++) {
+            //        var column = columns[j];
+            //        if (!column.pinned) {
+            //            if (i == 0) {
+            //                var columncell = columnsrow[0].cells[j];
+            //                columncell.style.marginLeft = -left + 'px';
+            //            }
+            //        }
+            //    }
+            //}
+
+            if (this.showaggregates) {
+                if (this.statusbar[0].cells) {
+                    for (var j = 0; j < columnstart + columnend; j++) {
+                        var tablecell = this.statusbar[0].cells[j];
+                        if (tablecell != undefined) {
+                            var column = columns[j];
+                            if (!column.pinned) {
+                                tablecell.style.marginLeft = -left + 'px';
                             }
                         }
                     }
@@ -3646,16 +4256,12 @@ License: http://jqwidgets.com/license/
             }
             if (this.showfilterrow && this.filterrow) {
                 if (this.filterrow[0].cells) {
-                    for (j = 0; j < columnstart + columnend; j++) {
+                    for (var j = 0; j < columnstart + columnend; j++) {
                         var tablecell = this.filterrow[0].cells[j];
                         if (tablecell != undefined) {
                             var column = columns[j];
                             if (!column.pinned) {
                                 tablecell.style.marginLeft = -left + 'px';
-                                if (i == 0) {
-                                    var columncell = columnsrow[0].cells[j];
-                                    columncell.style.marginLeft = -left + 'px';
-                                }
                             }
                         }
                     }
@@ -3671,7 +4277,7 @@ License: http://jqwidgets.com/license/
 
         _updaterowdetailsvisibility: function () {
             if (this.rowdetails) {
-                for (i = 0; i < this._rowdetailselementscache.length; i++) {
+                for (var i = 0; i < this._rowdetailselementscache.length; i++) {
                     $(this._rowdetailselementscache[i]).css('display', 'none');
                 }
             }
@@ -3688,7 +4294,7 @@ License: http://jqwidgets.com/license/
             var haspinnedcolumn = false;
 
             if (!hasgroups) {
-                for (j = 0; j < columnstart + columnend; j++) {
+                for (var j = 0; j < columnstart + columnend; j++) {
                     var rendercolumn = j;
 
                     if (!haspinnedcolumn) {
@@ -3725,6 +4331,9 @@ License: http://jqwidgets.com/license/
         },
 
         _rendervisualrows: function () {
+            if (!this.virtualsizeinfo)
+                return;
+
             var vScrollInstance = this.vScrollInstance;
             var hScrollInstance = this.hScrollInstance;
             var verticalscrollvalue = vScrollInstance.value;
@@ -3796,6 +4405,11 @@ License: http://jqwidgets.com/license/
             var groupslength = this.groupable ? this.groups.length : 0;
             var cellclass = this.toTP('jqx-grid-cell');
 
+            if (this.autoheight && this.pageable) {
+                if (!this.groupable) {
+                    pagesize = this.dataview.pagesize;
+                }
+            }
             if (hasgroups) {
                 cellclass = ' ' + this.toTP('jqx-grid-group-cell');
             }
@@ -3860,6 +4474,7 @@ License: http://jqwidgets.com/license/
                         if (renderrow.hidden)
                             continue;
 
+                        this._endboundindex = this._startboundindex + renderindex;
                         if (renderindex == 0) {
                             var topoffset = Math.abs(top - renderrow.top);
                             // this.table.css('top', -topoffset);
@@ -3868,22 +4483,21 @@ License: http://jqwidgets.com/license/
                         }
 
                         var tablerow = this.table[0].rows[renderedrows];
-                        var $tablerow = $(tablerow);
                         if (!tablerow) continue;
                         if (parseInt(tablerow.style.height) != renderrow.height) {
-                            $tablerow.height(renderrow.height);
+                            tablerow.style.height = parseInt(renderrow.height) + 'px';
                         }
 
                         renderedheight += renderrow.height;
                         var hasdetails = this.rowdetails && renderrow.rowdetails;
                         var showdetails = !renderrow.rowdetailshidden;
                         if (hasdetails && showdetails) {
-                            $tablerow.height(renderrow.height - renderrow.rowdetailsheight);
+                            tablerow.style.height = parseInt(renderrow.height - renderrow.rowdetailsheight) + 'px';
                             pagesize++;
                         }
 
                         var selected = this._isrowselected(enableselection, renderrow);
-                        for (cindex = hcolumnstart; cindex < hcolumnend; cindex++) {
+                        for (var cindex = hcolumnstart; cindex < hcolumnend; cindex++) {
                             var rendercolumn = cindex;
                             this._rendervisualcell(rendercellfunc, cellclass, selected, hasdetails, showdetails, hasgroups, groupslength, tablerow, renderrow, rendercolumn, renderedrows);
                         }
@@ -3892,7 +4506,7 @@ License: http://jqwidgets.com/license/
                             for (var cindex = hcolumnstart; cindex < hcolumnend; cindex++) {
                                 rowheight = Math.max(rowheight, 8 + $(tablerow.cells[cindex].firstChild).height());
                             }
-                            $tablerow.height(rowheight);
+                            tablerow.style.height = parseInt(rowheight) + 'px';
                             this.heights[this._startboundindex + renderindex] = rowheight;
                             if (hasdetails && showdetails) {
                                 rowheight += renderrow.rowdetailsheight;
@@ -3901,7 +4515,7 @@ License: http://jqwidgets.com/license/
                         }
 
                         if (renderrow.group != undefined && this._rendergroup) {
-                            this._rendergroup(groupslength, tablerow, renderrow, columnstart, columnend, renderedrows);
+                            this._rendergroup(groupslength, tablerow, renderrow, columnstart, columnend, renderedrows, tablewidth);
                         }
 
                         this.visiblerows[this.visiblerows.length] = renderrow;
@@ -3937,7 +4551,7 @@ License: http://jqwidgets.com/license/
                         var oldmax = vScrollInstance.max;
                         var newmax = lastpageview.top + lastpageview.height - tableheight; //tabletop + this.visiblerows[this.visiblerows.length - 1].top + tableheight; //offset + vScrollInstance.max - emptyheight;
                         if (this.hScrollBar.css('visibility') == 'visible') {
-                            newmax += this.scrollbarsize + 15;
+                            newmax += this.scrollbarsize + 20;
                         }
 
                         if (oldmax != newmax) {
@@ -3971,6 +4585,10 @@ License: http://jqwidgets.com/license/
         },
 
         _renderemptyrow: function () {
+            if (this._loading) {
+                return;
+            }
+
             if (this.dataview.records.length == 0 && this.showemptyrow) {
                 var rendered = false;
                 if (this.table && this.table.length > 0 && this.table[0].rows && this.table[0].rows.length > 0) {
@@ -3979,12 +4597,20 @@ License: http://jqwidgets.com/license/
                         var cell = $(row.cells[i]);
                         if (cell.css('display') != 'none' && !rendered) {
                             rendered = true;
+                            cell[0].innerHTML = "";
                             var span = $("<span style='white-space: nowrap; float: left; margin-left: 50%; position: relative;'></span>");
                             span.text(this.gridlocalization.emptydatastring);
                             cell.append(span);
                             span.css('left', -span.width() / 2);
                             span.css('top', this._gettableheight() / 2 - span.height() / 2);
-                            $(row).height(this._gettableheight());
+                            if ($.browser.msie && $.browser.version < 8) {
+                                span.css('margin-left', '0px');
+                                span.css('left', this.host.width() / 2 - span.width() / 2);
+                            }
+                            var top = Math.abs(parseInt(this.table[0].style.top));
+                            if (isNaN(top)) top = 0;
+                            $(row).height(this._gettableheight() + top);
+                            cell.css('margin-left', '0px');
                             cell.width(this.host.width());
                         }
                         cell.addClass(this.toThemeProperty('jqx-grid-empty-cell'));
@@ -4048,7 +4674,7 @@ License: http://jqwidgets.com/license/
                 else selected = false;
             }
 
-            var issortcolumn = this.showsortcolumnbackground && this.sortcolumn && column.datafield == this.sortcolumn;
+            var issortcolumn = this.showsortcolumnbackground && this.sortcolumn && column.displayfield == this.sortcolumn;
             if (issortcolumn) {
                 classname += ' ' + this.toTP('jqx-grid-cell-sort');
             }
@@ -4134,7 +4760,11 @@ License: http://jqwidgets.com/license/
         },
 
         _rendercell: function (me, column, row, value, tablecell) {
-            var lookupkey = row.uniqueid + "_" + column.visibleindex;
+            var lookupkey = value + "_" + column.visibleindex;
+            //row.uniqueid + "_" + column.visibleindex;
+            if (column.columntype == "number" || column.cellsrenderer != null) {
+                var lookupkey = row.uniqueid + "_" + column.visibleindex;
+            }
 
             if (me.editcell && me.editrow == undefined) {
                 if (me.editcell.row == row.boundindex && me.editcell.column == column.datafield) {
@@ -4160,10 +4790,11 @@ License: http://jqwidgets.com/license/
             }
 
             var cachedcell = me._cellscache[lookupkey];
+            //   var ie10 = me._browser == undefined ? me._isIE10() : me._browser;
             if (cachedcell) {
                 if (column.columntype == "checkbox") {
                     if (me.host.jqxCheckBox) {
-                        if (value == "") value = false;
+                        if (value === "") value = null;
                         var empty = tablecell.innerHTML.toString().length == 0;
                         if (tablecell.checkbox && !me.groupable && !empty) {
                             tablecell.checkboxrow = row.boundindex;
@@ -4174,11 +4805,22 @@ License: http://jqwidgets.com/license/
                             if (value == 0) value = false;
                             if (value == 'true') value = true;
                             if (value == 'false') value = false;
+                            if (value == null && !column.threestatecheckbox) {
+                                value = false;
+                            }
+
                             tablecell.checkbox.jqxCheckBox('_setState', value);
                         }
                         else {
                             me._rendercheckboxcell(me, tablecell, column, row, value);
                         }
+                        if (column.cellsrenderer != null) {
+                            var newvalue = column.cellsrenderer(row.boundindex, column.datafield, value, defaultcellsrenderer, column.getcolumnproperties());
+                            if (newvalue != undefined) {
+                                tablecell.innerHTML = newvalue;
+                            }
+                        }
+
                         return;
                     }
                 }
@@ -4187,6 +4829,12 @@ License: http://jqwidgets.com/license/
                         if (value == "") value = false;
                         if (column.cellsrenderer != null) {
                             value = column.cellsrenderer(row.boundindex, column.datafield, value, defaultcellsrenderer, column.getcolumnproperties());
+                        }
+
+                        if (tablecell.innerHTML == "") {
+                            tablecell.buttonrow = row.boundindex;
+                            tablecell.button = null;
+                            me._renderbuttoncell(me, tablecell, column, row, value);
                         }
 
                         if (tablecell.button && !me.groupable) {
@@ -4201,6 +4849,22 @@ License: http://jqwidgets.com/license/
                 }
 
                 var cellelement = cachedcell.element;
+
+                if (tablecell.firstChild != undefined && tablecell.firstChild.firstChild != undefined && tablecell.firstChild.firstChild.nodeValue != value) {
+                    var nodeValue = tablecell.firstChild.firstChild.nodeValue;
+                    if (column.cellsrenderer || column.cellsformat != '' || !nodeValue) {
+                        tablecell.innerHTML = cellelement;
+                    }
+                    else {
+                        tablecell.firstChild.firstChild.nodeValue = value;
+                    }
+
+                    if (me.enabletooltips) {
+                        tablecell.title = cachedcell.title;
+                    }
+                    return;
+                }
+
                 if (tablecell.innerHTML != cellelement) {
                     tablecell.innerHTML = cellelement;
                     if (me.enabletooltips) {
@@ -4254,16 +4918,30 @@ License: http://jqwidgets.com/license/
                 cellelement = defaultcellsrenderer;
             }
 
-            tablecell.innerHTML = cellelement;
+            if (me.WinJS) {
+                WinJS.Utilities.setInnerHTMLUnsafe(tablecell, cellelement);
+            }
+            else {
+                tablecell.innerHTML = cellelement;
+            }
             me._cellscache[lookupkey] = { element: tablecell.innerHTML, title: value };
-
             return true;
+        },
+
+        _isIE10: function () {
+            if (this._browser == undefined) {
+                var browserInfo = $.jqx.utilities.getBrowser();
+                if (browserInfo.browser == 'msie' && parseInt(browserInfo.version) > 9)
+                    this._browser = true;
+                else this._browser = false;
+            }
+            return this._browser;
         },
 
         _rendercheckboxcell: function (me, tablecell, column, row, value) {
             if (me.host.jqxCheckBox) {
                 var $tablecell = $(tablecell);
-                if (value == "") value = false;
+                if (value === "") value = null;
                 if (value == "1") value = true;
                 if (value == "0") value = false;
                 if (value == 1) value = true;
@@ -4273,7 +4951,7 @@ License: http://jqwidgets.com/license/
 
                 if ($tablecell.find('.jqx-checkbox').length == 0) {
                     tablecell.innerHTML = '<div tabIndex=0 style="opacity: 0.99; position: absolute; top: 50%; left: 50%; margin-top: -7px; margin-left: -10px;"></div>';
-                    $(tablecell.firstChild).jqxCheckBox({ enableContainerClick: false, animationShowDelay: 0, animationHideDelay: 0, locked: true, theme: me.theme, checked: value });
+                    $(tablecell.firstChild).jqxCheckBox({ hasInput: false, hasThreeStates: column.threestatecheckbox, enableContainerClick: false, animationShowDelay: 0, animationHideDelay: 0, locked: true, theme: me.theme, checked: value });
 
                     if (this.editable && column.editable) {
                         $(tablecell.firstChild).jqxCheckBox({ locked: false });
@@ -4282,13 +4960,21 @@ License: http://jqwidgets.com/license/
                     tablecell.checkbox = $(tablecell.firstChild);
                     tablecell.checkboxrow = row.boundindex;
                     var checkinstance = $.data(tablecell.firstChild, "jqxCheckBox").instance;
-                    checkinstance.updated = function (event, checked) {
+                    checkinstance.updated = function (event, checked, oldchecked) {
                         if (column.editable) {
                             var totalrows = me.table[0].rows.length;
                             var columnindex = me._getcolumnindex(column.datafield);
 
                             if (me.editrow == undefined) {
-                                for (currentCheckbox = 0; currentCheckbox < totalrows; currentCheckbox++) {
+                                if (column.cellbeginedit) {
+                                    var beginEdit = column.cellbeginedit(row.boundindex, column.datafield, column.columntype, !checked);
+                                    if (beginEdit == false) {
+                                        me.setcellvalue(tablecell.checkboxrow, column.datafield, !checked, true);
+                                        return;
+                                    }
+                                }
+
+                                for (var currentCheckbox = 0; currentCheckbox < totalrows; currentCheckbox++) {
                                     var checkboxcell = me.table[0].rows[currentCheckbox].cells[columnindex].firstChild;
                                     $(checkboxcell).jqxCheckBox('destroy');
                                 }
@@ -4297,9 +4983,9 @@ License: http://jqwidgets.com/license/
                                     me.setcellvalue(tablecell.checkboxrow, column.datafield, !checked, true);
                                 }
                                 else {
-                                    me._raiseEvent(17, { rowindex: tablecell.checkboxrow, datafield: column.datafield, value: !checked, columntype: column.columntype });
+                                    me._raiseEvent(17, { rowindex: tablecell.checkboxrow, datafield: column.datafield, value: oldchecked, columntype: column.columntype });
                                     me.setcellvalue(tablecell.checkboxrow, column.datafield, checked, true);
-                                    me._raiseEvent(18, { rowindex: tablecell.checkboxrow, datafield: column.datafield, oldvalue: !checked, value: checked, columntype: column.columntype });
+                                    me._raiseEvent(18, { rowindex: tablecell.checkboxrow, datafield: column.datafield, oldvalue: oldchecked, value: checked, columntype: column.columntype });
                                 }
                             }
                         }
@@ -4423,15 +5109,39 @@ License: http://jqwidgets.com/license/
                 return this._columnsbydatafield[datafield];
 
             var columnname = datafield;
+            var column = null;
             $.each(this.columns.records, function () {
                 if (this.datafield == datafield) {
                     columnname = this.text;
+                    column = this;
                     return false;
                 }
             });
 
-            this._columnsbydatafield[datafield] = columnname;
-            return columnname;
+            this._columnsbydatafield[datafield] = { label: columnname, column: column };
+            return this._columnsbydatafield[datafield];
+        },
+
+        _getcolumnbydatafield: function (datafield) {
+            if (this.__columnsbydatafield == undefined) {
+                this.__columnsbydatafield = new Array();
+            }
+
+            if (this.__columnsbydatafield[datafield])
+                return this.__columnsbydatafield[datafield];
+
+            var columnname = datafield;
+            var column = null;
+            $.each(this.columns.records, function () {
+                if (this.datafield == datafield || this.displayfield == datafield) {
+                    columnname = this.text;
+                    column = this;
+                    return false;
+                }
+            });
+
+            this.__columnsbydatafield[datafield] = column;
+            return this.__columnsbydatafield[datafield];
         },
 
         isscrollingvertically: function () {
@@ -4536,27 +5246,38 @@ License: http://jqwidgets.com/license/
                 }
             }
 
-            if (this.enableellipsis) {
-                if (column.cellsalign == 'center')
-                    return '<div style="text-overflow: ellipsis; overflow: hidden; padding-bottom: 2px; text-align: center; margin-top: 5px;">' + value + '</div>';
-
-                if (column.cellsalign == 'left')
-                    return '<div style="overflow: hidden; text-overflow: ellipsis; padding-bottom: 2px; text-align: left; margin: 4px;">' + value + '</div>';
-
-                if (column.cellsalign == 'right')
-                    return '<div style="overflow: hidden;  text-overflow: ellipsis; padding-bottom: 2px; text-align: right; margin: 4px;">' + value + '</div>';
+            var margin = '4px';
+            if (this.rowsheight != 25) {
+                margin = (this.rowsheight / 2 - this._cellheight / 2) + 'px';
             }
 
-            if (column.cellsalign == 'center')
-                return '<div style="text-align: center; margin-top: 5px;">' + value + '</div>';
+            if (this.enableellipsis) {
+                if (column.cellsalign == 'center') {
+                    margin = '5px';
+                    return '<div style="text-overflow: ellipsis; overflow: hidden; padding-bottom: 2px; text-align: center; margin-top: ' + margin + ';">' + value + '</div>';
+                }
 
-            return '<span style="margin: 4px; float: ' + column.cellsalign + ';">' + value + '</span>';
+                if (column.cellsalign == 'left')
+                    return '<div style="overflow: hidden; text-overflow: ellipsis; padding-bottom: 2px; text-align: left; margin-right: 2px; margin-left: 4px; margin-top: ' + margin + ';">' + value + '</div>';
+
+                if (column.cellsalign == 'right')
+                    return '<div style="overflow: hidden;  text-overflow: ellipsis; padding-bottom: 2px; text-align: right; margin-right: 2px; margin-left: 4px; margin-top: ' + margin + ';">' + value + '</div>';
+            }
+
+            if (column.cellsalign == 'center') {
+                margin = '5px';
+                return '<div style="text-align: center; margin-top: ' + margin + ';">' + value + '</div>';
+            }
+            return '<span style="margin-left: 4px; margin-right: 2px; margin-top: ' + margin + '; float: ' + column.cellsalign + ';">' + value + '</span>';
         },
 
         _getcellvalue: function (column, row) {
             var value = null;
             value = row.bounddata[column.datafield];
-
+            if (column.displayfield != null) {
+                value = row.bounddata[column.displayfield];
+            }
+ 
             if (value == null) value = "";
             return value;
         },
@@ -4622,7 +5343,7 @@ License: http://jqwidgets.com/license/
             return { value: value, row: row, column: datafield, width: width, height: height, hidden: hidden, pinned: pinned, align: align, format: format };
         },
 
-        setcellvalue: function (row, datafield, value, refresh) {
+        setcellvalue: function (row, datafield, value, refresh, sync) {
             if (row == null || datafield == null)
                 return false;
 
@@ -4644,26 +5365,78 @@ License: http://jqwidgets.com/license/
 
             var oldvalue = "";
             if (datarow != null && datarow[datafield] != value) {
+                var column = this._getcolumnbydatafield(datafield);
+                var type = 'string';
+                var datafields = this.source.datafields || ((this.source._source) ? this.source._source.datafields : null);
+
+                if (datafields) {
+                    var foundType = "";
+                    $.each(datafields, function () {
+                        if (this.name == column.displayfield) {
+                            if (this.type) {
+                                foundType = this.type;
+                            }
+                            return false;
+                        }
+                    });
+                    if (foundType)
+                        type = foundType;
+                }
+
                 oldvalue = datarow[datafield];
-                if ($.jqx.dataFormat.isNumber(oldvalue)) {
+                if ($.jqx.dataFormat.isNumber(oldvalue) || type == 'number' || type == 'float' || type == 'int' || type == 'decimal' && type != 'date') {
                     value = new Number(value);
                     value = parseFloat(value);
                     if (isNaN(value)) {
                         value = 0;
                     }
                 }
+                else if ($.jqx.dataFormat.isDate(oldvalue) || type == 'date') {
+                    if (value != '') {
+                        var tmp = value;
+                        tmp = new Date(tmp);
+                        if (tmp != 'Invalid Date' && tmp != null) {
+                            value = tmp;
+                        }
+                        else if (tmp == 'Invalid Date') {
+                            tmp = new Date();
+                            value = tmp;
+                        }
+                    }
+                }
 
                 datarow[datafield] = value;
                 var renderedrow = this.getrenderedrowdata(rowindex, true);
                 renderedrow[datafield] = value;
+
+                if (value != null && value.label != null) {
+                    var column = this._getcolumnbydatafield(datafield);
+                    datarow[column.displayfield] = value.label;
+                    renderedrow[column.displayfield] = value.label;
+                    datarow[datafield] = value.value;
+                    renderedrow[datafield] = value.value;
+                    value = value.label;
+                }
+
                 if (hasfilter) {
-                    datasourcerowindex = datarow.dataindex;
-                    this.dataview.cachedrecords[datarow.dataindex][datafield] = value;
+                    if (datarow.dataindex != undefined) {
+                        datasourcerowindex = datarow.dataindex;
+                        this.dataview.cachedrecords[datarow.dataindex][datafield] = value;
+                    }
                 }
             }
             else {
                 this._renderrows(this.virtualsizeinfo);
                 return false;
+            }
+
+            if (this.source && this.source._knockoutdatasource && !this._updateFromAdapter && this.autokoupdates) {
+                if (this.source._source._localdata) {
+                    var olditem = this.source._source._localdata()[rowindex];
+                    this.source.suspendKO = true;
+                    this.source._source._localdata.replace(olditem, $.extend({}, datarow));
+                    this.source.suspendKO = false;
+                }
             }
 
             if (this.sortcolumn && this.dataview.sortby) {
@@ -4674,8 +5447,24 @@ License: http://jqwidgets.com/license/
 
             this._cellscache = new Array();
 
-            if (this.source.updaterow) {
-                this.source.updaterow(datasourcerowindex, datarow);
+            if (this.source.updaterow && (sync == undefined || sync == true)) {
+                var success = false;
+                var me = this;
+                var result = function (param) {
+                    if (false == param) {
+                        me.setcellvalue(row, datafield, oldvalue, true, false);
+                    }
+                }
+                try {
+                    var rowid = this.getrowid(datasourcerowindex);
+                    success = this.source.updaterow(rowid, datarow, result);
+                    if (success == undefined) success = true;
+                }
+                catch (error) {
+                    success = false;
+                    me.setcellvalue(row, datafield, oldvalue, true, false);
+                    return;
+                }
             }
 
             //     var rowid = this.getrowid(row);
@@ -4697,18 +5486,42 @@ License: http://jqwidgets.com/license/
                 }
 
                 if (hasfilter) {
+                    if (this.autoheight) this.prerenderrequired = true;
                     this.dataview.refresh();
-                    this.rendergridcontent(true, true);
+                    this.rendergridcontent(true, false);
                     updatepager();
+                    this._renderrows(this.virtualsizeinfo);
                 }
                 else if (this.sortcolumn) {
+                    if (this.autoheight) this.prerenderrequired = true;
                     this.dataview.reloaddata();
-                    this.rendergridcontent(true, true);
+                    this.rendergridcontent(true, false);
                     updatepager();
+                    this._renderrows(this.virtualsizeinfo);
                 }
                 else if (this.groupable && this.groups.length > 0) {
-                    this.dataview.updateview();
-                    this._renderrows(this.virtualsizeinfo);
+                    if (this.autoheight) this.prerenderrequired = true;
+                    if (this.pageable) {
+                        if (this.groups.indexOf(datafield) != -1) {
+                            this.dataview.refresh();
+                            this.render(true, true, false, false);
+                        }
+                        else {
+                            this._pagescache = new Array();
+                            this._cellscache = new Array();
+                            this.dataview.updateview();
+                            this._renderrows(this.virtualsizeinfo);
+                        }
+                    }
+                    else {
+                        this._pagescache = new Array();
+                        this._cellscache = new Array();
+                        this.dataview.updateview();
+                        this._renderrows(this.virtualsizeinfo);
+
+                        //     this.dataview.updateview();
+                   //     this._renderrows(this.virtualsizeinfo);
+                    }
                     //                    this.dataview.reloaddata();
                     //                    this.render(true, true, false, false);
                     //                    var datarow = this.getrowdata(row);
@@ -4724,6 +5537,12 @@ License: http://jqwidgets.com/license/
             this.vScrollInstance.setPosition(scrollvalue);
             if (this.showaggregates && this._updatecolumnsaggregates) {
                 this._updatecolumnsaggregates();
+            }
+            if (this.showfilterrow && this.filterable && this.filterrow) {
+                var filtertype = this.getcolumn(datafield).filtertype;
+                if (filtertype == 'list' || filtertype == 'checkedlist') {
+                    this._updatelistfilters(true);
+                }
             }
 
             this._raiseEvent(19, { rowindex: row, datafield: datafield, newvalue: value, oldvalue: oldvalue });
@@ -4807,6 +5626,39 @@ License: http://jqwidgets.com/license/
             return null;
         },
 
+        getloadedrows: function () {
+            return this.dataview.loadedrecords;
+        },
+
+        getvisiblerows: function () {
+            if (this.virtualmode) {
+                return this.dataview.loadedrecords
+            }
+
+            if (this.pageable) {
+                var rows = [];
+                for (var i = 0; i < this.dataview.pagesize; i++) {
+                    var record = this.dataview.loadedrecords[i + (this.dataview.pagesize * this.dataview.pagenum)];
+                    if (record == undefined) break;
+                    rows.push(record);
+                }
+                return rows;
+            }
+            else {
+                if (this._startboundindex != undefined && this._endboundindex != undefined) {
+                    var rows = [];
+                    for (var i = this._startboundindex; i <= this._endboundindex; i++) {
+                        var record = this.dataview.loadedrecords[i];
+                        if (record == undefined) break;
+                        rows.push(record);
+                    }
+                    return rows;
+                }
+            }
+
+            return this.dataview.loadedrecords;
+        },
+
         // get row id.
         getrowid: function (boundindex) {
             if (boundindex == undefined)
@@ -4831,36 +5683,25 @@ License: http://jqwidgets.com/license/
                     if (record)
                         return record.uid;
                 }
+                if (this.dataview.filters.length > 0 && this.filterable) {
+                    if (this.groupable && this.groups.length > 0) {
+                        var visibleindex = this.getrowvisibleindex(boundindex);
+                        var record = this.dataview.cachedrecords[visibleindex];
+                    }
+                    else {
+                        var record = this.dataview.cachedrecords[boundindex];
+                    }
+                    if (record)
+                        if (record.uid != null) {
+                            return record.uid;
+                        }
+
+                    record.uid = this.dataview.getid(this.dataview.source.id, record, boundindex);
+                    return record.uid;
+                }
             }
 
             return null;
-        },
-
-        // update row.
-        updaterow: function (rowid, rowdata, refresh) {
-            if (rowid != undefined && rowdata != undefined) {
-                var success = this.dataview.updaterow(rowid, rowdata);
-                var scrollvalue = this.vScrollInstance.value;
-                if (refresh == undefined || refresh == true) {
-                    this._datachanged = true;
-                    if (this._updating == undefined || this._updating == false) {
-                        this._updateGridData();
-                    }
-                }
-
-                if (this.source.updaterow) {
-                    this.source.updaterow(rowid, rowdata);
-                }
-                if (this.showaggregates && this._updatecolumnsaggregates) {
-                    this._updatecolumnsaggregates();
-                }
-
-                this.vScrollInstance.setPosition(scrollvalue);
-
-                return success;
-            }
-
-            return false;
         },
 
         _updateGridData: function () {
@@ -4881,28 +5722,137 @@ License: http://jqwidgets.com/license/
                 this._pagescache = new Array();
                 this._renderrows(this.virtualsizeinfo);
             }
+            if (this.showfilterrow && this.filterable && this.filterrow) {
+                this._updatelistfilters();
+            }
+        },
+
+        // update row.
+        updaterow: function (rowid, rowdata, refresh) {
+            if (rowid != undefined && rowdata != undefined) {
+                var me = this;
+                var success = false;
+                me._datachanged = true;
+                var applychanges = function (me, rowid, rowdata) {
+                    var success = false;
+                    if (!$.isArray(rowid)) {
+                        success = me.dataview.updaterow(rowid, rowdata);
+                    }
+                    else {
+                        $.each(rowid, function (index, value) {
+                            success = me.dataview.updaterow(this, rowdata[index], false);
+                        });
+                        me.dataview.refresh();
+                    }
+
+                    var scrollvalue = me.vScrollInstance.value;
+                    if (refresh == undefined || refresh == true) {
+                        if (me._updating == undefined || me._updating == false) {
+                            me._updateGridData();
+                        }
+                    }
+
+                    if (me.showaggregates && me._updatecolumnsaggregates) {
+                        me._updatecolumnsaggregates();
+                    }
+
+                    if (me.source && me.source._knockoutdatasource && !me._updateFromAdapter && me.autokoupdates) {
+                        if (me.source._source._localdata) {
+                            var record = me.dataview.recordsbyid["id" + rowid];
+                            var recordindex = me.dataview.records.indexOf(record);
+                            var olditem = me.source._source._localdata()[recordindex];
+                            me.source.suspendKO = true;
+                            me.source._source._localdata.replace(olditem, $.extend({}, record));
+                            me.source.suspendKO = false;
+                        }
+                    }
+
+                    me.vScrollInstance.setPosition(scrollvalue);
+                    return success;
+                }
+
+                if (this.source.updaterow) {
+                    var done = function (result) {
+                        if (result == true || result == undefined) {
+                            applychanges(me, rowid, rowdata);
+                        }
+                    }
+                    try {
+                        success = this.source.updaterow(rowid, rowdata, done);
+                        if (success == undefined) success = true;
+                    }
+                    catch (error) {
+                        success = false;
+                    }
+                }
+                else {
+                    success = applychanges(me, rowid, rowdata);
+                }
+
+                return success;
+            }
+
+            return false;
         },
 
         // delete row.
         deleterow: function (rowid) {
             if (rowid != undefined) {
                 this._datachanged = true;
-                var scrollvalue = this.vScrollInstance.value;
-                var success = this.dataview.deleterow(rowid);
-                if (this._updating == undefined || this._updating == false) {
-                    this._render(true, true, false, false);
-                    if (this.vScrollBar.css('visibility') != 'visible') {
-                        this._arrange();
-                        this._updatecolumnwidths();
-                        this._updatecellwidths();
-                        this._renderrows(this.virtualsizeinfo);
+                var success = false;
+                var me = this;
+
+                var applychanges = function (me, rowid) {
+                    var success = false;
+                    var scrollvalue = me.vScrollInstance.value;
+                    if (!$.isArray(rowid)) {
+                        var success = me.dataview.deleterow(rowid);
                     }
-                }
-                if (this.source.deleterow) {
-                    this.source.deleterow(rowid);
+                    else {
+                        $.each(rowid, function () {
+                            success = me.dataview.deleterow(this, false);
+                        });
+                        me.dataview.refresh();
+                    }
+                    if (me._updating == undefined || me._updating == false) {
+                        me._render(true, true, false, false);
+                        if (me.vScrollBar.css('visibility') != 'visible') {
+                            me._arrange();
+                            me._updatecolumnwidths();
+                            me._updatecellwidths();
+                            me._renderrows(me.virtualsizeinfo);
+                        }
+                    }
+
+                    if (me.source && me.source._knockoutdatasource && !me._updateFromAdapter && me.autokoupdates) {
+                        if (me.source._source._localdata) {
+                            me.source.suspendKO = true;
+                            me.source._source._localdata.pop(rowdata);
+                            me.source.suspendKO = false;
+                        }
+                    }
+
+                    me.vScrollInstance.setPosition(scrollvalue);
+                    return success;
                 }
 
-                this.vScrollInstance.setPosition(scrollvalue);
+                if (this.source.deleterow) {
+                    var done = function (result) {
+                        if (result == true || result == undefined) {
+                            applychanges(me, rowid);
+                        }
+                    }
+                    try {
+                        this.source.deleterow(rowid, done);
+                        if (success == undefined) success = true;
+                    }
+                    catch (error) {
+                        success = false;
+                    }
+                }
+                else {
+                    success = applychanges(me, rowid);
+                }
                 return success;
             }
 
@@ -4917,17 +5867,61 @@ License: http://jqwidgets.com/license/
                     position = 'last';
                 }
 
-                var scrollvalue = this.vScrollInstance.value;
-                var success = this.dataview.addrow(rowid, rowdata, position);
-                if (this._updating == undefined || this._updating == false) {
-                    this._render(true, true, false, false);
+                var success = false;
+                var me = this;
+                var applychanges = function (me, rowid, rowdata, position) {
+                    var scrollvalue = me.vScrollInstance.value;
+                    var success = false;
+                    if (!$.isArray(rowdata)) {
+                        success = me.dataview.addrow(rowid, rowdata, position);
+                    }
+                    else {
+                        $.each(rowdata, function (index, value) {
+                            var id = null;
+                            if (rowid != null && rowid[index] != null) id = rowid[index];
+                            success = me.dataview.addrow(id, this, position, false);
+                        });
+                        me.dataview.refresh();
+                    }
+
+                    if (me._updating == undefined || me._updating == false) {
+                        me._render(true, true, false, false);
+                    }
+
+                    if (me.source && me.source._knockoutdatasource && !me._updateFromAdapter && me.autokoupdates) {
+                        if (me.source._source._localdata) {
+                            me.source.suspendKO = true;
+                            me.source._source._localdata.push(rowdata);
+                            me.source.suspendKO = false;
+                        }
+                    }
+
+                    me.vScrollInstance.setPosition(scrollvalue);
+                    return success;
                 }
 
                 if (this.source.addrow) {
-                    this.source.addrow(rowdata.uid, rowdata, position);
+                    var done = function (result) {
+                        if (result == true || result == undefined) {
+                            applychanges(me, rowid, rowdata, position);
+                        }
+                    }
+                    // undefined or true response code are handled as success. false or exception as failure
+                    try {
+                        success = this.source.addrow(rowdata.uid, rowdata, position, done);
+                        if (success == undefined) success = true;
+                    }
+                    catch (e) {
+                        success = false;
+                    }
+                    if (success == false) {
+                        return false;
+                    }
+                }
+                else {
+                    applychanges(this, rowid, rowdata, position);
                 }
 
-                this.vScrollInstance.setPosition(scrollvalue);
                 return success;
             }
             return false;
@@ -5127,6 +6121,10 @@ License: http://jqwidgets.com/license/
                     this.table.css('opacity', '0.99');
                 }
 
+                if (navigator.userAgent.indexOf('Safari') != -1) {
+                    this.table.css('opacity', '0.99');
+                }
+
                 var isIE7 = $.browser.msie && $.browser.version < 8;
                 if (isIE7) {
                     this.host.attr("hideFocus", "true");
@@ -5203,6 +6201,10 @@ License: http://jqwidgets.com/license/
                 }
 
                 this._updatescrollbarsafterrowsprerender();
+                // callback when the rendering is complete.
+                if (this.rendered) {
+                    this.rendered('rows');
+                }
             }
         },
 
@@ -5268,11 +6270,12 @@ License: http://jqwidgets.com/license/
 
             if (this.autoheight && this.virtualsizeinfo) {
                 if (this.pageable && this.gotopage) {
-                    var newheight = this.host.height() - this._gettableheight();
+                    //var newheight = this.host.height() - this._gettableheight();
+                    var newheight = 0;
                     height = newheight + (this._pageviews[0] ? this._pageviews[0].height : 0);
-                    if (height == 0) {
-                        height = baseheight();
-                    }
+                    //if (height == 0) {
+                    height += baseheight();
+                    //}
                     if (this.showemptyrow && this.dataview.totalrecords == 0) {
                         height += this.rowsheight;
                     }
@@ -5482,7 +6485,7 @@ License: http://jqwidgets.com/license/
             if (this.table != null) {
                 var offset = 0;
                 if (this.vScrollBar[0].style.visibility == 'visible') {
-                    offset = this.scrollbarsize + 3;
+                    offset = this.scrollbarsize + 4;
                 }
 
                 var newoffset = offset + this.table.width() - this.host.width();
@@ -5529,7 +6532,6 @@ License: http://jqwidgets.com/license/
                     this.removeHandler(this.gridmenu, 'closed');
                     this.removeHandler(this.gridmenu, 'itemclick');
                     this.gridmenu.jqxMenu('destroy');
-                    this.gridmenu.remove();
                 }
             }
 
@@ -5554,6 +6556,9 @@ License: http://jqwidgets.com/license/
             this.removeHandler($(document), 'mousedown.resize' + this.element.id);
             this.removeHandler($(document), 'mouseup.resize' + this.element.id);
             this.removeHandler($(document), 'mousemove.resize' + this.element.id);
+            this.removeHandler($(document), 'mousedown.reorder' + this.element.id);
+            this.removeHandler($(document), 'mouseup.reorder' + this.element.id);
+            this.removeHandler($(document), 'mousemove.reorder' + this.element.id);
 
             this.columns = new $.jqx.collection(this.element);
             this.rows = new $.jqx.collection(this.element);
@@ -5564,8 +6569,18 @@ License: http://jqwidgets.com/license/
             this._removeHandlers();
             this._clearcaches();
             this.dataview._clearcaches();
+            this.content.removeClass();
             this.content.remove();
+            this.content = null;
+            this.vScrollBar = null;
+            this.hScrollBar = null;
+            if (this.gridmenu)
+                this.gridmenu = null;
+
+            this.host.removeData();
+            this.host.removeClass();
             this.host.remove();
+            this.host = null;
         },
 
         _initializeColumns: function () {
@@ -5603,9 +6618,14 @@ License: http://jqwidgets.com/license/
             }
 
             $.each(this.columns, function (index) {
-                var column = new jqxGridColumn(me, this);
-                column.visibleindex = visibleindex++;
-                _columns.add(column);
+                if (me.columns[index] != undefined) {
+                    var column = new jqxGridColumn(me, this);
+                    column.visibleindex = visibleindex++;
+                    if (this.dataField != undefined) {
+                        this.datafield = this.dataField;
+                    }
+                    _columns.add(column);
+                }
             });
 
             this.columns = _columns;
@@ -5638,7 +6658,7 @@ License: http://jqwidgets.com/license/
 
         // performs mouse wheel.
         wheel: function (event, self) {
-            if (self.autoheight) {
+            if (self.autoheight && self.hScrollBar.css('visibility') != 'visible') {
                 event.returnValue = true;
                 return true;
             }
@@ -5688,14 +6708,38 @@ License: http://jqwidgets.com/license/
         },
 
         _handleDelta: function (delta) {
-            var oldvalue = this.vScrollInstance.value;
-            if (delta < 0) {
-                this.scrollDown();
+            if (this.vScrollBar.css('visibility') != 'hidden') {
+                var oldvalue = this.vScrollInstance.value;
+                if (delta < 0) {
+                    this.scrollDown();
+                }
+                else this.scrollUp();
+                var newvalue = this.vScrollInstance.value;
+                if (oldvalue != newvalue) {
+                    return true;
+                }
             }
-            else this.scrollUp();
-            var newvalue = this.vScrollInstance.value;
-            if (oldvalue != newvalue) {
-                return true;
+            else if (this.hScrollBar.css('visibility') != 'hidden') {
+                var oldvalue = this.hScrollInstance.value;
+                if (delta > 0) {
+                    if (this.hScrollInstance.value > 2 * this.horizontalscrollbarstep) {
+                        this.hScrollInstance.setPosition(this.hScrollInstance.value - 2 * this.horizontalscrollbarstep);
+                    }
+                    else {
+                        this.hScrollInstance.setPosition(0);
+                    }
+                }
+                else {
+                    if (this.hScrollInstance.value < this.hScrollInstance.max) {
+                        this.hScrollInstance.setPosition(this.hScrollInstance.value + 2 * this.horizontalscrollbarstep);
+                    }
+                    else this.hScrollInstance.setPosition(this.hScrollInstance.max);
+
+                }
+                var newvalue = this.hScrollInstance.value;
+                if (oldvalue != newvalue) {
+                    return true;
+                }
             }
 
             return false;
@@ -5729,13 +6773,18 @@ License: http://jqwidgets.com/license/
             var self = this;
             this.removeHandler(this.vScrollBar, 'valuechanged');
             this.removeHandler(this.hScrollBar, 'valuechanged');
+            this.vScrollInstance.valuechanged = null;
+            this.hScrollInstance.valuechanged = null;
+
             var eventname = 'mousedown';
 
             if (this.isTouchDevice()) {
                 eventname = 'touchend';
             }
+
+            this.removeHandler(this.host, 'dblclick');
             this.removeHandler(this.host, eventname);
-            this.removeHandler(this.content, 'mousemove');
+            this.removeHandler(this.content, 'mousemove', this._mousemovefunc);
             this.removeHandler(this.host, 'mouseleave');
             this.removeHandler(this.content, 'mouseenter');
             this.removeHandler(this.content, 'mouseleave');
@@ -5745,57 +6794,114 @@ License: http://jqwidgets.com/license/
             this.removeHandler($(document), 'keydown.edit' + this.element.id);
             this.removeHandler($(document), 'mousemove.selection' + this.element.id);
             this.removeHandler($(document), 'mouseup.selection' + this.element.id);
+            if (this.editable) {
+                this.removeHandler($(document), 'mousedown.gridedit' + this.element.id);
+            }
         },
 
         _addHandlers: function () {
             var self = this;
-
-            this.addHandler(this.host, 'dragstart.' + this.element.id, function (event) {
-                return false;
-            });
-
             var isTouch = self.isTouchDevice();
 
-            this.vScrollInstance.valuechanged = function (params) {
-                self._closemenu();
-                self._renderrows(self.virtualsizeinfo);
-                if (!self.pageable && !self.groupable && self.dataview.virtualmode) {
-                    if (self.loadondemandupdate) {
-                        clearTimeout(self.loadondemandupdate);
-                    }
+            if (!isTouch) {
+                this.addHandler(this.host, 'dragstart.' + this.element.id, function (event) {
+                    return false;
+                });
+            }
 
-                    self.loadondemandupdate = setTimeout(function () {
-                        self.loadondemand = true;
-                        self._renderrows(self.virtualsizeinfo);
-                    }, 100);
-                }
-                if (isTouch) {
-                    self._lastScroll = new Date();
+            if (this.editable) {
+                this.addHandler($(document), 'mousedown.gridedit' + this.element.id, function (event) {
+                    if (self.editable && self.begincelledit) {
+                        if (self.editcell) {
+                            if (!self.vScrollInstance.isScrolling() && !self.vScrollInstance.isScrolling()) {
+                                var gridOffset = self.host.offset();
+                                var gridWidth = self.host.width();
+                                var gridHeight = self.host.height();
+                                var close = false;
+                                if (event.pageY < gridOffset.top || event.pageY > gridOffset.top + gridHeight)
+                                    close = true;
+                                if (event.pageX < gridOffset.left || event.pageX > gridOffset.left + gridWidth)
+                                    close = true;
+                                
+                                if (close) {
+                                    var stopPropagation = false;
+                                    switch (self.editcell.columntype) {
+                                        case "datetimeinput":
+                                            if (self.editcell.editor.jqxDateTimeInput && self.editcell.editor.jqxDateTimeInput('container')[0].style.display == 'block') {
+                                                self.editcell.editor.jqxDateTimeInput('close');
+                                            }
+                                            break;
+                                        case "combobox":
+                                            if (self.editcell.editor.jqxComboBox && self.editcell.editor.jqxComboBox('container')[0].style.display == 'block') {
+                                                self.editcell.editor.jqxComboBox('close');
+                                            }
+                                            break;
+                                        case "dropdownlist":
+                                            if (self.editcell.editor.jqxDropDownList && self.editcell.editor.jqxDropDownList('container')[0].style.display == 'block') {
+                                                self.editcell.editor.jqxDropDownList('close');
+                                            }
+                                            break;
+                                    }
+                                    
+                                    self.endcelledit(self.editcell.row, self.editcell.column, false, true);
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            this.vScrollInstance.valuechanged = function (params) {
+                if (self.virtualsizeinfo) {
+                    self._closemenu();
+                    self._renderrows(self.virtualsizeinfo);
+                    if (!self.pageable && !self.groupable && self.dataview.virtualmode) {
+                        if (self.loadondemandupdate) {
+                            clearTimeout(self.loadondemandupdate);
+                        }
+
+                        self.loadondemandupdate = setTimeout(function () {
+                            self.loadondemand = true;
+                            self._renderrows(self.virtualsizeinfo);
+                        }, 100);
+                    }
+                    if (isTouch) {
+                        self._lastScroll = new Date();
+                    }
                 }
             }
 
             this.hScrollInstance.valuechanged = function (params) {
-                self._closemenu();
-                var doHScroll = function () {
-                    self._renderhorizontalscroll();
-                    self._renderrows(self.virtualsizeinfo);
-                    if (self.editcell && !self.editrow) {
-                        if (self._showcelleditor && self.editcell.editing) {
-                            self._showcelleditor(self.editcell.row, self.getcolumn(self.editcell.column), self.editcell.element, self.editcell.init);
+                if (self.virtualsizeinfo) {
+                    self._closemenu();
+                    var doHScroll = function () {
+                        self._renderhorizontalscroll();
+                        self._renderrows(self.virtualsizeinfo);
+                        if (self.editcell && !self.editrow) {
+                            if (self._showcelleditor && self.editcell.editing) {
+                                self._showcelleditor(self.editcell.row, self.getcolumn(self.editcell.column), self.editcell.element, self.editcell.init);
+                            }
                         }
                     }
-                }
-
-                if ($.browser.mozilla || (navigator && navigator.userAgent.indexOf('Safari') != -1)) {
-                    setTimeout(function () {
+                    var ie10 = self._browser == undefined ? self._isIE10() : self._browser;
+                    if (navigator && navigator.userAgent.indexOf('Safari') != -1) {
+                        if (this._hScrollTimer) clearTimeout(this._hScrollTimer);
+                        this._hScrollTimer = setTimeout(function () {
+                            doHScroll();
+                        }, 1);
+                    }
+                    else if ($.browser.mozilla || ie10) {
+                        if (this._hScrollTimer) clearTimeout(this._hScrollTimer);
+                        this._hScrollTimer = setTimeout(function () {
+                            doHScroll();
+                        }, 0.01);
+                    }
+                    else {
                         doHScroll();
-                    }, 1);
-                }
-                else {
-                    doHScroll();
-                }
-                if (isTouch) {
-                    self._lastScroll = new Date();
+                    }
+                    if (isTouch) {
+                        self._lastScroll = new Date();
+                    }
                 }
             }
 
@@ -5811,7 +6917,7 @@ License: http://jqwidgets.com/license/
 
             var eventname = 'mousedown';
 
-            if (this.isTouchDevice()) {
+            if (isTouch) {
                 eventname = 'touchend';
             }
 
@@ -5831,7 +6937,7 @@ License: http://jqwidgets.com/license/
                 self._mousedown = new Date();
                 var result = self._handlemousedown(event, self);
                 if (self.isNestedGrid) {
-                    if (!self.resizablecolumn) {
+                    if (!self.resizablecolumn && !self.columnsreorder) {
                         event.stopPropagation();
                     }
                 }
@@ -5840,142 +6946,187 @@ License: http://jqwidgets.com/license/
                 return result;
             });
 
-            this.addHandler(this.host, 'dblclick', function (event) {
-                if (self.editable && self.begincelledit && self.editmode == 'dblclick') {
-                    self._handledblclick(event, self);
-                }
-                self.mousecaptured = false;
-                return true;
-            });
+            if (!isTouch) {
+                this.addHandler(this.host, 'dblclick', function (event) {
+                    if (self.editable && self.begincelledit && self.editmode == 'dblclick') {
+                        self._handledblclick(event, self);
+                    }
+                    else if ($.browser.msie && $.browser.version < 9) {
+                        var result = self._handlemousedown(event, self);
+                    }
 
-            this.addHandler(this.content, 'mousemove', function (event) {
-                if (self._handlemousemove) {
-                    return self._handlemousemove(event, self);
-                }
-            });
+                    self.mousecaptured = false;
+                    self._lastmousedown = new Date();
+                    return true;
+                });
 
-            this.addHandler($(document), 'mousemove.selection' + this.element.id, function (event) {
-                if (self._handlemousemoveselection) {
-                    return self._handlemousemoveselection(event, self);
-                }
-            });
-
-            this.addHandler($(document), 'mouseup.selection' + this.element.id, function (event) {
-                if (self._handlemouseupselection) {
-                    self._handlemouseupselection(event, self);
-                }
-            });
-
-            if (window.frameElement) {
-                if (window.top != null) {
-                    var eventHandle = function (event) {
-                        if (self._handlemouseupselection) {
-                            self._handlemouseupselection(event, self);
-                        }
+                this._mousemovefunc = function (event) {
+                    if (self._handlemousemove) {
+                        return self._handlemousemove(event, self);
                     };
+                }
 
-                    if (window.top.document.addEventListener) {
-                        window.top.document.addEventListener('mouseup', eventHandle, false);
+                this.addHandler(this.content, 'mousemove', this._mousemovefunc);
 
-                    } else if (window.top.document.attachEvent) {
-                        window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                this.addHandler($(document), 'mousemove.selection' + this.element.id, function (event) {
+                    if (self._handlemousemoveselection) {
+                        return self._handlemousemoveselection(event, self);
+                    }
+                });
+
+                this.addHandler($(document), 'mouseup.selection' + this.element.id, function (event) {
+                    if (self._handlemouseupselection) {
+                        self._handlemouseupselection(event, self);
+                    }
+                });
+            }
+
+            if (document.referrer != "" || window.frameElement) {
+                if (window.top != null) {
+                    if (window.parent && document.referrer) {
+                        parentLocation = document.referrer;
+                    }
+
+                    if (parentLocation.indexOf(document.location.host) != -1) {
+                        var eventHandle = function (event) {
+                            if (self._handlemouseupselection) {
+                                self._handlemouseupselection(event, self);
+                            }
+                        };
+
+                        if (window.top.document.addEventListener) {
+                            window.top.document.addEventListener('mouseup', eventHandle, false);
+
+                        } else if (window.top.document.attachEvent) {
+                            window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                        }
                     }
                 }
             }
 
             this.focused = false;
-            this.addHandler(this.content, 'mouseenter', function (event) {
-                self.focused = true;
-            });
 
-            this.addHandler(this.content, 'mouseleave', function (event) {
-                if (self._handlemousemove) {
-                    if (self.enablehover) {
-                        self._clearhoverstyle();
-                    }
-                }
-                self.focused = false;
-            });
-
-            this.addHandler(this.content, 'selectstart.' + this.element.id, function (event) {
-                if (!self.editcell && !self.showfilterrow) {
-                    return false;
-                }
-            });
-
-            this.addHandler($(document), 'keydown.edit' + this.element.id, function (event) {
-                var key = event.charCode ? event.charCode : event.keyCode ? event.keyCode : 0;
-                if (self.editable && self.editcell) {
-                    if (key == 13 || key == 27) {
-                        if (self._handleeditkeydown) {
-                            result = self._handleeditkeydown(event, self);
+            if (!isTouch) {
+                this.addHandler(this.content, 'mouseenter', function (event) {
+                    self.focused = true;
+                    if (self._overlayElement) {
+                        if (self.vScrollInstance.isScrolling() || self.hScrollInstance.isScrolling()) {
+                            self._overlayElement[0].style.visibility = 'visible';
+                        }
+                        else {
+                            self._overlayElement[0].style.visibility = 'hidden';
                         }
                     }
-                }
-                if (key == 27) {
-                    self.mousecaptured = false;
-                    if (self.selectionarea.css('visibility') == 'visible') {
-                        self.selectionarea.css('visibility', 'hidden');
+                });
+
+                this.addHandler(this.content, 'mouseleave', function (event) {
+                    if (self._handlemousemove) {
+                        if (self.enablehover) {
+                            self._clearhoverstyle();
+                        }
                     }
-                }
-                if ($.browser.msie && self.focused && !self.isNestedGrid) {
-                    var result = true;
+                    if (self._overlayElement) {
+                        self._overlayElement[0].style.visibility = 'hidden';
+                    }
+                    self.focused = false;
+                });
+
+                this.addHandler(this.content, 'selectstart.' + this.element.id, function (event) {
+                    if (self.enablebrowserselection) {
+                        return true;
+                    }
+
+                    if (!self.editcell && !self.showfilterrow) {
+                        return false;
+                    }
+                });
+
+                this.addHandler($(document), 'keydown.edit' + this.element.id, function (event) {
                     var key = event.charCode ? event.charCode : event.keyCode ? event.keyCode : 0;
-                    if (!self.editcell && self.editable && self.editmode != 'programmatic') {
+                    if (self.handlekeyboardnavigation) {
+                        var handled = self.handlekeyboardnavigation(event);
+                        if (handled == true)
+                            return false;
+                    }
+
+                    if (self.editable && self.editcell) {
+                        if (key == 13 || key == 27) {
+                            if (self._handleeditkeydown) {
+                                result = self._handleeditkeydown(event, self);
+                            }
+                        }
+                    }
+                    if (key == 27) {
+                        self.mousecaptured = false;
+                        if (self.selectionarea.css('visibility') == 'visible') {
+                            self.selectionarea.css('visibility', 'hidden');
+                        }
+                    }
+                    if ($.browser.msie && self.focused && !self.isNestedGrid) {
+                        var result = true;
+                        var key = event.charCode ? event.charCode : event.keyCode ? event.keyCode : 0;
+                        if (!self.editcell && self.editable && self.editmode != 'programmatic') {
+                            if (self._handleeditkeydown) {
+                                result = self._handleeditkeydown(event, self);
+                            }
+                        }
+                        if (result && self.keyboardnavigation && self._handlekeydown) {
+                            result = self._handlekeydown(event, self);
+                            if (!result) {
+                                if (event.preventDefault)
+                                    event.preventDefault();
+
+                                if (event.stopPropagation != undefined) {
+                                    event.stopPropagation();
+                                }
+                            }
+                            return result;
+                        }
+                    }
+
+                    return true;
+                });
+
+                this.addHandler(this.host, 'keydown.edit' + this.element.id, function (event) {
+                    var result = true;
+                    if (self.handlekeyboardnavigation) {
+                        var handled = self.handlekeyboardnavigation(event);
+                        if (handled == true) {
+                            return false;
+                        }
+                    }
+
+                    if (self.editable && self.editmode != 'programmatic') {
                         if (self._handleeditkeydown) {
                             result = self._handleeditkeydown(event, self);
                         }
                     }
-                    if (result && self.keyboardnavigation && self._handlekeydown) {
-                        result = self._handlekeydown(event, self);
-                        if (!result) {
-                            if (event.preventDefault)
-                                event.preventDefault();
-
-                            if (event.stopPropagation != undefined) {
+                    if (!$.browser.msie) {
+                        if (result && self.keyboardnavigation && self._handlekeydown) {
+                            result = self._handlekeydown(event, self);
+                            if (self.isNestedGrid) {
                                 event.stopPropagation();
                             }
                         }
-                        return result;
                     }
-                }
-
-                return true;
-            });
-
-            this.addHandler(this.host, 'keydown.edit' + this.element.id, function (event) {
-                var result = true;
-
-                if (self.editable && self.editmode != 'programmatic') {
-                    if (self._handleeditkeydown) {
-                        result = self._handleeditkeydown(event, self);
-                    }
-                }
-                if (!$.browser.msie) {
-                    if (result && self.keyboardnavigation && self._handlekeydown) {
-                        result = self._handlekeydown(event, self);
-                        if (self.isNestedGrid) {
+                    else if (self.isNestedGrid) {
+                        if (result && self.keyboardnavigation && self._handlekeydown) {
+                            result = self._handlekeydown(event, self);
                             event.stopPropagation();
                         }
                     }
-                }
-                else if (self.isNestedGrid) {
-                    if (result && self.keyboardnavigation && self._handlekeydown) {
-                        result = self._handlekeydown(event, self);
-                        event.stopPropagation();
-                    }
-                }
 
-                if (!result) {
-                    if (event.preventDefault)
-                        event.preventDefault();
+                    if (!result) {
+                        if (event.preventDefault)
+                            event.preventDefault();
 
-                    if (event.stopPropagation != undefined) {
-                        event.stopPropagation();
+                        if (event.stopPropagation != undefined) {
+                            event.stopPropagation();
+                        }
                     }
-                }
-                return result;
-            });
+                    return result;
+                });
+            }
         },
 
         _hittestrow: function (x, y) {
@@ -6036,6 +7187,9 @@ License: http://jqwidgets.com/license/
             groupsheaderheight += toolbarheight;
 
             var hostoffset = this.host.offset();
+            if (this.hasTransform) {
+                hostoffset = $.jqx.utilities.getOffset(this.host);
+            }
             var x = left - hostoffset.left;
             var y = top - columnheaderheight - hostoffset.top - groupsheaderheight;
             var rowinfo = this._hittestrow(x, y);
@@ -6046,7 +7200,7 @@ License: http://jqwidgets.com/license/
             if (this.dataview && this.dataview.records.length == 0) {
                 var rows = this.table[0].rows;
                 var rowY = 0;
-                for (i = 0; i < rows.length; i++) {
+                for (var i = 0; i < rows.length; i++) {
                     if (y >= rowY && y < rowY + this.rowsheight) {
                         tablerow = rows[i];
                         break;
@@ -6064,7 +7218,7 @@ License: http://jqwidgets.com/license/
             var cellindex = 0;
             var groupslength = this.groupable ? this.groups.length : 0;
 
-            for (i = 0; i < tablerow.cells.length; i++) {
+            for (var i = 0; i < tablerow.cells.length; i++) {
                 var columnleft = parseInt($(this.columnsrow[0].cells[i]).css('left'));
                 var left = columnleft - horizontalscrollvalue;
                 if (self.columns.records[i].pinned) {
@@ -6124,8 +7278,17 @@ License: http://jqwidgets.com/license/
             groupsheaderheight += toolbarheight;
 
             var hostoffset = this.host.offset();
+            if (this.hasTransform) {
+                hostoffset = $.jqx.utilities.getOffset(this.host);
+            }
+
+            var bodyOffset = this._getBodyOffset();
+            hostoffset.left += bodyOffset.left;
+            hostoffset.top += bodyOffset.top;
+
             var left = parseInt(event.pageX);
             var top = parseInt(event.pageY);
+
             if (this.isTouchDevice()) {
                 var touches = self.getTouches(event);
                 var touch = touches[0];
@@ -6149,11 +7312,17 @@ License: http://jqwidgets.com/license/
             var index = rowinfo.index;
             var targetclassname = event.target.className;
             var tablerow = this.table[0].rows[index];
-            if (tablerow == null)
+            if (tablerow == null) {
+                if (self.editable && self.begincelledit) {
+                    if (self.editcell) {
+                        self.endcelledit(self.editcell.row, self.editcell.column, false, true);
+                    }
+                }
                 return true;
+            }
 
             self.mousecaptured = true;
-            self.mousecaptureposition = { left: event.pageX, top: event.pageY - groupsheaderheight };
+            self.mousecaptureposition = { left: event.pageX, top: event.pageY - groupsheaderheight, clickedrow: tablerow };
 
             var hScrollInstance = this.hScrollInstance;
             var horizontalscrollvalue = hScrollInstance.value;
@@ -6175,6 +7344,7 @@ License: http://jqwidgets.com/license/
                 var right = left + $(this.columnsrow[0].cells[i]).width();
                 if (right >= x && x >= left) {
                     cellindex = i;
+                    self.mousecaptureposition.clickedcell = i;
                     break;
                 }
             }
@@ -6197,6 +7367,9 @@ License: http://jqwidgets.com/license/
                             _triggeredEvents = true;
                             this._clickedrowindex = -1;
                             this._clickedcolumn = null;
+                            if (event.isPropagationStopped && event.isPropagationStopped()) {
+                                return false;
+                            }
                         }
                     }
                 }
@@ -6208,6 +7381,18 @@ License: http://jqwidgets.com/license/
                     this._clickedcolumn = column.datafield;
                 }
                 // end of handle double clicks.
+
+                var browserInfo = $.jqx.utilities.getBrowser();
+                if (browserInfo.browser == 'msie' && parseInt(browserInfo.version) <= 7) {
+                    if (cellindex == 0 && this.rowdetails) {
+                        targetclassname = "jqx-grid-group-collapse";
+                    }
+                    if (groupslength > 0) {
+                        if (cellindex <= groupslength) {
+                            targetclassname = "jqx-grid-group-collapse";
+                        }
+                    }
+                }
 
                 if (targetclassname.indexOf('jqx-grid-group-expand') != -1 || targetclassname.indexOf('jqx-grid-group-collapse') != -1) {
                     if (groupslength > 0 && cellindex < groupslength && this._togglegroupstate) {
@@ -6224,7 +7409,7 @@ License: http://jqwidgets.com/license/
                         var oldselectedrowindexes = this.selectedrowindexes.slice(0);
                         var isoldcell = false;
                         if (self.selectionmode != 'none' && this._selectrowwithmouse) {
-                            if (self.selectionmode == 'multiplecellsextended' || self.selectionmode == 'multiplerowsextended') {
+                            if (self.selectionmode == 'multiplecellsadvanced' || self.selectionmode == 'multiplecellsextended' || self.selectionmode == 'multiplerowsextended') {
                                 if (!event.ctrlKey && !event.shiftKey) {
                                     self.selectedrowindexes = new Array();
                                     self.selectedcells = new Array();
@@ -6251,10 +7436,15 @@ License: http://jqwidgets.com/license/
                             }
                             self._oldselectedcell = self.selectedcell;
                         }
+                        if (self.autosavestate) {
+                            if (self.savestate) self.savestate();
+                        }
                         if (self.editable && self.begincelledit) {
                             var canselect = self.editmode == 'click' || (isoldcell && self.editmode == 'selectedcell');
                             if (self.selectionmode.indexOf('cell') == -1) {
-                                canselect = true;
+                                if (self.editmode != 'dblclick') {
+                                    canselect = true;
+                                }
                             }
 
                             if (canselect) {
@@ -6284,31 +7474,72 @@ License: http://jqwidgets.com/license/
         _rowPropertyChanged: function (row, key, oldvalue, value) {
         },
 
+        _serializeObject: function(data)
+        {
+            if (data == null) return "";
+            var str = "";
+            $.each(data, function (index) {
+                var val = this;
+                if (index > 0) str += ', ';
+                str += "[";
+                var m = 0;
+                for (obj in val) {
+                    if (m > 0) str += ', ';
+                    str += '{' + obj + ":" + val[obj] + '}';
+                    m++;
+                }
+                str += "]";
+            });
+            return str;
+        },
+
         propertyChangedHandler: function (object, key, oldvalue, value) {
             if (this.isInitialized == undefined || this.isInitialized == false)
                 return;
 
             switch (key) {
+                case "showdefaultloadelement":
+                    object._builddataloadelement();
+                    break;
+                case "showfiltermenuitems":
+                case "showsortmenuitems":
+                case "showgroupmenuitems":
+                    object._initmenu();
+                    break;
                 case "touchmode":
-                    object._removeHandlers();
-                    object.touchDevice = null;
-                    object.vScrollBar.jqxScrollBar({ touchMode: value });
-                    object.hScrollBar.jqxScrollBar({ touchMode: value });
-                    object._updateTouchScrolling();
-                    object._addHandlers();
+                    if (oldvalue != value) {
+                        object._removeHandlers();
+                        object.touchDevice = null;
+                        object.vScrollBar.jqxScrollBar({ touchMode: value });
+                        object.hScrollBar.jqxScrollBar({ touchMode: value });
+                        object._updateTouchScrolling();
+                        object._addHandlers();
+                    }
                     break;
                 case "autoshowcolumnsmenubutton":
-                    object._rendercolumnheaders();
+                    if (oldvalue != value) {
+                        object._rendercolumnheaders();
+                    }
                     break;
                 case "rendergridrows":
-                    object.updatebounddata();
+                    if (oldvalue != value) {
+                        object.updatebounddata();
+                    }
                     break;
                 case "editmode":
-                    object._removeHandlers();
-                    object._addHandlers();
+                    if (oldvalue != value) {
+                        object._removeHandlers();
+                        object._addHandlers();
+                    }
                     break;
                 case "source":
                     object.virtualsizeinfo = null;
+                    if (object.showfilterrow && object.filterable && object.filterrow) {
+                        object.filterrow.remove();
+                        object._filterrowcache = new Array();
+                        object.filterrow = null;
+                    }
+
                     object.updatebounddata();
                     if (object.virtualmode && !object._loading) {
                         object.loadondemand = true;
@@ -6328,55 +7559,62 @@ License: http://jqwidgets.com/license/
                     }
                     break;
                 case "showgroupsheader":
-                    object.rendergridcontent();
+                    if (oldvalue != value) {
+                        object.rendergridcontent();
+                    }
                     break;
                 case "theme":
-                    if (object.pager) {
-                        object.pager.removeClass();
-                        object.pager.addClass(object.toTP('jqx-grid-pager'));
-                        object.pager.addClass(object.toTP('jqx-widget-header'));
-                        if (object.pageable && object._updatepagertheme) {
-                            object._updatepagertheme();
+                    if (value != oldvalue) {
+                        if (object.pager) {
+                            object.pager.removeClass();
+                            object.pager.addClass(object.toTP('jqx-grid-pager'));
+                            object.pager.addClass(object.toTP('jqx-widget-header'));
+                            if (object.pageable && object._updatepagertheme) {
+                                object._updatepagertheme();
+                            }
                         }
-                    }
-                    if (object.groupsheader) {
-                        object.groupsheader.removeClass();
-                        object.groupsheader.addClass(object.toTP('jqx-grid-groups-header'));
-                        object.groupsheader.addClass(object.toTP('jqx-widget-header'));
-                    }
-                    object.toolbar.removeClass();
-                    object.toolbar.addClass(object.toTP('jqx-grid-toolbar'));
-                    object.toolbar.addClass(object.toTP('jqx-widget-header'));
-                    object.statusbar.removeClass();
-                    object.statusbar.addClass(object.toTP('jqx-grid-statusbar'));
-                    object.statusbar.addClass(object.toTP('jqx-widget-content'));
-                    object.vScrollBar.jqxScrollBar({ theme: object.theme });
-                    object.hScrollBar.jqxScrollBar({ theme: object.theme });
-                    object.host.removeClass();
-                    object.host.addClass(object.toTP('jqx-grid'));
-                    object.host.addClass(object.toTP('jqx-reset'));
-                    object.host.addClass(object.toTP('jqx-rc-all'));
-                    object.host.addClass(object.toTP('jqx-widget'));
-                    object.host.addClass(object.toTP('jqx-widget-content'));
-                    object.bottomRight.removeClass();
-                    object.bottomRight.addClass(object.toTP('jqx-grid-bottomright'));
-                    object.toolbar.addClass(object.toTP('jqx-grid-toolbar'));
-                    object.toolbar.addClass(object.toTP('jqx-widget-header'));
-                    object.statusbar.addClass(object.toTP('jqx-grid-statusbar'));
-                    object.statusbar.addClass(object.toTP('jqx-widget-header'));
+                        if (object.groupsheader) {
+                            object.groupsheader.removeClass();
+                            object.groupsheader.addClass(object.toTP('jqx-grid-groups-header'));
+                            object.groupsheader.addClass(object.toTP('jqx-widget-header'));
+                        }
+                        object.toolbar.removeClass();
+                        object.toolbar.addClass(object.toTP('jqx-grid-toolbar'));
+                        object.toolbar.addClass(object.toTP('jqx-widget-header'));
+                        object.statusbar.removeClass();
+                        object.statusbar.addClass(object.toTP('jqx-grid-statusbar'));
+                        object.statusbar.addClass(object.toTP('jqx-widget-content'));
+                        object.vScrollBar.jqxScrollBar({ theme: object.theme });
+                        object.hScrollBar.jqxScrollBar({ theme: object.theme });
+                        object.host.removeClass();
+                        object.host.addClass(object.toTP('jqx-grid'));
+                        object.host.addClass(object.toTP('jqx-reset'));
+                        object.host.addClass(object.toTP('jqx-rc-all'));
+                        object.host.addClass(object.toTP('jqx-widget'));
+                        object.host.addClass(object.toTP('jqx-widget-content'));
+                        object.bottomRight.removeClass();
+                        object.bottomRight.addClass(object.toTP('jqx-grid-bottomright'));
+                        object.toolbar.addClass(object.toTP('jqx-grid-toolbar'));
+                        object.toolbar.addClass(object.toTP('jqx-widget-header'));
+                        object.statusbar.addClass(object.toTP('jqx-grid-statusbar'));
+                        object.statusbar.addClass(object.toTP('jqx-widget-header'));
 
-                    object.render();
-
+                        object.render();
+                    }
                     break;
                 case "showtoolbar":
                 case "toolbarheight":
-                    object._arrange();
-                    object.refresh();
+                    if (oldvalue != value) {
+                        object._arrange();
+                        object.refresh();
+                    }
                     break;
                 case "showstatusbar":
                 case "statusbarheight":
-                    object._arrange();
-                    object.refresh();
+                    if (oldvalue != value) {
+                        object._arrange();
+                        object.refresh();
+                    }
                     break;
                 case "filterable":
                     if (oldvalue != value) {
@@ -6387,13 +7625,19 @@ License: http://jqwidgets.com/license/
                 case "showfiltercolumnbackground":
                 case "showpinnedcolumnbackground":
                 case "showsortcolumnbackground":
-                    object.rendergridcontent();
+                    if (oldvalue != value) {
+                        object.rendergridcontent();
+                    }
                     break;
                 case "showrowdetailscolumn":
-                    object.render();
+                    if (oldvalue != value) {
+                        object.render();
+                    }
                     break;
                 case "scrollbarsize":
-                    object._arrange();
+                    if (oldvalue != value) {
+                        object._arrange();
+                    }
                     break;
                 case "width":
                     if (oldvalue != value) {
@@ -6420,6 +7664,10 @@ License: http://jqwidgets.com/license/
                                     if (parseInt(value) >= parseInt(oldvalue)) {
                                         object.prerenderrequired = true;
                                     }
+                                    if (value != null && value.toString().indexOf('%') != -1) {
+                                        object.prerenderrequired = true;
+                                    }
+
                                     object._renderrows(object.virtualsizeinfo);
                                 }
                                 else {
@@ -6443,12 +7691,16 @@ License: http://jqwidgets.com/license/
                 case "altrows":
                 case "altstart":
                 case "altstep":
-                    object._renderrows(object.virtualsizeinfo);
+                    if (oldvalue != value) {
+                        object._renderrows(object.virtualsizeinfo);
+                    }
                     break;
                 case "groupsheaderheight":
-                    object._arrange();
-                    if (object._initgroupsheader) {
-                        object._initgroupsheader();
+                    if (oldvalue != value) {
+                        object._arrange();
+                        if (object._initgroupsheader) {
+                            object._initgroupsheader();
+                        }
                     }
                     break;
                 case "pagerheight":
@@ -6477,9 +7729,11 @@ License: http://jqwidgets.com/license/
                     }
                     break;
                 case "virtualmode":
-                    object.dataview.virtualmode = object.virtualmode;
-                    object.dataview.refresh(false);
-                    object._render(false, false, false);
+                    if (oldvalue != value) {
+                        object.dataview.virtualmode = object.virtualmode;
+                        object.dataview.refresh(false);
+                        object._render(false, false, false);
+                    }
                     break;
                 case "columnsmenu":
                     if (oldvalue != value) {
@@ -6487,8 +7741,11 @@ License: http://jqwidgets.com/license/
                     }
                     break;
                 case "columns":
-                    object._columns = null;
-                    object.render();
+                    if (object._serializeObject(object._cachedcolumns) !== object._serializeObject(value)) {
+                        object._columns = null;
+                        object._filterrowcache = [];
+                        object.render();
+                    }
                     break;
                 case "autoheight":
                     if (oldvalue != value) {
@@ -6527,13 +7784,25 @@ License: http://jqwidgets.com/license/
                     }
                     break;
                 case "groups":
-                    object.updatebounddata();
+                    if (object._serializeObject(oldvalue) !== object._serializeObject(value)) {
+                        object.dataview.groups = value;
+                        object._refreshdataview();
+                        object._render(true, true, true, false);
+                    }
                     break;
                 case "groupable":
-                    object.dataview.groupable = object.groupable;
-                    object.dataview.pagenum = 0;
-                    object.dataview.refresh(false);
-                    object._render(false, false, true);
+                    if (oldvalue != value) {
+                        object.dataview.groupable = object.groupable;
+                        object.dataview.pagenum = 0;
+                        object.dataview.refresh(false);
+                        object._render(false, false, true);
+                    }
+                    break;
+                case "disabled":
+                    if (value) {
+                        object.host.addClass(object.toThemeProperty('jqx-fill-state-disabled'));
+                    }
+                    else object.host.removeClass(object.toThemeProperty('jqx-fill-state-disabled'));
                     break;
             }
         }
@@ -6542,6 +7811,7 @@ License: http://jqwidgets.com/license/
     function jqxGridColumn(owner, data) {
         this.owner = owner;
         this.datafield = null;
+        this.displayfield = null;
         this.text = '';
         this.sortable = true;
         this.hideable = true;
@@ -6552,6 +7822,7 @@ License: http://jqwidgets.com/license/
         this.cellsrenderer = null;
         // checkbox column, number column, button column
         this.checkchange = null,
+        this.threestatecheckbox = false;
         this.buttonclick = null,
         this.columntype = null;
         this.cellsformat = "";
@@ -6564,6 +7835,7 @@ License: http://jqwidgets.com/license/
         this.visibleindex = -1;
         this.filterable = true;
         this.filter = null;
+        this.filteritems = [];
         this.resizable = true;
         this.initeditor = null;
         this.createeditor = null;
@@ -6572,16 +7844,20 @@ License: http://jqwidgets.com/license/
         this.cellclassname = '';
         this.cellendedit = null;
         this.cellbeginedit = null;
+        this.cellvaluechanging = null;
         this.aggregates = null;
         this.aggregatesrenderer = null;
         this.menu = true;
         this.createfilterwidget = null;
         this.filtertype = 'default';
+        this.filtercondition = null;
         this.rendered = null;
         this.exportable = true;
+        this.draggable = true;
 
         this.getcolumnproperties = function () {
-            return { sortable: this.sortable, hideable: this.hideable,
+            return {
+                sortable: this.sortable, hideable: this.hideable,
                 hidden: this.hidden, groupable: this.groupable, width: this.width, align: this.align, editable: this.editable,
                 minwidth: this.minwidth, maxwidth: this.maxwidth, resizable: this.resizable, datafield: this.datafield, text: this.text,
                 exportable: this.exportable, cellsalign: this.cellsalign, pinned: this.pinned, cellsformat: this.cellsformat, columntype: this.columntype, classname: this.classname, cellclassname: this.cellclassname, menu: this.menu
@@ -6603,6 +7879,12 @@ License: http://jqwidgets.com/license/
                 }
                 if (data.dataField != undefined) {
                     this.datafield = data.dataField;
+                }
+                if (data.displayfield != undefined) {
+                    this.displayfield = data.displayfield;
+                }
+                else {
+                    this.displayfield = this.datafield;
                 }
                 if (data.text != undefined) {
                     this.text = data.text;
@@ -6712,6 +7994,21 @@ License: http://jqwidgets.com/license/
                 if (data.exportable != undefined) {
                     this.exportable = data.exportable;
                 }
+                if (data.filteritems != undefined) {
+                    this.filteritems = data.filteritems;
+                }
+                if (data.cellvaluechanging != undefined) {
+                    this.cellvaluechanging = data.cellvaluechanging;
+                }
+                if (data.draggable != undefined) {
+                    this.draggable = data.draggable;
+                }
+                if (data.filtercondition != undefined) {
+                    this.filtercondition = data.filtercondition;
+                }
+                if (data.threestatecheckbox != undefined) {
+                    this.threestatecheckbox = data.threestatecheckbox;
+                }
             }
         }
 
@@ -6792,10 +8089,10 @@ License: http://jqwidgets.com/license/
         }
 
         this._raiseEvent = function (args) {
-            var event = new jQuery.Event('collectionchanged');
-            event.owner = this.owner;
-            event.args = args;
-            $(this.owner).trigger(event);
+            //var event = new jQuery.Event('collectionchanged');
+            //event.owner = this.owner;
+            //event.args = args;
+            //$(this.owner).trigger(event);
         }
 
         this.clear = function () {
@@ -6968,6 +8265,10 @@ License: http://jqwidgets.com/license/
             }
 
             var initadapter = function (me) {
+                dataadapter.recordids = [];
+                dataadapter.records = new Array();
+                dataadapter.cachedrecords = new Array();
+                dataadapter.originaldata = new Array();
                 dataadapter._options.virtualmode = me.virtualmode;
                 dataadapter._options.totalrecords = me.totalrecords;
                 dataadapter._options.originaldata = me.originaldata;
@@ -7059,7 +8360,35 @@ License: http://jqwidgets.com/license/
                         dataadapter.dataBind();
 
                         var updateFunc = function (changeType) {
-                            updatefromadapter(me);
+                            if (changeType != undefined) {
+                                var dataItem = dataadapter._changedrecords[0];
+                                if (dataItem) {
+                                    $.each(dataadapter._changedrecords, function () {
+                                        var index = this.index;
+                                        var item = this.record;
+
+                                        me.grid._updateFromAdapter = true;
+                                        switch (changeType) {
+                                            case "update":
+                                                var id = me.grid.getrowid(index);
+                                                me.grid.updaterow(id, item);
+                                                me.grid._updateFromAdapter = false;
+                                                return;
+                                            case "add":
+                                                me.grid.addrow(null, item);
+                                                me.grid._updateFromAdapter = false;
+                                                return;
+                                            case "remove":
+                                                var id = me.grid.getrowid(index);
+                                                me.grid.deleterow(id);
+                                                me.grid._updateFromAdapter = false;
+                                                return;
+                                        }
+                                    });
+                                }
+                            }
+
+                            updatefromadapter(me, changeType);
 
                             if (changeType == 'updateData') {
                                 me.refresh();
@@ -7120,12 +8449,12 @@ License: http://jqwidgets.com/license/
                         var filterdata = {};
                         var filterslength = 0;
                         var postdata = {};
-                        for (x = 0; x < this.filters.length; x++) {
+                        for (var x = 0; x < this.filters.length; x++) {
                             var filterdatafield = this.filters[x].datafield;
                             var filter = this.filters[x].filter;
                             var filters = filter.getfilters();
                             postdata[filterdatafield + "operator"] = filter.operator;
-                            for (m = 0; m < filters.length; m++) {
+                            for (var m = 0; m < filters.length; m++) {
                                 filters[m].datafield = filterdatafield;
                                 postdata["filtervalue" + filterslength] = filters[m].value;
                                 postdata["filtercondition" + filterslength] = filters[m].condition;
@@ -7138,7 +8467,7 @@ License: http://jqwidgets.com/license/
 
                         postdata.filterscount = filterslength;
                         postdata.groupscount = me.groups.length;
-                        for (x = 0; x < me.groups.length; x++) {
+                        for (var x = 0; x < me.groups.length; x++) {
                             postdata["group" + x] = me.groups[x];
                         }
 
@@ -7285,12 +8614,14 @@ License: http://jqwidgets.com/license/
             this.loadedgroups = new Array();
             this.loadedgroupsByKey = new Array();
             this._cachegrouppages = new Array();
-            this.recordsbyid = {};
+            this.recordsbyid = new Array();
+            this.cachedrecords = new Array();
+            this.recordids = new Array();
         }
 
         this.addfilter = function (field, filter) {
             var filterindex = -1;
-            for (m = 0; m < this.filters.length; m++) {
+            for (var m = 0; m < this.filters.length; m++) {
                 if (this.filters[m].datafield == field) {
                     filterindex = m;
                     break;
@@ -7306,7 +8637,7 @@ License: http://jqwidgets.com/license/
         }
 
         this.removefilter = function (field) {
-            for (i = 0; i < this.filters.length; i++) {
+            for (var i = 0; i < this.filters.length; i++) {
                 if (this.filters[i].datafield == field) {
                     this.filters.splice(i, 1);
                     break;
@@ -7318,7 +8649,7 @@ License: http://jqwidgets.com/license/
             return this.records[i];
         }
 
-        this.updaterow = function (rowid, rowdata) {
+        this.updaterow = function (rowid, rowdata, refresh) {
             if (rowdata != undefined && rowid != undefined) {
 
                 rowdata.uid = rowid;
@@ -7329,14 +8660,39 @@ License: http://jqwidgets.com/license/
                 var record = this.recordsbyid["id" + rowid];
                 var recordindex = this.records.indexOf(record);
                 this.records[recordindex] = rowdata;
-                this.refresh();
+                if (this.cachedrecords) {
+                    this.cachedrecords[recordindex] = rowdata;
+                }
+                if (refresh == true || refresh == undefined) {
+                    this.refresh();
+                }
                 this.changedrecords[rowdata.uid] = { Type: "Update", OldData: record, Data: rowdata };
                 return true;
             }
+            else if (this.filters && this.filters.length > 0) {
+                var records = this.cachedrecords;
+                var record = null;
+                var recordindex = -1;
+                for (var i = 0; i < records.length; i++) {
+                    if (records[i].uid == rowid) {
+                        record = records[i];
+                        recordindex = i;
+                        break;
+                    }
+                }
+                if (record) {
+                    this.cachedrecords[recordindex] = rowdata;
+                    if (refresh == true || refresh == undefined) {
+                        this.refresh();
+                    }
+                    return true;
+                }
+            }
+
             return false;
         }
 
-        this.addrow = function (rowid, rowdata, position) {
+        this.addrow = function (rowid, rowdata, position, refresh) {
             if (rowdata != undefined) {
                 if (!rowid) {
                     rowdata.uid = this.getid(this.source.id, rowdata, this.totalrecords);
@@ -7350,7 +8706,9 @@ License: http://jqwidgets.com/license/
                 else rowdata.uid = rowid;
 
                 if (!(rowdata[this.source.id])) {
-                    rowdata[this.source.id] = rowdata.uid;
+                    if (this.source.id != undefined) {
+                        rowdata[this.source.id] = rowdata.uid;
+                    }
                 }
 
                 if (position == 'last') {
@@ -7359,9 +8717,19 @@ License: http://jqwidgets.com/license/
                 else {
                     this.records.splice(0, 0, rowdata);
                 }
+                if (this.filters && this.filters.length > 0) {
+                    if (position == 'last') {
+                        this.cachedrecords.push(rowdata);
+                    }
+                    else {
+                        this.cachedrecords.splice(0, 0, rowdata);
+                    }
+                }
 
                 this.totalrecords++;
-                this.refresh();
+                if (refresh == true || refresh == undefined) {
+                    this.refresh();
+                }
 
                 this.changedrecords[rowdata.uid] = { Type: "New", Data: rowdata };
                 return true;
@@ -7369,7 +8737,7 @@ License: http://jqwidgets.com/license/
             return false;
         }
 
-        this.deleterow = function (rowid) {
+        this.deleterow = function (rowid, refresh) {
             if (rowid != undefined) {
                 if (this.recordsbyid["id" + rowid]) {
                     var record = this.recordsbyid["id" + rowid];
@@ -7377,9 +8745,31 @@ License: http://jqwidgets.com/license/
                     this.changedrecords[rowid] = { Type: "Delete", Data: this.records[recordindex] };
                     this.records.splice(recordindex, 1);
                     this.totalrecords--;
-                    this.refresh();
+                    if (refresh == true || refresh == undefined) {
+                        this.refresh();
+                    }
                     return true;
                 }
+                else if (this.filters && this.filters.length > 0) {
+                    var records = this.cachedrecords;
+                    var record = null;
+                    var recordindex = -1;
+                    for (var i = 0; i < records.length; i++) {
+                        if (records[i].uid == rowid) {
+                            record = records[i];
+                            recordindex = i;
+                            break;
+                        }
+                    }
+                    if (record) {
+                        this.cachedrecords.splice(recordindex, 1);
+                        if (refresh == true || refresh == undefined) {
+                            this.refresh();
+                        }
+                        return true;
+                    }
+                }
+
                 return false;
             }
 
@@ -7483,7 +8873,7 @@ License: http://jqwidgets.com/license/
 
             var data = hassortdata ? this.sortdata : this.records;
 
-            for (obj = startindex; obj < endindex; obj++) {
+            for (var obj = startindex; obj < endindex; obj++) {
                 var item = {};
                 if (!hassortdata) {
                     item = $.extend({}, data[obj]);
@@ -7597,7 +8987,7 @@ License: http://jqwidgets.com/license/
                 rows = this._updategroupsinpage(self, filter, currentRowIndex, currentPageIndex, rl, this.pagesize * this.pagenum, this.pagesize * (1 + this.pagenum));
             }
             else {
-                for (i = this.pagesize * this.pagenum; i < this.pagesize * (1 + this.pagenum); i++) {
+                for (var i = this.pagesize * this.pagenum; i < this.pagesize * (1 + this.pagenum) ; i++) {
                     var item = i < this.loadedrecords.length ? this.loadedrecords[i] : null;
                     if (item == null) continue;
 
@@ -7613,7 +9003,7 @@ License: http://jqwidgets.com/license/
             if ((rows.length == 0 || rows.length < this.pagesize) && !this.pageable && this.virtualmode) {
                 currentPageIndex = rows.length;
                 var startlength = rows.length;
-                for (i = this.pagesize * this.pagenum; i < this.pagesize * (1 + this.pagenum) - startlength; i++) {
+                for (var i = this.pagesize * this.pagenum; i < this.pagesize * (1 + this.pagenum) - startlength; i++) {
                     var item = {};
                     item.boundindex = i + startlength;
                     item.visibleindex = i + startlength;
@@ -7666,10 +9056,10 @@ License: http://jqwidgets.com/license/
                     this.records = filtereddata;
                 }
                 else if (this.source.filter == null || this.source.filter == undefined) {
-                    for (row = 0; row < length; row++) {
+                    for (var row = 0; row < length; row++) {
                         var datarow = data[row];
                         var filterresult = undefined;
-                        for (j = 0; j < filterslength; j++) {
+                        for (var j = 0; j < filterslength; j++) {
                             var filter = this.filters[j].filter;
                             var value = datarow[this.filters[j].datafield];
                             var result = filter.evaluate(value);
@@ -7727,8 +9117,8 @@ License: http://jqwidgets.com/license/
 
             if (this.rowschangecallback != null) {
                 if (totalrowsBefore != totalrows) this.rowschangecallback({ type: "PagingChanged", data: getpagingdetails() });
-                if (countBefore != rows.length) this.rowschangecallback({ type: "RowsCountChanged", data: { previous: countBefore, current: rows.length} });
-                if (diff.length > 0 || countBefore != rows.length) this.rowschangecallback({ type: "RowsChanged", data: { previous: countBefore, current: rows.length, diff: diff} });
+                if (countBefore != rows.length) this.rowschangecallback({ type: "RowsCountChanged", data: { previous: countBefore, current: rows.length } });
+                if (diff.length > 0 || countBefore != rows.length) this.rowschangecallback({ type: "RowsChanged", data: { previous: countBefore, current: rows.length, diff: diff } });
             }
         }
 

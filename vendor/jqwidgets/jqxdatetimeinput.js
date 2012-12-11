@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -211,17 +211,17 @@ License: http://jqwidgets.com/license/
 
         // creates the masked input's instance. 
         createInstance: function (args) {
+            this.render();
+        },
+
+        render: function()
+        {
+            this._removeHandlers();
             this.element.innerHTML = "";
             this.host
 		    .attr({
 		        role: "dateTimeInput"
 		    });
-            input = this;
-            this.element.innerHTML = "";
-            if (this.element.id == "") {
-                this.element.id = $.jqx.utilities.createId();
-            }
-
             var id = this.createID();
             var buttonid = this.createID();
             var dateTimeInputStructure = $("<div style='overflow: hidden; border: 0px;'>" +
@@ -236,6 +236,7 @@ License: http://jqwidgets.com/license/
                 this.width = this.host.width();
                 this.host.width(this.width);
             }
+            this.touch = $.jqx.mobile.isTouchDevice();
 
             this.host.append(dateTimeInputStructure);
             this.dateTimeWrapper = this.host.find('#dateTimeWrapper');
@@ -245,6 +246,9 @@ License: http://jqwidgets.com/license/
             this.dateTimeInput.removeClass(this.toThemeProperty("jqx-input-content"));
             this.dateTimeInput.addClass(this.toThemeProperty("jqx-input-content"));
             this.dateTimeInput.addClass(this.toThemeProperty("jqx-widget-content"));
+            var name = this.host.attr('name');
+            if (!name) name = this.element.id;
+            this.dateTimeInput.attr('name', name);
 
             this.inputElement.addClass(this.toThemeProperty("jqx-input"));
             this.inputElement.addClass(this.toThemeProperty("jqx-widget-content"));
@@ -297,9 +301,19 @@ License: http://jqwidgets.com/license/
                     container.appendTo(document.body);
                     this.container = container;
                     if (this.showFooter) this.dropDownHeight = this.dropDownHeight + 30;
-                    this.calendarContainer = $($.find('#innerCalendar' + this.element.id)).jqxCalendar({ showFooter: this.showFooter, selectionMode: this.selectionMode, firstDayOfWeek: this.firstDayOfWeek, showWeekNumbers: this.showWeekNumbers, width: this.dropDownWidth, height: this.dropDownHeight, theme: this.theme });
+                    this.calendarContainer = $($.find('#innerCalendar' + this.element.id)).jqxCalendar({ culture: this.culture, showFooter: this.showFooter, selectionMode: this.selectionMode, firstDayOfWeek: this.firstDayOfWeek, showWeekNumbers: this.showWeekNumbers, width: this.dropDownWidth, height: this.dropDownHeight, theme: this.theme });
                     this.calendarContainer.css({ position: 'absolute', zIndex: 100000, top: 0, left: 0 });
                     this.calendar = $.data(this.calendarContainer[0], "jqxCalendar").instance;
+                    var me = this;
+                    this.calendar.today = function () {
+                        me.setDate(new Date);
+                        me.hideCalendar();
+                    }
+                    this.calendar.clear = function () {
+                        me.setDate(null);
+                        me.hideCalendar();
+                    }
+
                     this.calendar.render();
                     if ($.jqx.utilities.getBrowser().browser == 'opera') {
                         container.show();
@@ -337,10 +351,6 @@ License: http://jqwidgets.com/license/
             this.oldValue = this.getDate();
             this.items = new Array();
             this.editors = new Array();
-
-            //       if (this.value == null) {
-            //           this.value = $.jqx._jqxDateTimeInput.getDateTime(new Date())
-            //       }
 
             if (this.value) {
                 this.calendarButtonContent.html("<div style='line-height: 16px;  color: inherit; background: transparent; margin: 0; border: 0; padding: 0px; text-align: center; vertical-align: middle;'>" + "<b style='border: 0; padding: 0px; margin: 0px; background: transparent;'>" + this.value.day + "</b>" + "</div>");
@@ -450,19 +460,10 @@ License: http://jqwidgets.com/license/
                     }
                 }
 
-                $(window).resize(function () {
+                $(window).unbind('resize.' + this.element.id);
+                $(window).bind('resize.' + this.element.id, function () {
                     resizeFunc();
                 });
-
-                setInterval(function () {
-                    var width = me.host.width();
-                    var height = me.host.height();
-                    if (me._lastWidth != width || me._lastHeight != height) {
-                        resizeFunc();
-                    }
-                    me._lastWidth = width;
-                    me._lastHeight = height;
-                }, 100);
             }
         },
 
@@ -474,6 +475,7 @@ License: http://jqwidgets.com/license/
             this.calendarButtonHeader.width(buttonSize);
             this.calendarButtonContent.height(buttonSize - rightOffset);
             this.calendarButtonContent.width(buttonSize);
+            this.inputElement.height(height);
 
             var inputElementOffset = parseInt(this.inputElement.outerHeight()) - parseInt(this.inputElement.height());
             inputElementOffset = 0;
@@ -484,7 +486,6 @@ License: http://jqwidgets.com/license/
             }
 
             this.dateTimeInput.width(contentWidth - rightOffset + 'px');
-
             this.dateTimeInput.css('left', 0);
             this.dateTimeInput.css('top', 0);
             this.inputElement.css('left', 0);
@@ -496,7 +497,11 @@ License: http://jqwidgets.com/license/
             var top = parseInt(this.inputElement.outerHeight()) / 2 - buttonsHeight / 2;
             this.calendarElement.css('top', parseInt(top) + 'px');
 
-            var inputTop = parseInt(this.inputElement.height()) / 2 - parseInt(this.dateTimeInput.outerHeight()) / 2;
+            var inputHeight = this.dateTimeInput.outerHeight();
+            if (inputHeight == 0) {
+                inputHeight = parseInt(this.dateTimeInput.css('font-size')) + 3;
+            }
+            var inputTop = parseInt(this.inputElement.height()) / 2 - parseInt(inputHeight) / 2;
             this.dateTimeInput.css('margin', '0px');
             this.dateTimeInput.css('padding', '0px');
             this.dateTimeInput.css('top', parseInt(inputTop));
@@ -505,15 +510,19 @@ License: http://jqwidgets.com/license/
         _removeHandlers: function () {
             var me = this;
             this.removeHandler($(document), 'mousedown.' + this.element.id);
-            this.removeHandler(this.dateTimeInput, 'keydown.' + this.element.id);
-            this.removeHandler(this.dateTimeInput, 'blur');
-            this.removeHandler(this.dateTimeInput, 'focus');
-            this.removeHandler(this.calendarButton, 'mousedown');
-            this.removeHandler(this.dateTimeInput, 'mousedown');
-            this.removeHandler(this.dateTimeInput, 'mouseup');
-            this.removeHandler(this.dateTimeInput, 'keydown');
-            this.removeHandler(this.dateTimeInput, 'keyup');
-            this.removeHandler(this.dateTimeInput, 'keypress');
+            if (this.dateTimeInput) {
+                this.removeHandler(this.dateTimeInput, 'keydown.' + this.element.id);
+                this.removeHandler(this.dateTimeInput, 'blur');
+                this.removeHandler(this.dateTimeInput, 'focus');
+                this.removeHandler(this.dateTimeInput, 'mousedown');
+                this.removeHandler(this.dateTimeInput, 'mouseup');
+                this.removeHandler(this.dateTimeInput, 'keydown');
+                this.removeHandler(this.dateTimeInput, 'keyup');
+                this.removeHandler(this.dateTimeInput, 'keypress');
+            }
+            if (this.calendarButton != null) {
+                this.removeHandler(this.calendarButton, 'mousedown');
+            }
             if (this.calendarContainer != null) {
                 this.removeHandler(this.calendarContainer, 'cellSelected');
                 this.removeHandler(this.calendarContainer, 'cellMouseDown');
@@ -522,7 +531,7 @@ License: http://jqwidgets.com/license/
 
         isOpened: function () {
             var me = this;
-            var openedCalendar = $.data(document.body, "openedJQXCalendar");
+            var openedCalendar = $.data(document.body, "openedJQXCalendar" + this.element.id);
             if (openedCalendar != null && openedCalendar == me.calendarContainer) {
                 return true;
             }
@@ -580,7 +589,7 @@ License: http://jqwidgets.com/license/
             this.addHandler($(document), 'mousedown.' + this.element.id, this._closeOpenedCalendar, { me: this });
 
             this.addHandler(this.dateTimeInput, 'keydown.' + this.element.id, function (event) {
-                var openedCalendar = $.data(document.body, "openedJQXCalendar");
+                var openedCalendar = $.data(document.body, "openedJQXCalendar" + me.element.id);
                 if (openedCalendar != null && openedCalendar == me.calendarContainer) {
                     var result = me.handleCalendarKey(event);
                     return result;
@@ -590,13 +599,19 @@ License: http://jqwidgets.com/license/
             if (this.calendarContainer != null) {
                 this.addHandler(this.calendarContainer, 'keydown', function (event) {
                     if (event.keyCode == 13) {
-                        me.hideCalendar('selected');
-                        me.dateTimeInput.focus();
+                        if (me.isOpened()) {
+                            me.hideCalendar('selected');
+                            me.dateTimeInput.focus();
+                            return false;
+                        }
                         return true;
                     }
                     else if (event.keyCode == 27) {
-                        me.hideCalendar();
-                        me.dateTimeInput.focus();
+                        if (me.isOpened()) {
+                            me.hideCalendar();
+                            me.dateTimeInput.focus();
+                            return false;
+                        }
                         return true;
                     }
                     if (event.keyCode == 115) {
@@ -678,7 +693,12 @@ License: http://jqwidgets.com/license/
                 }
             });
 
-            this.addHandler(this.calendarButton, 'mousedown',
+            var eventName = 'mousedown';
+            if (this.touch) {
+                eventName = 'touchstart';
+            }
+
+            this.addHandler(this.calendarButton, eventName,
                 function (event) {
                     var calendar = me.container;
                     var isOpen = calendar.css('display') == 'block';
@@ -815,21 +835,7 @@ License: http://jqwidgets.com/license/
             }
 
             if (key == "width" || key == "height") {
-                if (object.width != null && object.width.toString().indexOf("px") != -1) {
-                    object.host.width(object.width);
-                }
-                else
-                    if (object.width != undefined && !isNaN(object.width)) {
-                        object.host.width(object.width);
-                    };
-
-                if (object.height != null && object.height.toString().indexOf("px") != -1) {
-                    object.host.height(object.height);
-                }
-                else if (object.height != undefined && !isNaN(object.height)) {
-                    object.host.height(object.height);
-                };
-                object._arrange();
+                object.refresh();
             }
 
             object._setOption(key, value);
@@ -843,14 +849,17 @@ License: http://jqwidgets.com/license/
 
         setDate: function (date) {
             if (date == null || date == 'null' || date == 'undefined') {
-                this.value = null;
-                this._refreshValue();
-                if (this.cookies) {
-                    if (this.value != null) {
-                        $.jqx.cookie.cookie("jqxDateTimeInput" + this.element.id, this.value.dateTime.toString(), this.cookieoptions);
+                if (this.value != null) {
+                    this.value = null;
+                    this.calendar.setDate(null);
+                    this._refreshValue();
+                    if (this.cookies) {
+                        if (this.value != null) {
+                            $.jqx.cookie.cookie("jqxDateTimeInput" + this.element.id, this.value.dateTime.toString(), this.cookieoptions);
+                        }
                     }
+                    this._raiseEvent('0', date);
                 }
-                this._raiseEvent('0', date);
                 return;
             }
 
@@ -868,6 +877,7 @@ License: http://jqwidgets.com/license/
 
             if (date.getFullYear) {
                 this.value._setYear(date.getFullYear());
+                this.value._setDay(1);
                 this.value._setMonth(date.getMonth() + 1);
                 this.value._setHours(date.getHours());
                 this.value._setMinutes(date.getMinutes());
@@ -1094,7 +1104,7 @@ License: http://jqwidgets.com/license/
 
         handleCalendarKey: function (event) {
             var $target = $(event.target);
-            var openedCalendar = $.data(document.body, "openedJQXCalendar");
+            var openedCalendar = $.data(document.body, "openedJQXCalendar" + this.element.id);
             if (openedCalendar != null) {
                 if (openedCalendar.length > 0) {
                     var calendarID = openedCalendar[0].id.toString();
@@ -1132,6 +1142,10 @@ License: http://jqwidgets.com/license/
                     offset.left = hostLeft - hOffset + 2;
                 }
             }
+            if (offset.left < 0) {
+                offset.left = parseInt(this.host.offset().left) + 'px'
+            }
+
             offset.top -= Math.min(offset.top, (offset.top + dpHeight > viewHeight && viewHeight > dpHeight) ?
                 Math.abs(dpHeight + inputHeight + 23) : 0);
 
@@ -1156,6 +1170,20 @@ License: http://jqwidgets.com/license/
             this.open();
         },
 
+        _getBodyOffset: function () {
+            var top = 0;
+            var left = 0;
+            if ($('body').css('border-top-width') != '0px') {
+                top = parseInt($('body').css('border-top-width'));
+                if (isNaN(top)) top = 0;
+            }
+            if ($('body').css('border-left-width') != '0px') {
+                left = parseInt($('body').css('border-left-width'));
+                if (isNaN(left)) left = 0;
+            }
+            return { left: left, top: top };
+        },
+
         showCalendar: function () {
             var calendar = this.calendarContainer;
             var calendarInstace = this.calendar;
@@ -1167,7 +1195,16 @@ License: http://jqwidgets.com/license/
             var left = parseInt(this.host.offset().left) + 'px';
             var isMobileBrowser = $.jqx.mobile.isSafariMobileBrowser();
 
-            if (isMobileBrowser != null && isMobileBrowser) {
+            if ($('body').css('border-top-width') != '0px') {
+                top = parseInt(top) + this._getBodyOffset().top + 'px';
+            }
+            if ($('body').css('border-left-width') != '0px') {
+                left = parseInt(left) + this._getBodyOffset().left + 'px';
+            }
+
+            var hasTransform = $.jqx.utilities.hasTransform(this.host);
+
+            if (hasTransform || (isMobileBrowser != null && isMobileBrowser)) {
                 left = $.jqx.mobile.getLeftPos(this.element);
                 top = $.jqx.mobile.getTopPos(this.element) + parseInt(this.inputElement.outerHeight());
             }
@@ -1226,7 +1263,7 @@ License: http://jqwidgets.com/license/
                     calendar.animate({ 'opacity': 1 }, this.openDelay, function () {
                         self.isanimating = false;
                         self.opening = false;
-                        $.data(document.body, "openedJQXCalendar", calendar);
+                        $.data(document.body, "openedJQXCalendar" + self.element.id, calendar);
                         self.calendarContainer.focus();
                     });
                 }
@@ -1241,7 +1278,7 @@ License: http://jqwidgets.com/license/
                     calendar.animate({ 'margin-top': 0 }, this.openDelay, function () {
                         self.isanimating = false;
                         self.opening = false;
-                        $.data(document.body, "openedJQXCalendar", calendar);
+                        $.data(document.body, "openedJQXCalendar" + self.element.id, calendar);
                         self.calendarContainer.focus();
                     });
                 }
@@ -1253,7 +1290,7 @@ License: http://jqwidgets.com/license/
                 calendar.css('opacity', 1);
                 calendar.css('margin-top', 0);
                 this.container.css('display', 'block');
-                $.data(document.body, "openedJQXCalendar", calendar);
+                $.data(document.body, "openedJQXCalendar" + self.element.id, calendar);
                 this.calendarContainer.focus();
             }
 
@@ -1268,7 +1305,7 @@ License: http://jqwidgets.com/license/
             var calendar = this.calendarContainer;
             var container = this.container;
             var self = this;
-            $.data(document.body, "openedJQXCalendar", null);
+            $.data(document.body, "openedJQXCalendar" + this.element.id, null);
             if (this.animationType != 'none') {
                 var height = calendar.outerHeight();
                 calendar.css('margin-top', 0);
@@ -1325,7 +1362,7 @@ License: http://jqwidgets.com/license/
 
         _closeOpenedCalendar: function (event) {
             var $target = $(event.target);
-            var openedCalendar = $.data(document.body, "openedJQXCalendar");
+            var openedCalendar = $.data(document.body, "openedJQXCalendar" + event.data.me.element.id);
             var isCalendar = false;
             $.each($target.parents(), function () {
                 if (this.className.indexOf('jqx-calendar') != -1) {
@@ -1338,12 +1375,23 @@ License: http://jqwidgets.com/license/
                 }
             });
 
-            if (event.target != null && (event.target.tagName == "B" || event.target.tagName == 'b')) {
+            if ($(event.target).ischildof(event.data.me.host)) {
                 return true;
             }
 
-            if ($(event.target).ischildof(event.data.me.host)) {
-                return true;
+            if (event.target != null && (event.target.tagName == "B" || event.target.tagName == 'b')) {
+                var hostOffset = event.data.me.host.offset();
+                var hostWidth = event.data.me.host.width();
+                var hostHeight = event.data.me.host.height();
+                var top = parseInt(hostOffset.top);
+                var left = parseInt(hostOffset.left);
+
+                if (top <= event.pageY && event.pageY <= top + hostHeight)
+                {
+                    if (left <= event.pageX && event.pageX <= left + hostWidth) {
+                        return true;
+                    }
+                }          
             }
 
             if (openedCalendar != null && !isCalendar) {
@@ -1353,7 +1401,7 @@ License: http://jqwidgets.com/license/
                     var datetimeinput = $(document).find("#" + inputID);
                     var datetimeinputinstance = $.data(datetimeinput[0], "jqxDateTimeInput").instance;
                     datetimeinputinstance.hideCalendar();
-                    $.data(document.body, "openedJQXCalendar", null);
+                    $.data(document.body, "openedJQXCalendar" + event.data.me.element.id, null);
                 }
             }
         },
@@ -1664,7 +1712,7 @@ License: http://jqwidgets.com/license/
             var amPmEditor = null;
 
             var k = 0;
-            for (i = 0; i < this.items.length; i++) {
+            for (var i = 0; i < this.items.length; i++) {
                 switch (this.items[i].type) {
                     case 'FORMAT_AMPM':
                         amPmOffset = this.editors[i].value;
@@ -2137,7 +2185,7 @@ License: http://jqwidgets.com/license/
                     if (this.activeEditor == null) {
                         this.activeEditor = this.editors[0];
                     }
-
+                    if (this.activeEditor == null) return false;
                     this.activeEditor.insert(letter);
                     if (dateTimeEditor != null && this.editorText.length >= dateTimeEditor.maxEditPositions) {
                         this.editorText = "";
@@ -2482,6 +2530,7 @@ License: http://jqwidgets.com/license/
 
         refresh: function (initialRefresh) {
             if (initialRefresh != true) {
+                this._setSize();
                 this._arrange();
             }
         },

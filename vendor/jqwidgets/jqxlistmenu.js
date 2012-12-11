@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -44,6 +44,10 @@ License: http://jqwidgets.com/license/
             this._currentPage = null;
             this._header = null;
             this._oldHost;
+        },
+
+        destroy: function () {
+            this.host.remove();
         },
 
         createInstance: function () {
@@ -181,7 +185,9 @@ License: http://jqwidgets.com/license/
                         element[0].items = new Array();
                         separator = element[0];
                     }
-                    separator.items[separator.items.length] = li[0];
+                    if (separator.items) {
+                        separator.items[separator.items.length] = li[0];
+                    }
                 }
             }
         },
@@ -228,7 +234,15 @@ License: http://jqwidgets.com/license/
                 this._filterBar.append(this._filterInput);
                 this.host.prepend(this._filterBar);
             }
-            this._filterInput.attr('placeholder', this.placeHolder);
+            var IE7 = false;
+            if ($.browser.msie && $.browser.version < 8) {
+                IE7 = true;
+            }
+
+            if (!IE7) {
+                this._filterInput.attr('placeholder', this.placeHolder);
+            }
+
             if (!this.showFilter) {
                 this._filterBar.css('display', 'none');
             } else {
@@ -627,7 +641,8 @@ License: http://jqwidgets.com/license/
         _filter: function (searchValue) {
             var els = this.host.find('.jqx-listmenu-item');
             for (var i = 0; i < els.length; i += 1) {
-                if (!this.filterCallback(els[i].innerText, searchValue)) {
+                var value = $.trim($(els[i]).text());
+                if (!this.filterCallback(value, searchValue)) {
                     els[i].style.display = 'none';
                 } else {
                     els[i].style.display = 'block';

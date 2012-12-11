@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -73,6 +73,7 @@ License: http://jqwidgets.com/license/
             // Default: false
             // Gets or sets whether the listbox's height is equal to the sum of its items height          
             this.autoHeight = false;
+            this.autoItemsHeight = false;
             // represents the listbox's events.    
             // Type: Boolean
             // Default: true
@@ -94,6 +95,9 @@ License: http://jqwidgets.com/license/
             this.touchModeStyle = 'auto';
             this.keyboardNavigation = true;
             this.enableMouseWheel = true;
+            this.multipleextended = false;
+            this.emptyString = "null";
+
             this.events =
             [
             // triggered when the user selects an item.
@@ -107,11 +111,18 @@ License: http://jqwidgets.com/license/
             // triggered when the user drags an item. 
                'dragStart',
             // triggered when the user drops an item. 
-               'dragEnd'
+               'dragEnd',
+               // triggered when the binding is completed.
+               'bindingComplete'
             ];
         },
 
         createInstance: function (args) {
+            this.render();
+        },
+
+        render: function () {
+            this.element.innerHTML = "";
             var self = this;
             this.host.addClass(this.toThemeProperty("jqx-listbox"));
             this.host.addClass(this.toThemeProperty("jqx-reset"));
@@ -155,7 +166,7 @@ License: http://jqwidgets.com/license/
                 "<div id='bottomRight' style='align:left; valign:top; left: 0px; top: 0px; border: none; position: absolute;'/>" +
                 "</div>" +
                 "</div>");
-
+            this._addInput();
             this.host.attr('tabIndex', 1);
             this.host.append(listBoxStructure);
             var verticalScrollBar = this.host.find("#verticalScrollBar" + this.element.id);
@@ -184,16 +195,21 @@ License: http://jqwidgets.com/license/
             this._updateTouchScrolling();
 
             this.host.addClass('jqx-disableselect');
-
-            if (isPercentage) {
-                $(window).resize(function () {
-                    self._updateSize();
-                });
-            }
-
             if (this.host.jqxDragDrop) {
                 jqxListBoxDragDrop();
             }
+        },
+
+        _addInput: function () {
+            var name = this.host.attr('name');
+            if (!name) name = this.element.id;
+            else {
+                this.host.attr('name', "");
+            }
+
+            this.input = $("<input type='hidden'/>");
+            this.host.append(this.input);
+            this.input.attr('name', name);
         },
 
         _updateTouchScrolling: function () {
@@ -219,6 +235,7 @@ License: http://jqwidgets.com/license/
                         self._lastScroll = new Date();
                     }
                 }, this.element.id);
+
                 if (self.vScrollBar.css('visibility') != 'visible' && self.hScrollBar.css('visibility') != 'visible') {
                     $.jqx.mobile.setTouchScroll(false, this.element.id);
                 }
@@ -267,49 +284,64 @@ License: http://jqwidgets.com/license/
             this._render(false);
         },
 
-        _updateSize: function () {
-            var me = this;
-            var hostWidth = me.host.width();
-            var hostHeight = me.host.height();
+        //_updateSize: function () {
+        //    var me = this;
+        //    var hostWidth = me.host.width();
+        //    var hostHeight = me.host.height();
 
-            if (!me._oldWidth) {
-                me._oldWidth = hostWidth;
-            }
+        //    if (!me._oldWidth) {
+        //        me._oldWidth = hostWidth;
+        //    }
 
-            if (!me._oldHeight) {
-                me._oldHeight = hostHeight;
-            }
+        //    if (!me._oldHeight) {
+        //        me._oldHeight = hostHeight;
+        //    }
 
-            setTimeout(function () {
-                if (hostWidth != me._oldWidth) {
-                    me._updatescrollbars();
-                    me._renderItems();
-                }
+        //    setTimeout(function () {
+        //        if (hostWidth != me._oldWidth) {
+        //            me._updatescrollbars();
+        //            me._renderItems();
+        //        }
 
-                if (hostHeight != me._oldHeight) {
-                    if (me.items) {
-                        if (me.items.length > 0 && me.virtualItemsCount * me.items[0].height < hostHeight) {
-                            me._render(false);
-                        }
-                        else {
-                            me._updatescrollbars();
-                            me._renderItems();
-                        }
-                    }
-                }
+        //        if (hostHeight != me._oldHeight) {
+        //            if (me.items) {
+        //                if (me.autoItemsHeight) {
+        //                    me._render(false);
+        //                }
+        //                else {
+        //                    if (me.items.length > 0 && me.virtualItemsCount * me.items[0].height < hostHeight) {
+        //                        me._render(false);
+        //                    }
+        //                    else {
+        //                        me._updatescrollbars();
+        //                        me._renderItems();
+        //                    }
+        //                }
+        //            }
+        //        }
 
-                me._oldWidth = hostWidth;
-                me._oldHeight = hostHeight;
-            }, 1);
-        },
+        //        me._oldWidth = hostWidth;
+        //        me._oldHeight = hostHeight;
+        //    }, 1);
+        //},
 
         propertyChangedHandler: function (object, key, oldvalue, value) {
             if (this.isInitialized == undefined || this.isInitialized == false)
                 return;
 
-            if (key == 'source' || key == 'scrollBarSize' || key == 'equalItemsWidth' || key == 'checkboxes') {
+            if (key == 'source' || key == 'checkboxes') {
                 object.clearSelection();
                 object.refresh();
+            }
+
+            if (key == 'scrollBarSize' || key == 'equalItemsWidth') {
+                if (value != oldvalue) {
+                    object._updatescrollbars();
+                }
+            }
+
+            if (key == 'disabled') {
+                object._renderItems();
             }
 
             if (key == "touchMode") {
@@ -380,7 +412,13 @@ License: http://jqwidgets.com/license/
             }
 
             if (key == 'autoHeight') {
-                object._render();
+                if (oldvalue != value) {
+                    object._render(false);
+                }
+                else {
+                    object._updatescrollbars();
+                    object._renderItems();
+                }
             }
         },
 
@@ -435,8 +473,7 @@ License: http://jqwidgets.com/license/
 
         refresh: function (initialRefresh) {
             var me = this;
-            var verticalScrollBar = this.host.find("#verticalScrollBar" + this.element.id);
-            if (!verticalScrollBar.jqxScrollBar) {
+            if (this.vScrollBar == undefined) {
                 return;
             }
             this.visibleItems = new Array();
@@ -445,9 +482,18 @@ License: http://jqwidgets.com/license/
                     if (me.selectedIndex != -1) {
                         var tmpIndex = me.selectedIndex;
                         me.selectedIndex = -1;
-                        me.selectIndex(tmpIndex);
+                        me._stopEvents = true;
+                        me.selectIndex(tmpIndex, false, true);
+                        if (me.selectedIndex == -1) {
+                            me.selectedIndex = tmpIndex;
+                        }
+                        me._stopEvents = false;
                     }
                 }
+            }
+            if (this.itemswrapper != null) {
+                this.itemswrapper.remove();
+                this.itemswrapper = null;
             }
             if ($.jqx.dataAdapter && this.source != null && this.source._source) {
                 this.databind(this.source);
@@ -455,21 +501,19 @@ License: http://jqwidgets.com/license/
                 return;
             }
             this.items = this.loadItems(this.source);
-            this._render();
+            this._render(false, initialRefresh == true);
             selectInitialItem(initialRefresh);
         },
 
-        _render: function (ensurevisible) {
+        _render: function (ensurevisible, initialRefresh) {
             this._addItems();
             this._renderItems();
-            var vScrollInstance = $.data(this.vScrollBar[0], 'jqxScrollBar').instance;
-            vScrollInstance.setPosition(0);
+            this.vScrollInstance.setPosition(0);
             this._cachedItemHtml = new Array();
             if (ensurevisible == undefined || ensurevisible) {
                 if (this.items != undefined && this.items != null) {
                     if (this.selectedIndex >= 0 && this.selectedIndex < this.items.length) {
-                        this.selectIndex(this.selectedIndex);
-                        this.ensureVisible(this.selectedIndex);
+                        this.selectIndex(this.selectedIndex, true, true, true);
                     }
                 }
             }
@@ -488,6 +532,12 @@ License: http://jqwidgets.com/license/
                 }
             }
             this._updateTouchScrolling();
+            if (this.rendered) {
+                this.rendered();
+            }
+            if (this.ready) {
+                this.ready();
+            }
         },
 
         _createID: function () {
@@ -565,25 +615,34 @@ License: http://jqwidgets.com/license/
             var top = parseInt(vScrollInstance.value);
             var left = parseInt(hScrollInstance.value);
             var itemsLength = this.items.length;
-            var width = parseInt(this.content.width()) + parseInt(hScrollInstance.max);
-            var vScrollBarWidth = parseInt(this.vScrollBar.outerWidth());
-            if (this.vScrollBar.css('visibility') != 'visible') {
+            var hostWidth = this.host.width();
+            var contentWidth = parseInt(this.content[0].style.width);
+            var width = contentWidth + parseInt(hScrollInstance.max);
+            var vScrollBarWidth = parseInt(this.vScrollBar[0].style.width) + 2;
+            if (this.vScrollBar[0].style.visibility == 'hidden') {
                 vScrollBarWidth = 0;
             }
 
-            if (this.hScrollBar.css('visibility') != 'visible') {
-                width = parseInt(this.content.width());
+            if (this.hScrollBar[0].style.visibility != 'visible') {
+                width = contentWidth;
             }
             var virtualItemsCount = this._getVirtualItemsCount();
             var renderCollection = new Array();
             var y = 0;
-            var hostHeight = this.host.outerHeight();
+            var hostHeight = parseInt(this.element.style.height) + 2;
+            if (this.element.style.height.indexOf('%') != -1) {
+                hostHeight = this.host.outerHeight();
+            }
+
+            if (isNaN(hostHeight)) {
+                hostHeight = 0;
+            }
             var maxWidth = 0;
             var visibleIndex = 0;
             var renderIndex = 0;
 
             if (vScrollInstance.value == 0 || this.visibleItems.length == 0) {
-                for (indx = 0; indx < this.items.length; indx++) {
+                for (var indx = 0; indx < this.items.length; indx++) {
                     var item = this.items[indx];
                     if (item.visible) {
                         item.top = -top;
@@ -641,7 +700,7 @@ License: http://jqwidgets.com/license/
                 var hideItem = function () {
                     var spanElement = itemElement[0].firstChild; // itemElement.find('#spanElement');
                     if (me.checkboxes) {
-                        spanElement = itemElement.find('#spanElement')[0];
+                        spanElement = itemElement[0].lastChild;
                     }
 
                     if (spanElement != null) {
@@ -664,7 +723,7 @@ License: http://jqwidgets.com/license/
 
                     var spanElement = $(itemElement[0].firstChild); // itemElement.find('#spanElement');
                     if (this.checkboxes) {
-                        spanElement = itemElement.find('#spanElement');
+                        spanElement = $(itemElement[0].lastChild);
                     }
 
                     if (spanElement.length == 0)
@@ -721,12 +780,22 @@ License: http://jqwidgets.com/license/
                                 if (spanElement[0].innerHTML !== item.label) {
                                     spanElement[0].innerHTML = item.label;
                                 }
+                                if (item.label == "") {
+                                    spanElement[0].innerHTML = this.emptyString;
+                                }
                             }
                             else {
                                 if (spanElement[0].innerHTML !== item.value) {
                                     spanElement[0].innerHTML = item.value;
                                 }
+                                else if (item.label == "") {
+                                    spanElement[0].innerHTML = " ";
+                                }
                             }
+                        }
+                        else if (item.label == "" || item.label == null) {
+                            spanElement[0].innerHTML = "";
+                            spanElement[0].style.height = (item.height - 10) + 'px';
                         }
                     }
 
@@ -734,7 +803,7 @@ License: http://jqwidgets.com/license/
                     itemElement[0].style.top = item.initialTop - scrollValue + 'px';
 
                     item.element = spanElement[0];
-                    $.data(spanElement[0], 'item', item);
+                    //  $.data(spanElement[0], 'item', item);
                     if (item.title) {
                         spanElement[0].title = item.title;
                     }
@@ -751,12 +820,18 @@ License: http://jqwidgets.com/license/
                             else borderSize = 0;
                             itemWidth -= 2 * borderSize;
                             maxWidth = itemWidth;
-                            if (this.checkboxes && this.host.jqxCheckBox) {
+                            if (this.checkboxes && this.host.jqxCheckBox && this.hScrollBar[0].style.visibility != 'visible') {
                                 maxWidth -= 18;
                             }
                         }
-                        spanElement.width(maxWidth);
-                        item.width = maxWidth;
+                        if (contentWidth > this.virtualSize.width) {
+                            spanElement[0].style.width = maxWidth + 'px';
+                            item.width = maxWidth;
+                        }
+                        else {
+                            spanElement[0].style.width = -4 + this.virtualSize.width + 'px';
+                            item.width = this.virtualSize.width - 4;
+                        }
                     }
                     else {
                         if (spanElement.width() < this.host.width()) {
@@ -764,20 +839,34 @@ License: http://jqwidgets.com/license/
                         }
                     }
 
+                    if (this.rtl) {
+                        spanElement[0].style.textAlign = 'right';
+                    }
+
+                    if (this.autoItemsHeight) {
+                        spanElement[0].style.whiteSpace = 'normal';
+                        spanElement.width(maxWidth);
+                        item.width = maxWidth;
+                    }
+                    middle = 0;
                     if (this.checkboxes && this.host.jqxCheckBox && !item.isGroup) {
                         if (middle == 0) {
-                            middle = (parseInt(itemElement.outerHeight(true)) - 16) / 2;
+                            middle = (item.height - 16) / 2;
                             middle++;
                         }
                         var checkbox = $(itemElement.children()[0]);
                         checkbox[0].item = item;
-                        spanElement.css({ 'left': '18px' });
+                        if (spanElement[0].style.left != '18px') {
+                            spanElement[0].style.left = '18px';
+                        }
                         checkbox.css('top', middle + 'px');
                         checkbox.css({ 'display': 'block', 'visibility': 'inherit' });
                         var checked = checkbox.jqxCheckBox('checked');
                         if (checked != item.checked) {
                             checkbox.jqxCheckBox({ checked: item.checked, disabled: item.disabled });
                         }
+                        else checkbox.jqxCheckBox({ disabled: item.disabled });
+
                     }
                     else if (this.checkboxes && this.host.jqxCheckBox) {
                         var checkbox = $(itemElement.children()[0]);
@@ -811,68 +900,179 @@ License: http://jqwidgets.com/license/
             var hostHeight = this.host.outerHeight();
 
             $(document.body).append(spanElement);
-            for (currentItem = 0; currentItem < this.items.length; currentItem++) {
-                var item = this.items[currentItem];
-
-                if (item.isGroup && (item.label == '' && item.html == '')) {
-                    continue;
-                }
-
-                if (!item.visible)
-                    continue;
-
-
-                if (!item.isGroup) {
-                    spanElement.addClass(this.toThemeProperty('jqx-listitem-state-normal jqx-rc-all'));
-                }
-                else {
-                    spanElement.addClass(this.toThemeProperty('jqx-listitem-state-group jqx-rc-all'));
-                }
-                spanElement.addClass(this.toThemeProperty('jqx-fill-state-normal'));
-                if (this.isTouchDevice()) {
-                    spanElement.addClass(this.toThemeProperty('jqx-touch'));
-                }
-                if (this.equalItemsWidth) {
-                    spanElement.css('float', 'left');
-                }
-
-                if (this.renderer) {
-                    var html = this.renderer(item.index, item.label, item.value);
-                    spanElement[0].innerHTML = html;
-                }
-                else {
-                    if (item.html != null && item.html.toString().length > 0) {
-                        spanElement['html'](item.html);
-                    }
-                    else if (item.label != null || item.value != null) {
-                        if (item.label != null) {
-                            spanElement['text'](item.label);
-                        }
-                        else spanElement['text'](item.value);
-                    }
-                }
-
-                var spanHeight = spanElement.outerHeight();
-                var spanWidth = spanElement.outerWidth();
-
-                if (this.itemHeight > -1) {
-                    spanHeight = this.itemHeight;
-                }
-
-                item.height = spanHeight;
-                item.width = spanWidth;
-                height += spanHeight;
-                width = Math.max(width, spanWidth);
-
-                if (height <= hostHeight) {
-                    itemsPerPage++;
-                }
+            var length = this.items.length;
+            var w = this.host.width();
+            if (this.autoItemsHeight) {
+                w -= 10;
+                if (this.vScrollBar.css('visibility') != 'hidden') w -= 20;
             }
 
+            if (this.renderer || this.groups.length > 1 || (length > 0 && this.items[0].html != null)) {
+                for (var currentItem = 0; currentItem < length; currentItem++) {
+                    var item = this.items[currentItem];
+
+                    if (item.isGroup && (item.label == '' && item.html == '')) {
+                        continue;
+                    }
+
+                    if (!item.visible)
+                        continue;
+
+                    var className = "";
+
+                    if (!item.isGroup) {
+                        className += this.toThemeProperty('jqx-listitem-state-normal jqx-rc-all');
+                    }
+                    else {
+                        className += this.toThemeProperty('jqx-listitem-state-group jqx-rc-all');
+                    }
+                    className += " " + this.toThemeProperty('jqx-fill-state-normal');
+                    if (this.isTouchDevice()) {
+                        className += " " + this.toThemeProperty('jqx-touch');
+                    }
+                    if (this.equalItemsWidth) {
+                        spanElement.css('float', 'left');
+                    }
+                    spanElement[0].className = className;
+                    if (this.autoItemsHeight) {
+                        spanElement[0].style.whiteSpace = 'normal';
+                        var checkWidth = this.checkboxes ? -20 : 0;
+                        spanElement[0].style.width = (checkWidth + w) + 'px';
+                    }
+
+                    if (this.renderer) {
+                        var html = this.renderer(item.index, item.label, item.value);
+                        spanElement[0].innerHTML = html;
+                    }
+                    else {
+                        if (item.html != null && item.html.toString().length > 0) {
+                            spanElement[0].innerHTML = item.html;
+                        }
+                        else if (item.label != null || item.value != null) {
+                            if (item.label != null) {
+                                spanElement[0].innerHTML = item.label;
+                                if (item.label == "") spanElement[0].innerHTML = "Empty";
+                            }
+                            else spanElement[0].innerHTML = item.value;
+                        }
+                    }
+
+                    var spanHeight = spanElement.outerHeight();
+                    var spanWidth = spanElement.outerWidth();
+
+                    if (this.itemHeight > -1) {
+                        spanHeight = this.itemHeight;
+                    }
+
+                    item.height = spanHeight;
+                    item.width = spanWidth;
+                    height += spanHeight;
+                    width = Math.max(width, spanWidth);
+
+                    if (height <= hostHeight) {
+                        itemsPerPage++;
+                    }
+                }
+            }
+            else {
+                var height = 0;
+                var elementHeight = 0;
+                var maxText = "";
+                var maxTextLength = 0;
+                var oldMaxTextLength = 0;
+                for (var currentItem = 0; currentItem < length; currentItem++) {
+                    var item = this.items[currentItem];
+
+                    if (item.isGroup && (item.label == '' && item.html == '')) {
+                        continue;
+                    }
+
+                    if (!item.visible)
+                        continue;
+
+                    var className = "";
+                    if (currentItem == 0) {
+                        className += this.toThemeProperty('jqx-listitem-state-normal jqx-rc-all');
+                        className += " " + this.toThemeProperty('jqx-fill-state-normal');
+                        className += " " + this.toThemeProperty('jqx-widget');
+                        className += " " + this.toThemeProperty('jqx-listbox');
+                        className += " " + this.toThemeProperty('jqx-widget-content');
+
+                        if (this.isTouchDevice()) {
+                            className += " " + this.toThemeProperty('jqx-touch');
+                        }
+                        if (this.equalItemsWidth) {
+                            spanElement.css('float', 'left');
+                        }
+                        spanElement[0].className = className;
+                        if (this.autoItemsHeight) {
+                            spanElement[0].style.whiteSpace = 'normal';
+                            var checkWidth = this.checkboxes ? -20 : 0;
+                            spanElement[0].style.width = (checkWidth + w) + 'px';
+                        }
+
+                        if (item.html == null && (item.label == "" || item.label == null)) {
+                            spanElement[0].innerHTML = "Item";
+                        }
+                        else {
+                            if (item.html != null && item.html.toString().length > 0) {
+                                spanElement[0].innerHTML = item.html;
+                            }
+                            else if (item.label != null || item.value != null) {
+                                if (item.label != null) {
+                                    spanElement[0].innerHTML = item.label;
+                                }
+                                else spanElement[0].innerHTML = item.value;
+                            }
+                        }
+
+                        var spanHeight = spanElement.outerHeight();
+
+                        if (this.itemHeight > -1) {
+                            spanHeight = this.itemHeight;
+                        }
+                        elementHeight = spanHeight;
+                    }
+
+                    if (maxTextLength != undefined) {
+                        oldMaxTextLength = maxTextLength;
+                    }
+
+                    if (item.html != null && item.html.toString().length > 0) {
+                        maxTextLength = Math.max(maxTextLength, item.html.toString().length);
+                        if (oldMaxTextLength != maxTextLength) {
+                            maxText = item.html;
+                        }
+                    }
+                    else if (item.label != null) {
+                        maxTextLength = Math.max(maxTextLength, item.label.length);
+                        if (oldMaxTextLength != maxTextLength) {
+                            maxText = item.label;
+                        }
+                    }
+                    else if (item.value != null) {
+                        maxTextLength = Math.max(maxTextLength, item.value.length);
+                        if (oldMaxTextLength != maxTextLength) {
+                            maxText = item.value;
+                        }
+                    }
+
+                    item.height = elementHeight;
+                    height += elementHeight;
+
+                    if (height <= hostHeight) {
+                        itemsPerPage++;
+                    }
+                }
+                spanElement[0].innerHTML = maxText;
+                width = spanElement.outerWidth();
+            }
+
+            height += 2;
             if (itemsPerPage < 10) itemsPerPage = 10;
 
             spanElement.remove();
-            return { width: width + 4, height: height, itemsPerPage: itemsPerPage };
+            return { width: width, height: height, itemsPerPage: itemsPerPage };
         },
 
         _getVirtualItemsCount: function () {
@@ -886,7 +1086,7 @@ License: http://jqwidgets.com/license/
             else return this.virtualItemsCount;
         },
 
-        _addItems: function () {
+        _addItems: function (refreshUIItems) {
             if (this.updatingListBox == true)
                 return;
 
@@ -899,22 +1099,35 @@ License: http://jqwidgets.com/license/
                 }
                 return;
             }
+
+            if (refreshUIItems == false) {
+                var virtualSize = this._calculateVirtualSize();
+                var virtualItemsCount = virtualSize.itemsPerPage * 2;
+                if (this.autoHeight) {
+                    virtualItemsCount = this.items.length;
+                }
+
+                this.virtualItemsCount = Math.min(virtualItemsCount, this.items.length);
+                var me = this;
+                var virtualWidth = virtualSize.width;
+                this.virtualSize = virtualSize;
+                this._updatescrollbars();
+                return;
+            }
             var self = this;
             var top = 0;
             this.visibleItems = new Array();
             this.renderedVisibleItems = new Array();
-            this.content.find('.jqx-listitem-state-normal').remove();
-            this.content.find('.jqx-listitem-state-pressed').remove();
-            this.content.find('.jqx-listitem-state-hover').remove();
-            this.content.find('.jqx-listitem-state-disabled').remove();
-            this.content.find('.jqx-listitem-state-group ').remove();
-
             this._removeHandlers();
-            this.content[0].innerHTML = '';
-
-            this.itemswrapper = $('<div tabIndex=1 style="outline: 0 none; overflow:hidden; width:100%; position: relative;"></div>');
-            this.itemswrapper.height(2 * this.host.height());
-            this.content.append(this.itemswrapper);
+            if (this.allowDrag && this._enableDragDrop) {
+                this.itemswrapper = null;
+            }
+            if (this.itemswrapper == null) {
+                this.content[0].innerHTML = '';
+                this.itemswrapper = $('<div tabIndex=1 style="outline: 0 none; overflow:hidden; width:100%; position: relative;"></div>');
+                this.itemswrapper.height(2 * this.host.height());
+                this.content.append(this.itemswrapper);
+            }
 
             var virtualSize = this._calculateVirtualSize();
             var virtualItemsCount = virtualSize.itemsPerPage * 2;
@@ -927,45 +1140,58 @@ License: http://jqwidgets.com/license/
             var virtualWidth = virtualSize.width;
             this.virtualSize = virtualSize;
             this.itemswrapper.width(Math.max(this.host.width(), 17 + virtualSize.width));
-            for (virtualItemIndex = 0; virtualItemIndex < this.virtualItemsCount; virtualItemIndex++) {
+            var startIndex = this.itemswrapper.children().length;
+            for (var virtualItemIndex = startIndex; virtualItemIndex < this.virtualItemsCount; virtualItemIndex++) {
                 var item = this.items[virtualItemIndex];
-                var itemElement = $("<div style='border: none; tabIndex=0 width:100%; height: 100%; align:left; valign:top; position: absolute;'></div>");
-                var spanElement = $("<span id='spanElement'></span>");
+                var itemElement = $("<div style='border: none; tabIndex=0 width:100%; height: 100%; align:left; valign:top; position: absolute;'><span id='spanElement'></span></div>");
 
                 itemElement[0].id = self._createID();
                 if (this.allowDrag && this._enableDragDrop) {
                     itemElement.addClass('draggable');
                 }
 
-                spanElement.appendTo(itemElement);
                 itemElement.appendTo(this.itemswrapper);
 
                 if (this.checkboxes && this.host.jqxCheckBox) {
                     var checkbox = $('<div tabIndex=1 style="background-color: transparent; padding: 0; margin: 0; position: absolute; float: left; width: 16px; height: 16px;" class="chkbox"/>');
                     itemElement.css('float', 'left');
+                    var spanElement = $(itemElement[0].firstChild);
                     spanElement.css('float', 'left');
                     itemElement.prepend(checkbox);
-                    checkbox.jqxCheckBox({ checked: item.checked, animationShowDelay: 0, animationHideDelay: 0, disabled: item.disabled, enableContainerClick: false, keyboardCheck: false, hasThreeStates: this.hasThreeStates, theme: this.theme });
+                    checkbox.jqxCheckBox({hasInput: false, checked: item.checked, animationShowDelay: 0, animationHideDelay: 0, disabled: item.disabled, enableContainerClick: false, keyboardCheck: false, hasThreeStates: this.hasThreeStates, theme: this.theme });
                     item.checkBoxElement = checkbox[0];
                     var updated = function (event, checked) {
                         var checkItem = event.owner.element.item;
                         if (checkItem != null) {
                             var args = event.args;
                             if (checked) {
-                                me.checkIndex(checkItem.index, false);
+                                me.checkIndex(checkItem.index, true);
                             }
-                            else if (checked == false) {
-                                me.uncheckIndex(checkItem.index, false);
+                            else if (checkItem.checked == false) {
+                                me.uncheckIndex(checkItem.index, true);
                             }
-                            else me.indeterminateIndex(checkItem.index, false);
+                            else {
+                                if (checkItem.hasThreeStates && me.hasThreeStates) {
+                                    if (checked == false) {
+                                        me.uncheckIndex(checkItem.index, true);
+                                    }
+                                    else {
+                                        me.indeterminateIndex(checkItem.index, true);
+                                    }
+                                }
+                                else {
+                                    me.uncheckIndex(checkItem.index, true);
+                                }
+                            }
                         }
                         me.focused = true;
                     }
                     checkbox.jqxCheckBox('updated', updated);
                 }
 
-                itemElement.height(item.height);
-                itemElement.css('top', top);
+                itemElement[0].style.height = item.height + 'px';
+                itemElement[0].style.top = top + 'px';
+
                 top += item.height;
                 this.visualItems[virtualItemIndex] = itemElement;
             };
@@ -973,6 +1199,21 @@ License: http://jqwidgets.com/license/
             this._addHandlers();
 
             this._updatescrollbars();
+
+            if (this.autoItemsHeight) {
+                var virtualSize = this._calculateVirtualSize();
+                var virtualItemsCount = virtualSize.itemsPerPage * 2;
+                if (this.autoHeight) {
+                    virtualItemsCount = this.items.length;
+                }
+
+                this.virtualItemsCount = Math.min(virtualItemsCount, this.items.length);
+                var me = this;
+                var virtualWidth = virtualSize.width;
+                this.virtualSize = virtualSize;
+                this._updatescrollbars();
+            }
+
             if ($.browser.msie && $.browser.version < 8) {
                 this.host.attr('hideFocus', true);
                 this.host.find('div').attr('hideFocus', true);
@@ -980,12 +1221,12 @@ License: http://jqwidgets.com/license/
         },
 
         _updatescrollbars: function () {
-            this._arrange();
             var virtualHeight = this.virtualSize.height;
             var virtualWidth = this.virtualSize.width;
             var vScrollInstance = this.vScrollInstance;
             var hScrollInstance = this.hScrollInstance;
-
+            this._arrange();
+            var hasChange = false;
             if (virtualHeight > this.host.outerHeight()) {
                 var hScrollOffset = 0; //parseInt(this.hScrollBar.height());
                 if (virtualWidth > this.host.outerWidth()) {
@@ -993,19 +1234,75 @@ License: http://jqwidgets.com/license/
                 }
 
                 vScrollInstance.max = 2 + parseInt(virtualHeight) + hScrollOffset - parseInt(this.host.height());
-                this.vScrollBar.css('visibility', 'inherit');
-            } else this.vScrollBar.css('visibility', 'hidden');
-
-            if (virtualWidth > this.host.outerWidth()) {
-                hScrollInstance.max = parseInt(virtualWidth) - parseInt(this.content.width()) + parseInt(this.hScrollBar.height());
-                this.hScrollBar.css('visibility', 'inherit');
+                if (this.vScrollBar[0].style.visibility != 'inherit') {
+                    this.vScrollBar[0].style.visibility = 'inherit';
+                    hasChange = true;
+                }
             }
-            else this.hScrollBar.css('visibility', 'hidden');
-            this.hScrollBar.jqxScrollBar('setPosition', 0);
-            this._arrange();
+            else {
+                if (this.vScrollBar[0].style.visibility != 'hidden') {
+                    this.vScrollBar[0].style.visibility = 'hidden';
+                    hasChange = true;
+                    vScrollInstance.setPosition(0);
+                }
+            }
+
+            var scrollOffset = 0;
+            if (this.vScrollBar[0].style.visibility != 'hidden') {
+                scrollOffset = this.scrollBarSize + 6;
+            }
+
+            var checkboxes = this.checkboxes ? 20 : 0;
+
+            if (this.autoItemsHeight) {
+                this.hScrollBar[0].style.visibility = 'hidden';
+            }
+            else {
+                if (virtualWidth >= this.host.outerWidth() - scrollOffset - checkboxes) {
+                    var changedMax = hScrollInstance.max;
+                    if (this.vScrollBar[0].style.visibility == 'inherit') {
+                        hScrollInstance.max = checkboxes + scrollOffset + parseInt(virtualWidth) - this.host.width() + 4;
+                    }
+                    else {
+                        hScrollInstance.max = checkboxes + parseInt(virtualWidth) - this.host.width() + 6;
+                    }
+
+                    if (this.hScrollBar[0].style.visibility != 'inherit') {
+                        this.hScrollBar[0].style.visibility = 'inherit';
+                        hasChange = true;
+                    }
+                    if (changedMax != hScrollInstance.max) {
+                        hScrollInstance._arrange();
+                    }
+                    if (this.vScrollBar[0].style.visibility == 'inherit') {
+                        vScrollInstance.max = 2 + parseInt(virtualHeight) + this.hScrollBar.outerHeight() + 2 - parseInt(this.host.height());
+                    }
+                }
+                else {
+                    if (this.hScrollBar[0].style.visibility != 'hidden') {
+                        this.hScrollBar[0].style.visibility = 'hidden';
+                        hasChange = true;
+                    }
+                }
+            }
+
+            hScrollInstance.setPosition(0);
+
+            if (hasChange) this._arrange();
+
             if (this.itemswrapper) {
                 this.itemswrapper.width(Math.max(this.host.width(), 17 + virtualWidth));
                 this.itemswrapper.height(2 * this.host.height());
+            }
+
+            var isTouchDevice = this.isTouchDevice();
+            if (isTouchDevice) {
+                if (this.vScrollBar.css('visibility') != 'visible' && this.hScrollBar.css('visibility') != 'visible') {
+                    $.jqx.mobile.setTouchScroll(false, this.element.id);
+                }
+                else {
+                    $.jqx.mobile.setTouchScroll(true, this.element.id);
+                }
             }
         },
 
@@ -1036,6 +1333,7 @@ License: http://jqwidgets.com/license/
                 this._renderItems();
                 this._raiseEvent('1', { index: index, type: type });
             }
+            this._updateInputSelection();
 
             this._raiseEvent('2', { index: index, item: this.getItem(index) });
         },
@@ -1064,7 +1362,7 @@ License: http://jqwidgets.com/license/
         },
 
         // checks a specific item by its index.
-        checkIndex: function (index, render) {
+        checkIndex: function (index, render, raiseEvent) {
             if (!this.checkboxes || !this.host.jqxCheckBox) {
                 return;
             }
@@ -1083,15 +1381,20 @@ License: http://jqwidgets.com/license/
                 return;
 
             var item = this.getItem(index);
+            if (this.groups.length > 0) {
+                var item = this.getVisibleItem(index);
+            }
             if (item != null) {
                 var checkbox = $(item.checkBoxElement);
                 item.checked = true;
                 if (render == undefined || render == true) {
-                    this._renderItems();
+                    this._updateCheckedItems();
                 }
             }
 
-            this._raiseEvent(3, { label: item.label, value: item.value, checked: true, item: item });
+            if (raiseEvent == undefined || raiseEvent == true) {
+                this._raiseEvent(3, { label: item.label, value: item.value, checked: true, item: item });
+            }
         },
 
         getCheckedItems: function () {
@@ -1100,6 +1403,8 @@ License: http://jqwidgets.com/license/
             }
 
             var checkedItems = new Array();
+            if (this.items == undefined) return;
+
             $.each(this.items, function () {
                 if (this.checked) {
                     checkedItems[checkedItems.length] = this;
@@ -1108,7 +1413,7 @@ License: http://jqwidgets.com/license/
             return checkedItems;
         },
 
-        checkAll: function () {
+        checkAll: function (silentUpdate) {
             if (!this.checkboxes || !this.host.jqxCheckBox) {
                 return;
             }
@@ -1120,11 +1425,13 @@ License: http://jqwidgets.com/license/
                 this.checked = true;
             });
 
-            this._renderItems();
-            this._raiseEvent(3, { checked: true });
+            this._updateCheckedItems();
+            if (silentUpdate == undefined || silentUpdate == true) {
+                this._raiseEvent(3, { checked: true });
+            }
         },
 
-        uncheckAll: function () {
+        uncheckAll: function (silentUpdate) {
             if (!this.checkboxes || !this.host.jqxCheckBox) {
                 return;
             }
@@ -1136,12 +1443,15 @@ License: http://jqwidgets.com/license/
                 this.checked = false;
             });
 
-            this._renderItems();
-            this._raiseEvent(3, { checked: false });
+            this._updateCheckedItems();
+
+            if (silentUpdate == undefined || silentUpdate == true) {
+                this._raiseEvent(3, { checked: false });
+            }
         },
 
         // unchecks a specific item by its index.
-        uncheckIndex: function (index, render) {
+        uncheckIndex: function (index, render, raiseEvent) {
             if (!this.checkboxes || !this.host.jqxCheckBox) {
                 return;
             }
@@ -1160,18 +1470,23 @@ License: http://jqwidgets.com/license/
                 return;
 
             var item = this.getItem(index);
+            if (this.groups.length > 0) {
+                var item = this.getVisibleItem(index);
+            }
             if (item != null) {
                 var checkbox = $(item.checkBoxElement);
                 item.checked = false;
                 if (render == undefined || render == true) {
-                    this._renderItems();
+                    this._updateCheckedItems();
                 }
             }
-            this._raiseEvent(3, { label: item.label, value: item.value, checked: false, item: item });
+            if (raiseEvent == undefined || raiseEvent == true) {
+                this._raiseEvent(3, { label: item.label, value: item.value, checked: false, item: item });
+            }
         },
 
         // sets a specific item's checked property to null.
-        indeterminateIndex: function (index, render) {
+        indeterminateIndex: function (index, render, raiseEvent) {
             if (!this.checkboxes || !this.host.jqxCheckBox) {
                 return;
             }
@@ -1190,14 +1505,19 @@ License: http://jqwidgets.com/license/
                 return;
 
             var item = this.getItem(index);
+            if (this.groups.length > 0) {
+                var item = this.getVisibleItem(index);
+            }
             if (item != null) {
                 var checkbox = $(item.checkBoxElement);
                 item.checked = null;
                 if (render == undefined || render == true) {
-                    this._renderItems();
+                    this._updateCheckedItems();
                 }
             }
-            this._raiseEvent(3, { checked: null });
+            if (raiseEvent == undefined || raiseEvent == true) {
+                this._raiseEvent(3, { checked: null });
+            }
         },
 
         // gets the selected index.
@@ -1225,6 +1545,75 @@ License: http://jqwidgets.com/license/
             return this.getItem(this.selectedIndex);
         },
 
+        _updateCheckedItems: function () {
+            var selectedIndex = this.selectedIndex;
+            this.clearSelection(false);
+            var items = this.getCheckedItems();
+            this.selectedIndex = selectedIndex;
+
+            this._renderItems();
+            var selectedElement = $.data(this.element, 'hoveredItem');
+            if (selectedElement != null) {
+                $(selectedElement).addClass(this.toThemeProperty('jqx-listitem-state-hover'));
+                $(selectedElement).addClass(this.toThemeProperty('jqx-fill-state-hover'));
+            }
+
+            this._updateInputSelection();
+        },
+
+        getItemByValue: function (value) {
+            if (this.visibleItems == null) {
+                return;
+            }
+
+            if (this.itemsByValue)
+                return this.itemsByValue[value];
+
+            var items = this.visibleItems;
+
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].value == value) {
+                    return items[i];
+                    break;
+                }
+            }
+        },
+
+        checkItem: function (item) {
+            if (item != null) {
+                return this.checkIndex(item.index, true);
+            }
+            return false;
+        },
+
+        uncheckItem: function (item) {
+            if (item != null) {
+                return this.uncheckIndex(item.index, true);
+            }
+            return false;
+        },
+
+        indeterminateItem: function (item) {
+            if (item != null) {
+                return this.indeterminateIndex(item.index, true);
+            }
+            return false;
+        },
+
+        selectItem: function (item) {
+            if (item != null) {
+                return this.selectIndex(item.index, true);
+            }
+            return false;
+        },
+
+        unselectItem: function (item) {
+            if (item != null) {
+                return this.unselectIndex(item.index, true);
+            }
+            return false;
+        },
+
         // selects an item.
         selectIndex: function (index, ensureVisible, render, forceSelect, type, originalEvent) {
             if (isNaN(index))
@@ -1240,8 +1629,13 @@ License: http://jqwidgets.com/license/
             if (this.disabled)
                 return;
 
-            if (!this.multiple && this.selectedIndex == index)
+            if (!this.multiple && !this.multipleextended && this.selectedIndex == index && !forceSelect)
                 return;
+
+            if (this.checkboxes) {
+                this._updateCheckedItems();
+                return;
+            }
 
             this.focused = true;
             var newSelection = false;
@@ -1270,26 +1664,67 @@ License: http://jqwidgets.com/license/
                 this._raiseEvent('0', { index: index, type: type, item: newItem, originalEvent: originalEvent });
             }
             else {
-                if (this.multiple) {
-                    if (this.selectedIndexes[index] == undefined || this.selectedIndexes[index] == -1) {
-                        this.selectedIndexes[index] = index;
-                        this.selectedIndex = index;
-                        this._raiseEvent('0', { index: index, type: type, item: newItem, originalEvent: originalEvent });
+                var me = this;
+                var singleSelect = function (index, oldIndex, type, oldItem, newItem, originalEvent) {
+                    me._raiseEvent('1', { index: oldIndex, type: type, item: oldItem, originalEvent: originalEvent });
+                    me.selectedIndex = index;
+                    me.selectedIndexes[oldIndex] = -1;
+                    oldIndex = index;
+                    me.selectedIndexes[index] = index;
+                    me._raiseEvent('0', { index: index, type: type, item: newItem, originalEvent: originalEvent });
+                }
+                var multipleSelect = function (index, oldIndex, type, oldItem, newItem, originalEvent) {
+                    if (me.selectedIndexes[index] == undefined || me.selectedIndexes[index] == -1) {
+                        me.selectedIndexes[index] = index;
+                        me.selectedIndex = index;
+                        me._raiseEvent('0', { index: index, type: type, item: newItem, originalEvent: originalEvent });
                     }
                     else {
-                        oldIndex = this.selectedIndexes[index];
-                        this.selectedIndexes[index] = -1;
-                        this.selectedIndex = -1;
-                        this._raiseEvent('1', { index: oldIndex, type: type, item: oldItem, originalEvent: originalEvent });
+                        oldIndex = me.selectedIndexes[index];
+                        me.selectedIndexes[index] = -1;
+                        me.selectedIndex = -1;
+                        me._raiseEvent('1', { index: oldIndex, type: type, item: oldItem, originalEvent: originalEvent });
                     }
                 }
+
+                if (this.multipleextended) {
+                    if (!this._shiftKey && !this._ctrlKey) {
+                        if (type != 'keyboard' && type != 'mouse') {
+                            multipleSelect(index, oldIndex, type, oldItem, newItem, originalEvent);
+                            me._clickedIndex = index;
+                        }
+                        else {
+                            this.clearSelection(false);
+                            me._clickedIndex = index;
+                            singleSelect(index, oldIndex, type, oldItem, newItem, originalEvent);
+                        }
+                    }
+                    else if (this._ctrlKey) {
+                        if (type == 'keyboard') this.clearSelection(false);
+                        multipleSelect(index, oldIndex, type, oldItem, newItem, originalEvent);
+                    }
+                    else if (this._shiftKey) {
+                        if (me._clickedIndex == undefined) me._clickedIndex = oldIndex;
+                        var min = Math.min(me._clickedIndex, index);
+                        var max = Math.max(me._clickedIndex, index);
+                        this.clearSelection(false);
+                        for (var i = min; i <= max; i++) {
+                            me.selectedIndexes[i] = i;
+                            me._raiseEvent('0', { index: i, type: type, item: this.getVisibleItem(i), originalEvent: originalEvent });
+                        }
+                        if (type != 'keyboard') {
+                            me.selectedIndex = me._clickedIndex;
+                        }
+                        else {
+                            me.selectedIndex = index;
+                        }
+                    }
+                }
+                else if (this.multiple) {
+                    multipleSelect(index, oldIndex, type, oldItem, newItem, originalEvent);
+                }
                 else {
-                    this._raiseEvent('1', { index: oldIndex, type: type, item: oldItem, originalEvent: originalEvent });
-                    this.selectedIndex = index;
-                    this.selectedIndexes[oldIndex] = -1;
-                    oldIndex = index;
-                    this.selectedIndexes[index] = index;
-                    this._raiseEvent('0', { index: index, type: type, item: newItem, originalEvent: originalEvent });
+                    singleSelect(index, oldIndex, type, oldItem, newItem, originalEvent);
                 }
             }
 
@@ -1301,8 +1736,35 @@ License: http://jqwidgets.com/license/
                 this.ensureVisible(index);
             }
 
-            this._raiseEvent('2', { index: index, item: newItem });
+            this._raiseEvent('2', { index: index, item: newItem, oldItem: oldItem });
+            this._updateInputSelection();
             return newSelection;
+        },
+
+        _updateInputSelection: function () {
+            if (this.input) {
+                if (this.selectedIndex == -1) {
+                    this.input.val("");
+                }
+                else {
+                    if (this.items[this.selectedIndex] != undefined) {
+                        this.input.val(this.items[this.selectedIndex].value);
+                    }
+                }
+                if (this.multiple || this.multipleextended || this.checkboxes) {
+                    var items = !this.checkboxes ? this.getSelectedItems() : this.getCheckedItems();
+                    var str = "";
+                    for (var i = 0; i < items.length; i++) {
+                        if (i == items.length - 1) {
+                            str += items[i].value;
+                        }
+                        else {
+                            str += items[i].value + ",";
+                        }
+                    }
+                    this.input.val(str);
+                }
+            }
         },
 
         // checks whether an item is in the visible view.
@@ -1523,6 +1985,12 @@ License: http://jqwidgets.com/license/
             if (!this.keyboardNavigation)
                 return;
 
+            var doClear = function () {
+                if (self.multiple) {
+                    self.clearSelection(false);
+                }
+            }
+
             if (event.altKey) key = -1;
             if (self.incrementalSearch) {
                 var matchindex = -1;
@@ -1565,9 +2033,7 @@ License: http://jqwidgets.com/license/
                     self._lastMatchIndex = matchindex;
 
                     if (matchindex >= 0) {
-                        if (self.multiple) {
-                            self.clearSelection(false);
-                        }
+                        doClear();
                         self.selectIndex(matchindex, false, false, false, 'keyboard', event);
                         var isInView = self.isIndexInView(matchindex);
                         if (!isInView) {
@@ -1595,18 +2061,17 @@ License: http://jqwidgets.com/license/
                 }
             }
 
+            if (this.checkboxes)
+                return true;
+
             if (key == 33) {
                 var itemsInPage = self._itemsInPage();
                 if (self.selectedIndex - itemsInPage >= 0) {
-                    if (self.multiple) {
-                        self.clearSelection(false);
-                    }
+                    doClear();
                     self.selectIndex(selectedIndex - itemsInPage, false, false, false, 'keyboard', event);
                 }
                 else {
-                    if (self.multiple) {
-                        self.clearSelection(false);
-                    }
+                    doClear();
                     self.selectIndex(self._firstItemIndex(), false, false, false, 'keyboard', event);
                 }
                 self._searchString = "";
@@ -1615,42 +2080,20 @@ License: http://jqwidgets.com/license/
             if (key == 32 && this.checkboxes) {
                 var checkItem = this.getItem(index);
                 if (checkItem != null) {
-                    if (checkItem.checked == true) {
-                        checkItem.checked = this.hasThreeStates ? null : false;
-                    }
-                    else {
-                        checkItem.checked = checkItem.checked != null;
-                    }
-
-                    switch (checkItem.checked) {
-                        case true:
-                            this.checkIndex(index);
-                            break;
-                        case false:
-                            this.uncheckIndex(index);
-                            break;
-                        default:
-                            this.indeterminateIndex(index);
-                            break;
-                    }
-
+                    self._updateItemCheck(checkItem, index);
                     event.preventDefault();
                 }
                 self._searchString = "";
             }
 
             if (key == 36) {
-                if (self.multiple) {
-                    self.clearSelection(false);
-                }
+                doClear();
                 self.selectIndex(self._firstItemIndex(), false, false, false, 'keyboard', event);
                 self._searchString = "";
             }
 
             if (key == 35) {
-                if (self.multiple) {
-                    self.clearSelection(false);
-                }
+                doClear();
                 self.selectIndex(self._lastItemIndex(), false, false, false, 'keyboard', event);
                 self._searchString = "";
             }
@@ -1658,15 +2101,11 @@ License: http://jqwidgets.com/license/
             if (key == 34) {
                 var itemsInPage = self._itemsInPage();
                 if (self.selectedIndex + itemsInPage < self.visibleItems.length) {
-                    if (self.multiple) {
-                        self.clearSelection(false);
-                    }
+                    doClear();
                     self.selectIndex(selectedIndex + itemsInPage, false, false, false, 'keyboard', event);
                 }
                 else {
-                    if (self.multiple) {
-                        self.clearSelection(false);
-                    }
+                    doClear();
                     self.selectIndex(self._lastItemIndex(), false, false, false, 'keyboard', event);
                 }
                 self._searchString = "";
@@ -1677,9 +2116,7 @@ License: http://jqwidgets.com/license/
                 if (self.selectedIndex > 0) {
                     var newIndex = self._prevItemIndex(self.selectedIndex);
                     if (newIndex != self.selectedIndex && newIndex != -1) {
-                        if (self.multiple) {
-                            self.clearSelection(false);
-                        }
+                        doClear();
                         self.selectIndex(newIndex, false, false, false, 'keyboard', event);
                     }
                     else return true;
@@ -1691,9 +2128,7 @@ License: http://jqwidgets.com/license/
                 if (self.selectedIndex + 1 < self.visibleItems.length) {
                     var newIndex = self._nextItemIndex(self.selectedIndex);
                     if (newIndex != self.selectedIndex && newIndex != -1) {
-                        if (self.multiple) {
-                            self.clearSelection(false);
-                        }
+                        doClear();
                         self.selectIndex(newIndex, false, false, false, 'keyboard', event);
                     }
                     else return true;
@@ -1714,6 +2149,27 @@ License: http://jqwidgets.com/license/
             }
 
             return true;
+        },
+
+        _updateItemCheck: function (checkItem, index) {
+            if (checkItem.checked == true) {
+                checkItem.checked = (checkItem.hasThreeStates && this.hasThreeStates) ? null : false;
+            }
+            else {
+                checkItem.checked = checkItem.checked != null;
+            }
+
+            switch (checkItem.checked) {
+                case true:
+                    this.checkIndex(index);
+                    break;
+                case false:
+                    this.uncheckIndex(index);
+                    break;
+                default:
+                    this.indeterminateIndex(index);
+                    break;
+            }
         },
 
         // performs mouse wheel.
@@ -1798,8 +2254,19 @@ License: http://jqwidgets.com/license/
             return e.touches;
         },
 
+        focus: function () {
+            this.focused = true;
+            this.content.focus();
+            var me = this;
+            setTimeout(function () {
+                me.content.focus();
+            }, 10);
+        },
+
         _removeHandlers: function () {
             var self = this;
+            this.removeHandler($(document), 'keydown.listbox' + this.element.id);
+            this.removeHandler($(document), 'keyup.listbox' + this.element.id);
             this.removeHandler(this.vScrollBar, 'valuechanged');
             this.removeHandler(this.hScrollBar, 'valuechanged');
             this.removeHandler(this.host, 'mousewheel');
@@ -1811,7 +2278,13 @@ License: http://jqwidgets.com/license/
             this.removeHandler(this.content, 'mouseup');
             this.removeHandler(this.content, 'mousedown');
             this.removeHandler(this.content, 'touchend');
-            this.removeHandler(this.content, 'mousemove');
+            if (this._mousemovefunc) {
+                this.removeHandler(this.content, 'mousemove', this._mousemovefunc);
+                this._mousemovefunc = null;
+            }
+            else {
+                this.removeHandler(this.content, 'mousemove');
+            }
             if ($.browser.msie) {
                 this.removeHandler(this.content, 'selectstart');
             }
@@ -1835,17 +2308,31 @@ License: http://jqwidgets.com/license/
             (this.height != null && this.height.toString().indexOf("%") != -1)) {
                 $(window).unbind('resize.' + this.element.id);
                 $(window).bind('resize.' + this.element.id, function () {
+                    self._arrange();
                     if (self.host.height() != self._oldheight || self.host.width() != self._oldwidth) {
+                        var changedWidth = self.host.width() != self._oldwidth;
                         self._oldwidth = self.host.width();
                         self._oldheight = self.host.height();
 
-                        if (self.items) {
-                            if (self.items.length > 0 && self.virtualItemsCount * self.items[0].height < self._oldheight) {
-                                self._render(false);
-                            }
-                            else {
-                                self._updatescrollbars();
-                                self._renderItems();
+                        if (self.autoItemsHeight) {
+                            self._render(false);
+                        }
+                        else {
+                            if (self.items) {
+                                if (self.items.length > 0 && self.virtualItemsCount * self.items[0].height < self._oldheight) {
+                                    self._render(false);
+                                }
+                                else {
+                                    var _oldScrollValue = self.vScrollInstance.value;
+                                    self._updatescrollbars();
+                                    self._renderItems();
+                                    if (_oldScrollValue < self.vScrollInstance.max) {
+                                        self.vScrollInstance.setPosition(_oldScrollValue);
+                                    }
+                                    else {
+                                        self.vScrollInstance.setPosition(self.vScrollInstance.max);
+                                    }
+                                }
                             }
                         }
                     }
@@ -1874,7 +2361,12 @@ License: http://jqwidgets.com/license/
                 //                    });
                 //                }
                 //                else self._renderItems();
-                self._renderItems();
+                if ($.browser.msie && $.browser.version > 9) {
+                    setTimeout(function () {
+                        self._renderItems();
+                    }, 1);
+                }
+                else self._renderItems();
             });
 
             this.addHandler(this.hScrollBar, 'valuechanged', function () {
@@ -1883,6 +2375,15 @@ License: http://jqwidgets.com/license/
 
             this.addHandler(this.host, 'mousewheel', function (event) {
                 self.wheel(event, self);
+            });
+
+            this.addHandler($(document), 'keydown.listbox' + this.element.id, function (event) {
+                self._ctrlKey = event.ctrlKey;
+                self._shiftKey = event.shiftKey;
+            });
+            this.addHandler($(document), 'keyup.listbox' + this.element.id, function (event) {
+                self._ctrlKey = event.ctrlKey;
+                self._shiftKey = event.shiftKey;
             });
 
             this.addHandler(this.host, 'keydown', function (event) {
@@ -1897,6 +2398,7 @@ License: http://jqwidgets.com/license/
                 if (hoveredItem != null) {
                     $(hoveredItem).removeClass(self.toThemeProperty('jqx-listitem-state-hover'));
                     $(hoveredItem).removeClass(self.toThemeProperty('jqx-fill-state-hover'));
+                    $.data(self.element, 'hoveredItem', null);
                 }
             });
 
@@ -1911,6 +2413,7 @@ License: http://jqwidgets.com/license/
             this.addHandler(this.content, 'mouseenter', function (event) {
                 self.focused = true;
             });
+            var hasTransform = $.jqx.utilities.hasTransform(this.host);
 
             if (this.enableSelection) {
                 var isTouch = self.isTouchDevice();
@@ -1921,71 +2424,114 @@ License: http://jqwidgets.com/license/
                         if (isTouch) {
                             self._newScroll = new Date();
                             if (self._newScroll - self._lastScroll < 500) {
-                                return false;
+                                return true;
                             }
                         }
 
                         var touches = self.getTouches(event);
                         var touch = touches[0];
-                        var selfOffset = self.host.offset();
-                        var left = parseInt(touch.pageX);
-                        var top = parseInt(touch.pageY);
-                        if (self.touchmode == true) {
-                            left = parseInt(touch._pageX);
-                            top = parseInt(touch._pageY);
-                        }
-                        left = left - selfOffset.left;
-                        top = top - selfOffset.top;
-                        var item = self._hitTest(left, top);
-                        if (item != null && !item.isGroup) {
-                            if (item.html.indexOf('href') != -1) {
-                                setTimeout(function () {
-                                    self.selectIndex(item.visibleIndex, false, true, false, 'mouse', event);
-                                }, 100);
+                        if (touch != undefined) {
+                            var selfOffset = self.host.offset();
+                            var left = parseInt(touch.pageX);
+                            var top = parseInt(touch.pageY);
+                            if (self.touchmode == true) {
+                                left = parseInt(touch._pageX);
+                                top = parseInt(touch._pageY);
                             }
-                            else {
-                                self.selectIndex(item.visibleIndex, false, true, false, 'mouse', event);
+                            left = left - selfOffset.left;
+                            top = top - selfOffset.top;
+                            var item = self._hitTest(left, top);
+                            if (item != null && !item.isGroup) {
+                                if (self.checkboxes) {
+                                    var checkboxOffset = $(item.element).offset();
+                                    var leftCheckOffset = parseInt(checkboxOffset.left);
+                                    if (left <= leftCheckOffset + 20) {
+                                        if (item.checked) {
+                                            self.uncheckIndex(item.visibleIndex);
+                                        }
+                                        else self.checkIndex(item.visibleIndex);
+                                    }
+                                }
+
+                                if (item.html.indexOf('href') != -1) {
+                                    setTimeout(function () {
+                                        self.selectIndex(item.visibleIndex, false, true, false, 'mouse', event);
+                                    }, 100);
+                                }
+                                else {
+                                    self.selectIndex(item.visibleIndex, false, true, false, 'mouse', event);
+                                }
                             }
                         }
                     });
                 }
-
-                this.addHandler(this.content, eventName, function (event) {
-                    if (isTouch) {
-                        self._newScroll = new Date();
-                        if (self._newScroll - self._lastScroll < 500) {
-                            return false;
-                        }
-                    }
-
-                    self.focused = true;
-                    if (!self.isTouchDevice()) {
-                        self.content.focus();
-                    }
-                    if (event.target.id != ('listBoxContent' + self.element.id) && self.itemswrapper[0] != event.target) {
-                        var target = event.target;
-                        var targetOffset = $(target).offset();
-                        var selfOffset = self.host.offset();
-                        var y = parseInt(targetOffset.top) - parseInt(selfOffset.top);
-                        var x = parseInt(targetOffset.left) - parseInt(selfOffset.left);
-                        var item = self._hitTest(x, y);
-                        if (item != null && !item.isGroup) {
-                            if (item.html.indexOf('href') != -1) {
-                                setTimeout(function () {
-                                    self.selectIndex(item.visibleIndex, false, true, false, 'mouse', event);
-                                }, 100);
-                            }
-                            else {
-                                self.selectIndex(item.visibleIndex, false, true, false, 'mouse', event);
+                else {
+                    this.addHandler(this.content, eventName, function (event) {
+                        if (isTouch) {
+                            self._newScroll = new Date();
+                            if (self._newScroll - self._lastScroll < 500) {
+                                return false;
                             }
                         }
-                        if (eventName == 'mousedown') {
-                            return false;
-                        }
-                    }
 
-                    return true;
-                });
+                        self.focused = true;
+                        if (!self.isTouchDevice()) {
+                            self.content.focus();
+                        }
+                        if (event.target.id != ('listBoxContent' + self.element.id) && self.itemswrapper[0] != event.target) {
+                            var target = event.target;
+                            var targetOffset = $(target).offset();
+                            var selfOffset = self.host.offset();
+                            if (hasTransform) {
+                                var left = $.jqx.mobile.getLeftPos(target);
+                                var top = $.jqx.mobile.getTopPos(target);
+                                targetOffset.left = left; targetOffset.top = top;
+
+                                left = $.jqx.mobile.getLeftPos(self.element);
+                                top = $.jqx.mobile.getTopPos(self.element);
+                                selfOffset.left = left; selfOffset.top = top;
+                            }
+
+                            var y = parseInt(targetOffset.top) - parseInt(selfOffset.top);
+                            var x = parseInt(targetOffset.left) - parseInt(selfOffset.left);
+                            var item = self._hitTest(x, y);
+                            if (item != null && !item.isGroup) {
+                                var doSelection = function (item, event) {
+                                    if (!self._shiftKey)
+                                        self._clickedIndex = item.visibleIndex;
+                                    if (!self.checkboxes) {
+                                        self.selectIndex(item.visibleIndex, false, true, false, 'mouse', event);
+                                    } else {
+                                        self.selectedIndex = item.visibleIndex;
+                                        if (x + self.hScrollInstance.value >= 20) {
+                                            self._updateItemCheck(item, item.visibleIndex);
+                                        }
+                                    }
+                                }
+
+                                if (!item.disabled) {
+                                    if (item.html.indexOf('href') != -1) {
+                                        setTimeout(function () {
+                                            doSelection(item, event);
+                                        }, 100);
+                                    }
+                                    else {
+                                        doSelection(item, event);
+                                    }
+                                }
+                            }
+                            if (eventName == 'mousedown') {
+                                var rightclick = false;
+                                if (event.which) rightclick = (event.which == 3);
+                                else if (event.button) rightclick = (event.button == 2);
+                                if (rightclick) return true;
+                                return false;
+                            }
+                        }
+
+                        return true;
+                    });
+                }
 
                 this.addHandler(this.content, 'mouseup', function (event) {
                     self.vScrollInstance.handlemouseup(self, event);
@@ -2000,7 +2546,7 @@ License: http://jqwidgets.com/license/
             // hover behavior.
             var isTouchDevice = this.isTouchDevice();
             if (this.enableHover && !isTouchDevice) {
-                this.addHandler(this.content, 'mousemove', function (event) {
+                this._mousemovefunc = function (event) {
                     if (isTouchDevice)
                         return true;
 
@@ -2021,6 +2567,15 @@ License: http://jqwidgets.com/license/
                             var target = event.target;
                             var targetOffset = $(target).offset();
                             var selfOffset = self.host.offset();
+                            if (hasTransform) {
+                                var left = $.jqx.mobile.getLeftPos(target);
+                                var top = $.jqx.mobile.getTopPos(target);
+                                targetOffset.left = left; targetOffset.top = top;
+
+                                left = $.jqx.mobile.getLeftPos(self.element);
+                                top = $.jqx.mobile.getTopPos(self.element);
+                                selfOffset.left = left; selfOffset.top = top;
+                            }
                             var y = parseInt(targetOffset.top) - parseInt(selfOffset.top);
                             var x = parseInt(targetOffset.left) - parseInt(selfOffset.left);
                             var item = self._hitTest(x, y);
@@ -2038,11 +2593,12 @@ License: http://jqwidgets.com/license/
                             }
                         }
                     }
-                });
+                };
+
+                this.addHandler(this.content, 'mousemove', this._mousemovefunc);
             }
         },
 
-        //[optimize]
         _arrange: function () {
             var width = null;
             var height = null;
@@ -2087,14 +2643,18 @@ License: http://jqwidgets.com/license/
 
             if (width != null) {
                 width = parseInt(width);
-                this.host.width(this.width);
+                if (parseInt(this.element.style.width) != parseInt(this.width)) {
+                    this.host.width(this.width);
+                }
             }
 
             if (!this.autoHeight) {
                 if (height != null) {
                     height = parseInt(height);
-                    this.host.height(this.height);
-                    _setHostHeight(height);
+                    if (parseInt(this.element.style.height) != parseInt(this.height)) {
+                        this.host.height(this.height);
+                        _setHostHeight(height);
+                    }
                 }
             }
             else {
@@ -2126,25 +2686,30 @@ License: http://jqwidgets.com/license/
             var rightSizeOffset = 0;
             // right scroll offset. 
             if (this.vScrollBar) {
-                if (this.vScrollBar.css('visibility') != 'hidden') {
+                if (this.vScrollBar[0].style.visibility != 'hidden') {
                     rightSizeOffset = scrollSize + scrollOffset;
                 }
                 else {
-                    this.vScrollBar.jqxScrollBar('setPosition', 0);
+                    this.vScrollInstance.setPosition(0);
                 }
             }
             else return;
 
             if (this.hScrollBar) {
                 // bottom scroll offset.
-                if (this.hScrollBar.css('visibility') != 'hidden') {
+                if (this.hScrollBar[0].style.visibility != 'hidden') {
                     bottomSizeOffset = scrollSize + scrollOffset;
                 }
                 else {
-                    this.hScrollBar.jqxScrollBar('setPosition', 0);
+                    this.hScrollInstance.setPosition(0);
                 }
             }
             else return;
+
+            if (this.autoItemsHeight) {
+                this.hScrollBar[0].style.visibility = 'hidden';
+                bottomSizeOffset = 0;
+            }
 
             var hScrollTop = parseInt(height) - scrollOffset - scrollSize;
             if (hScrollTop < 0) hScrollTop = 0;
@@ -2157,8 +2722,13 @@ License: http://jqwidgets.com/license/
                 this.hScrollBar.width(width - 2);
             }
 
-            this.vScrollBar.width(scrollSize);
-            this.vScrollBar.height(parseInt(height) - bottomSizeOffset + 'px');
+            if (scrollSize != parseInt(this.vScrollBar[0].style.width)) {
+                this.vScrollBar.width(scrollSize);
+            }
+            if ((parseInt(height) - bottomSizeOffset) != parseInt(this.vScrollBar[0].style.height)) {
+                this.vScrollBar.height(parseInt(height) - bottomSizeOffset + 'px');
+            }
+
             this.vScrollBar.css({ left: parseInt(width) - parseInt(scrollSize) - scrollOffset + 'px', top: '0px' });
             var vScrollInstance = this.vScrollInstance;
             vScrollInstance.disabled = this.disabled;
@@ -2168,16 +2738,36 @@ License: http://jqwidgets.com/license/
             hScrollInstance.disabled = this.disabled;
             hScrollInstance._arrange();
 
-            if ((this.vScrollBar.css('visibility') != 'hidden') && (this.hScrollBar.css('visibility') != 'hidden')) {
+            if ((this.vScrollBar[0].style.visibility != 'hidden') && (this.hScrollBar[0].style.visibility != 'hidden')) {
                 this.bottomRight.css('visibility', 'inherit');
                 this.bottomRight.css({ left: 1 + parseInt(this.vScrollBar.css('left')), top: 1 + parseInt(this.hScrollBar.css('top')) });
+                if (this.rtl) {
+                    this.bottomRight.css({ left: 0 });
+                }
                 this.bottomRight.width(parseInt(scrollSize) + 3);
                 this.bottomRight.height(parseInt(scrollSize) + 3);
             }
             else this.bottomRight.css('visibility', 'hidden');
 
-            this.content.width(parseInt(width) - rightSizeOffset);
-            this.content.height(parseInt(height) - bottomSizeOffset);
+            if (parseInt(this.content[0].style.width) != (parseInt(width) - rightSizeOffset)) {
+                this.content.width(parseInt(width) - rightSizeOffset);
+            }
+
+            if (this.rtl) {
+                this.vScrollBar.css({ left: 0 + 'px', top: '0px' });
+                this.hScrollBar.css({ left: this.vScrollBar.width() + 'px' });
+                if (this.vScrollBar[0].style.visibility != 'hidden') {
+                    this.content.css('margin-left', 4 + this.vScrollBar.width());
+                }
+                else {
+                    this.content.css('margin-left', 0);
+                    this.hScrollBar.css({ left: '0px' });
+                }
+            }
+
+            if (parseInt(this.content[0].style.height) != (parseInt(height) - bottomSizeOffset)) {
+                this.content.height(parseInt(height) - bottomSizeOffset);
+            }
             if (this.overlayContent) {
                 this.overlayContent.width(parseInt(width) - rightSizeOffset);
                 this.overlayContent.height(parseInt(height) - bottomSizeOffset);
@@ -2275,31 +2865,71 @@ License: http://jqwidgets.com/license/
                 }
             }
 
-            var updatefromadapter = function (me) {
-                me.records = dataadapter.records;
-                var recordslength = me.records.length;
-                me.items = new Array();
-                for (i = 0; i < recordslength; i++) {
-                    var record = me.records[i];
-                    var value = record[me.valueMember];
-                    var label = record[me.displayMember];
+            var updatefromadapter = function (me, type) {
+                var getItem = function (record) {
+                    if (typeof record === 'string') {
+                        var label = record;
+                        var value = record;
+                    }
+                    else {
+                        var value = record[me.valueMember];
+                        var label = record[me.displayMember];
+                    }
                     var listBoxItem = new $.jqx._jqxListBox.item();
                     listBoxItem.label = label;
                     listBoxItem.value = value;
                     listBoxItem.html = "";
                     listBoxItem.visible = true;
                     listBoxItem.originalItem = record;
-                    listBoxItem.index = i;
                     listBoxItem.group = '';
                     listBoxItem.groupHtml = '';
                     listBoxItem.disabled = false;
+                    listBoxItem.hasThreeStates = true;
+                    return listBoxItem;
+                }
 
+                if (type != undefined) {
+                    var dataItem = dataadapter._changedrecords[0];
+                    if (dataItem) {
+                        $.each(dataadapter._changedrecords, function () {
+                            var index = this.index;
+                            var item = this.record;
+                            if (type != 'remove') {
+                                var mapItem = getItem(item);
+                            }
+
+                            switch (type) {
+                                case "update":
+                                    me.updateAt(mapItem, index);
+                                    break;
+                                case "add":
+                                    me.insertAt(mapItem, index);
+                                    break;
+                                case "remove":
+                                    me.removeAt(index);
+                                    break;
+                            }
+                        });
+                        return;
+                    }
+                }
+
+                me.records = dataadapter.records;
+                var recordslength = me.records.length;
+                me.items = new Array();
+                me.itemsByValue = new Array();
+                for (var i = 0; i < recordslength; i++) {
+                    var record = me.records[i];
+                    var listBoxItem = getItem(record);
+                    listBoxItem.index = i;
                     me.items[i] = listBoxItem;
+
+                    var key = listBoxItem.value;
+                    if (listBoxItem.value == "" || listBoxItem.value == null) key = i;
+                    me.itemsByValue[key] = listBoxItem;
                 }
                 me._render();
-                if (me.rendered) {
-                    me.rendered();
-                }
+                me._raiseEvent('6');
             }
 
             initadapter(this);
@@ -2310,11 +2940,11 @@ License: http://jqwidgets.com/license/
                 case "array":
                 default:
                     if (source.localdata != null) {
+                        dataadapter.unbindBindingUpdate(this.element.id);
                         dataadapter.dataBind();
                         updatefromadapter(this);
-                        dataadapter.unbindBindingUpdate(this.element.id);
-                        dataadapter.bindBindingUpdate(this.element.id, function () {
-                            updatefromadapter(me);
+                        dataadapter.bindBindingUpdate(this.element.id, function (updatetype) {
+                            updatefromadapter(me, updatetype);
                         });
                     }
                     break;
@@ -2328,9 +2958,9 @@ License: http://jqwidgets.com/license/
                 case "tab":
                     {
                         if (source.localdata != null) {
+                            dataadapter.unbindBindingUpdate(this.element.id);
                             dataadapter.dataBind();
                             updatefromadapter(this);
-                            dataadapter.unbindBindingUpdate(this.element.id);
                             dataadapter.bindBindingUpdate(this.element.id, function () {
                                 updatefromadapter(me);
                             });
@@ -2375,6 +3005,7 @@ License: http://jqwidgets.com/license/
             this.items = new Array();
             this.visualItems = new Array();
             var listItems = new Array();
+            this.itemsByValue = new Array();
 
             $.map(items, function (item) {
                 if (item == undefined)
@@ -2404,6 +3035,7 @@ License: http://jqwidgets.com/license/
                     var groupID = index + 'jqxGroup';
                     self.groups[groupID] = self.groups[group];
                     length++;
+                    self.groups.length = length;
                 }
 
                 var uniqueGroup = self.groups[group];
@@ -2425,7 +3057,9 @@ License: http://jqwidgets.com/license/
 
                 if (typeof item != "string") {
                     if (self.displayMember != "") {
-                        listBoxItem.label = item[self.displayMember];
+                        if (item[self.displayMember]) {
+                            listBoxItem.label = item[self.displayMember];
+                        }
                     }
 
                     if (self.valueMember != "") {
@@ -2433,9 +3067,17 @@ License: http://jqwidgets.com/license/
                     }
                 }
 
+                listBoxItem.hasThreeStates = item.hasThreeStates != undefined ? item.hasThreeStates : true;
                 listBoxItem.originalItem = item;
                 listBoxItem.title = title;
                 listBoxItem.html = item.html || '';
+                if (item.html && item.html != '') {
+               //     listBoxItem.label = listBoxItem.value = item.html;
+                    if (title && title != '') {
+             //           listBoxItem.label = listBoxItem.value = title;
+                    }
+                }
+
                 listBoxItem.group = group;
                 listBoxItem.checked = item.checked || false;
                 listBoxItem.groupHtml = item.groupHtml || '';
@@ -2451,7 +3093,7 @@ License: http://jqwidgets.com/license/
             var uniqueItemIndex = 0;
 
             if (this.fromSelect == undefined || this.fromSelect == false) {
-                for (indx = 0; indx < length; indx++) {
+                for (var indx = 0; indx < length; indx++) {
                     var index = indx + 1;
                     var groupID = index + 'jqxGroup';
                     var group = this.groups[groupID];
@@ -2472,10 +3114,14 @@ License: http://jqwidgets.com/license/
 
                         listBoxItem.html = group.captionHtml;
                         itemsArray[uniqueItemIndex] = listBoxItem;
+                        var key = listBoxItem.value;
+                        if (listBoxItem.value == "" || listBoxItem.value == null) key = uniqueItemIndex;
+                        self.itemsByValue[key] = listBoxItem;
+
                         uniqueItemIndex++;
                     }
 
-                    for (j = 0; j < group.items.length; j++) {
+                    for (var j = 0; j < group.items.length; j++) {
                         itemsArray[uniqueItemIndex] = group.items[j];
                         uniqueItemIndex++;
                     }
@@ -2498,6 +3144,10 @@ License: http://jqwidgets.com/license/
                     }
 
                     itemsArray[uniqueItemIndex] = this;
+                    var key = this.value;
+                    if (this.value == "" || this.value == null) key = uniqueItemIndex - 1;
+                    self.itemsByValue[key] = this;
+
                     uniqueItemIndex++;
                 });
             }
@@ -2544,15 +3194,34 @@ License: http://jqwidgets.com/license/
             return this.insertAt(item, this.items.length);
         },
 
+        updateAt: function (item, index) {
+            if (item != null) {
+                var listBoxItem = this._mapItem(item);
+                this.items[index].value = listBoxItem.value;
+                this.items[index].label = listBoxItem.label;
+                this.items[index].html = listBoxItem.html;
+                this.items[index].disabled = listBoxItem.disabled;
+            }
+            this._cachedItemHtml = [];
+            this._renderItems();
+            if (this.rendered) {
+                this.rendered();
+            }
+        },
+
         // inserts an item at a specific position.
         insertAt: function (item, index) {
             if (item == null)
                 return false;
 
+            this._cachedItemHtml = [];
             if (this.items == undefined || this.items.length == 0) {
                 this.source = new Array();
                 this.source[0] = item;
                 this.refresh();
+                if (this.rendered) {
+                    this.rendered();
+                }
                 return false;
             }
 
@@ -2592,12 +3261,20 @@ License: http://jqwidgets.com/license/
             var vScrollInstance = $.data(this.vScrollBar[0], 'jqxScrollBar').instance;
             var value = vScrollInstance.value;
             vScrollInstance.setPosition(0);
-            this._addItems();
+            if ((this.allowDrag && this._enableDragDrop) || (this.virtualSize && this.virtualSize.height < 10 + this.host.height())) {
+                this._addItems(true);
+            }
+            else {
+                this._addItems(false);
+            }
             this._renderItems();
             if (this.allowDrag && this._enableDragDrop) {
                 this._enableDragDrop();
             }
             vScrollInstance.setPosition(value);
+            if (this.rendered) {
+                this.rendered();
+            }
             return true;
         },
 
@@ -2656,6 +3333,9 @@ License: http://jqwidgets.com/license/
             else {
                 vScrollInstance.setPosition(0);
             }
+            if (this.rendered) {
+                this.rendered();
+            }
 
             return true;
         },
@@ -2707,13 +3387,16 @@ License: http://jqwidgets.com/license/
         },
 
         _raiseEvent: function (id, arg) {
+            if (this._stopEvents == true)
+                return true;
+
             if (arg == undefined)
                 arg = { owner: null };
 
             var evt = this.events[id];
             args = arg;
             args.owner = this;
-
+            this._updateInputSelection();
             var event = new jQuery.Event(evt);
             event.owner = this;
             event.args = args;

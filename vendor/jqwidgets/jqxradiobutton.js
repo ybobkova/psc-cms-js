@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -122,8 +122,17 @@ License: http://jqwidgets.com/license/
                 this.checked = true;
             }
 
+            this._addInput();
             this._render();
             this._addHandlers();
+        },
+
+        _addInput: function () {
+            var name = this.host.attr('name');
+            if (!name) name = this.element.id;
+            this.input = $("<input type='hidden'/>");
+            this.host.append(this.input);
+            this.input.attr('name', name);
         },
 
         refresh: function (initialRefresh) {
@@ -194,7 +203,6 @@ License: http://jqwidgets.com/license/
                 if (!me.disabled && me.enableContainerClick) {
                     me.host.focus();
                     event.preventDefault();
-                    return false;
                 }
             });
 
@@ -297,6 +305,7 @@ License: http://jqwidgets.com/license/
                 }
                 else {
                     this.checkMark.addClass(this.toThemeProperty('jqx-radiobutton-check-disabled'));
+                    this.checkMark.addClass(this.toThemeProperty('jqx-radiobutton-check-checked'));
                 }
             }
             else {
@@ -305,6 +314,7 @@ License: http://jqwidgets.com/license/
                 }
                 else {
                     this.checkMark.addClass(this.toThemeProperty('jqx-radiobutton-check-disabled'));
+                    this.checkMark.addClass(this.toThemeProperty('jqx-radiobutton-check-checked'));
                 }
 
                 this.checkMark.css('opacity', 0);
@@ -329,6 +339,7 @@ License: http://jqwidgets.com/license/
                 this.checkMark.height(this.boxSize);
                 this.checkMark.width(this.boxSize);
             }
+            this.input.val(this.checked);
         },
 
         // unchecks the radiobutton.
@@ -351,6 +362,7 @@ License: http://jqwidgets.com/license/
                 this._raiseEvent('1');
                 this._raiseEvent('3', { checked: false });
             }
+            this.input.val(this.checked);
         },
 
         // sets the indeterminate state.
@@ -373,6 +385,7 @@ License: http://jqwidgets.com/license/
                 this._raiseEvent('2');
                 this._raiseEvent('3', { checked: null });
             }
+            this.input.val(this.checked);
         },
 
         // toggles the check state.
@@ -395,6 +408,7 @@ License: http://jqwidgets.com/license/
             if (oldChecked != this.checked) {
                 this.updateStates();
             }
+            this.input.val(this.checked);
         },
 
         // updates check states depending on the value of the 'checked' property.
@@ -440,6 +454,7 @@ License: http://jqwidgets.com/license/
 
         destroy: function () {
             this._removeHandlers();
+            this.host.remove();
         },
 
         _raiseEvent: function (id, args) {
@@ -486,7 +501,7 @@ License: http://jqwidgets.com/license/
                 $.jqx.utilities.setTheme(oldvalue, value, this.host);
             }
 
-            if (key == 'disable') {
+            if (key == 'disabled') {
                 if (value) {
                     this.disable();
                 } else this.enable();

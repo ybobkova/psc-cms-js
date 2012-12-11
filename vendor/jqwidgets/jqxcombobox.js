@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -90,6 +90,8 @@ License: http://jqwidgets.com/license/
             this.keyboardSelection = true;
             this.renderer = null;
             this.autoOpen = false;
+            this.checkboxes = false;
+            this.promptText = "";
             this.events =
 	   	    [
             // occurs when the combobox is opened.
@@ -101,96 +103,32 @@ License: http://jqwidgets.com/license/
             // occurs when an item is unselected.
               'unselect',
             // occurs when the selection is changed.
-              'change'
-            ];
+              'change',
+              // triggered when the user checks or unchecks an item. 
+              'checkChange',
+              // triggered when the binding is completed.
+              'bindingComplete'
+        ];
         },
 
         createInstance: function (args) {
-            this.isanimating = false;
+            this.render();
+        },
 
-            var comboStructure = $("<div tabIndex=0 style='background-color: transparent; -webkit-appearance: none; outline: none; width:100%; height: 100%; padding: 0px; margin: 0px; border: 0px; position: relative;'>" +
+        render: function()
+        {
+            this.removeHandlers();
+            this.isanimating = false;
+            this.element.innerHTML = "";
+            var comboStructure = $("<div style='background-color: transparent; -webkit-appearance: none; outline: none; width:100%; height: 100%; padding: 0px; margin: 0px; border: 0px; position: relative;'>" +
                 "<div id='dropdownlistWrapper' style='padding: 0; margin: 0; border: none; background-color: transparent; float: left; width:100%; height: 100%; position: relative;'>" +
                 "<div id='dropdownlistContent' style='padding: 0; margin: 0; border-left: none; border-top: none; border-bottom: none; float: left; position: absolute;'/>" +
                 "<div id='dropdownlistArrow' style='padding: 0; margin: 0; border-left-width: 1px; border-bottom-width: 0px; border-top-width: 0px; border-right-width: 0px; float: right; position: absolute;'/>" +
                 "</div>" +
                 "</div>");
-
+            this.comboStructure = comboStructure;
             if ($.jqx._jqxListBox == null || $.jqx._jqxListBox == undefined) {
                 throw "jqxListBox is not loaded.";
-            }
-
-            try {
-                var listBoxID = 'listBox' + this.element.id;
-                var oldContainer = $($.find('#' + listBoxID));
-                if (oldContainer.length > 0) {
-                    oldContainer.remove();
-                }
-
-                var container = $("<div style='overflow: hidden; border: none; background-color: transparent; position: absolute;' id='listBox" + this.element.id + "'><div id='innerListBox" + this.element.id + "'></div></div>");
-                if ($.jqx.utilities.getBrowser().browser == 'opera') {
-                    container.hide();
-                }
-                container.appendTo(document.body);
-                this.container = container;
-                this.listBoxContainer = $($.find('#innerListBox' + this.element.id));
-
-                var width = this.width;
-                if (this.dropDownWidth != 'auto') {
-                    width = this.dropDownWidth;
-                }
-
-                if (this.dropDownHeight == null) {
-                    this.dropDownHeight = 200;
-                }
-
-                this.listBoxContainer.jqxListBox({ renderer: this.renderer, itemHeight: this.itemHeight, incrementalSearch: false, width: width, scrollBarSize: this.scrollBarSize, autoHeight: this.autoDropDownHeight, height: this.dropDownHeight, displayMember: this.displayMember, valueMember: this.valueMember, source: this.source, theme: this.theme });
-                this.container.width(parseInt(width) + 25);
-                this.container.height(parseInt(this.dropDownHeight) + 25);
-                this.listBoxContainer.css({ position: 'absolute', zIndex: 100000, top: 0, left: 0 });
-                this.listBoxContainer.css('border-top-width', '1px');
-                this.listBox = $.data(this.listBoxContainer[0], "jqxListBox").instance;
-                this.listBox.enableSelection = this.enableSelection;
-                this.listBox.enableHover = this.enableHover;
-                this.listBox.equalItemsWidth = this.equalItemsWidth;
-                this.listBox.selectIndex(this.selectedIndex);
-                this.listBox._arrange();
-                this.listBox.rendered = function () {
-                    me.listBox.selectIndex(me.selectedIndex);
-                    me.renderSelection('mouse');
-                    if (me.remoteAutoComplete) {
-                        me.container.height(me.listBox.virtualSize.height + 25);
-                        me.listBoxContainer.height(me.listBox.virtualSize.height);
-                        if (me.searchString != undefined) {
-                            if (me.listBox.items.length > 0) {
-                                if (!me.isOpened()) {
-                                    me.open();
-                                }
-                            }
-                            else me.close();
-                        }
-                    }
-                }
-                var me = this;
-                this.addHandler(this.host, 'loadContent', function (event) {
-                    me._arrange();
-                });
-                this.addHandler(this.listBoxContainer, 'unselect', function (event) {
-                    me._raiseEvent('3', { index: event.args.index, type: event.args.type, item: event.args.item });
-                });
-
-                this.addHandler(this.listBoxContainer, 'change', function (event) {
-                    me._raiseEvent('4', { index: event.args.index, type: event.args.type, item: event.args.item });
-                });
-
-                if (this.animationType == 'none') {
-                    this.container.css('display', 'none');
-                }
-                else {
-                    this.container.hide();
-                }
-            }
-            catch (e) {
-
             }
 
             this.touch = $.jqx.mobile.isTouchDevice();
@@ -210,9 +148,109 @@ License: http://jqwidgets.com/license/
             this.input = this.dropdownlistContent.find('input');
             this.input.addClass(this.toThemeProperty('jqx-combobox-input'));
             this.input.addClass(this.toThemeProperty('jqx-widget-content'));
+            this._addInput();
+
+            try {
+                var listBoxID = 'listBox' + this.element.id;
+                var oldContainer = $($.find('#' + listBoxID));
+                if (oldContainer.length > 0) {
+                    oldContainer.remove();
+                }
+
+                var container = $("<div style='overflow: hidden; border: none; background-color: transparent; position: absolute;' id='listBox" + this.element.id + "'><div id='innerListBox" + this.element.id + "'></div></div>");
+                container.hide();
+                container.appendTo(document.body);
+                this.container = container;
+                this.listBoxContainer = $($.find('#innerListBox' + this.element.id));
+
+                var width = this.width;
+                if (this.dropDownWidth != 'auto') {
+                    width = this.dropDownWidth;
+                }
+
+                if (this.dropDownHeight == null) {
+                    this.dropDownHeight = 200;
+                }
+
+                var me = this;
+                this.container.width(parseInt(width) + 25);
+                this.container.height(parseInt(this.dropDownHeight) + 25);
+                this.addHandler(this.listBoxContainer, 'bindingComplete', function (event) {
+                    me._raiseEvent('6');
+                });
+
+                this.listBoxContainer.jqxListBox({
+                    checkboxes: this.checkboxes,
+                    renderer: this.renderer, itemHeight: this.itemHeight, incrementalSearch: false, width: width, scrollBarSize: this.scrollBarSize, autoHeight: this.autoDropDownHeight, height: this.dropDownHeight, displayMember: this.displayMember, valueMember: this.valueMember, source: this.source, theme: this.theme,
+                    rendered: function () {
+                        me.listBox = $.data(me.listBoxContainer[0], "jqxListBox").instance;
+                        if (!me.autoComplete && !me.remoteAutoComplete) {
+                            me.listBoxContainer.jqxListBox('selectIndex', me.selectedIndex);
+                        }
+                        if (me.autoComplete && !me.remoteAutoComplete) {
+                            me.clearSelection();
+                        }
+                        if (me.remoteAutoComplete) {
+                            me.container.height(me.listBox.virtualSize.height + 25);
+                            me.listBoxContainer.height(me.listBox.virtualSize.height);
+                            if (me.searchString != undefined) {
+                                var items = me.listBoxContainer.jqxListBox('items');
+                                if (items) {
+                                    if (items.length > 0) {
+                                        if (!me.isOpened()) {
+                                            me.open();
+                                        }
+                                    }
+                                    else me.close();
+                                } else me.close();
+                            }
+                        }
+                        else {
+                            me.renderSelection('mouse');
+                        }
+
+                        if (me.rendered) {
+                            me.rendered();
+                        }
+                    }
+                });
+                this.listBoxContainer.css({ position: 'absolute', zIndex: 100000, top: 0, left: 0 });
+                this.listBoxContainer.css('border-top-width', '1px');
+                this.listBox = $.data(this.listBoxContainer[0], "jqxListBox").instance;
+                this.listBox.enableSelection = this.enableSelection;
+                this.listBox.enableHover = this.enableHover;
+                this.listBox.equalItemsWidth = this.equalItemsWidth;
+                this.listBox.selectIndex(this.selectedIndex);
+                this.listBox._arrange();
+                this.addHandler(this.host, 'loadContent', function (event) {
+                    me._arrange();
+                });
+                this.addHandler(this.listBoxContainer, 'unselect', function (event) {
+                    me._raiseEvent('3', { index: event.args.index, type: event.args.type, item: event.args.item });
+                });
+
+                this.addHandler(this.listBoxContainer, 'change', function (event) {
+                    me._raiseEvent('4', { index: event.args.index, type: event.args.type, item: event.args.item });
+                });
+          
+                if (this.animationType == 'none') {
+                    this.container.css('display', 'none');
+                }
+                else {
+                    this.container.hide();
+                }
+            }
+            catch (e) {
+
+            }
 
             var self = this;
             self.input.attr('disabled', self.disabled);
+            var ie7 = $.browser.msie && $.browser.version < 8;
+            if (!ie7) {
+                self.input.attr('placeholder', self.promptText);
+            }
+
             this.propertyChangeMap['disabled'] = function (instance, key, oldVal, value) {
                 if (value) {
                     instance.host.addClass(self.toThemeProperty('jqx-combobox-state-disabled'));
@@ -246,7 +284,7 @@ License: http://jqwidgets.com/license/
             this.dropdownlistArrow.addClass(this.toThemeProperty('jqx-rc-r'));
 
             this._setSize();
-            this.render();
+            this._updateHandlers();
 
             this.addHandler(this.input, 'keyup.textchange', function (event) {
                 var foundMatch = me._search(event);
@@ -258,6 +296,50 @@ License: http://jqwidgets.com/license/
                     var zIndex = this.host.parents('.jqx-window').css('z-index');
                     container.css('z-index', zIndex + 10);
                     this.listBoxContainer.css('z-index', zIndex + 10);
+                }
+            }
+
+            if (this.checkboxes) {
+                this.input.attr('readonly', true);
+            }
+        },
+
+        _addInput: function () {
+            var name = this.host.attr('name');
+            if (!name) name = this.element.id;
+            this.cinput = $("<input type='hidden'/>");
+            this.host.append(this.cinput);
+            this.cinput.attr('name', name);
+        },
+
+        _updateInputSelection: function () {
+            if (this.cinput) {
+                if (this.selectedIndex == -1) {
+                    this.cinput.val("");
+                }
+                else {
+                    var selectedItem = this.getSelectedItem();
+                    if (selectedItem != null) {
+                        this.cinput.val(selectedItem.value);
+                    }
+                    else {
+                        this.cinput.val(this.dropdownlistContent.text());
+                    }
+                }
+                if (this.checkboxes) {
+                    var items = this.getCheckedItems();
+                    var str = "";
+                    if (items != null) {
+                        for (var i = 0; i < items.length; i++) {
+                            if (i == items.length - 1) {
+                                str += items[i].value;
+                            }
+                            else {
+                                str += items[i].value + ",";
+                            }
+                        }
+                    }
+                    this.cinput.val(str);
                 }
             }
         },
@@ -272,6 +354,10 @@ License: http://jqwidgets.com/license/
 
             if (event.keyCode == 16 || event.keyCode == 17 || event.keyCode == 20)
                 return false;
+
+            if (this.checkboxes) {
+                return false;
+            }
 
             if (!this.isanimating) {
                 if (event.altKey && event.keyCode == 38) {
@@ -306,16 +392,20 @@ License: http://jqwidgets.com/license/
 
             if (this.remoteAutoComplete) {
                 var me = this;
+                var clearListSelection = function () {
+                    me.listBox.vScrollInstance.value = 0;
+                    me.selectedIndex = -1;
+                    me.listBox.selectedIndex = -1;
+                    me.listBox.clearSelection();
+                }
+
                 if (value.length >= me.minLength) {
                     if (!event.ctrlKey && !event.shiftKey && !event.altKey) {
                         if (me.searchString != value) {
                             if (this._searchTimer) clearTimeout(this._searchTimer);
                             if (event.keyCode != 13 && event.keyCode != 27) {
                                 this._searchTimer = setTimeout(function () {
-                                    me.listBox.vScrollInstance.value = 0;
-                                    me.selectedIndex = -1;
-                                    me.listBox.selectedIndex = -1;
-                                    me.listBox.clearSelection();
+                                    clearListSelection();
                                     me.listBox.autoHeight = true;
                                     me.searchString = me.input.val();
                                     me.search(me.input.val());
@@ -325,8 +415,12 @@ License: http://jqwidgets.com/license/
                         me.searchString = value;
                     }
                 }
-                else if (this._searchTimer) clearTimeout(this._searchTimer);
-
+                else {
+                    if (this._searchTimer) clearTimeout(this._searchTimer);
+                    clearListSelection();
+                    me.searchString = me.input.val();
+                    me.listBoxContainer.jqxListBox({ source: null });
+                }
                 return;
             }
 
@@ -336,7 +430,7 @@ License: http://jqwidgets.com/license/
             var index = matches.index;
 
             if (me.autoComplete) {
-                if (matchItems.length > 0 || value == '') {
+                if (matchItems != undefined || value == '') {
                     this.listBox.vScrollInstance.value = 0;
                     this.listBox._addItems();
                     this.listBox.autoHeight = false;
@@ -366,31 +460,102 @@ License: http://jqwidgets.com/license/
             }
 
             if (event.keyCode == '13') {
-                return;
+                var isOpen = this.container.css('display') == 'block';
+                if (isOpen && !this.isanimating) {
+                    this.hideListBox();
+                    return;
+                }
             }
             else if (event.keyCode == '27') {
-                if (this.tempSelectedIndex != undefined) {
-                    this.listBox.selectIndex(this.tempSelectedIndex, true);
-                    this.renderSelection('mouse');
+                var isOpen = this.container.css('display') == 'block';
+                if (isOpen && !this.isanimating) {
+                    this.hideListBox();
+                    event.preventDefault();
+                    return false;
                 }
-
-                this.hideListBox();
-                event.preventDefault();
-                return false;
             }
             else {
                 if (index > -1) {
-                    if (!this.isOpened() && !this.opening) {
-                        this.tempSelectedIndex = this.listBox.selectedIndex;
-                        this.showListBox();
+                    var _oldindex = this.listBox.selectedIndex;
+                    if (!this.isOpened() && !this.opening && !event.ctrlKey) {
+                        if (this.listBox.visibleItems && this.listBox.visibleItems.length > 0) {
+                            if (this.input.val() != this.searchString && this.searchString != undefined) {
+                                this.showListBox();
+                            }
+                        }
                     }
+                    this.searchString = this.input.val();
+                    this.listBox.clearSelection();
+                    var item = this.listBox.getVisibleItem(index);
 
-                    this.listBox.selectIndex(index, true);
+                    if (item != undefined && (this.searchMode == 'startswith' || this.searchMode == 'startswithignorecase')) {
+                        this.listBox.selectIndex(index, true);
+                        var currentInput = this.input.val();
+                        var me = this;
+                        if (!event.ctrlKey && parseInt(event.keyCode) != 8 && parseInt(event.keyCode) != 46) {
+                            if (item.label != me.input.val()) {
+                                if (item.label != undefined) {
+                                    me.input.val(item.label);
+                                    me.input.focus();
+                                    me._setSelection(currentInput.length, item.label.length);
+                                }
+                            }
+                        }
+                    }
                 }
                 else if (index == -1) {
-                    this.listBox.selectIndex(index, true);
+                    this.listBox.clearSelection();
                 }
             }
+        },
+        
+        val: function(value)
+        {
+            if (!this.input) return "";
+            if (typeof value === 'object') {
+                return this.input.val();
+            }
+            else {
+                this.input.val(value);
+                return this.input.val();
+            }
+
+        },
+
+        focus: function()
+        {
+            var me = this;
+            var doFocus = function () {
+                me.input.focus();
+                var val = me.input.val();
+                me._setSelection(0, val.length);
+            }
+            doFocus();
+            setTimeout(function () {
+                doFocus();
+            }, 10);
+        },
+
+        _setSelection: function (start, end) {
+            try {
+                if ('selectionStart' in this.input[0]) {
+                    this.input[0].focus();
+                    this.input[0].setSelectionRange(start, end);
+                }
+                else {
+                    var range = this.input[0].createTextRange();
+                    range.collapse(true);
+                    range.moveEnd('character', end);
+                    range.moveStart('character', start);
+                    range.select();
+                }
+            }
+            catch (error) {
+            }
+        },
+
+        setContent: function (value) {
+            this.input.val(value);
         },
 
         // get all matches of a searched value.
@@ -581,7 +746,7 @@ License: http://jqwidgets.com/license/
             }
 
             if (isPercentage) {
-                this.refresh(false);
+                me._arrange();
                 var me = this;
                 var width = this.host.width();
                 if (this.dropDownWidth != 'auto') {
@@ -599,19 +764,10 @@ License: http://jqwidgets.com/license/
                     }
                 }
 
-                $(window).resize(function () {
+                $(window).unbind('resize.' + this.element.id);
+                $(window).bind('resize.' + this.element.id, function () {
                     resizeFunc();
                 });
-
-                setInterval(function () {
-                    var width = me.host.width();
-                    var height = me.host.height();
-                    if (me._lastWidth != width || me._lastHeight != height) {
-                        resizeFunc();
-                    }
-                    me._lastWidth = width;
-                    me._lastHeight = height;
-                }, 100);
             }
         },
 
@@ -630,7 +786,7 @@ License: http://jqwidgets.com/license/
             return false;
         },
 
-        render: function () {
+        _updateHandlers: function () {
             var self = this;
             var hovered = false;
             this.removeHandlers();
@@ -692,17 +848,24 @@ License: http://jqwidgets.com/license/
                 });
             }
 
-            this.addHandler(this.dropdownlistArrow, 'mousedown',
+            var eventName = 'mousedown';
+            if (this.touch) eventName = 'touchstart';
+
+            this.addHandler(this.dropdownlistArrow, eventName,
             function (event) {
                 if (!self.disabled) {
                     var isOpen = self.container.css('display') == 'block';
                     if (!self.isanimating) {
                         if (isOpen) {
                             self.hideListBox();
+                            self.input.focus();
+                            setTimeout(function () {
+                                self.input.focus();
+                            }, 10);
                         }
                         else {
                             if (self.autoComplete) {
-                                self._resetautocomplete();
+                             //   self._resetautocomplete();
                             }
                             if (self.autoDropDownHeight) {
                                 self.container.height(self.listBoxContainer.height() + 25);
@@ -716,39 +879,55 @@ License: http://jqwidgets.com/license/
                                 }
                             }
                             self.showListBox();
+                            self.input.focus();
+                            setTimeout(function () {
+                                self.input.focus();
+                            }, 10);
                         }
                     }
                 }
             });
 
             this.addHandler(this.input, 'focus', function () {
+                self.focused = true;
                 self.host.addClass(self.toThemeProperty('jqx-combobox-state-focus'));
                 self.host.addClass(self.toThemeProperty('jqx-fill-state-focus'));
+                self.dropdownlistContent.addClass(self.toThemeProperty('jqx-combobox-content-focus'));
             });
             this.addHandler(this.input, 'blur', function () {
-                self.host.removeClass(self.toThemeProperty('jqx-combobox-state-focus'));
-                self.host.removeClass(self.toThemeProperty('jqx-fill-state-focus'));
+                self.focused = false;
+                if (!self.isOpened() && !self.opening) {
+                    self.host.removeClass(self.toThemeProperty('jqx-combobox-state-focus'));
+                    self.host.removeClass(self.toThemeProperty('jqx-fill-state-focus'));
+                    self.dropdownlistContent.removeClass(self.toThemeProperty('jqx-combobox-content-focus'));
+                }
                 if (self._searchTimer) clearTimeout(self._searchTimer);
             });
             this.addHandler($(document), 'mousedown.' + this.element.id, self.closeOpenedListBox, { me: this, listbox: this.listBox, id: this.element.id });
             if (this.touch) {
                 this.addHandler($(document), 'touchstart.' + this.element.id, self.closeOpenedListBox, { me: this, listbox: this.listBox, id: this.element.id });
             }
-            if (window.frameElement) {
+            if (document.referrer != "" || window.frameElement) {
                 if (window.top != null) {
-                    var eventHandle = function (event) {
-                        if (self.isOpened()) {
-                            var data = { me: self, listbox: self.listBox, id: self.element.id };
-                            event.data = data;
-                            //self.closeOpenedListBox(event);
+                    if (window.parent && document.referrer) {
+                        parentLocation = document.referrer;
+                    }
+
+                    if (parentLocation.indexOf(document.location.host) != -1) {
+                        var eventHandle = function (event) {
+                            if (self.isOpened()) {
+                                var data = { me: self, listbox: self.listBox, id: self.element.id };
+                                event.data = data;
+                                //self.closeOpenedListBox(event);
+                            }
+                        };
+
+                        if (window.top.document.addEventListener) {
+                            window.top.document.addEventListener('mousedown', eventHandle, false);
+
+                        } else if (window.top.document.attachEvent) {
+                            window.top.document.attachEvent("on" + 'mousedown', eventHandle);
                         }
-                    };
-
-                    if (window.top.document.addEventListener) {
-                        window.top.document.addEventListener('mousedown', eventHandle, false);
-
-                    } else if (window.top.document.attachEvent) {
-                        window.top.document.attachEvent("on" + 'mousedown', eventHandle);
                     }
                 }
             }
@@ -763,6 +942,8 @@ License: http://jqwidgets.com/license/
                 if (event.keyCode == '13') {
                     if (isOpen && !self.isanimating) {
                         self.renderSelection('mouse');
+                        var index = self.listBox.selectedIndex;
+                        self._setSelection(self.input.val().length, self.input.val().length);
                         self.hideListBox();
                         if (!self.keyboardSelection) {
                             self._raiseEvent('2', { index: self.selectedIndex, type: 'keyboard', item: self.getItem(self.selectedIndex) });
@@ -771,9 +952,6 @@ License: http://jqwidgets.com/license/
                             self._raiseEvent('2', { index: self.selectedIndex, type: 'keyboard', item: self.listBox.getVisibleItem(self.selectedIndex) });
                         }
                         return false;
-                    }
-                    else if (!isOpen) {
-                        self.showListBox();
                     }
                 }
 
@@ -807,12 +985,12 @@ License: http://jqwidgets.com/license/
                 }
 
                 if (event.keyCode == '27') {
-                    if (self.tempSelectedIndex != undefined) {
-                        self.selectIndex(self.tempSelectedIndex);
+                    if (self.isOpened() && !self.isanimating) {
+                        self.hideListBox();
+                        event.preventDefault();
+
+                        return false;
                     }
-                    self.hideListBox();
-                    event.preventDefault();
-                    return false;
                 }
 
                 if (isOpen && !self.disabled) {
@@ -827,13 +1005,25 @@ License: http://jqwidgets.com/license/
                 }
             });
 
+            this.addHandler(this.listBoxContainer, 'checkChange', function (event) {
+                self.renderSelection('mouse');
+                self._updateInputSelection();
+                self._raiseEvent(5, { label: event.args.label, value: event.args.value, checked: event.args.checked, item: event.args.item });
+            });
+            
             this.addHandler(this.listBoxContainer, 'select', function (event) {
                 if (!self.disabled) {
                     if (event.args.type != 'keyboard' || self.keyboardSelection) {
                         self.renderSelection(event.args.type);
                         self._raiseEvent('2', { index: event.args.index, type: event.args.type, item: event.args.item });
                         if (event.args.type == 'mouse') {
-                            self.hideListBox();
+                            if (event.args.item != undefined) {
+                                self.tempSelectedValue = event.args.item.value;
+                            }
+                            if (!self.checkboxes) {
+                                self.hideListBox();
+                                self.input.focus();
+                            }
                         }
                     }
                 }
@@ -841,10 +1031,16 @@ License: http://jqwidgets.com/license/
             if (this.listBox != null && this.listBox.content != null) {
                 this.addHandler(this.listBox.content, 'click', function (event) {
                     if (!self.disabled) {
+                        if (event.target === self.listBox.itemswrapper[0])
+                            return true;
+
                         self.renderSelection('mouse');
                         if (!self.touch && !self.ishiding) {
-                            self.hideListBox();
-                        }
+                            if (!self.checkboxes) {
+                                self.hideListBox();
+                                self.input.focus();
+                            }
+                        }    
                     }
                 });
             }
@@ -852,11 +1048,16 @@ License: http://jqwidgets.com/license/
 
         removeHandlers: function () {
             var self = this;
-            this.removeHandler(this.dropdownlistWrapper, 'mousedown');
+            if (this.dropdownlistWrapper != null) {
+                this.removeHandler(this.dropdownlistWrapper, 'mousedown');
+            }
+
             this.removeHandler(this.host, 'keydown');
             this.host.unbind('hover');
-            this.removeHandler(this.input, 'focus');
-            this.removeHandler(this.input, 'blur');
+            if (this.input != null) {
+                this.removeHandler(this.input, 'focus');
+                this.removeHandler(this.input, 'blur');
+            }
             this.removeHandler(this.host, 'mouseenter');
             $(document).unbind('mousemove.' + self.element.id);
         },
@@ -864,6 +1065,17 @@ License: http://jqwidgets.com/license/
         // gets an item by index.
         getItem: function (index) {
             var item = this.listBox.getItem(index);
+            return item;
+        },
+
+        getItemByValue: function (value) {
+            var item = this.listBox.getItemByValue(value);
+            return item;
+        },
+
+        getVisibleItem: function(index)
+        {
+            var item = this.listBox.getVisibleItem(index);
             return item;
         },
 
@@ -877,16 +1089,25 @@ License: http://jqwidgets.com/license/
                 return;
 
             var item = this.listBox.visibleItems[this.listBox.selectedIndex];
+            if (this.checkboxes) {
+                var checkedItems = this.getCheckedItems();
+                if (checkedItems != null && checkedItems.length > 0) {
+                    item = checkedItems[0];
+                }
+                else item = null;
+            }
             if (item == null) {
-                //  this.input.val("");
+                var ie7 = $.browser.msie && $.browser.version < 8;
+                if (!ie7) {
+                    this.input.attr('placeholder', this.promptText);
+                }
+                this._updateInputSelection();
                 return;
             }
 
             this.selectedIndex = this.listBox.selectedIndex;
             var spanElement = $('<span></span>');
-            spanElement.appendTo($(document.body));
-            spanElement.addClass(this.toThemeProperty('jqx-listitem-state-normal'));
-
+           
             if (item.label != undefined && item.label != null && item.label.toString().length > 0) {
                 spanElement.html(item.label);
             }
@@ -898,26 +1119,31 @@ License: http://jqwidgets.com/license/
             }
             else spanElement.html('jqxItem');
 
-            var fontsize = this.dropdownlistContent.css('font-size');
-            var fontfamily = this.dropdownlistContent.css('font-family');
-            var topPadding = this.dropdownlistContent.css('padding-top');
-            var bottomPadding = this.dropdownlistContent.css('padding-bottom');
-
-            spanElement.css('font-size', fontsize);
-            spanElement.css('font-family', fontfamily);
-            spanElement.css('padding-top', topPadding);
-            spanElement.css('padding-bottom', bottomPadding);
-
             var spanHeight = spanElement.outerHeight();
-            this.input.val(spanElement.text());
+            if (this.checkboxes) {
+                var items = this.getCheckedItems();
+                var str = "";
+                for (var i = 0; i < items.length; i++) {
+                    if (i == items.length - 1) {
+                        str += items[i].label;
+                    }
+                    else {
+                        str += items[i].label + ",";
+                    }
+                }
+                this.input.val(str);
+            }
+            else {
+                this.input.val(spanElement.text());
+            }
             spanElement.remove();
-            spanElement.removeClass();
             if (this.renderSelectedItem) {
                 var result = this.renderSelectedItem(this.listBox.selectedIndex, item);
                 if (result != undefined) {
                     this.input.val(result);
                 }
             }
+            this._updateInputSelection();
         },
 
         dataBind: function () {
@@ -958,6 +1184,47 @@ License: http://jqwidgets.com/license/
             this.selectedIndex = index;
         },
 
+        selectItem: function(item)
+        {
+            if (this.listBox != undefined) {
+                this.listBox.selectItem(item);
+                this.selectedIndex = this.listBox.selectedIndex;
+                this.renderSelection('mouse');
+            }
+        },
+
+        unselectItem: function(item)
+        {
+            if (this.listBox != undefined) {
+                this.listBox.unselectItem(item);
+                this.renderSelection('mouse');
+            }
+        },
+
+        checkItem: function(item)
+        {
+            if (this.listBox != undefined) {
+                this.listBox.checkItem(item);
+            }
+        },
+
+        uncheckItem: function (item) {
+            if (this.listBox != undefined) {
+                this.listBox.uncheckItem(item);
+            }
+        },
+
+        indeteterminateItem: function (item) {
+            if (this.listBox != undefined) {
+                this.listBox.indeteterminateItem(item);
+            }
+        },
+
+        getSelectedValue: function()
+        {
+            return this.listBox.selectedValue;
+        },
+
         // gets the selected index.
         getSelectedIndex: function () {
             return this.selectedIndex;
@@ -966,6 +1233,29 @@ License: http://jqwidgets.com/license/
         // gets the selected item.
         getSelectedItem: function () {
             return this.getItem(this.selectedIndex);
+        },
+
+        getCheckedItems: function () {
+            return this.listBox.getCheckedItems();
+        },
+
+        checkIndex: function (index) {
+            this.listBox.checkIndex(index);
+        },
+
+        uncheckIndex: function (index) {
+            this.listBox.uncheckIndex(index);
+        },
+
+        indeterminateIndex: function (index) {
+            this.listBox.indeterminateIndex(index);
+        },
+        checkAll: function () {
+            this.listBox.checkAll();
+        },
+
+        uncheckAll: function () {
+            this.listBox.uncheckAll();
         },
 
         // inserts an item at specific index.
@@ -1029,6 +1319,9 @@ License: http://jqwidgets.com/license/
                     offset.left = hostLeft - hOffset + 2;
                 }
             }
+            if (offset.left < 0) {
+                offset.left = parseInt(this.host.offset().left) + 'px'
+            }
 
             offset.top -= Math.min(offset.top, (offset.top + dpHeight > viewHeight && viewHeight > dpHeight) ?
                 Math.abs(dpHeight + inputHeight + 23) : 0);
@@ -1054,6 +1347,20 @@ License: http://jqwidgets.com/license/
             this.open();
         },
 
+        _getBodyOffset: function () {
+            var top = 0;
+            var left = 0;
+            if ($('body').css('border-top-width') != '0px') {
+                top = parseInt($('body').css('border-top-width'));
+                if (isNaN(top)) top = 0;
+            }
+            if ($('body').css('border-left-width') != '0px') {
+                left = parseInt($('body').css('border-left-width'));
+                if (isNaN(left)) left = 0;
+            }
+            return { left: left, top: top };
+        },
+
         // shows the listbox.
         showListBox: function () {
             if (this.listBox.items && this.listBox.items.length == 0)
@@ -1069,16 +1376,29 @@ License: http://jqwidgets.com/license/
             if ($.browser.mozilla) {
                 //     var left = parseInt(this.host.offset().left) + 1 + 'px';
             }
+
             if (!this.keyboardSelection) {
                 this.listBox.selectIndex(this.selectedIndex);
                 this.listBox.ensureVisible(this.selectedIndex);
             }
+            if (this.autoComplete && !this.isOpened() && !this.opening) {
+                this.listBox.clearSelection();
+                this._updateSearch();
+            }
 
-            this.tempSelectedIndex = this.selectedIndex;
             var isMobileBrowser = $.jqx.mobile.isSafariMobileBrowser();
             this.ishiding = false;
 
-            if (isMobileBrowser != null && isMobileBrowser) {
+            if ($('body').css('border-top-width') != '0px') {
+                top = parseInt(top) + this._getBodyOffset().top + 'px';
+            }
+            if ($('body').css('border-left-width') != '0px') {
+                left = parseInt(left) + this._getBodyOffset().left + 'px';
+            }
+
+            var hasTransform = $.jqx.utilities.hasTransform(this.host);
+
+            if (hasTransform || (isMobileBrowser != null && isMobileBrowser)) {
                 left = $.jqx.mobile.getLeftPos(this.element);
                 top = $.jqx.mobile.getTopPos(this.element) + parseInt(this.host.outerHeight());
             }
@@ -1087,6 +1407,9 @@ License: http://jqwidgets.com/license/
             this.dropdownlistArrowIcon.addClass(this.toThemeProperty('icon-arrow-down-selected'));
             this.dropdownlistArrow.addClass(this.toThemeProperty('jqx-combobox-arrow-selected'));
             this.dropdownlistArrow.addClass(this.toThemeProperty('jqx-fill-state-pressed'));
+            this.host.addClass(this.toThemeProperty('jqx-combobox-state-focus'));
+            this.host.addClass(this.toThemeProperty('jqx-fill-state-focus'));
+            this.dropdownlistContent.addClass(this.toThemeProperty('jqx-combobox-content-focus'));
 
             this.container.css('left', left);
             this.container.css('top', top);
@@ -1160,7 +1483,42 @@ License: http://jqwidgets.com/license/
                 }
             }
             listBoxInstance._renderItems();
+
             this._raiseEvent('0', listBoxInstance);
+        },
+
+        _updateSearch: function()
+        {
+            var me = this;
+            if (me.autoComplete && !me.remoteAutoComplete) {
+                var value = this.input.val();
+                var matches = this._getMatches(value);
+                var matchItems = matches.matchItems;
+                var index = matches.index;
+
+                if (matchItems.length > 0 || value == '') {
+                    this.listBox.vScrollInstance.value = 0;
+                    this.listBox._addItems();
+                    this.listBox.autoHeight = false;
+                    if (this.listBox.virtualSize.height < parseInt(this.dropDownHeight)) {
+                        this.listBox.autoHeight = true;
+                        this.container.height(this.listBox.virtualSize.height + 25);
+                        this.listBoxContainer.height(this.listBox.virtualSize.height);
+                        this.listBox._arrange();
+                    }
+                    else {
+                        this.listBox.height = this.dropDownHeight;
+                        this.container.height(parseInt(this.dropDownHeight) + 25);
+                        this.listBoxContainer.height(parseInt(this.dropDownHeight));
+                        this.listBox._arrange();
+                    }
+
+                    this.listBox._addItems();
+                    this.listBox._renderItems();
+
+                    index = 0;
+                }
+            }
         },
 
         // hides the listbox.
@@ -1171,7 +1529,6 @@ License: http://jqwidgets.com/license/
             if (this.container.css('display') == 'none')
                 return;
 
-            this.tempSelectedIndex = undefined;
             var me = this;
             $.data(document.body, "openedComboJQXListBox", null);
             if (this.animationType == 'none') {
@@ -1209,7 +1566,11 @@ License: http://jqwidgets.com/license/
             this.dropdownlistArrowIcon.removeClass(this.toThemeProperty('icon-arrow-down-selected'));
             this.dropdownlistArrow.removeClass(this.toThemeProperty('jqx-combobox-arrow-selected'));
             this.dropdownlistArrow.removeClass(this.toThemeProperty('jqx-fill-state-pressed'));
-
+            if (!this.focused) {
+                this.host.removeClass(this.toThemeProperty('jqx-combobox-state-focus'));
+                this.host.removeClass(this.toThemeProperty('jqx-fill-state-focus'));
+                this.dropdownlistContent.removeClass(this.toThemeProperty('jqx-combobox-content-focus'));
+            }
             this._raiseEvent('1', listBoxInstance);
         },
 
@@ -1246,13 +1607,6 @@ License: http://jqwidgets.com/license/
             });
 
             if (openedListBox != null && !isListBox) {
-                if (!self.touch) {
-                    if (self.tempSelectedIndex != undefined) {
-                        self.listBox.selectIndex(self.tempSelectedIndex, true);
-                        self.renderSelection('mouse');
-                    }
-                }
-
                 self.hideListBox();
             }
 
@@ -1263,17 +1617,18 @@ License: http://jqwidgets.com/license/
             this.listBox.loadFromSelect(id);
         },
 
-        refresh: function (partialRefresh) {
+        refresh: function (initialRefresh) {
+            this._setSize();
             this._arrange();
-            this.renderSelection('mouse');
-            if (partialRefresh != true) {
-                this.dataBind();
+            if (this.listBox) {
+                this.renderSelection();
             }
         },
 
         _arrange: function () {
             var width = parseInt(this.host.width());
             var height = parseInt(this.host.height());
+
             var arrowHeight = this.arrowSize;
             var arrowWidth = this.arrowSize;
             var rightOffset = 1;
@@ -1290,8 +1645,13 @@ License: http://jqwidgets.com/license/
             this.dropdownlistArrow.height(height);
             this.dropdownlistArrow.css('left', 1 + contentWidth + 'px');
             this.input.css('width', '100%');
+            var inputHeight = this.input.height();
+            if (inputHeight == 0) {
+                inputHeight = parseInt(this.input.css('font-size')) + 3;
+            }
+
             this.input.addClass(this.toThemeProperty('jqx-rc-all'));
-            var top = parseInt(height) / 2 - parseInt(this.input.height()) / 2;
+            var top = parseInt(height) / 2 - parseInt(inputHeight) / 2;
             if (top > 0) {
                 this.input.css('margin-top', top);
             }
@@ -1314,7 +1674,7 @@ License: http://jqwidgets.com/license/
 
             var event = new jQuery.Event(evt);
             event.owner = this;
-            if (id == 2 || id == 3 || id == 4) {
+            if (id == 2 || id == 3 || id == 4 || id == 5) {
                 event.args = arg;
             }
 
@@ -1327,7 +1687,7 @@ License: http://jqwidgets.com/license/
                 return;
 
             if (key == 'autoOpen') {
-                object.render();
+                object._updateHandlers();
             }
 
             if (key == 'renderer') {
@@ -1338,6 +1698,7 @@ License: http://jqwidgets.com/license/
             }
 
             if (key == 'source') {
+                object.input.val("");
                 object.listBoxContainer.jqxListBox({ source: object.source });
                 object.renderSelection('mouse');
                 if (object.source == null) {
@@ -1382,6 +1743,13 @@ License: http://jqwidgets.com/license/
                 object._resetautocomplete();
             }
 
+            if (key == "checkboxes") {
+                object.listBoxContainer.jqxListBox({ checkboxes: object.checkboxes });
+                if (object.checkboxes) {
+                    object.input.attr('readonly', true);
+                }
+            }
+
             if (key == 'theme' && value != null) {
                 object.listBoxContainer.jqxListBox({ theme: value });
                 object.dropdownlistContent.removeClass();
@@ -1403,6 +1771,13 @@ License: http://jqwidgets.com/license/
 
             if (key == 'width' || key == 'height') {
                 object._setSize();
+                if (key == 'width') {
+                    if (object.dropDownWidth == 'auto') {
+                        var width = object.host.width();
+                        object.listBoxContainer.jqxListBox({ width: width });
+                        object.container.width(parseInt(width) + 25);
+                    }
+                }
                 object._arrange();
             }
 

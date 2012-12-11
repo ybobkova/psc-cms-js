@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -93,7 +93,7 @@ jqxbuttons.js
             // Type: Number/String
             // Default: 11
             // Sets or gets whether the slider buttons size.
-            this.sliderButtonSize = 15;
+            this.sliderButtonSize = 14;
             // Type: Number/String
             // Default: 5
             // Sets or gets the tick size.
@@ -168,6 +168,27 @@ jqxbuttons.js
             this.host.height(this.height);
             this._refresh();
             this._raiseEvent(4, { value: this.getValue() });
+            this._addInput();
+        },
+
+        destroy: function () {
+            this.host.remove();
+        },
+
+        _addInput: function () {
+            var name = this.host.attr('name');
+            if (!name) name = this.element.id;
+            this.input = $("<input type='hidden'/>");
+            this.host.append(this.input);
+            this.input.attr('name', name);
+            if (!this.rangeSlider) {
+                this.input.val(this.value.toString());
+            }
+            else {
+                if (this.values) {
+                    this.input.val(this.value.rangeStart.toString() + "-" + this.value.rangeEnd.toString());
+                }
+            }
         },
 
         _getDimention: function (dimention) {
@@ -295,6 +316,9 @@ jqxbuttons.js
 
         //Webkit don't know how to handle with width with floating point. We are correcting the error using displacement and error varaibles
         _addTicks: function (container) {
+            if (!this.showTicks)
+                return;
+
             var count = this.max - this.min,
                 width = container[this._getDimention('size')](),
                 tickscount = Math.round(count / this.ticksFrequency),
@@ -360,13 +384,10 @@ jqxbuttons.js
             switch (this.buttonsPosition) {
                 case 'left':
                     return this._leftButton[this._getDimention('outerSize')](true) + this._rightButton[this._getDimention('outerSize')](true);
-                    break;
                 case 'right':
                     return 0;
-                    break;
                 default:
                     return this._leftButton[this._getDimention('outerSize')](true);
-                    break;
             }
             return 0;
         },
@@ -391,6 +412,14 @@ jqxbuttons.js
                 this._slider.left.css('visibility', 'hidden');
             }
             this._refreshRangeBar();
+            if (this.orientation == 'vertical') {
+                if (this.showButtons) {
+                    //   var leftMargin = parseInt(this._leftButton.css('margin-left'));
+                    var centerLeft = parseInt((this._leftButton.width() - this._track.width()) / 2);
+
+                    this._track.css('margin-left', -2 + centerLeft + 'px');
+                }
+            }
         },
 
         _performTrackLayout: function (size) {
@@ -423,7 +452,7 @@ jqxbuttons.js
 
             this._topTicks[sizeDimension](this._track[sizeDimension]());
             this._bottomTicks[sizeDimension](this._track[sizeDimension]());
-            var topTicksSize = - 1 + (this[oSizeDimension] - this._track[outerSizeDimension](true)) / 2;
+            var topTicksSize = -1 + (this[oSizeDimension] - this._track[outerSizeDimension](true)) / 2;
             this._topTicks[oSizeDimension](parseInt(topTicksSize));
             var bottomTicksSize = -1 + (this[oSizeDimension] - this._track[outerSizeDimension](true)) / 2;
             this._bottomTicks[oSizeDimension](parseInt(bottomTicksSize));
@@ -492,27 +521,35 @@ jqxbuttons.js
             });
 
             this.addHandler(this._leftButton, 'mousedown', function () {
+                if (!me.disabled)
                 me._leftArrow.addClass(me.toThemeProperty('icon-arrow-' + icons.prev + '-selected'));
             });
             this.addHandler(this._leftButton, 'mouseup', function () {
-                me._leftArrow.removeClass(me.toThemeProperty('icon-arrow-' + icons.prev + '-selected'));
+                if (!me.disabled)
+                    me._leftArrow.removeClass(me.toThemeProperty('icon-arrow-' + icons.prev + '-selected'));
             });
             this.addHandler(this._rightButton, 'mousedown', function () {
-                me._rightArrow.addClass(me.toThemeProperty('icon-arrow-' + icons.next + '-selected'));
+                if (!me.disabled)
+                    me._rightArrow.addClass(me.toThemeProperty('icon-arrow-' + icons.next + '-selected'));
             });
             this.addHandler(this._rightButton, 'mouseup', function () {
-                me._rightArrow.removeClass(me.toThemeProperty('icon-arrow-' + icons.next + '-selected'));
+                if (!me.disabled)
+                    me._rightArrow.removeClass(me.toThemeProperty('icon-arrow-' + icons.next + '-selected'));
             });
 
             this._leftButton.hover(function () {
-                me._leftArrow.addClass(me.toThemeProperty('icon-arrow-' + icons.prev + '-hover'));
+                if (!me.disabled)
+                    me._leftArrow.addClass(me.toThemeProperty('icon-arrow-' + icons.prev + '-hover'));
             }, function () {
-                me._leftArrow.removeClass(me.toThemeProperty('icon-arrow-' + icons.prev + '-hover'));
+                if (!me.disabled)
+                    me._leftArrow.removeClass(me.toThemeProperty('icon-arrow-' + icons.prev + '-hover'));
             });
             this._rightButton.hover(function () {
-                me._rightArrow.addClass(me.toThemeProperty('icon-arrow-' + icons.next + '-hover'));
+                if (!me.disabled)
+                    me._rightArrow.addClass(me.toThemeProperty('icon-arrow-' + icons.next + '-hover'));
             }, function () {
-                me._rightArrow.removeClass(me.toThemeProperty('icon-arrow-' + icons.next + '-hover'));
+                if (!me.disabled)
+                    me._rightArrow.removeClass(me.toThemeProperty('icon-arrow-' + icons.next + '-hover'));
             });
         },
 
@@ -525,7 +562,7 @@ jqxbuttons.js
         },
 
         _horizontalButtonsLayout: function () {
-            var offset = (1 + Math.ceil(this.sliderButtonSize / 2));
+            var offset = (2 + Math.ceil(this.sliderButtonSize / 2));
             if (this.buttonsPosition == 'left') {
                 this._leftButton.css('margin-right', '0px');
                 this._rightButton.css('margin-right', offset);
@@ -539,7 +576,7 @@ jqxbuttons.js
         },
 
         _verticalButtonsLayout: function () {
-            var offset = (1 + Math.ceil(this.sliderButtonSize / 2));
+            var offset = (2 + Math.ceil(this.sliderButtonSize / 2));
             if (this.buttonsPosition == 'left') {
                 this._leftButton.css('margin-bottom', '0px');
                 this._rightButton.css('margin-bottom', offset);
@@ -628,54 +665,67 @@ jqxbuttons.js
                 self._stopDrag(self);
             });
 
-            if (window.frameElement) {
+            if (document.referrer != "" || window.frameElement) {
                 if (window.top != null) {
                     var eventHandle = function (event) {
                         self._stopDrag(self);
                     };
+                    if (window.parent && document.referrer) {
+                        parentLocation = document.referrer;
+                    }
 
-                    if (window.top.document) {
-                        if (window.top.document.addEventListener) {
-                            window.top.document.addEventListener('mouseup', eventHandle, false);
+                    if (parentLocation.indexOf(document.location.host) != -1) {
+                        if (window.top.document) {
+                            if (window.top.document.addEventListener) {
+                                window.top.document.addEventListener('mouseup', eventHandle, false);
 
-                        } else if (window.top.document.attachEvent) {
-                            window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                            } else if (window.top.document.attachEvent) {
+                                window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                            }
                         }
                     }
                 }
             }
             this.addHandler($(document), this._getEvent('mousemove') + '.' + this.host.attr('id'), this._performDrag, { self: this });
-
+            var me = this;
             this.addHandler(this._slider.left, 'mouseenter', function () {
-                self._slider.left.addClass(self.toThemeProperty('jqx-fill-state-hover'));
+                if (!me.disabled)
+                    self._slider.left.addClass(self.toThemeProperty('jqx-fill-state-hover'));
             });
 
             this.addHandler(this._slider.right, 'mouseenter', function () {
-                self._slider.right.addClass(self.toThemeProperty('jqx-fill-state-hover'));
+                if (!me.disabled)
+                    self._slider.right.addClass(self.toThemeProperty('jqx-fill-state-hover'));
             });
 
             this.addHandler(this._slider.left, 'mouseleave', function () {
-                self._slider.left.removeClass(self.toThemeProperty('jqx-fill-state-hover'));
+                if (!me.disabled)
+                    self._slider.left.removeClass(self.toThemeProperty('jqx-fill-state-hover'));
             });
 
             this.addHandler(this._slider.right, 'mouseleave', function () {
-                self._slider.right.removeClass(self.toThemeProperty('jqx-fill-state-hover'));
+                if (!me.disabled)
+                    self._slider.right.removeClass(self.toThemeProperty('jqx-fill-state-hover'));
             });
 
             this.addHandler(this._slider.left, 'mousedown', function () {
-                self._slider.left.addClass(self.toThemeProperty('jqx-fill-state-pressed'));
+                if (!me.disabled)
+                    self._slider.left.addClass(self.toThemeProperty('jqx-fill-state-pressed'));
             });
 
             this.addHandler(this._slider.right, 'mousedown', function () {
-                self._slider.right.addClass(self.toThemeProperty('jqx-fill-state-pressed'));
+                if (!me.disabled)
+                    self._slider.right.addClass(self.toThemeProperty('jqx-fill-state-pressed'));
             });
 
             this.addHandler(this._slider.left, 'mouseup', function () {
-                self._slider.left.removeClass(self.toThemeProperty('jqx-fill-state-pressed'));
+                if (!me.disabled)
+                    self._slider.left.removeClass(self.toThemeProperty('jqx-fill-state-pressed'));
             });
 
             this.addHandler(this._slider.right, 'mouseup', function () {
-                self._slider.right.removeClass(self.toThemeProperty('jqx-fill-state-pressed'));
+                if (!me.disabled)
+                    self._slider.right.removeClass(self.toThemeProperty('jqx-fill-state-pressed'));
             });
 
             this.addHandler(this._leftButton, this._getEvent('click'), this._leftButtonHandler, { self: this });
@@ -920,6 +970,16 @@ jqxbuttons.js
                 if (this.tooltip) {
                     slider.attr('title', value);
                 }
+                if (this.input) {
+                    if (!this.rangeSlider) {
+                        this.input.val(this.value.toString());
+                    }
+                    else {
+                        if (this.values) {
+                            this.input.val(this.value.rangeStart.toString() + "-" + this.value.rangeEnd.toString());
+                        }
+                    }
+                }
             }
         },
 
@@ -1015,9 +1075,11 @@ jqxbuttons.js
         },
 
         _addDisabledClasses: function () {
+            this.host.addClass(this.toThemeProperty('jqx-fill-state-disabled'));
         },
 
         _removeDisabledClasses: function () {
+            this.host.removeClass(this.toThemeProperty('jqx-fill-state-disabled'));
         },
 
         propertyChangedHandler: function (object, key, oldvalue, value) {
@@ -1028,12 +1090,12 @@ jqxbuttons.js
                     object._rightButton.jqxRepeatButton({ theme: value });
                     break;
                 case 'disabled':
-                    if (!value) {
+                    if (value) {
                         object.disabled = true;
-                        object.enable();
+                        object.disable();
                     } else {
                         object.disabled = false;
-                        object.disable();
+                        object.enable();
                     }
                     break;
                 case 'width':
@@ -1047,7 +1109,8 @@ jqxbuttons.js
                     object._initialSettings();
                     break;
                 case 'min':
-                    object._performLayout();
+                    //   object._performLayout();
+                    object.min = parseFloat(value);
                     if (!object.rangeSlider) {
                         object._setValue(value, object._slider.left);
                     }
@@ -1056,6 +1119,12 @@ jqxbuttons.js
                 case 'step':
                     break;
                 case 'max':
+                    object.max = parseFloat(value);
+                    if (!object.rangeSlider) {
+                        object._setValue(value, object._slider.left);
+                    }
+                    object._initialSettings();
+                    break;
                 case 'showTicks':
                 case 'ticksPosition':
                 case 'ticksFrequency':
@@ -1086,6 +1155,9 @@ jqxbuttons.js
                     object._initialSettings();
                     break;
                 case 'value':
+                    if (!object.rangeSlider) {
+                        object.value = parseFloat(value);
+                    }
                     object.setValue(value);
                     break;
                 case 'values':
@@ -1171,15 +1243,17 @@ jqxbuttons.js
             this._removeEventHandlers();
             this.disabled = true;
             this._addDisabledClasses();
+            this._leftButton.jqxRepeatButton({ disabled: this.disabled });
+            this._rightButton.jqxRepeatButton({ disabled: this.disabled });
         },
 
         //Enabling the slider.
         enable: function () {
-            if (this.disabled) {
-                this._addEventHandlers();
-                this.disabled = false;
-                this._removeDisabledClasses();
-            }
+            this._addEventHandlers();
+            this.disabled = false;
+            this._removeDisabledClasses();
+            this._leftButton.jqxRepeatButton({ disabled: this.disabled });
+            this._rightButton.jqxRepeatButton({ disabled: this.disabled });
         }
     });
 })(jQuery);

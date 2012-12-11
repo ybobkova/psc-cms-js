@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -32,7 +32,7 @@ License: http://jqwidgets.com/license/
                 if (!updateui)
                     continue;
 
-                if (columnrecord.createfilterwidget) {
+                if (columnrecord.createfilterwidget && columnrecord.filtertype == 'custom') {
                     columnrecord.createfilterwidget(columnrecord, tablecolumn);
                 }
                 else {
@@ -79,13 +79,72 @@ License: http://jqwidgets.com/license/
             tablerow.height(this.filterrowheight);
         },
 
+        clearfilterrow: function () {
+            this._disablefilterrow = true;
+            var columnslength = this.columns.records.length;
+            var left = 0;
+            for (var j = 0; j < columnslength; j++) {
+                var columnrecord = this.columns.records[j];
+                var tablecolumn = $(this.filterrow[0].cells[j]);
+
+                if (columnrecord.filterable) {
+                    var addtextfilter = function (me, tablecolumn) {
+                        var textbox = $(tablecolumn.children()[0]);
+                        textbox.val("");
+                    }
+
+                    switch (columnrecord.filtertype) {
+                        case 'number':
+                            tablecolumn.find('input').val("");
+                            break;
+                        case 'date':
+                            if (this.host.jqxDateTimeInput) {
+                                $(tablecolumn.children()[0]).jqxDateTimeInput('setDate', null);
+                            }
+                            else addtextfilter(this, tablecolumn);
+                            break;
+                        case 'textbox':
+                        case 'default':
+                            addtextfilter(this, tablecolumn);
+                            break;
+                        case 'list':
+                            if (this.host.jqxDropDownList) {
+                                $(tablecolumn.children()[0]).jqxDropDownList('clearSelection');
+                            }
+                            else addtextfilter(this, tablecolumn);
+                            break;
+                        case 'checkedlist':
+                            if (this.host.jqxDropDownList) {
+                                $(tablecolumn.children()[0]).jqxDropDownList('checkAll', false);
+                            }
+                            else addtextfilter(this, tablecolumn);
+                            break;
+                        case 'bool':
+                        case 'boolean':
+                            if (!this.host.jqxCheckBox) {
+                                addtextfilter(this, tablecolumn);
+                            }
+                            else $(tablecolumn.children()[0]).jqxCheckBox({ checked: null });
+                            break;
+                    }
+
+                }
+            }
+            this._disablefilterrow = false;
+        },
+
         _applyfilterfromfilterrow: function () {
+            if (this._disablefilterrow == true)
+                return;
+
             var columnslength = this.columns.records.length;
             var me = this;
 
             for (var j = 0; j < columnslength; j++) {
                 var filtergroup = new $.jqx.filter();
                 var columnrecord = this.columns.records[j];
+                if (!columnrecord.filterable) continue;
+
                 var type = me._getcolumntypebydatafield(columnrecord);
                 var filtertype = me._getfiltertype(type);
                 var filter_or_operator = 1;
@@ -100,7 +159,37 @@ License: http://jqwidgets.com/license/
                             if (filtertype == 'stringfilter') {
                                 var filtercondition = 'contains';
                             }
+                            if (filtertype != 'stringfilter') {
+                                var hasoperator = 0;
+                                if (filtervalue.indexOf('>') != -1) {
+                                    filtercondition = "greater_than";
+                                    hasoperator = 1;
+                                }
+                                if (filtervalue.indexOf('<') != -1) {
+                                    filtercondition = "less_than";
+                                    hasoperator = 1;
+                                }
+                                if (filtervalue.indexOf('=') != -1) {
+                                    if (filtercondition == "greater_than") {
+                                        filtercondition = "greater_than_or_equal";
+                                        hasoperator = 2;
+                                    }
+                                    else if (filtercondition == "less_than") {
+                                        filtercondition = "less_than_or_equal";
+                                        hasoperator = 2;
+                                    }
+                                    else {
+                                        filtercondition = "equal";
+                                        hasoperator = 1;
+                                    }
+                                }
+                                if (hasoperator != 0) {
+                                    filtervalue = filtervalue.substring(hasoperator);
+                                    if (filtervalue.length < 1) return false;
+                                }
+                            }
 
+                            if (columnrecord.filtercondition != undefined) filtercondition = columnrecord.filtercondition;
                             var filter = filtergroup.createfilter(filtertype, filtervalue, filtercondition);
                             filtergroup.addfilter(filter_or_operator, filter);
                         }
@@ -149,7 +238,7 @@ License: http://jqwidgets.com/license/
                             }
                             var nullcondition1 = condition == "NULL" || condition == "NOT_NULL";
                             var emptycondition1 = condition == "EMPTY" || condition == "NOT_EMPTY";
-                            if (filtervalue.length > 0 || nullcondition1 || emptycondition1) {
+                            if (filtervalue != undefined && filtervalue.length > 0 || nullcondition1 || emptycondition1) {
                                 filter1 = filtergroup.createfilter(filtertype, filtervalue, condition, null, columnrecord.cellsformat, me.gridlocalization);
                                 filtergroup.addfilter(0, filter1);
                             }
@@ -192,11 +281,13 @@ License: http://jqwidgets.com/license/
                             var widget = columnrecord._filterwidget.jqxDropDownList('listBox');
                             var checkedItems = widget.getCheckedItems();
                             if (checkedItems.length == 0) {
-                                var filter_or_operator = 1;
-                                var filtervalue = "Empty";
-                                var filtercondition = 'equal';
-                                var filter = filtergroup.createfilter(filtertype, filtervalue, filtercondition);
-                                filtergroup.addfilter(filter_or_operator, filter);
+                                for (var i = 1; i < widget.items.length; i++) {
+                                    var filtervalue = widget.items[i].value;
+                                    var filtercondition = 'not_equal';
+                                    var filter = filtergroup.createfilter(filtertype, filtervalue, filtercondition);
+                                    filtergroup.addfilter(0, filter);
+                                }
+
                                 hasFilter = true;
                             }
                             else {
@@ -214,18 +305,23 @@ License: http://jqwidgets.com/license/
                         else hasFilter = addstringfilter(columnrecord, filtertype, filtergroup);
                         break;
                 }
-                if (hasFilter) {
-                    this.addfilter(columnrecord.datafield, filtergroup, false);
-                }
-                else {
-                    this.removefilter(columnrecord.datafield, false);
+
+                if (!this._loading) {
+                    if (hasFilter) {
+                        this.addfilter(columnrecord.displayfield, filtergroup, false);
+                    }
+                    else {
+                        this.removefilter(columnrecord.displayfield, false);
+                    }
                 }
             }
-            this.applyfilters();
+            if (!this._loading) {
+                this.applyfilters();
+            }
         },
 
         _updatefilterrow: function () {
-            var tablerow = $('<div style="position: relative;" id="row' + i + this.element.id + '"></div>');
+            var tablerow = $('<div style="position: relative;" id="row00' + this.element.id + '"></div>');
             var left = 0;
             var columnslength = this.columns.records.length;
             var cellclass = this.toThemeProperty('jqx-grid-cell');
@@ -241,7 +337,7 @@ License: http://jqwidgets.com/license/
                 this._filterrowcache = new Array();
 
             var usefromcache = false;
-
+            var _newfilterrowcache = new Array();
             for (var j = 0; j < columnslength; j++) {
                 var columnrecord = this.columns.records[j];
                 var width = columnrecord.width;
@@ -287,13 +383,13 @@ License: http://jqwidgets.com/license/
                             }
                             else {
                                 this._addfilterwidget(columnrecord, tablecolumn, width);
-                                this._filterrowcache[columnrecord.datafield] = columnrecord._filterwidget;
+                                _newfilterrowcache[columnrecord.datafield] = columnrecord._filterwidget;
                             }
                         }
                     }
                 }
             }
-
+            this._filterrowcache = _newfilterrowcache;
             if ($.browser.msie && $.browser.version < 8) {
                 tablerow.css('z-index', zindex--);
             }
@@ -326,17 +422,28 @@ License: http://jqwidgets.com/license/
                 textbox.width(width - 10);
                 textbox.height(me.filterrowheight - 10);
                 textbox.css('margin', '4px');
+                if (columnrecord.createfilterwidget) {
+                    columnrecord.createfilterwidget(columnrecord, tablecolumn, textbox);
+                }
                 columnrecord._filterwidget = textbox;
+
+                textbox.focus(function () {
+                    me.focusedfilter = textbox;
+                });
+
                 textbox.bind('keydown', function (event) {
                     if (event.keyCode == '13')
                         me._applyfilterfromfilterrow();
                     if (textbox[0]._writeTimer) clearTimeout(textbox[0]._writeTimer);
                     textbox[0]._writeTimer = setTimeout(function () {
-                        if (me["_oldWriteText" + textbox[0].id] != textbox.val()) {
-                            me._applyfilterfromfilterrow();
-                            me["_oldWriteText" + textbox[0].id] = textbox.val();
+                        if (!me._loading) {
+                            if (me["_oldWriteText" + textbox[0].id] != textbox.val()) {
+                                me._applyfilterfromfilterrow();
+                                me["_oldWriteText" + textbox[0].id] = textbox.val();
+                            }
                         }
                     }, 400);
+                    me.focusedfilter = textbox;
                 });
                 me.host.removeClass('jqx-disableselect');
                 me.content.removeClass('jqx-disableselect');
@@ -365,11 +472,15 @@ License: http://jqwidgets.com/license/
                                 me._applyfilterfromfilterrow();
                             if (textbox[0]._writeTimer) clearTimeout(textbox[0]._writeTimer);
                             textbox[0]._writeTimer = setTimeout(function () {
-                                if (me["_oldWriteText" + textbox[0].id] != textbox.val()) {
-                                    me._applyfilterfromfilterrow();
-                                    me["_oldWriteText" + textbox[0].id] = textbox.val();
+                                if (!me._loading) {
+
+                                    if (me["_oldWriteText" + textbox[0].id] != textbox.val()) {
+                                        me._applyfilterfromfilterrow();
+                                        me["_oldWriteText" + textbox[0].id] = textbox.val();
+                                    }
                                 }
                             }, 400);
+                            me.focusedfilter = textbox;
                         });
                         textbox.val(filtervalue);
                         return textbox;
@@ -380,13 +491,25 @@ License: http://jqwidgets.com/license/
                     var dropdownlist = $("<div class='filter' style='float: left;'></div>");
                     dropdownlist.css('margin-top', '4px');
                     dropdownlist.appendTo(numberwidget);
-                    dropdownlist.jqxDropDownList({ dropDownHorizontalAlignment: 'right', enableBrowserBoundsDetection: false, selectedIndex: 2, width: 18, height: 20, dropDownHeight: 150, dropDownWidth: 170, source: source, theme: me.theme });
-                    dropdownlist.jqxDropDownList({ selectionRenderer: function (element) {
-                        return "";
+
+                    var selectedIndex = 2;
+                    if (columnrecord.filtercondition != null) {
+                        var newIndex = source.indexOf(columnrecord.filtercondition);
+                        if (newIndex != -1)
+                            selectedIndex = newIndex;
                     }
+
+                    dropdownlist.jqxDropDownList({ dropDownHorizontalAlignment: 'right', enableBrowserBoundsDetection: true, selectedIndex: selectedIndex, width: 18, height: 20, dropDownHeight: 150, dropDownWidth: 170, source: source, theme: me.theme });
+                    dropdownlist.jqxDropDownList({
+                        selectionRenderer: function (element) {
+                            return "";
+                        }
                     });
                     dropdownlist.jqxDropDownList('setContent', "");
                     dropdownlist.find('.jqx-dropdownlist-content').hide();
+                    if (columnrecord.createfilterwidget) {
+                        columnrecord.createfilterwidget(columnrecord, tablecolumn, numberwidget);
+                    }
                     columnrecord._filterwidget = numberwidget;
                     dropdownlist.bind('select', function () {
                         if (columnrecord._filterwidget.find('input').val().length > 0) {
@@ -396,6 +519,7 @@ License: http://jqwidgets.com/license/
                     break;
                 case 'textbox':
                 case 'default':
+                default:
                     addtextfilter(this, tablecolumn);
                     break;
                 case 'date':
@@ -404,9 +528,13 @@ License: http://jqwidgets.com/license/
                         datetimeinput.css('margin', '4px');
                         datetimeinput.appendTo(tablecolumn);
                         datetimeinput.jqxDateTimeInput({ showFooter: true, formatString: columnrecord.cellsformat, selectionMode: 'range', value: null, theme: this.theme, width: width - 10, height: this.filterrowheight - 10 });
+                        if (columnrecord.createfilterwidget) {
+                            columnrecord.createfilterwidget(columnrecord, tablecolumn, datetimeinput);
+                        }
                         columnrecord._filterwidget = datetimeinput;
                         datetimeinput.bind('valuechanged', function (event) {
                             me._applyfilterfromfilterrow();
+                            me.focusedfilter = null;
                         });
                     }
                     else addtextfilter(this, tablecolumn);
@@ -414,38 +542,14 @@ License: http://jqwidgets.com/license/
                 case 'list':
                 case 'checkedlist':
                     if (this.host.jqxDropDownList) {
-                        var isdataadapter = this.source._source ? true : false;
-                        var dataadapter = null;
-                        if (!isdataadapter) {
-                            dataadapter = new $.jqx.dataAdapter(this.source,
-                                        {
-                                            autoBind: false,
-                                            uniqueDataFields: [column.datafield],
-                                            async: false
-                                        });
-                        }
-                        else {
-                            var dataSource =
-                                        {
-                                            localdata: this.source.records,
-                                            datatype: this.source.datatype,
-                                            async: false
-                                        }
-
-                            dataadapter = new $.jqx.dataAdapter(dataSource,
-                                        {
-                                            autoBind: false,
-                                            async: false,
-                                            uniqueDataFields: [columnrecord.datafield]
-                                        });
-                        }
+                        var dataadapter = this._getfilterdataadapter(columnrecord);
 
                         var autoheight = true;
                         var dropdownlist = $("<div></div>");
                         dropdownlist.css('margin', '4px');
                         var datafield = columnrecord.datafield;
                         var checkboxes = columnrecord.filtertype == 'checkedlist' ? true : false;
-                        dropdownlist.jqxDropDownList({ checkboxes: checkboxes, source: dataadapter, autoDropDownHeight: autoheight, theme: this.theme, width: width - 10, height: this.filterrowheight - 10, displayMember: datafield, valueMember: datafield });
+                        dropdownlist.jqxDropDownList({ checkboxes: checkboxes, source: dataadapter, autoDropDownHeight: autoheight, theme: this.theme, width: width - 10, height: this.filterrowheight - 10, displayMember: columnrecord.displayfield, valueMember: datafield });
                         dropdownlist.appendTo(tablecolumn);
                         var dropdownitems = dropdownlist.jqxDropDownList('getItems');
                         var listbox = dropdownlist.jqxDropDownList('listBox');
@@ -454,49 +558,57 @@ License: http://jqwidgets.com/license/
                         }
                         else {
                             dropdownlist.jqxDropDownList('autoDropDownHeight', false);
+                            autoheight = false;
                         }
                         if (checkboxes) {
-                            dropdownlist.jqxDropDownList({ selectionRenderer: function (element) {
-                                return "Select Filter";
-                            }
-                            });
-                            var spanElement = $('<span style="top: 2px; position: relative; color: inherit; border: none; background-color: transparent;">Select Filter</span>');
-                            spanElement.addClass(this.toThemeProperty('jqx-item'));
-                            dropdownlist.jqxDropDownList('setContent', spanElement);
-                            var handleCheckChange = true;
-                            listbox.insertAt(me.gridlocalization.filterselectallstring, 0);
-                            var checkedItems = new Array();
-                            listbox.checkAll();
-                            listbox.host.bind('checkChange', function (event) {
-                                if (!handleCheckChange)
-                                    return;
-
-                                if (event.args.label != me.gridlocalization.filterselectallstring) {
-                                    handleCheckChange = false;
-                                    listbox.host.jqxListBox('checkIndex', 0);
-                                    var checkedItems = listbox.host.jqxListBox('getCheckedItems');
-                                    var items = listbox.host.jqxListBox('getItems');
-
-                                    if (checkedItems.length == 1) {
-                                        listbox.host.jqxListBox('uncheckIndex', 0);
-                                    }
-                                    else if (items.length != checkedItems.length) {
-                                        listbox.host.jqxListBox('indeterminateIndex', 0);
-                                    }
-                                    handleCheckChange = true;
+                            dropdownlist.jqxDropDownList({
+                                selectionRenderer: function () {
+                                    return me.gridlocalization.filterselectstring;
                                 }
-                                else {
-                                    handleCheckChange = false;
-                                    if (event.args.checked) {
-                                        listbox.host.jqxListBox('checkAll');
+                            });
+                            var spanElement = $('<span style="top: 2px; position: relative; color: inherit; border: none; background-color: transparent;">' + me.gridlocalization.filterselectstring + '</span>');
+                            spanElement.addClass(this.toThemeProperty('jqx-item'));
+                            if (listbox != undefined) {
+                                if (!autoheight) {
+                                    listbox.host.height(200);
+                                }
+                                listbox.insertAt(me.gridlocalization.filterselectallstring, 0);
+                                dropdownlist.jqxDropDownList('setContent', spanElement);
+                                var handleCheckChange = true;
+                                var checkedItems = new Array();
+                                listbox.checkAll(false);
+                                listbox.host.bind('checkChange', function (event) {
+                                    dropdownlist[0]._selectionChanged = true;
+                                    if (!handleCheckChange)
+                                        return;
+
+                                    if (event.args.label != me.gridlocalization.filterselectallstring) {
+                                        handleCheckChange = false;
+                                        listbox.host.jqxListBox('checkIndex', 0, true, false);
+                                        var checkedItems = listbox.host.jqxListBox('getCheckedItems');
+                                        var items = listbox.host.jqxListBox('getItems');
+
+                                        if (checkedItems.length == 1) {
+                                            listbox.host.jqxListBox('uncheckIndex', 0, true, false);
+                                        }
+                                        else if (items.length != checkedItems.length) {
+                                            listbox.host.jqxListBox('indeterminateIndex', 0, true, false);
+                                        }
+                                        handleCheckChange = true;
                                     }
                                     else {
-                                        listbox.host.jqxListBox('uncheckAll');
-                                    }
+                                        handleCheckChange = false;
+                                        if (event.args.checked) {
+                                            listbox.host.jqxListBox('checkAll', false);
+                                        }
+                                        else {
+                                            listbox.host.jqxListBox('uncheckAll', false);
+                                        }
 
-                                    handleCheckChange = true;
-                                }
-                            });
+                                        handleCheckChange = true;
+                                    }
+                                });
+                            }
                         }
                         else {
                             listbox.insertAt({ label: this.gridlocalization.filterchoosestring, value: "" }, 0);
@@ -507,22 +619,25 @@ License: http://jqwidgets.com/license/
                             columnrecord.createfilterwidget(columnrecord, tablecolumn, dropdownlist);
                         }
                         columnrecord._filterwidget = dropdownlist;
-                        dropdownlist[0]._selectionChanged = false;
-                        this.addHandler(listbox.content, 'click', function (event) {
-                            me._applyfilterfromfilterrow();
-                            dropdownlist[0]._selectionChanged = false;
-                        });
-                        this.addHandler(dropdownlist, 'select', function (event) {
-                            dropdownlist[0]._selectionChanged = true;
-                        });
 
                         var dropdownlistWrapper = dropdownlist.jqxDropDownList('dropdownlistWrapper');
-                        this.addHandler(dropdownlist, 'close', function (event) {
-                            if (dropdownlist[0]._selectionChanged) {
-                                me._applyfilterfromfilterrow();
-                                dropdownlist[0]._selectionChanged = false;
-                            }
-                        });
+                        if (columnrecord.filtertype == 'list') {
+                            this.addHandler(dropdownlist, 'select', function (event) {
+                                if (event.args && event.args.type != 'none') {
+                                    me._applyfilterfromfilterrow();
+                                    me.focusedfilter = null;
+                                }
+                            });
+                        }
+                        else {
+                            this.addHandler(dropdownlist, 'close', function (event) {
+                                if (dropdownlist[0]._selectionChanged) {
+                                    me._applyfilterfromfilterrow();
+                                    me.focusedfilter = null;
+                                    dropdownlist[0]._selectionChanged = false;
+                                }
+                            });
+                        }
                     }
                     else addtextfilter(this, tablecolumn);
                     break;
@@ -545,6 +660,7 @@ License: http://jqwidgets.com/license/
                         columnrecord._filterwidget = checkbox;
                         checkbox.bind('change', function (event) {
                             if (event.args) {
+                                me.focusedfilter = null;
                                 me._applyfilterfromfilterrow();
                             }
                         });
@@ -552,7 +668,139 @@ License: http://jqwidgets.com/license/
                     else addtextfilter(this, tablecolumn);
                     break;
             }
+        },
 
+        _getfilterdataadapter: function (columnrecord) {
+            var isdataadapter = this.source._source ? true : false;
+
+            if (!isdataadapter) {
+                dataadapter = new $.jqx.dataAdapter(this.source,
+                            {
+                                autoBind: false,
+                                uniqueDataFields: [columnrecord.displayfield],
+                                async: false
+                            });
+            }
+            else {
+                var dataSource =
+                {
+                    localdata: this.source.records,
+                    datatype: this.source.datatype,
+                    async: false
+                }
+
+                dataadapter = new $.jqx.dataAdapter(dataSource,
+                {
+                    autoBind: false,
+                    async: false,
+                    uniqueDataFields: [columnrecord.displayfield]
+                });
+            }
+            if (columnrecord.filteritems && columnrecord.filteritems.length > 0) {
+                var dataSource =
+                {
+                    localdata: columnrecord.filteritems,
+                    datatype: this.source.datatype,
+                    async: false
+                }
+
+                dataadapter = new $.jqx.dataAdapter(dataSource,
+                {
+                    autoBind: false,
+                    async: false
+                });
+            }
+            return dataadapter;
+        },
+
+        refreshfilterrow: function () {
+            this._updatefilterrowui();
+            this._updatelistfilters();
+        },
+
+        _updatelistfilters: function (endcelledit) {
+            var me = this;
+            var columnslength = this.columns.records.length;
+            for (var j = 0; j < columnslength; j++) {
+                var columnrecord = this.columns.records[j];
+                if (columnrecord.filterable) {
+                    if (columnrecord.filtertype == 'list' || columnrecord.filtertype == 'checkedlist') {
+                        var dropdownlist = columnrecord._filterwidget;
+                        if (!endcelledit) {
+                            if (columnrecord.filter == undefined) {
+                                dropdownlist.jqxDropDownList('renderSelection');
+                                continue;
+                            }
+                        }
+                        else {
+                            var dataadapter = this._getfilterdataadapter(columnrecord);
+                            dataadapter.dataBind();
+                            var dropdownitems = dropdownlist.jqxDropDownList('getItems');
+                            var equalSources = true;
+                            if (dropdownitems.length != dataadapter.records.length + 1)
+                                equalSources = false;
+
+                            if (equalSources) {
+                                for (var i = 1; i < dropdownitems.length; i++) {
+                                    if (dropdownitems[i].label != dataadapter.records[i - 1][columnrecord.displayfield]) {
+                                        equalSources = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (equalSources)
+                                continue;
+                        }
+
+                        dropdownlist.jqxDropDownList('dataBind');
+                        var checkboxes = columnrecord.filtertype == 'checkedlist' ? true : false;
+                        var dropdownitems = dropdownlist.jqxDropDownList('getItems');
+                        var listbox = dropdownlist.jqxDropDownList('listBox');
+
+                        if (checkboxes) {
+                            dropdownlist.jqxDropDownList({
+                                selectionRenderer: function () {
+                                    return me.gridlocalization.filterselectstring;
+                                }
+                            });
+                            var spanElement = $('<span style="top: 2px; position: relative; color: inherit; border: none; background-color: transparent;">' + this.gridlocalization.filterselectstring + '</span>');
+                            spanElement.addClass(this.toThemeProperty('jqx-item'));
+                            listbox.insertAt(this.gridlocalization.filterselectallstring, 0);
+                            dropdownlist.jqxDropDownList('setContent', spanElement);
+                            listbox.checkAll(false);
+                            if (columnrecord.filter) {
+                                listbox.uncheckAll(false);
+                                var filters = columnrecord.filter.getfilters();
+
+                                for (var i = 0; i < listbox.items.length; i++) {
+                                    var label = listbox.items[i].label;
+                                    $.each(filters, function () {
+                                        if (this.condition == "NOT_EQUAL") return true;
+                                        if (label == this.value) {
+                                            listbox.checkIndex(i, false, false);
+                                        }
+                                    });
+                                }
+                                listbox._updateCheckedItems();
+                                var checkedItemsLength = listbox.getCheckedItems().length;
+                                if (listbox.items.length != checkedItemsLength && checkedItemsLength > 0) {
+                                    listbox.host.jqxListBox('indeterminateIndex', 0, true, false);
+                                }
+                            }
+                        }
+                        else {
+                            listbox.insertAt({ label: this.gridlocalization.filterchoosestring, value: "" }, 0);
+                            dropdownlist.jqxDropDownList({ selectedIndex: 0 });
+                        }
+                        if (dropdownitems.length < 8) {
+                            dropdownlist.jqxDropDownList('autoDropDownHeight', true);
+                        }
+                        else {
+                            dropdownlist.jqxDropDownList('autoDropDownHeight', false);
+                        }
+                    }
+                }
+            }
         },
 
         _renderfiltercolumn: function () {
@@ -585,7 +833,7 @@ License: http://jqwidgets.com/license/
             if (datafields) {
                 var foundType = "";
                 $.each(datafields, function () {
-                    if (this.name == column.datafield) {
+                    if (this.name == column.displayfield) {
                         if (this.type) {
                             foundType = this.type;
                         }
@@ -607,14 +855,14 @@ License: http://jqwidgets.com/license/
                     if (this.dataview.cachedrecords.length == 0)
                         return type;
 
-                    cell = this.dataview.cachedrecords[0][column.datafield];
+                    cell = this.dataview.cachedrecords[0][column.displayfield];
                     if (cell != null && cell.toString() == "") {
                         return "string";
                     }
                 }
                 else {
                     $.each(this.dataview.cachedrecords, function () {
-                        cell = this[column.datafield];
+                        cell = this[column.displayfield];
                         return false;
                     });
                 }
@@ -685,13 +933,14 @@ License: http://jqwidgets.com/license/
                 return;
             }
 
-            var clearbutton = $(element).find('#filterclearbutton' + me.element.id);
-            var filterbutton = $(element).find('#filterbutton' + me.element.id);
-            var condition = $(element).find('#filter1' + me.element.id);
-            var filteroperator = $(element).find('#filter2' + me.element.id);
-            var condition2 = $(element).find('#filter3' + me.element.id);
-            var input1 = $(element).find('.filtertext1' + me.element.id);
-            var input2 = $(element).find('.filtertext2' + me.element.id);
+            var $element = $(element);
+            var clearbutton = $element.find('#filterclearbutton' + me.element.id);
+            var filterbutton = $element.find('#filterbutton' + me.element.id);
+            var condition = $element.find('#filter1' + me.element.id);
+            var filteroperator = $element.find('#filter2' + me.element.id);
+            var condition2 = $element.find('#filter3' + me.element.id);
+            var input1 = $element.find('.filtertext1' + me.element.id);
+            var input2 = $element.find('.filtertext2' + me.element.id);
             input1.val('');
             input2.val('');
 
@@ -707,15 +956,25 @@ License: http://jqwidgets.com/license/
                 me._closemenu();
             });
 
-            condition.jqxDropDownList({ enableBrowserBoundsDetection: false, source: source });
-            condition2.jqxDropDownList({ enableBrowserBoundsDetection: false, source: source });
+            if (condition.jqxDropDownList('source') != source) {
+                condition.jqxDropDownList({ enableBrowserBoundsDetection: false, source: source });
+                condition2.jqxDropDownList({ enableBrowserBoundsDetection: false, source: source });
+            }
+
             if (type == 'boolean' || type == 'bool') {
                 condition.jqxDropDownList({ autoDropDownHeight: true, selectedIndex: 0 });
                 condition2.jqxDropDownList({ autoDropDownHeight: true, selectedIndex: 0 });
             }
             else {
-                condition.jqxDropDownList({ autoDropDownHeight: false, selectedIndex: 2 });
-                condition2.jqxDropDownList({ autoDropDownHeight: false, selectedIndex: 2 });
+                var autoDropDownHeight = false;
+                if (source && source.length) {
+                    if (source.length < 5) {
+                        autoDropDownHeight = true;
+                    }
+                }
+
+                condition.jqxDropDownList({ autoDropDownHeight: autoDropDownHeight, selectedIndex: 2 });
+                condition2.jqxDropDownList({ autoDropDownHeight: autoDropDownHeight, selectedIndex: 2 });
             }
             filteroperator.jqxDropDownList({ selectedIndex: 0 });
 
@@ -866,7 +1125,7 @@ License: http://jqwidgets.com/license/
             }
 
             if (isvalidfilter) {
-                var datafield = column.datafield;
+                var datafield = column.displayfield;
                 this.addfilter(datafield, filtergroup, true);
             }
             else {
@@ -875,7 +1134,7 @@ License: http://jqwidgets.com/license/
         },
 
         _clearfilter: function (me, element, column) {
-            var datafield = column.datafield;
+            var datafield = column.displayfield;
             this.removefilter(datafield, true);
         },
 
@@ -999,6 +1258,9 @@ License: http://jqwidgets.com/license/
                 this._updatecolumnwidths();
                 this._updatecellwidths();
                 this._renderrows(this.virtualsizeinfo);
+                if (this.showaggregates && this._updatecolumnsaggregates) {
+                    this._updatecolumnsaggregates();
+                }
             }
             else {
                 this._rowdetailscache = new Array();
@@ -1009,21 +1271,27 @@ License: http://jqwidgets.com/license/
 
         getfilterinformation: function () {
             var filters = new Array();
-            for (i = 0; i < this.dataview.filters.length; i++) {
+            for (var i = 0; i < this.dataview.filters.length; i++) {
                 var column = this.getcolumn(this.dataview.filters[i].datafield);
                 filters[i] = { filter: this.dataview.filters[i].filter, filtercolumn: column.datafield, filtercolumntext: column.text };
             }
             return filters;
         },
 
-        clearfilters: function () {
+        clearfilters: function (apply) {
             var me = this;
+            if (this.showfilterrow) {
+                this.clearfilterrow();
+            }
+
             if (this.columns.records) {
                 $.each(this.columns.records, function () {
-                    me.removefilter(this.datafield);
+                    me.removefilter(this.displayfield);
                 });
             }
-            this.applyfilters();
+            if (apply == true || apply != undefined) {
+                this.applyfilters();
+            }
         },
 
         _destroyfilterpanel: function () {
@@ -1100,15 +1368,18 @@ License: http://jqwidgets.com/license/
             filterclearbutton.jqxButton({ height: 20, theme: me.theme });
 
             var selectionrenderer = function (selectionelement) {
-                if (selectionelement.text().indexOf("case sensitive") != -1) {
-                    var selectiontext = selectionelement.text();
-                    selectiontext = selectiontext.replace("case sensitive", "match case");
-                    selectionelement.text(selectiontext);
-                }
-                selectionelement.css('font-family', me.host.css('font-family'));
-                selectionelement.css('font-size', me.host.css('font-size'));
+                if (selectionelement) {
+                    if (selectionelement.text().indexOf("case sensitive") != -1) {
+                        var selectiontext = selectionelement.text();
+                        selectiontext = selectiontext.replace("case sensitive", "match case");
+                        selectionelement.text(selectiontext);
+                    }
+                    selectionelement.css('font-family', me.host.css('font-family'));
+                    selectionelement.css('font-size', me.host.css('font-size'));
 
-                return selectionelement;
+                    return selectionelement;
+                }
+                return "";
             }
 
             filterpanelcontainer.append(showwhere);
@@ -1146,7 +1417,7 @@ License: http://jqwidgets.com/license/
 
         this.evaluate = function (value) {
             var result = true;
-            for (i = 0; i < filters.length; i++) {
+            for (var i = 0; i < filters.length; i++) {
                 var currentResult = filters[i].evaluate(value);
                 if (i == 0) {
                     result = currentResult;
@@ -1231,8 +1502,8 @@ License: http://jqwidgets.com/license/
 
         this.getfilters = function () {
             var filtersarray = new Array();
-            for (i = 0; i < filters.length; i++) {
-                var filter = { value: filters[i].filtervalue, condition: filters[i].comparisonoperator, operator: comparisonoperators[i] };
+            for (var i = 0; i < filters.length; i++) {
+                var filter = { value: filters[i].filtervalue, condition: filters[i].comparisonoperator, operator: comparisonoperators[i], type: filters[i].type };
                 filtersarray[i] = filter;
             }
             return filtersarray;
@@ -1245,7 +1516,7 @@ License: http://jqwidgets.com/license/
         }
 
         this.removefilter = function (filter) {
-            for (i = 0; i < filters.length; i++) {
+            for (var i = 0; i < filters.length; i++) {
                 if (filters[i].key == filter.key) {
                     filters.splice(i, 1);
                     comparisonoperators.splice(i, 1);
@@ -1303,6 +1574,7 @@ License: http://jqwidgets.com/license/
         var stringfilter = function (filtervalue, comparisonoperator) {
             this.filtervalue = filtervalue;
             this.comparisonoperator = comparisonoperator;
+            this.type = 'stringfilter';
             this.evaluate = function (value) {
                 var filtervalue = this.filtervalue;
                 var comparisonoperator = this.comparisonoperator;
@@ -1326,6 +1598,10 @@ License: http://jqwidgets.com/license/
                         return $.jqx.string.equalsIgnoreCase(val, filtervalue);
                     case 'EQUAL_CASE_SENSITIVE':
                         return $.jqx.string.equals(val, filtervalue);
+                    case 'NOT_EQUAL':
+                        return !$.jqx.string.equalsIgnoreCase(val, filtervalue);
+                    case 'NOT_EQUAL_CASE_SENSITIVE':
+                        return !$.jqx.string.equals(val, filtervalue);
                     case 'CONTAINS':
                         return $.jqx.string.containsIgnoreCase(val, filtervalue);
                     case 'CONTAINS_CASE_SENSITIVE':
@@ -1357,6 +1633,7 @@ License: http://jqwidgets.com/license/
         var booleanfilter = function (filtervalue, comparisonoperator) {
             this.filtervalue = filtervalue;
             this.comparisonoperator = comparisonoperator;
+            this.type = 'booleanfilter';
             this.evaluate = function (value) {
                 var filtervalue = this.filtervalue;
                 var comparisonoperator = this.comparisonoperator;
@@ -1383,6 +1660,7 @@ License: http://jqwidgets.com/license/
         var numericfilter = function (filtervalue, comparisonoperator) {
             this.filtervalue = filtervalue;
             this.comparisonoperator = comparisonoperator;
+            this.type = 'numericfilter';
             this.evaluate = function (value) {
                 var filtervalue = this.filtervalue;
                 var comparisonoperator = this.comparisonoperator;
@@ -1434,6 +1712,7 @@ License: http://jqwidgets.com/license/
 
         var datefilter = function (filtervalue, comparisonoperator, formatstring, localization) {
             this.filtervalue = filtervalue;
+            this.type = 'datefilter';
 
             if (formatstring != undefined && localization != undefined) {
                 var parsedDate = $.jqx.dataFormat.parsedate(filtervalue, formatstring, localization);
@@ -1519,6 +1798,7 @@ License: http://jqwidgets.com/license/
                     }
                 }
 
+                if (val == null) val = "";
                 switch (comparisonoperator) {
                     case 'EQUAL':
                         return val.toString() == filtervalue.toString();

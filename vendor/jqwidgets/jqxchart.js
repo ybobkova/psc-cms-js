@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -116,7 +116,9 @@ License: http://jqwidgets.com/license/
             this._renderData = new Array();
             var renderer = null;
 
-            if (document.createElementNS && (this.renderEngine == 'SVG' || this.renderEngine == undefined)) {
+            var isTouchDevice = $.jqx.mobile.isTouchDevice();
+
+            if (!isTouchDevice && document.createElementNS && (this.renderEngine == 'SVG' || this.renderEngine == undefined)) {
                 renderer = new $.jqx.svgRenderer();
                 if (!renderer.init(this.host)) {
                     if (this.renderEngine == 'SVG')
@@ -126,7 +128,7 @@ License: http://jqwidgets.com/license/
                 }
             }
 
-            if (renderer == null && this.renderEngine != 'HTML5') {
+            if (!isTouchDevice && renderer == null && this.renderEngine != 'HTML5') {
                 renderer = new $.jqx.vmlRenderer();
                 if (!renderer.init(this.host)) {
                     if (this.renderEngine == 'VML')
@@ -136,8 +138,8 @@ License: http://jqwidgets.com/license/
                 }
                 this._isVML = true;
             }
-
-            if (renderer == null && (this.renderEngine == 'HTML5' || this.renderEngine == undefined)) {
+     
+            if (isTouchDevice || (renderer == null && (this.renderEngine == 'HTML5' || this.renderEngine == undefined))) {
                 renderer = new $.jqx.HTML5Renderer();
                 if (!renderer.init(this.host)) {
                     throw 'Your browser does not support HTML5 Canvas';
@@ -2726,7 +2728,7 @@ License: http://jqwidgets.com/license/
                     else {
                         _min = new Date(_min.getFullYear(), 0, 1);
                         _max = new Date(_min);
-                        _max.setYear(_max.getYear() + rangeLength);
+                        _max.setYear(_max.getFullYear() + rangeLength);
                     }
                 }
                 dateRangeDays = $.jqx._rnd(this._getDateDiff(_min, _max, 'day'), 1, false);

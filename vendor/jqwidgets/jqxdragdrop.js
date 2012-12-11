@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -158,17 +158,24 @@ License: http://jqwidgets.com/license/
             this.addHandler(this.host, this._getEvent('mousedown') + '.draggable.' + this.element.id, this._mouseDown, { self: this });
             this.addHandler($(document), this._getEvent('mousemove') + '.draggable.' + this.element.id, this._mouseMove, { self: this });
             this.addHandler($(document), this._getEvent('mouseup') + '.draggable.' + this.element.id, this._mouseUp, { self: this });
-            if (window.frameElement) {
+            if (document.referrer != "" || window.frameElement) {
                 if (window.top != null) {
-                    var eventHandle = function (event) {
-                        self._mouseUp(self);
-                    };
+                    var parentLocation = '';
+                    if (window.parent && document.referrer) {
+                        parentLocation = document.referrer;
+                    }
 
-                    if (window.top.document.addEventListener) {
-                        window.top.document.addEventListener('mouseup', eventHandle, false);
+                    if (parentLocation.indexOf(document.location.host) != -1) {
+                        var eventHandle = function (event) {
+                            self._mouseUp(self);
+                        };
 
-                    } else if (window.top.document.attachEvent) {
-                        window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                        if (window.top.document.addEventListener) {
+                            window.top.document.addEventListener('mouseup', eventHandle, false);
+
+                        } else if (window.top.document.attachEvent) {
+                            window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                        }
                     }
                 }
             }
@@ -834,11 +841,6 @@ jqxListBoxDragDrop = function () {
             if (y < 0)
                 return null;
 
-            if (listBox.items && listBox.items.length > 0) {
-                var lastItem = listBox.items[listBox.items.length - 1];
-                //        if (y - 20 <= lastItem.top)
-                //            item = lastItem;
-            }
             if (item != null) {
                 var left = parseInt(selfOffset.left);
                 var right = left + listBox.host.width();
@@ -846,6 +848,16 @@ jqxListBoxDragDrop = function () {
                     return item;
 
                 return null;
+            }
+
+
+            if (listBox.items && listBox.items.length > 0) {
+                var lastItem = listBox.items[listBox.items.length - 1];
+                //        if (y - 20 <= lastItem.top)
+                //            item = lastItem;
+                if (lastItem.top + lastItem.height + 15 >= y) {
+                    return lastItem;
+                }
             }
 
             return null;
@@ -871,7 +883,7 @@ jqxListBoxDragDrop = function () {
                     me.isDragging = true;
                     me._dragCancel = false;
                     var position = event.args.position;
-                    var item = me._hitTestBounds(me, position.left, position.top);
+                    var item = me._hitTestBounds(me, event.args.pageX, event.args.pageY);
                     var listBoxes = $.find('.jqx-listbox');
                     me._listBoxes = listBoxes;
                     $.each(me._listBoxes, function () {
@@ -880,22 +892,24 @@ jqxListBoxDragDrop = function () {
                         listBoxInstance.enableHover = false;
                         $.jqx.mobile.setTouchScroll(false, me.element.id);
                     });
+
+                    var stopDrag = function () {
+                        me._dragCancel = true;
+                        $(event.args.element).jqxDragDrop({ triggerEvents: false });
+                        $(event.args.element).jqxDragDrop('cancelDrag');
+                        clearInterval(me._autoScrollTimer);
+                        $(event.args.element).jqxDragDrop({ triggerEvents: true });
+                        $.each(me._listBoxes, function () {
+                            var listBoxInstance = $.data(this, "jqxListBox").instance;
+                            if (listBoxInstance._enableHover != undefined) {
+                                listBoxInstance.enableHover = listBoxInstance._enableHover;
+                                $.jqx.mobile.setTouchScroll(true, me.element.id);
+                            }
+                        });
+                    }
+
                     if (item != null && !item.isGroup) {
-                        me._dragItem = item;
-                        var stopDrag = function () {
-                            me._dragCancel = true;
-                            $(event.args.element).jqxDragDrop({ triggerEvents: false });
-                            $(event.args.element).jqxDragDrop('cancelDrag');
-                            clearInterval(me._autoScrollTimer);
-                            $(event.args.element).jqxDragDrop({ triggerEvents: true });
-                            $.each(me._listBoxes, function () {
-                                var listBoxInstance = $.data(this, "jqxListBox").instance;
-                                if (listBoxInstance._enableHover != undefined) {
-                                    listBoxInstance.enableHover = listBoxInstance._enableHover;
-                                    $.jqx.mobile.setTouchScroll(true, me.element.id);
-                                }
-                            });
-                        }
+                        me._dragItem = item;              
                         if (me.dragStart) {
                             var result = me.dragStart(item);
                             if (result == false) {
@@ -908,6 +922,9 @@ jqxListBoxDragDrop = function () {
                         }
                         me._raiseEvent(4, { label: item.label, value: item.value, originalEvent: event.args });
                     }
+                    else if (item == null) {
+                        stopDrag();
+                    }
                 }
                 return false;
             });
@@ -917,7 +934,7 @@ jqxListBoxDragDrop = function () {
             elements.unbind('dragging');
             elements.bind('dragging', function (event) {
                 var args = event.args;
-                var position = args.position;
+                var position = { left: event.args.pageX, top: event.args.pageY };
                 if (me._dragCancel)
                     return;
 
@@ -933,7 +950,7 @@ jqxListBoxDragDrop = function () {
                     var width = $(this).width();
                     var right = left + width;
                     var listBoxInstance = $.data(this, "jqxListBox").instance;
-                    var item = listBoxInstance._hitTestBounds(listBoxInstance, position.left, position.top);
+                    var item = listBoxInstance._hitTestBounds(listBoxInstance, event.args.pageX, event.args.pageY);
                     var vScrollInstance = listBoxInstance.vScrollInstance;
                     if (item != null) {
                         if (listBoxInstance.allowDrop && !listBoxInstance.disabled) {
@@ -996,7 +1013,7 @@ jqxListBoxDragDrop = function () {
             elements.unbind('dragEnd');
             elements.bind('dragEnd', function (event) {
                 clearInterval(me._autoScrollTimer);
-                var position = event.args.position;
+                var position = { left: event.args.pageX, top: event.args.pageY };
                 var listBoxes = $.find('.jqx-listbox');
                 var listBox = null;
                 me.feedbackElement.remove();
@@ -1130,9 +1147,19 @@ jqxListBoxDragDrop = function () {
             if (this.allowDrag && this.host.jqxDragDrop) {
                 var elements = this.content.find('.draggable');
                 if (elements.length > 0) {
-                    elements.jqxDragDrop({ cursor: 'arrow', revertDuration: 0, appendTo: 'body', dragZIndex: 99999, revert: true });
-                    this._autoScrollTimer = null;
                     var me = this;
+                    elements.jqxDragDrop({
+                        cursor: 'arrow', revertDuration: 0, appendTo: 'body', dragZIndex: 99999, revert: true,
+                        initFeedback: function (feedback) {
+                            var title = $('<span style="white-space: nowrap;" class="' + me.toThemeProperty('jqx-fill-state-normal') + '">' + feedback.text() + '</span>');
+                            $(document.body).append(title);
+                            var width = title.width();
+                            title.remove();
+                            feedback.width(width + 5);
+                            feedback.addClass(me.toThemeProperty('jqx-fill-state-pressed'));
+                        }
+                    });
+                    this._autoScrollTimer = null;
                     me._dragItem = null;
                     me._handleDragStart(elements, me);
                     me._handleDragging(elements, me);
@@ -1435,12 +1462,13 @@ jqxTreeDragDrop = function () {
                                     var oldTreeInstance = me._dragItem.treeInstance;
                                     oldTreeInstance._refreshMapping();
                                     oldTreeInstance._updateItemsNavigation();
-                                    oldTreeInstance._render();
+                                    oldTreeInstance._render(true, false);
                                     if (oldTreeInstance.checkboxes) {
                                         oldTreeInstance._updateCheckStates();
                                     }
                                     me._dragItem.treeInstance = treeInstance;
                                     me._syncItems(me._dragItem.treeInstance.host.find('.draggable'));
+                             //       oldTreeInstance._enableDragDrop();
                                 }
 
                                 if (treeInstance.dropAction != 'none') {
@@ -1458,7 +1486,7 @@ jqxTreeDragDrop = function () {
                                     }
                                 }
 
-                                treeInstance._render();
+                                treeInstance._render(true, false);
                                 var treeElements = treeInstance.host.find('.draggable');
                                 me._syncItems(treeElements);
                                 me._dragOverItem = null;
@@ -1470,6 +1498,8 @@ jqxTreeDragDrop = function () {
                                 if (treeInstance.checkboxes) {
                                     treeInstance._updateCheckStates();
                                 }
+                                treeInstance._render(true, false);
+                                //      treeInstance._enableDragDrop();
                             }
                         }
                         else {
@@ -1487,7 +1517,7 @@ jqxTreeDragDrop = function () {
                                     me._syncItems(treeElements);
                                     me._dragItem.treeInstance = treeInstance;
                                     treeInstance.items[treeInstance.items.length] = me._dragItem;
-                                    treeInstance._render();
+                                    treeInstance._render(true, false);
                                     treeInstance.selectItem(oldItem.element);
                                     treeInstance._refreshMapping();
                                     treeInstance._updateItemsNavigation();
@@ -1498,6 +1528,7 @@ jqxTreeDragDrop = function () {
                                     }
                                     me._dragOverItem = null;
                                     me._dragItem = null;
+                          //          treeInstance._enableDragDrop();
                                 }
                             }
                         }

@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -58,7 +58,7 @@ License: http://jqwidgets.com/license/
             var cellindex = 0;
             var groupslength = this.groupable ? this.groups.length : 0;
 
-            for (i = 0; i < tablerow.cells.length; i++) {
+            for (var i = 0; i < tablerow.cells.length; i++) {
                 var left = parseInt($(this.columnsrow[0].cells[i]).css('left')) - horizontalscrollvalue;
                 var right = left + $(this.columnsrow[0].cells[i]).width();
                 if (right >= x && x >= left) {
@@ -87,7 +87,40 @@ License: http://jqwidgets.com/license/
                 }
             }
 
+            if (self.pageable) {
+                if ($(event.target).ischildof(this.pager)) {
+                    return true;
+                }
+            }
+
+            if (this.showtoolbar) {
+                if ($(event.target).ischildof(this.toolbar)) {
+                    return true;
+                }
+            }
+            if (this.showstatusbar) {
+                if ($(event.target).ischildof(this.statusbar)) {
+                    return true;
+                }
+            }
+
             if (this.editcell) {
+                if (this.editcell.columntype == null || this.editcell.columntype == 'textbox') {
+                    if (key >= 33 && key <= 40 && self.selectionmode == 'multiplecellsadvanced') {
+                        var selection = self._selection(this.editcell.editor);
+                        var strlength = this.editcell.editor.val().length;
+                        if (selection.length > 0) {
+                            self._cancelkeydown = true;
+                        }
+
+                        if (selection.start > 0 && key == 37) {
+                            self._cancelkeydown = true;
+                        }
+                        if (selection.start < strlength && key == 39) {
+                            self._cancelkeydown = true;
+                        }
+                    }
+                }
                 if (key == 32) {
                     if (self.editcell.columntype == 'checkbox') {
                         var checked = !self.getcellvalue(self.editcell.row, self.editcell.column);
@@ -143,6 +176,18 @@ License: http://jqwidgets.com/license/
                 }
                 else if (key == 13) {
                     this.endcelledit(this.editcell.row, this.editcell.column, false, true);
+                    if (self.selectionmode == 'multiplecellsadvanced') {
+                        var cell = self.getselectedcell();
+                        if (cell != null) {
+                            if (self.selectcell) {
+                                if (cell.rowindex + 1 < self.dataview.totalrecords) {
+                                    self.clearselection(false);
+                                    self.selectcell(cell.rowindex + 1, cell.datafield);
+                                    self.ensurecellvisible(cell.rowindex + 1, cell.datafield);
+                                }
+                            }
+                        }
+                    }
                     return false;
                 }
                 else if (key == 27) {
@@ -155,21 +200,23 @@ License: http://jqwidgets.com/license/
                 if (key == 113) {
                     startedit = true;
                 }
-                if (key >= 48 && key <= 57) {
-                    this.editchar = String.fromCharCode(key);
-                    startedit = true;
-                }
-                if (key >= 65 && key <= 90) {
-                    this.editchar = String.fromCharCode(key);
-                    if (!event.shiftKey) {
-                        this.editchar = this.editchar.toLowerCase();
+                if (!event.ctrlKey && !event.altKey) {
+                    if (key >= 48 && key <= 57) {
+                        this.editchar = String.fromCharCode(key);
+                        startedit = true;
                     }
-                    startedit = true;
-                }
-                else if (key >= 96 && key <= 105) {
-                    this.editchar = key - 96;
-                    this.editchar = this.editchar.toString();
-                    startedit = true;
+                    if (key >= 65 && key <= 90) {
+                        this.editchar = String.fromCharCode(key);
+                        if (!event.shiftKey) {
+                            this.editchar = this.editchar.toLowerCase();
+                        }
+                        startedit = true;
+                    }
+                    else if (key >= 96 && key <= 105) {
+                        this.editchar = key - 96;
+                        this.editchar = this.editchar.toString();
+                        startedit = true;
+                    }
                 }
 
                 if (key == 13 || startedit) {
@@ -183,7 +230,7 @@ License: http://jqwidgets.com/license/
                                 {
                                     if (rowindex >= 0) {
                                         var datafield = "";
-                                        for (m = 0; m < self.columns.records.length; m++) {
+                                        for (var m = 0; m < self.columns.records.length; m++) {
                                             var column = self.getcolumnat(m);
                                             if (column.editable) {
                                                 datafield = column.datafield;
@@ -200,8 +247,29 @@ License: http://jqwidgets.com/license/
                             case 'multiplecellsextended':
                                 var cell = self.getselectedcell();
                                 if (cell != null) {
-                                    self.begincelledit(cell.rowindex, cell.datafield);
+                                    var column = self._getcolumnbydatafield(cell.datafield);
+                                    if (column.columntype != 'checkbox') {
+                                        self.begincelledit(cell.rowindex, cell.datafield);
+                                    }
                                 }
+                                break;
+                            case "multiplecellsadvanced":
+                                var cell = self.getselectedcell();
+                                if (cell != null) {
+                                    if (key == 13) {
+                                        if (self.selectcell) {
+                                            if (cell.rowindex + 1 < self.dataview.totalrecords) {
+                                                self.clearselection(false);
+                                                self.selectcell(cell.rowindex + 1, cell.datafield);
+                                                self.ensurecellvisible(cell.rowindex + 1, cell.datafield);
+                                            }
+                                        }
+                                    }
+                                    else {
+                                        self.begincelledit(cell.rowindex, cell.datafield);
+                                    }
+                                }
+
                                 break;
                         }
                         return false;
@@ -209,18 +277,27 @@ License: http://jqwidgets.com/license/
                 }
                 if (key == 46) {
                     var cells = self.getselectedcells();
+                    if (self.selectionmode.indexOf('cell') == -1) {
+                        if (self._getcellsforcopypaste) {
+                            cells = self._getcellsforcopypaste();
+                        }
+                    }
                     if (cells != null && cells.length > 0) {
                         for (var cellIndex = 0; cellIndex < cells.length; cellIndex++) {
                             var cell = cells[cellIndex];
                             var column = self.getcolumn(cell.datafield);
                             var cellValue = self.getcellvalue(cell.rowindex, cell.datafield);
-                            self._raiseEvent(17, { rowindex: cell.rowindex, datafield: cell.datafield, value: cellValue });
-                            if (cellIndex == cells.length - 1) {
-                                self.setcellvalue(cell.rowindex, cell.datafield, "", true);
+                            if (cellValue != "") {
+                                self._raiseEvent(17, { rowindex: cell.rowindex, datafield: cell.datafield, value: cellValue });
+                                if (cellIndex == cells.length - 1) {
+                                    self.setcellvalue(cell.rowindex, cell.datafield, "", true);
+                                }
+                                else self.setcellvalue(cell.rowindex, cell.datafield, "", false);
+                                self._raiseEvent(18, { rowindex: cell.rowindex, datafield: cell.datafield, oldvalue: cellValue, value: "" });
                             }
-                            else self.setcellvalue(cell.rowindex, cell.datafield, "", false);
-                            self._raiseEvent(18, { rowindex: cell.rowindex, datafield: cell.datafield, oldvalue: cellValue, value: "" });
                         }
+                        this.dataview.updateview();
+                        this._renderrows(this.virtualsizeinfo);
                         return false;
                     }
                 }
@@ -349,8 +426,10 @@ License: http://jqwidgets.com/license/
                     me._renderrows(me.virtualsizeinfo);
                 }
                 setfocus();
-                me.host.addClass('jqx-disableselect');
-                me.content.addClass('jqx-disableselect');
+                if (!me.enablebrowserselection) {
+                    me.host.addClass('jqx-disableselect');
+                    me.content.addClass('jqx-disableselect');
+                }
             }
 
             if (cancelchanges) {
@@ -363,42 +442,68 @@ License: http://jqwidgets.com/license/
                 this.validationpopuparrow.hide();
             }
 
+            if (column.cellvaluechanging) {
+                var newcellvalue = column.cellvaluechanging(row, datafield, column.columntype, this.editcell.value, editorvalue);
+                if (newcellvalue != undefined) {
+                    editorvalue = newcellvalue;
+                }
+            }
+
             if (column.validation) {
                 var cell = this.getcell(row, datafield);
-                var validationobj = column.validation(cell, editorvalue);
-                var validationmessage = this.gridlocalization.validationstring;
-                if (validationobj.message != undefined) {
-                    validationmessage = validationobj.message;
-                }
-                var result = typeof validationobj == "boolean" ? validationobj : validationobj.result;
-
-                if (!result) {
-                    if (validationobj.showmessage == undefined || validationobj.showmessage == true) {
-                        this._showvalidationpopup(row, datafield, validationmessage);
+                try
+                {
+                    var validationobj = column.validation(cell, editorvalue);
+                    var validationmessage = this.gridlocalization.validationstring;
+                    if (validationobj.message != undefined) {
+                        validationmessage = validationobj.message;
                     }
+                    var result = typeof validationobj == "boolean" ? validationobj : validationobj.result;
+
+                    if (!result) {
+                        if (validationobj.showmessage == undefined || validationobj.showmessage == true) {
+                            this._showvalidationpopup(row, datafield, validationmessage);
+                        }
+                        this.editcell.validated = false;
+                        return false;
+                    }
+                }
+                catch (error) {
+                    this._showvalidationpopup(row, datafield, this.gridlocalization.validationstring);
                     this.editcell.validated = false;
                     return false;
                 }
             }
 
+            if (column.displayfield != column.datafield) {
+                var label = this.getcellvalue(this.editcell.row, column.displayfield);
+                var value = this.editcell.value;
+                oldvalue = { value: value, label: label };
+            }
+            else oldvalue = this.editcell.value;
+
             if (column.cellendedit) {
                 var cellendeditresult = column.cellendedit(row, datafield, column.columntype, this.editcell.value, editorvalue);
                 if (cellendeditresult == false) {
-                    this._raiseEvent(18, { rowindex: row, datafield: datafield, oldvalue: this.editcell.value, value: this.editcell.value, columntype: column.columntype });
+                    this._raiseEvent(18, { rowindex: row, datafield: datafield, displayfield: column.displayfield, oldvalue: oldvalue, value: oldvalue, columntype: column.columntype });
                     cancelchangesfunc(this);
                     return false;
                 }
             }
 
-            this._raiseEvent(18, { rowindex: row, datafield: datafield, oldvalue: this.editcell.value, value: editorvalue, columntype: column.columntype });
+            this._raiseEvent(18, { rowindex: row, datafield: datafield, displayfield: column.displayfield, oldvalue: oldvalue, value: editorvalue, columntype: column.columntype });
 
             this._hidecelleditor();
-            this.editcell.editor = null;
-            this.editcell.editing = false;
+            if (this.editcell != undefined) {
+                this.editcell.editor = null;
+                this.editcell.editing = false;
+            }
             this.editcell = null;
             this.setcellvalue(row, datafield, editorvalue, refresh);
-            this.host.addClass('jqx-disableselect');
-            this.content.addClass('jqx-disableselect');
+            if (!this.enablebrowserselection) {
+                this.host.addClass('jqx-disableselect');
+                this.content.addClass('jqx-disableselect');
+            }
             setfocus();
 
             // raise end cell edit event.
@@ -447,9 +552,30 @@ License: http://jqwidgets.com/license/
                 return false;
             }
 
-
             // raise end cell edit event.
             return true;
+        },
+
+        _selection: function (textbox) {
+            if ('selectionStart' in textbox[0]) {
+                var e = textbox[0];
+                var selectionLength = e.selectionEnd - e.selectionStart;
+                return { start: e.selectionStart, end: e.selectionEnd, length: selectionLength, text: e.value };
+            }
+            else {
+                var r = document.selection.createRange();
+                if (r == null) {
+                    return { start: 0, end: e.value.length, length: 0 }
+                }
+
+                var re = textbox[0].createTextRange();
+                var rc = re.duplicate();
+                re.moveToBookmark(r.getBookmark());
+                rc.setEndPoint('EndToStart', re);
+                var selectionLength = r.text.length;
+
+                return { start: rc.text.length, end: rc.text.length + r.text.length, length: selectionLength, text: r.text };
+            }
         },
 
         _setSelection: function (start, end, textbox) {
@@ -474,7 +600,7 @@ License: http://jqwidgets.com/license/
                 var length = records.length;
 
                 // loop through all records.
-                for (urec = 0; urec < length; urec++) {
+                for (var urec = 0; urec < length; urec++) {
                     var datarow = records[urec];
                     var currentValue = datarow['label'];
                     if (value == currentValue)
@@ -494,6 +620,13 @@ License: http://jqwidgets.com/license/
                         if (dropdownlist) {
                             dropdownlist.jqxDropDownList('destroy');
                             me.editors["dropdownlist" + "_" + this.datafield] = null;
+                        }
+                        break;
+                    case "combobox":
+                        var combobox = me.editors["combobox" + "_" + this.datafield];
+                        if (combobox) {
+                            combobox.jqxComboBox('destroy');
+                            me.editors["combobox" + "_" + this.datafield] = null;
                         }
                         break;
                     case "datetimeinput":
@@ -568,16 +701,19 @@ License: http://jqwidgets.com/license/
                         editor = dropdownlisteditor == undefined ? $("<div style='z-index: 99999; top: 0px; left: 0px; position: absolute;' id='dropdownlisteditor'></div>") : dropdownlisteditor;
                         editor.css('top', $(element).parent().position().top);
                         editor.css('left', -left + parseInt($(element).position().left));
+                        var datafieldname = $.trim(column.datafield).split(" ").join("");
+                        var displayfield = $.trim(column.displayfield).split(" ").join("");
                         if (dropdownlisteditor == undefined) {
                             editor.prependTo(this.table);
-                            editor[0].id = "dropdownlisteditor" + this.element.id + column.datafield;
+                            editor[0].id = "dropdownlisteditor" + this.element.id + datafieldname;
                             var isdataadapter = this.source._source ? true : false;
                             var dataadapter = null;
+                        
                             if (!isdataadapter) {
                                 dataadapter = new $.jqx.dataAdapter(this.source,
                                 {
                                     autoBind: false,
-                                    uniqueDataFields: [column.datafield],
+                                    uniqueDataFields: [displayfield],
                                     async: false
                                 });
                             }
@@ -593,13 +729,13 @@ License: http://jqwidgets.com/license/
                                 {
                                     autoBind: false,
                                     async: false,
-                                    uniqueDataFields: [column.datafield]
+                                    uniqueDataFields: [displayfield]
                                 });
                             }
 
                             var autoheight = true;
-                            editor.jqxDropDownList({ keyboardSelection: false, source: dataadapter, autoDropDownHeight: autoheight, theme: this.theme, width: $element.width() - 2, height: $element.height() - 2, displayMember: datafield, valueMember: datafield });
-                            this.editors["dropdownlist" + "_" + column.datafield] = editor;
+                            editor.jqxDropDownList({ keyboardSelection: false, source: dataadapter, autoDropDownHeight: autoheight, theme: this.theme, width: $element.width() - 2, height: $element.height() - 2, displayMember: displayfield, valueMember: datafield });
+                            this.editors["dropdownlist" + "_" + datafieldname] = editor;
                             if (column.createeditor) {
                                 column.createeditor(row, cellvalue, editor);
                             }
@@ -615,8 +751,8 @@ License: http://jqwidgets.com/license/
                         else {
                             editor.jqxDropDownList('autoDropDownHeight', false);
                         }
-
-                        var selectedIndex = this.findRecordIndex(cellvalue, column.datafield, dropdownitems);
+                        var cellvalue = this.getcellvalue(row, displayfield);
+                        var selectedIndex = this.findRecordIndex(cellvalue, displayfield, dropdownitems);
                         if (init) {
                             if (cellvalue != "") {
                                 editor.jqxDropDownList('selectIndex', selectedIndex, true);
@@ -635,6 +771,98 @@ License: http://jqwidgets.com/license/
                         }, 10);
                     }
                     break;
+                case "combobox":
+                    if (this.host.jqxComboBox) {
+                        element.innerHTML = "";
+                        var comboboxeditor = this.editors["combobox" + "_" + column.datafield];
+                        editor = comboboxeditor == undefined ? $("<div style='z-index: 99999; top: 0px; left: 0px; position: absolute;' id='comboboxeditor'></div>") : comboboxeditor;
+                        editor.css('top', $(element).parent().position().top);
+                        editor.css('left', -left + parseInt($(element).position().left));
+                        var datafieldname = $.trim(column.datafield).split(" ").join("");
+                        var displayfield = $.trim(column.displayfield).split(" ").join("");
+                        if (comboboxeditor == undefined) {
+                            editor.prependTo(this.table);
+                            editor[0].id = "comboboxeditor" + this.element.id + datafieldname;
+                            var isdataadapter = this.source._source ? true : false;
+                            var dataadapter = null;
+                            if (!isdataadapter) {
+                                dataadapter = new $.jqx.dataAdapter(this.source,
+                                {
+                                    autoBind: false,
+                                    uniqueDataFields: [displayfield],
+                                    async: false
+                                });
+                            }
+                            else {
+                                var dataSource =
+                                {
+                                    localdata: this.source.records,
+                                    datatype: this.source.datatype,
+                                    async: false
+                                }
+
+                                dataadapter = new $.jqx.dataAdapter(dataSource,
+                                {
+                                    autoBind: false,
+                                    async: false,
+                                    uniqueDataFields: [displayfield]
+                                });
+                            }
+
+                            var autoheight = true;
+                            editor.jqxComboBox({ keyboardSelection: false, source: dataadapter, autoDropDownHeight: autoheight, theme: this.theme, width: $element.width() - 2, height: $element.height() - 2, displayMember: displayfield, valueMember: datafield });
+                            this.editors["combobox" + "_" + datafieldname] = editor;
+                            if (column.createeditor) {
+                                column.createeditor(row, cellvalue, editor);
+                            }
+                        }
+                        if (column._requirewidthupdate) {
+                            editor.jqxComboBox({ width: $element.width() - 2 });
+                        }
+
+                        var dropdownitems = editor.jqxComboBox('getItems');
+                        if (dropdownitems.length < 8) {
+                            editor.jqxComboBox('autoDropDownHeight', true);
+                        }
+                        else {
+                            editor.jqxComboBox('autoDropDownHeight', false);
+                        }
+
+                        var cellvalue = this.getcellvalue(row, displayfield);
+                        var selectedIndex = this.findRecordIndex(cellvalue, displayfield, dropdownitems);
+                        if (init) {
+                            if (cellvalue != "") {
+                                editor.jqxComboBox('selectIndex', selectedIndex, true);
+                                editor.jqxComboBox('val', cellvalue);
+                            }
+                            else {
+                                editor.jqxComboBox('selectIndex', -1);
+                                editor.jqxComboBox('val', cellvalue);
+                            }
+                        }
+
+                        if (this.editcell.defaultvalue != undefined) {
+                            editor.jqxComboBox('selectIndex', this.editcell.defaultvalue, true);
+                        }
+
+                        if (this.editchar && this.editchar.length > 0) {
+                            editor.jqxComboBox('input').val(this.editchar);
+                        }
+
+                        setTimeout(function () {
+                            focuseditor(editor.jqxComboBox('input'));
+                            editor.jqxComboBox('_setSelection', 0, 0);
+                            if (me.editchar) {
+                                editor.jqxComboBox('_setSelection', 1, 1);
+                                me.editchar = null;
+                            }
+                            else {
+                                var val = editor.jqxComboBox('input').val();
+                                editor.jqxComboBox('_setSelection', 0, val.length);
+                            }                           
+                        }, 10);
+                    }
+                    break;
                 case "datetimeinput":
                     if (this.host.jqxDateTimeInput) {
                         element.innerHTML = "";
@@ -643,11 +871,12 @@ License: http://jqwidgets.com/license/
                         editor.show();
                         editor.css('top', $(element).parent().position().top);
                         editor.css('left', -left + parseInt($(element).position().left));
+                        var datafieldname = $.trim(column.datafield).split(" ").join("");
                         if (dateeditor == undefined) {
                             editor.prependTo(this.table);
-                            editor[0].id = "datetimeeditor" + this.element.id + column.datafield;
+                            editor[0].id = "datetimeeditor" + this.element.id + datafieldname;
                             editor.jqxDateTimeInput({ theme: this.theme, width: $element.width(), height: $element.height(), formatString: column.cellsformat });
-                            this.editors["datetimeinput" + "_" + column.datafield] = editor;
+                            this.editors["datetimeinput" + "_" + datafieldname] = editor;
                             if (column.createeditor) {
                                 column.createeditor(row, cellvalue, editor);
                             }
@@ -656,7 +885,7 @@ License: http://jqwidgets.com/license/
                             editor.jqxDateTimeInput({ width: $element.width() - 2 });
                         }
                         if (init) {
-                            if (cellvalue != "") {
+                            if (cellvalue != "" && cellvalue != null) {
                                 var date = new Date(cellvalue);
                                 if (date == "Invalid Date") {
                                     if (this.source.getvaluebytype) {
@@ -667,7 +896,7 @@ License: http://jqwidgets.com/license/
                                 editor.jqxDateTimeInput('setDate', date);
                             }
                             else {
-                                editor.jqxDateTimeInput('setDate', new Date());
+                                editor.jqxDateTimeInput('setDate', null);
                             }
 
                             if (this.editcell.defaultvalue != undefined) {
@@ -687,9 +916,10 @@ License: http://jqwidgets.com/license/
                         editor.show();
                         editor.css('top', $(element).parent().position().top);
                         editor.css('left', -left + parseInt($(element).position().left));
+                        var datafieldname = $.trim(column.datafield).split(" ").join("");
                         if (numbereditor == undefined) {
                             editor.prependTo(this.table);
-                            editor[0].id = "numbereditor" + this.element.id + column.datafield;
+                            editor[0].id = "numbereditor" + this.element.id + datafieldname;
                             var symbol = '';
                             var symbolPosition = 'left';
                             if (column.cellsformat) {
@@ -702,7 +932,7 @@ License: http://jqwidgets.com/license/
                                 }
                             }
                             editor.jqxNumberInput({ inputMode: 'simple', theme: this.theme, width: $element.width() - 1, height: $element.height() - 1, spinButtons: true, symbol: symbol, symbolPosition: symbolPosition });
-                            this.editors["numberinput" + "_" + column.datafield] = editor;
+                            this.editors["numberinput" + "_" + datafieldname] = editor;
                             if (column.createeditor) {
                                 column.createeditor(row, cellvalue, editor);
                             }
@@ -711,7 +941,7 @@ License: http://jqwidgets.com/license/
                             editor.jqxNumberInput({ width: $element.width() - 2 });
                         }
                         if (init) {
-                            if (cellvalue != "") {
+                            if (cellvalue != "" && cellvalue != null) {
                                 var decimal = cellvalue;
                                 editor.jqxNumberInput('setDecimal', decimal);
                             }
@@ -855,16 +1085,21 @@ License: http://jqwidgets.com/license/
                 this.editcell.editor.hide();
                 switch (this.editcell.columntype) {
                     case "dropdownlist":
-                        this.editcell.editor.jqxDropDownList({ hideDelay: 0 });
+                        this.editcell.editor.jqxDropDownList({ closeDelay: 0 });
                         this.editcell.editor.jqxDropDownList('hideListBox');
-                        this.editcell.editor.jqxDropDownList({ hideDelay: 400 });
+                        this.editcell.editor.jqxDropDownList({ closeDelay: 400 });
+                        break;
+                    case "combobox":
+                        this.editcell.editor.jqxComboBox({ closeDelay: 0 });
+                        this.editcell.editor.jqxComboBox('hideListBox');
+                        this.editcell.editor.jqxComboBox({ closeDelay: 400 });
                         break;
                     case "datetimeinput":
                         var datetimeeiditor = this.editcell.editor;
                         if (datetimeeiditor.jqxDateTimeInput('isOpened')) {
-                            datetimeeiditor.jqxDateTimeInput({ hideDelay: 0 });
+                            datetimeeiditor.jqxDateTimeInput({ closeDelay: 0 });
                             datetimeeiditor.jqxDateTimeInput('hideCalendar');
-                            datetimeeiditor.jqxDateTimeInput({ hideDelay: 400 });
+                            datetimeeiditor.jqxDateTimeInput({ closeDelay: 400 });
                         }
                         break;
                 }
@@ -886,14 +1121,26 @@ License: http://jqwidgets.com/license/
                     case "textbox":
                     default:
                         value = this.editcell.editor.val();
+                        if (column.cellsformat != "") {
+                            if (column.cellsformat.indexOf('p') != -1 || column.cellsformat.indexOf('c') != -1 || column.cellsformat.indexOf('n') != -1 || column.cellsformat.indexOf('f') != -1) {
+                                value = parseFloat(value);
+                            }
+                        }
+                        if (column.displayfield != column.datafield) {
+                            value = { label: value, value: value };
+                        }
                         break;
                     case "datetimeinput":
                         if (this.editcell.editor.jqxDateTimeInput) {
                             this.editcell.editor.jqxDateTimeInput({ isEditing: false });
-                            value = this.editcell.editor.jqxDateTimeInput('getDate').toString();
-                            value = new Date(value)
+                            value = this.editcell.editor.jqxDateTimeInput('getDate');
+                            if (value == null) return "";
+                            value = new Date(value.toString());
                             if (value == null) {
                                 value == "";
+                            }
+                            if (column.displayfield != column.datafield) {
+                                value = { label: value, value: value };
                             }
                         }
                         break;
@@ -901,10 +1148,43 @@ License: http://jqwidgets.com/license/
                         if (this.editcell.editor.jqxDropDownList) {
                             var selectedIndex = this.editcell.editor.jqxDropDownList('selectedIndex');
                             var item = this.editcell.editor.jqxDropDownList('getItem', selectedIndex);
-                            if (item) {
-                                value = item.label;
+                            if (column.displayfield != column.datafield) {
+                                if (item) {
+                                    value = { label: item.label, value: item.value };
+                                }
+                                else value = "";
                             }
-                            else value = "";
+                            else {
+                                if (item) value = item.label;
+                                else value = "";
+                            }
+
+                            if (value == null) {
+                                value = "";
+                            }
+                        }
+                        break;
+                    case "combobox":
+                        if (this.editcell.editor.jqxComboBox) {
+                            value = this.editcell.editor.jqxComboBox('val');
+                            if (column.displayfield != column.datafield) {
+                                var item = this.editcell.editor.jqxComboBox('getSelectedItem');
+                                if (item != null)
+                                {
+                                    value = { label: value, value: item.value };
+                                }
+                            }
+                            //var selectedIndex = this.editcell.editor.jqxComboBox('selectedIndex');
+                            //var autoComplete = this.editcell.editor.jqxComboBox('autoComplete');
+                            //var item = this.editcell.editor.jqxComboBox('getItem', selectedIndex);
+                            //if (autoComplete) {
+                            //     item = this.editcell.editor.jqxComboBox('val');
+                            //}
+
+                            //if (item) {
+                            //    value = item.label;
+                            //}
+                            //else value = "";
 
                             if (value == null) {
                                 value = "";
@@ -918,6 +1198,9 @@ License: http://jqwidgets.com/license/
                             value = parseFloat(value);
                             if (isNaN(value)) {
                                 value = 0;
+                            }
+                            if (column.displayfield != column.datafield) {
+                                value = { label: value, value: value };
                             }
                         }
                         break;
@@ -941,6 +1224,10 @@ License: http://jqwidgets.com/license/
         },
 
         showvalidationpopup: function (row, datafield, message) {
+            if (message == undefined) {
+                var message = this.gridlocalization.validationstring;
+            }
+
             var validationpopup = $("<div style='z-index: 99999; top: 0px; left: 0px; position: absolute;'></div>");
             var validationpopuparrow = $("<div style='width: 20px; height: 20px; z-index: 999999; top: 0px; left: 0px; position: absolute;'></div>");
             validationpopup.html(message);
@@ -1014,7 +1301,7 @@ License: http://jqwidgets.com/license/
             var horizontalscrollvalue = hScrollInstance.value;
             var left = parseInt(horizontalscrollvalue);
 
-            this.validationpopup.css('top', parseInt($(this.editcell.element).parent().position().top) + 30 + 'px');
+            this.validationpopup.css('top', parseInt($(this.editcell.element).parent().position().top) + (this.rowsheight + 5) + 'px');
 
             var topposition = parseInt(this.validationpopup.css('top'));
 
@@ -1025,7 +1312,7 @@ License: http://jqwidgets.com/license/
             if (topposition > this._gettableheight()) {
                 this.validationpopuparrow.removeClass(this.toThemeProperty('jqx-grid-validation-arrow-up'));
                 this.validationpopuparrow.addClass(this.toThemeProperty('jqx-grid-validation-arrow-down'));
-                topposition = parseInt($(this.editcell.element).parent().position().top) - 30;
+                topposition = parseInt($(this.editcell.element).parent().position().top) - this.rowsheight - 5;
                 this.validationpopup.css('top', topposition + 'px');
                 this.validationpopuparrow.css('top', topposition + this.validationpopup.outerHeight() - 9);
             }

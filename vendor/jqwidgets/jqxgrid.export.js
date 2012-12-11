@@ -1,12 +1,12 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
 
 (function ($) {
     $.extend($.jqx._jqxGrid.prototype, {
-        exportdata: function (datatype, filename, exportHeader, exportServer) {
+        exportdata: function (datatype, filename, exportHeader, rows, exportServer) {
             if (!$.jqx.dataAdapter.ArrayExporter) {
                 throw 'jqxdata.export.js is not loaded.';
             }
@@ -16,9 +16,12 @@ License: http://jqwidgets.com/license/
             }
 
             var me = this;
-            var rows = this.getrows();
-            if (rows.length == 0) {
-                throw 'No data to export.';
+
+            if (rows == undefined) {
+                var rows = this.getrows();
+                if (rows.length == 0) {
+                    throw 'No data to export.';
+                }
             }
 
             var dataFields = {};
@@ -57,6 +60,8 @@ License: http://jqwidgets.com/license/
                     removeClassFunc($cellalt);
                 }
 
+                if (this.datafield == null) return true;
+
                 if (me.showaggregates) {
                     if (me.getcolumnaggregateddata) {
                         aggregates.push(me.getcolumnaggregateddata(this.datafield, this.aggregates, true));
@@ -64,10 +69,11 @@ License: http://jqwidgets.com/license/
                 }
 
                 var type = me._getexportcolumntype(this);
-                if (this.exportable) {
+                if (this.exportable && !this.hidden) {
                     dataFields[this.datafield] = {};
                     dataFields[this.datafield].text = this.text;
-                    dataFields[this.datafield].width = this.width;
+                    dataFields[this.datafield].width = parseInt(this.width);
+                    if (isNaN(dataFields[this.datafield].width)) dataFields[this.datafield].width = 60;
                     dataFields[this.datafield].formatString = this.cellsformat;
                     dataFields[this.datafield].type = type;
                     dataFields[this.datafield].cellsAlign = this.cellsalign;
@@ -77,8 +83,10 @@ License: http://jqwidgets.com/license/
                 styleName = 'cell' + styleIndex;
 
                 var $element = $(this.element);
+                if (this.element == undefined) $element = $(this.uielement);
+
                 columnStyleName = 'column' + columnStyleIndex;
-                if (datatype == 'html' || datatype == 'xls') {
+                if (datatype == 'html' || datatype == 'xls' || datatype == 'pdf') {
                     var buildStyle = function (styleName, $element, isColumn, altStyle, meColumn, me, index) {
                         styles[styleName] = {};
                         styles[styleName]['font-size'] = $element.css('font-size');
@@ -96,7 +104,7 @@ License: http://jqwidgets.com/license/
                             styles[styleName]['dataType'] = type;
                         }
 
-                        if (datatype == 'html') {
+                        if (datatype == 'html' || datatype == 'pdf') {
                             styles[styleName]['border-top-width'] = $element.css('border-top-width');
                             styles[styleName]['border-left-width'] = $element.css('border-left-width');
                             styles[styleName]['border-right-width'] = $element.css('border-right-width');
@@ -120,7 +128,7 @@ License: http://jqwidgets.com/license/
                             styles[styleName]['height'] = $element.css('height');
                         }
 
-                        if (meColumn.exportable) {
+                        if (meColumn.exportable && !meColumn.hidden) {
                             if (isColumn) {
                                 dataFields[meColumn.datafield].style = styleName;
                             }
@@ -152,7 +160,9 @@ License: http://jqwidgets.com/license/
                                 if (!aggregatedrows[i]) aggregatedrows[i] = {};
                                 if (aggregatedrows[i]) {
                                     var aggregatename = me._getaggregatename(this.aggregates[i]);
-                                    aggregatedrows[i][this.datafield] = aggregatename + ": " + aggregates[index][this.aggregates[i]];
+                                    var aggregatetype = me._getaggregatetype(this.aggregates[i]);
+                                    var aggregate = aggregates[index];
+                                    aggregatedrows[i][this.datafield] = aggregatename + ": " + aggregate[aggregatetype];
                                 }
                             }
                         }
@@ -177,15 +187,24 @@ License: http://jqwidgets.com/license/
                 return exporter.exportTo(datatype);
             }
             else {
-                exporter.exportToFile(datatype, filename);
+                exporter.exportToFile(datatype, filename, exportServer);
             }
             // update ui
+            if (this.showaggregates) {
+                $.each(aggregatedrows, function () {
+                    rows.pop(this);
+                });
+            }
             this._renderrows(this.virtualsizeinfo);
         },
 
         _getexportcolor: function (value) {
             var color = value;
             if (value == 'transparent') color = "#FFFFFF";
+            if (!color || !color.toString()) {
+                color = "#FFFFFF";
+            }
+
             if (color.toString().indexOf('rgb') != -1) {
                 var rgb = color.split(',');
                 var r = parseInt(rgb[0].substring(4));
@@ -195,6 +214,13 @@ License: http://jqwidgets.com/license/
                 var hex = this._rgbToHex(rgbObj);
                 return "#" + hex;
             }
+            else if (color.toString().indexOf('#') != -1) {
+                if (color.toString().length == 4) {
+                    var colorPart = color.toString().substring(1, 4);
+                    color += colorPart;
+                }
+            }
+
             return color;
         },
 
@@ -252,6 +278,31 @@ License: http://jqwidgets.com/license/
                 }
 
                 if (cell != null) {
+                    if (column.cellsformat.indexOf('c') != -1) {
+                        return 'number';
+                    }
+                    if (column.cellsformat.indexOf('n') != -1) {
+                        return 'number';
+                    }
+                    if (column.cellsformat.indexOf('p') != -1) {
+                        return 'number';
+                    }
+                    if (column.cellsformat.indexOf('d') != -1) {
+                        return 'date';
+                    }
+                    if (column.cellsformat.indexOf('y') != -1) {
+                        return 'date';
+                    }
+                    if (column.cellsformat.indexOf('M') != -1) {
+                        return 'date';
+                    }
+                    if (column.cellsformat.indexOf('m') != -1) {
+                        return 'date';
+                    }
+                    if (column.cellsformat.indexOf('t') != -1) {
+                        return 'date';
+                    }
+
                     if (typeof cell == 'boolean') {
                         type = 'boolean';
                     }
@@ -260,7 +311,6 @@ License: http://jqwidgets.com/license/
                     }
                     else {
                         var tmpvalue = new Date(cell);
-
                         if (tmpvalue.toString() == 'NaN' || tmpvalue.toString() == "Invalid Date") {
                             if ($.jqx.dataFormat) {
                                 tmpvalue = $.jqx.dataFormat.tryparsedate(cell);

@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -280,6 +280,7 @@ License: http://jqwidgets.com/license/
             this.host.addClass(this.toThemeProperty("jqx-widget"));
             this.host.addClass(this.toThemeProperty("jqx-widget-content"));
             this.host.addClass(this.toThemeProperty("jqx-rc-all"));
+            this._addInput();
 
             this.addHandler($($(this.element)[0]), 'keydown',
             function (event) {
@@ -287,6 +288,9 @@ License: http://jqwidgets.com/license/
                 if (me.keyboardNavigation) {
                     if (me._handleKey != undefined) {
                         result = me._handleKey(event);
+                        if (!result) {
+                            if (event.stopPropagation) event.stopPropagation();
+                        }
                     }
                 }
                 return result;
@@ -347,6 +351,15 @@ License: http://jqwidgets.com/license/
                 }
                 me.refreshControl();
             }
+        },
+
+        _addInput: function () {
+            var name = this.host.attr('name');
+            if (!name) name = this.element.id;
+            this.input = $("<input type='hidden'/>");
+            this.host.append(this.input);
+            this.input.attr('name', name);
+            this.input.val(this.getDate().toString());
         },
 
         setCalendarSize: function () {
@@ -727,13 +740,13 @@ License: http://jqwidgets.com/license/
             }
 
 
-            var title = $("<div style='height:" + this.titleHeight + "px;'><table style='width: 100%; height: 100%; border-spacing: 0px;' cellspacing='0' cellpadding='0'><tr id='calendarTitle' width='100%'>" +
+            var title = $("<div style='height:" + this.titleHeight + "px;'><table style='margin: 0px; width: 100%; height: 100%; border-spacing: 0px;' cellspacing='0' cellpadding='0'><tr id='calendarTitle' width='100%'>" +
                "<td NOWRAP id='leftNavigationArrow'></td>" + "<td align='center' NOWRAP id='calendarTitleHeader'></td>" + "<td NOWRAP id='rightNavigationArrow'></td>" +
                "</tr></table></div>");
 
             title.addClass(this.toThemeProperty('jqx-calendar-title-container'));
             month.append(title);
-            var monthStructure = $("<table style='border-spacing: 0px;' cellspacing='0' cellpadding='0'>" +
+            var monthStructure = $("<table style='margin: 0px; border-spacing: 0px;' cellspacing='0' cellpadding='0'>" +
                "<tr id='calendarHeader' height='" + columnHeaderHeight + "'>" +
                "<td id='selectCell' width='" + rowHeaderWidth + "'></td>" + "<td colspan='2' style='padding-left: 2px; padding-right: 2px' id='calendarColumnHeader'></td>" +
                "</tr>" +
@@ -744,7 +757,7 @@ License: http://jqwidgets.com/license/
            );
 
             var footerHeight = 20;
-            var footer = $("<div style='display: none; height:" + footerHeight + "px;'><table style='width: 100%; height: 100%; border-spacing: 0px;' cellspacing='0' cellpadding='0'>" +
+            var footer = $("<div style='margin: 0px; display: none; height:" + footerHeight + "px;'><table style='width: 100%; height: 100%; border-spacing: 0px;' cellspacing='0' cellpadding='0'>" +
             "<tr id='calendarFooter'>" +
             "<td align='right' id='todayButton'></td>" + "<td align='left' colspan='2' id=doneButton></td>" +
             "</tr>" + "</table></div>");
@@ -808,9 +821,11 @@ License: http://jqwidgets.com/license/
                 var self = this;
                 this.addHandler(todayLink, 'click', function () {
                     self.setDate(new Date(), 'mouse');
+                    if (self.today) self.today();
                 });
                 this.addHandler(clearLink, 'click', function () {
                     self.setDate(null, 'mouse');
+                    if (self.clear) self.clear();
                 });
             }
 
@@ -881,10 +896,11 @@ License: http://jqwidgets.com/license/
 
             var rightArrowElement = month.find("#rightNavigationArrow" + month[0].id).append(rightArrow);
 
-            if (this.enableTooltips && this.tooltip != null) {
-                this.tooltip.theme = this.theme;
-                this.tooltip.add(leftArrowElement, this.backText);
-                this.tooltip.add(rightArrowElement, this.forwardText);
+            if (this.enableTooltips) {
+                if ($(leftArrowElement).jqxTooltip) {
+                    $(leftArrowElement).jqxTooltip({name: this.element.id, position: 'mouse', theme: this.theme, content: this.backText });
+                    $(rightArrowElement).jqxTooltip({ name: this.element.id, position: 'mouse', theme: this.theme, content: this.forwardText });
+                }
             }
 
             var titleHeader = month.find("#calendarTitleHeader" + month[0].id);
@@ -1045,10 +1061,10 @@ License: http://jqwidgets.com/license/
             var cells = new Array();
             var k = 0;
             var today = new $.jqx._jqxDateTimeInput.getDateTime(new Date());
-            var cellWidth = (month.width() - this.rowHeaderWidth - 2) / 7;
-            if (!this.showWeekNumbers) {
-                cellWidth = (month.width() - 2) / 7;
-            }
+            //var cellWidth = (month.width() - this.rowHeaderWidth - 2) / 7;
+            //if (!this.showWeekNumbers) {
+            //    cellWidth = (month.width() - 2) / 7;
+            //}
 
             for (i = 0; i < 6; i++) {
                 for (j = 0; j < 7; j++) {
@@ -1084,14 +1100,7 @@ License: http://jqwidgets.com/license/
                     $.data(this.element, "cellContent" + cellID.substring(1), cell);
                     cells[k] = cell;
                     k++;
-                    var cellContent = cellElement.find("#cellContent" + cellID.substring(1));
-                    if (this.specialDates.length > 0) {
-                        if (this.tooltip != null) {
-                            if (this.tooltip.hasTooltip(cellContent)) {
-                                this.tooltip.remove(cellContent);
-                            }
-                        }
-                    }
+                    var cellContent = cellElement.find("#cellContent" + cellID.substring(1));  
                     cellContent.html(currentDate.day);
                     this._applyCellStyle(cell, cellElement, cellContent);
 
@@ -1152,7 +1161,7 @@ License: http://jqwidgets.com/license/
             if (!this.showWeekNumbers) {
                 cellWidth = (month.width() - 2) / 7;
             }
-
+            cellWidth = parseInt(cellWidth);
             var today = new $.jqx._jqxDateTimeInput.getDateTime(new Date());
 
             for (i = 0; i < 6; i++) {
@@ -1185,13 +1194,13 @@ License: http://jqwidgets.com/license/
                         var cellContent = $("<div id='cellContent" + cellID.substring(1) + "'>" + currentDate.day + "</div>");
                         cellElement.append(cellContent);
                         cellElement.width(cellWidth);
-                        cellContent.css('padding', '3px');
+                   //     cellContent.css('padding', '3px');
                     }
                     else {
                         var cellContent = $("<div id='cellContent" + cellID.substring(1) + "'>" + currentDate.day + "</div>");
                         cellElement.append(cellContent);
                         cellElement.width(cellWidth);
-                        cellContent.css('padding', '3px');
+                    //    cellContent.css('padding', '3px');
                     }
 
                     currentDate = new $.jqx._jqxDateTimeInput.getDateTime(new Date(currentDate._addDays(1)));
@@ -1341,10 +1350,18 @@ License: http://jqwidgets.com/license/
 
         // gets the calendar's date.
         getDate: function () {
+            if (this.selectedDate == undefined)
+                return new Date();
+
+            return this.selectedDate;
+        },
+
+        getValue: function()
+        {
             if (this.value == undefined)
                 return new Date();
 
-            return this.value.dateTime;
+            return this.value.dateTime;;
         },
 
         setRange: function (from, to) {
@@ -1369,6 +1386,13 @@ License: http://jqwidgets.com/license/
                 return;
 
             var self = this;
+            if (this.input) {
+                if (date != null) {
+                    this.input.val(date.toString());
+                }
+                else this.input.val("");
+            }
+            this.selectedDate = date;
 
             $.each(monthInstance.cells, function (index) {
                 var cell = this;
@@ -1468,8 +1492,6 @@ License: http://jqwidgets.com/license/
 
                 self._applyCellStyle(cell, cellElement, cellContent);
             });
-
-            this.selectedDate = date;
         },
 
         // gets the selected date.
@@ -1557,11 +1579,11 @@ License: http://jqwidgets.com/license/
                     }
 
                     if (cell.dateTime._equalDate(this.Date)) {
-                        if (cell.tooltip == null && this.Tooltip != null && me.tooltip != null) {
+                        if (cell.tooltip == null && this.Tooltip != null) {
                             cell.tooltip = this.Tooltip;
-                            me.tooltip.remove(cellContent);
-                            me.tooltip.theme = me.theme;
-                            me.tooltip.add(cellContent, this.Tooltip);
+                            if ($(cellContent).jqxTooltip) {
+                                $(cellContent).jqxTooltip({ name: me.element.id, content: this.Tooltip, position: 'mouse', theme: me.theme });
+                            }
                         }
 
                         cellContent.removeClass(self.toThemeProperty("jqx-calendar-cell-othermonth"));
@@ -1643,14 +1665,7 @@ License: http://jqwidgets.com/license/
                 cellWidth = (month.width() - 2) / 7;
             }
 
-            if ($.jqx._jqxTooltip != null && $.jqx._jqxTooltip != undefined) {
-                var tooltipContainer = calendarColumnHeader.jqxTooltip();
-                this.tooltip = $.data(tooltipContainer[0], "jqxTooltip").instance;
-                this.tooltip.location = 'relative';
-                this.tooltip.verticalOffset = 30;
-            }
-
-            for (i = 0; i < 7; i++) {
+            for (var i = 0; i < 7; i++) {
                 var dayString = dayNames[day];
 
                 // Possible values: default, shortest, firstTwoLetters, firstLetter, full
@@ -1675,8 +1690,12 @@ License: http://jqwidgets.com/license/
 
                 var oldI = i;
 
-                if (this.enableTooltips && this.tooltip != null) {
-                    this.tooltip.add(cellElement, dayNames[day]);
+                if (this.enableTooltips) {
+                    if ($(cellElement).jqxTooltip) {
+                        $(cellElement).jqxTooltip({
+                            name: this.element.id, content: dayNames[day], theme: this.theme, position: 'mouse'
+                        });
+                    }
                 }
 
                 if (day >= 6) {
@@ -1842,6 +1861,7 @@ License: http://jqwidgets.com/license/
         destroy: function () {
             this.host
 			.removeClass();
+            this.host.remove();
         },
 
         _raiseEvent: function (id, arg) {
@@ -1856,7 +1876,7 @@ License: http://jqwidgets.com/license/
             event.owner = this;
             event.args = args;
             if (id == 0 || id == 1 || id == 2 || id == 3 || id == 4 || id == 5 || id == 6) {
-                event.args.date = this.getDate();
+                event.args.date = this.getValue();
                 event.args.selectedDate = this._getSelectedDate();
             }
 

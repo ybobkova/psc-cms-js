@@ -1,12 +1,12 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
 
 (function ($) {
     $.extend($.jqx._jqxGrid.prototype, {
-        _calculateaggregate: function (column, aggregates, formatData) {
+        _calculateaggregate: function (column, aggregates, formatData, records) {
             var aggregate = column.aggregates;
             if (!aggregate) aggregate = aggregates;
 
@@ -20,14 +20,22 @@ License: http://jqwidgets.com/license/
                 }
 
                 if (this.source && this.source.getAggregatedData) {
+                    if (records == undefined) records = this.source.records;
+                    if (this.virtualmode) {
+                        var records = new Array();
+                        $.each(this.source._source.records, function () {
+                            records.push(this);
+                        });
+                    }
+
                     if (formatData == undefined || formatData == true) {
                         var summaryData = this.source.getAggregatedData
-                ([{ name: column.datafield, aggregates: aggregate, formatStrings: formatstrings}], this.gridlocalization);
+                ([{ name: column.datafield, aggregates: aggregate, formatStrings: formatstrings }], this.gridlocalization, records);
                         return summaryData;
                     }
                     else {
                         var summaryData = this.source.getAggregatedData
-                ([{ name: column.datafield, aggregates: aggregate}], this.gridlocalization);
+                ([{ name: column.datafield, aggregates: aggregate }], this.gridlocalization, records);
                         return summaryData;
                     }
                 }
@@ -35,16 +43,16 @@ License: http://jqwidgets.com/license/
             return null;
         },
 
-        getcolumnaggregateddata: function (datafield, aggregates, formatdata) {
+        getcolumnaggregateddata: function (datafield, aggregates, formatdata, records) {
             var column = this.getcolumn(datafield);
             var format = (formatdata == undefined || formatdata == false) ? false : formatdata;
             if (aggregates == null) return "";
 
-            var summaryData = this._calculateaggregate(column, aggregates, format)[datafield];
+            var summaryData = this._calculateaggregate(column, aggregates, format, records)[datafield];
             return summaryData;
         },
 
-        refresheaggregates: function () {
+        refreshaggregates: function () {
             this._updatecolumnsaggregates();
         },
 
@@ -58,7 +66,7 @@ License: http://jqwidgets.com/license/
                 columnelement.children().remove();
                 columnelement.html('');
                 if (column.aggregatesrenderer) {
-                    var renderstring = column.aggregatesrenderer(column);
+                    var renderstring = column.aggregatesrenderer(column, columnelement);
                     columnelement.html(renderstring);
                 }
                 return;
@@ -68,7 +76,7 @@ License: http://jqwidgets.com/license/
             columnelement.html('');
             if (column.aggregatesrenderer) {
                 if (aggregates) {
-                    var renderstring = column.aggregatesrenderer(aggregates[column.datafield], column);
+                    var renderstring = column.aggregatesrenderer(aggregates[column.datafield], column, columnelement, this.getcolumnaggregateddata(column.datafield, aggregates[column.datafield]));
                     columnelement.html(renderstring);
                 }
             }
@@ -84,6 +92,28 @@ License: http://jqwidgets.com/license/
                     }
                 });
             }
+        },
+
+        _getaggregatetype: function (obj) {
+            switch (obj) {
+                case 'min':
+                case 'max':
+                case 'count':
+                case 'avg':
+                case 'product':
+                case 'var':
+                case 'varp':
+                case 'stdev':
+                case 'stdevp':
+                case 'sum':
+                    return obj;
+            }
+            var name = obj;
+            for (var myObj in obj) {
+                name = myObj;
+                break;
+            }
+            return name;
         },
 
         _getaggregatename: function (obj) {
@@ -119,21 +149,30 @@ License: http://jqwidgets.com/license/
                     name = 'Sum';
                     break;
             }
+            if (obj === name && typeof(name) != 'string') {
+                for (var myObj in obj) {
+                    name = myObj;
+                    break;
+                }
+            }
             return name;
         },
 
         _updatecolumnsaggregates: function () {
+            var rows = this.getrows();
             var columnslength = this.columns.records.length;
-            for (j = 0; j < columnslength; j++) {
-                var tablecolumn = $(this.statusbar[0].cells[j]);
-                var columnrecord = this.columns.records[j];
-                var summaryData = this._calculateaggregate(columnrecord);
-                this._updatecolumnaggregates(columnrecord, summaryData, tablecolumn);
+            if (undefined != this.statusbar[0].cells) {
+                for (var j = 0; j < columnslength; j++) {
+                    var tablecolumn = $(this.statusbar[0].cells[j]);
+                    var columnrecord = this.columns.records[j];
+                    var summaryData = this._calculateaggregate(columnrecord, null, true, rows);
+                    this._updatecolumnaggregates(columnrecord, summaryData, tablecolumn);
+                }
             }
         },
 
         _updateaggregates: function () {
-            var tablerow = $('<div style="position: relative;" id="row' + i + this.element.id + '"></div>');
+            var tablerow = $('<div style="position: relative;" id="row0' + this.element.id + '"></div>');
             var left = 0;
             var columnslength = this.columns.records.length;
             var cellclass = this.toThemeProperty('jqx-grid-cell');
@@ -142,7 +181,7 @@ License: http://jqwidgets.com/license/
             var zindex = columnslength + 10;
             var cells = new Array();
             this.statusbar[0].cells = cells;
-            for (j = 0; j < columnslength; j++) {
+            for (var j = 0; j < columnslength; j++) {
                 var columnrecord = this.columns.records[j];
                 var summaryData = this._calculateaggregate(columnrecord);
                 var width = columnrecord.width;

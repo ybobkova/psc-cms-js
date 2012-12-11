@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -178,6 +178,7 @@ License: http://jqwidgets.com/license/
             this.host.addClass(this.toThemeProperty('jqx-widget-content'));
 
             this._unorderedList = this.host.children('ul');
+
             this._titleList = this.host.children('ul').children('li');
             this._contentList = this.host.children('div');
             this._selectedItem = this.selectedItem;
@@ -206,16 +207,18 @@ License: http://jqwidgets.com/license/
             this.element.tabIndex = 0;
             this._raiseEvent(0);
 
-            // resize when the width or height is in percentages.
-            var percentageSize = false;
+            //// resize when the width or height is in percentages.
+            //var percentageSize = false;
             var me = this;
-            if (me.width != null && me.width.toString().indexOf("%") != -1) {
-                percentageSize = true;
-            }
+            //if (me.width != null && me.width.toString().indexOf("%") != -1) {
+            //    percentageSize = true;
+            //}
 
-            if (me.height != null && me.height.toString().indexOf("%") != -1) {
-                percentageSize = true;
-            }
+            //if (me.height != null && me.height.toString().indexOf("%") != -1) {
+            //    percentageSize = true;
+            //}
+
+            //if (me.width == 'auto' || me.height == 'auto') percentageSize = true;
 
             me._enableWindowResize();
 
@@ -258,6 +261,8 @@ License: http://jqwidgets.com/license/
             if (me.height != null && me.height.toString().indexOf("%") != -1) {
                 percentageSize = true;
             }
+            if (me.width == 'auto' || me.height == 'auto') percentageSize = true;
+
             $(window).bind('resize.tabs' + this.element.id, function () {
                 if (percentageSize) {
                     var width = me.host.width();
@@ -287,7 +292,7 @@ License: http://jqwidgets.com/license/
             var txt = "Browser CodeName: " + navigator.appCodeName + "";
             txt += "Browser Name: " + navigator.appName + "";
             txt += "Browser Version: " + navigator.appVersion + "";
-           // txt += "Cookies Enabled: " + navigator.cookieEnabled + "";
+            // txt += "Cookies Enabled: " + navigator.cookieEnabled + "";
             txt += "Platform: " + navigator.platform + "";
             txt += "User-agent header: " + navigator.userAgent + "";
 
@@ -326,7 +331,8 @@ License: http://jqwidgets.com/license/
 
         _addStyles: function () {
             this._unorderedList.addClass(this.toThemeProperty('jqx-tabs-title-container'));
-            this._unorderedList.css({ 'outline': 'none', 'white-space': 'nowrap',
+            this._unorderedList.css({
+                'outline': 'none', 'white-space': 'nowrap',
                 'margin-top': '0px', 'margin-bottom': '0px', padding: '0px', background: 'transparent', border: 'none', 'border-style': 'none', 'text-indent': '0px'
             });
 
@@ -609,7 +615,7 @@ License: http://jqwidgets.com/license/
                 this._addReorderHandlers();
             }
             var me = this;
-            if (window.frameElement) {
+            if (document.referrer != "" || window.frameElement) {
                 if (window.top != null) {
                     var eventHandle = function (event) {
                         if (me._tabCaptured) {
@@ -618,12 +624,17 @@ License: http://jqwidgets.com/license/
                             me._tabCaptured = false;
                         }
                     };
+                    if (window.parent && document.referrer) {
+                        parentLocation = document.referrer;
+                    }
 
-                    if (window.top.document.addEventListener) {
-                        window.top.document.addEventListener('mouseup', eventHandle, false);
+                    if (parentLocation.indexOf(document.location.host) != -1) {
+                        if (window.top.document.addEventListener) {
+                            window.top.document.addEventListener('mouseup', eventHandle, false);
 
-                    } else if (window.top.document.attachEvent) {
-                        window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                        } else if (window.top.document.attachEvent) {
+                            window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                        }
                     }
                 }
             }
@@ -1054,7 +1065,7 @@ License: http://jqwidgets.com/license/
                     return true;
                 }
 
-            } (index));
+            }(index));
         },
 
         _addDragDropHandlers: function (index) {
@@ -1224,7 +1235,8 @@ License: http://jqwidgets.com/license/
                 if (isNaN(topMargin))
                     topMargin = 0;
 
-                this._selectionTracker.animate({ 'top': headerPadding + topMargin - topOffset, 'left': leftDisplacement + 'px',
+                this._selectionTracker.animate({
+                    'top': headerPadding + topMargin - topOffset, 'left': leftDisplacement + 'px',
                     'height': parseInt(this._titleList[item].height() + itemPadding), 'width': this._titleList[item].width() + horizontalPadding
                 }, duration, function () {
                     self._unlockAnimation('selectionTracker');
@@ -1233,6 +1245,11 @@ License: http://jqwidgets.com/license/
                     self._moveSelectionTrackerContainer.css('visibility', 'hidden');
                 });
             }
+        },
+
+        destroy: function()
+        {
+            this.host.remove();
         },
 
         _switchTabs: function (selectIndex, unselectIndex) {
@@ -1453,18 +1470,36 @@ License: http://jqwidgets.com/license/
 
                 var hasCloseButton = this._titleList[count].attr('hasCloseButton');
                 if (hasCloseButton != undefined && hasCloseButton != null) {
-                    if (hasCloseButton == 'true' || hasCloseButton == true) {
-                        totalItemsWidth += this.closeButtonSize;
-                        this._titleList[count].find(this.toThemeProperty('.jqx-tabs-close-button', true)).css('display', 'block');
+                    var processed = false;
+                    if (this.hiddenCloseButtons) {
+                        if (this.hiddenCloseButtons[count] == 1) {
+                            this._titleList[count].find(this.toThemeProperty('.jqx-tabs-close-button', true)).css('display', 'none');
+                            processed = true;
+                        }
                     }
-                    else if (hasCloseButton == 'false' || hasCloseButton == false) {
-                        this._titleList[count].find(this.toThemeProperty('.jqx-tabs-close-button', true)).css('display', 'none');
+                    if (!processed) {
+                        if (hasCloseButton == 'true' || hasCloseButton == true) {
+                            totalItemsWidth += this.closeButtonSize;
+                            this._titleList[count].find(this.toThemeProperty('.jqx-tabs-close-button', true)).css('display', 'block');
+                        }
+                        else if (hasCloseButton == 'false' || hasCloseButton == false) {
+                            this._titleList[count].find(this.toThemeProperty('.jqx-tabs-close-button', true)).css('display', 'none');
+                        }
                     }
                 }
                 else {
                     if (this.showCloseButtons && (this.canCloseAllTabs || this._tabsWithVisibleCloseButtons() > 1)) {
-                        totalItemsWidth += this.closeButtonSize;
-                        this._titleList[count].find(this.toThemeProperty('.jqx-tabs-close-button', true)).css('display', 'block');
+                        var processed = false;
+                        if (this.hiddenCloseButtons) {
+                            if (this.hiddenCloseButtons[count] == 1) {
+                                this._titleList[count].find(this.toThemeProperty('.jqx-tabs-close-button', true)).css('display', 'none');
+                                processed = true;
+                            }
+                        }
+                        if (!processed) {
+                            totalItemsWidth += this.closeButtonSize;
+                            this._titleList[count].find(this.toThemeProperty('.jqx-tabs-close-button', true)).css('display', 'block');
+                        }
                     }
                 }
 
@@ -1556,6 +1591,10 @@ License: http://jqwidgets.com/license/
             }
             else {
                 this._unorderedList.width(this.host.width());
+            }
+            if ($.browser.msie && $.browser.version < 8) {
+                this._unorderedList.css('position', 'relative');
+                this._headerWrapper.css('overflow', 'hidden');
             }
 
             this._reorderHeaderElements();
@@ -1795,6 +1834,11 @@ License: http://jqwidgets.com/license/
                 if (!this.showCloseButtons) {
                     closeButton.css('display', 'none');
                 }
+                else if (this.hiddenCloseButtons) {
+                    if (this.hiddenCloseButtons[index] == 1) {
+                        closeButton.css('display', 'none');
+                    }
+                }
             }
         },
 
@@ -1859,6 +1903,11 @@ License: http://jqwidgets.com/license/
                     var closeButton = null;
                     if (this.showCloseButtons) {
                         var closeButton = this._titleList[index].children(0).children(this.toThemeProperty('.jqx-tabs-close-button', true));
+                        if (this.hiddenCloseButtons) {
+                            if (this.hiddenCloseButtons[index] == 1) {
+                                closeButton = null;
+                            }
+                        }
                     }
 
                     this._titleList[index].removeClass(this.toThemeProperty('jqx-fill-state-hover'));
@@ -1923,7 +1972,7 @@ License: http://jqwidgets.com/license/
                 switch (this.animationType) {
                     case 'none':
                         if (!self.selectionTracker) {
-                            for (i = 0; i < this._contentList.length; i++) {
+                            for (var i = 0; i < this._contentList.length; i++) {
                                 if (index != i && this._contentList[i].css('display') == 'block') {
                                     this._contentList[i].css('display', 'none');
                                 }
@@ -2346,8 +2395,15 @@ License: http://jqwidgets.com/license/
         //Showing close button in a specific position
         showCloseButtonAt: function (index) {
             if (this._isValidIndex(index)) {
+                if (!this.showCloseButtons) {
+                    this.showCloseButtons = true;
+                    this.updatetabsheader();
+                }
+
                 var closeButton = this._titleList[index].find(this.toThemeProperty('.jqx-tabs-close-button', true));
                 closeButton.css('display', 'block');
+                if (!this.hiddenCloseButtons) this.hiddenCloseButtons = new Array();
+                this.hiddenCloseButtons[index] = 0;
             }
         },
 
@@ -2356,6 +2412,8 @@ License: http://jqwidgets.com/license/
             if (this._isValidIndex(index)) {
                 var closeButton = this._titleList[index].find(this.toThemeProperty('.jqx-tabs-close-button', true));
                 closeButton.css('display', 'none');
+                if (!this.hiddenCloseButtons) this.hiddenCloseButtons = new Array();
+                this.hiddenCloseButtons[index] = 1;
             }
         },
 
@@ -2396,6 +2454,12 @@ License: http://jqwidgets.com/license/
         setTitleAt: function (index, text) {
             if (this._titleList[index]) {
                 this._titleList[index].text(text);
+                if (this.showCloseButtons) {
+                    this._addCloseButton(index);
+                    this._removeEventHandlers();
+                    this._addEventHandlers();
+
+                }
             }
         },
 
@@ -2556,4 +2620,4 @@ License: http://jqwidgets.com/license/
             this._addSelectStyle(this._selectedItem, true);
         }
     });
-} (jQuery));
+}(jQuery));

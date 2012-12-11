@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -133,7 +133,7 @@ License: http://jqwidgets.com/license/
             this.collapseButtonSize = 16;
 
             //To move show into 4th place into the array and to remove open
-            this._events = ['created', 'closed', 'moving', 'moved', 'open', 'collapse', 'expand', 'open', 'close'];
+            this._events = ['created', 'closed', 'moving', 'moved', 'open', 'collapse', 'expand', 'open', 'close', 'resize'];
 
             this._invalidArgumentExceptions = {
                 'invalidHeight': 'Invalid height!',
@@ -202,6 +202,9 @@ License: http://jqwidgets.com/license/
             if (this.autoOpen) {
                 this._performLayout();
                 var self = this;
+                if (self.initContent) {
+                    self.initContent();
+                }
                 setTimeout(function () {
                     self._performLayout();
                 }, 250);
@@ -237,7 +240,7 @@ License: http://jqwidgets.com/license/
         //Fixing window's z-index and adding it to the collection of all windows
         //saved in $.data. In the end of the method we are sorting the window list in ascending z-index order.
         _fixWindowZIndex: function () {
-            var windowsList = $.data(document.body, 'jqxwindows-list') || [], zIndex = 901, tempZIndex;
+            var windowsList = $.data(document.body, 'jqxwindows-list') || [], zIndex = 9001, tempZIndex;
             if (!this.isModal) {
                 if (this._indexOf(this.host, windowsList) < 0) {
                     windowsList.push(this.host);
@@ -253,14 +256,14 @@ License: http://jqwidgets.com/license/
                     $.data(document.body, 'jqxwindows-list', windowsList);
                 }
 
-                zIndex = 1800;
-                var modalZindex = 1299;
+                zIndex = 18000;
+                var modalZindex = 12990;
 
                 var me = this;
                 $.each($('.jqx-window-modal'), function (p) {
                     zIndex++;
                     if (this == me._modalBackground[0]) {
-                        me._modalBackground.css('z-index', 1800 + p);
+                        me._modalBackground.css('z-index', 18000 + p);
                         return false;
                     }
                 });
@@ -495,7 +498,7 @@ License: http://jqwidgets.com/license/
                 this.addHandler(this._modalBackground, 'mouseup', function (event) {
                     me._stopResizing(me);
                     event.preventDefault();
-                    return false;
+               //     return false;
                 });
                 this.addHandler(this._modalBackground, 'mousedown', function (event) {
                     var tabbables = me._getTabbables();
@@ -571,8 +574,8 @@ License: http://jqwidgets.com/license/
             this._performHeaderCloseButtonLayout();
             this._performHeaderCollapseButtonLayout();
             this._centerElement(this._headerContentWrapper, this._header, 'y', 'margin');
-            this._centerElement(this._closeButtonWrapper, this._header, 'y', 'margin');
-            this._centerElement(this._collapseButtonWrapper, this._header, 'y', 'margin');
+   //         this._centerElement(this._closeButtonWrapper, this._header, 'y', 'margin');
+   //         this._centerElement(this._collapseButtonWrapper, this._header, 'y', 'margin');
         },
 
         _handleHeaderButtons: function () {
@@ -602,7 +605,7 @@ License: http://jqwidgets.com/license/
                 'position': 'absolute',
                 'right': '0px'
             });
-            this._centerElement(this._closeButton, this._closeButton.parent(), 'y');
+        //    this._centerElement(this._closeButton, this._closeButton.parent(), 'y');
         },
 
         _performHeaderCollapseButtonLayout: function () {
@@ -902,7 +905,7 @@ License: http://jqwidgets.com/license/
                     'left': '0px',
                     'width': this._getDocumentSize().width,
                     'height': this._getDocumentSize().height,
-                    'z-index': 1299
+                    'z-index': 12990
                 });
                 if (!this.autoOpen) {
                     this._modalBackground.css('display', 'none');
@@ -999,19 +1002,30 @@ License: http://jqwidgets.com/license/
                     return self._dropHandler(self, event);
                 });
 
-                if (window.frameElement) {
-                    if (window.top != null) {
-                        var eventHandle = function (event) {
-                            self._dropHandler(self, event);
-                        };
-
-                        if (window.top.document.addEventListener) {
-                            window.top.document.addEventListener('mouseup', eventHandle, false);
-
-                        } else if (window.top.document.attachEvent) {
-                            window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                try
+                {
+                    if (document.referrer != "" || window.frameElement) {
+                        if (window.top != null) {
+                            if (window.parent && document.referrer) {
+                                parentLocation = document.referrer;
+                            }
                         }
+
+                        if (parentLocation.indexOf(document.location.host) != -1) {
+                            var eventHandle = function (event) {
+                                self._dropHandler(self, event);
+                            };
+
+                            if (window.top.document.addEventListener) {
+                                window.top.document.addEventListener('mouseup', eventHandle, false);
+
+                            } else if (window.top.document.attachEvent) {
+                                window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                            }
+                        }                      
                     }
+                }
+                catch (error) {
                 }
             }
         },
@@ -1193,7 +1207,7 @@ License: http://jqwidgets.com/license/
                 args.pageX = arguments[3];
                 args.pageY = arguments[4];
             }
-            if (eventType === 'closed' || eventType === 'hide') {
+            if (eventType === 'closed' || eventType === 'close') {
                 args.dialogResult = this.dialogResult;
             }
             event.args = args;
@@ -1341,6 +1355,7 @@ License: http://jqwidgets.com/license/
                     self._collapseButton.addClass(self.toThemeProperty('jqx-window-collapse-button-collapsed'));
                     self._content.css('display', 'none');
                     self._raiseEvent(5);
+                    self._raiseEvent(9);
                 });
             }
         },
@@ -1360,6 +1375,7 @@ License: http://jqwidgets.com/license/
                     self._content.css('display', 'block');
                     self._raiseEvent(6);
                     self._performWidgetLayout();
+                    self._raiseEvent(9);
                 });
             }
         },
@@ -1552,6 +1568,7 @@ License: http://jqwidgets.com/license/
                             }
                         }
                         me._raiseEvent(7);
+                        me._raiseEvent(9);
                     }, duration - 150);
                 }
                 else {
@@ -1561,6 +1578,7 @@ License: http://jqwidgets.com/license/
                         }
                     }
                     this._raiseEvent(7);
+                    me._raiseEvent(9);
                 }
             }
             this._visible = true;
@@ -1835,8 +1853,10 @@ var resizeModule = (function ($) {
             $(document).bind('mouseup.resize.' + resizetargetid, { self: this }, function (event) {
                 self._stopResizing(self, event);
             });
-            if (window.frameElement) {
-                if (window.top != null) {
+
+            try
+            {
+                if (document.referrer != "" || window.frameElement) {
                     var eventHandle = function (event) {
                         self._stopResizing(self, event);
                     };
@@ -1848,6 +1868,8 @@ var resizeModule = (function ($) {
                         window.top.document.attachEvent("on" + 'mouseup', eventHandle);
                     }
                 }
+            }
+            catch (error) {
             }
         },
 
@@ -2059,7 +2081,7 @@ var resizeModule = (function ($) {
 
         _validateHeight: function (newHeight, element, side) {
             var scrollTop = 0,
-            heightDisplacement = (element.outerHeight(true) - element.height()),
+            heightDisplacement = 2,
             result = false,
             size = newHeight,
             resizeParent = this._getParent();
@@ -2083,7 +2105,7 @@ var resizeModule = (function ($) {
         },
 
         _validateWidth: function (newWidth, element, side) {
-            var scrollLeft = 0, widthDisplacement = (element.outerWidth(true) - element.width()), result = false, size = newWidth, resizeParent = this._getParent();
+            var scrollLeft = 0, widthDisplacement = 2, result = false, size = newWidth, resizeParent = this._getParent();
             if ($(window).height() < $(document).height() && $.browser.msie &&
                 document.documentElement.clientWidth >= document.documentElement.scrollWidth &&
                 resizeParent.width === $(document).width()) {    //check if there is a right but there is not a bottom one 

@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -697,6 +697,7 @@ License: http://jqwidgets.com/license/
         destroy: function () {
             this.host
 			.removeClass();
+            this.host.remove();
         },
 
         //[optimize]

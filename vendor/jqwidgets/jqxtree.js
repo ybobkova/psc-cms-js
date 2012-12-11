@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -91,6 +91,7 @@ License: http://jqwidgets.com/license/
             this.allowDrag = true;
             this.allowDrop = true;
             this.animationHideDelay = 0;
+            this.submitCheckedItems = false;
             // Possible values: 'none, 'default', 'copy'
             this.dropAction = 'default';
             this.events =
@@ -544,6 +545,10 @@ License: http://jqwidgets.com/license/
                 label = "Item";
             }
 
+            if (typeof item === 'string') {
+                label = item;
+            }
+
             var expanded = false;
             if (item.expanded != undefined && item.expanded) {
                 expanded = true;
@@ -612,6 +617,9 @@ License: http://jqwidgets.com/license/
             if (item.id != undefined) {
                 html += ' id="' + item.id + '" ';
             }
+            else {
+                html += ' id="' + this.createID() + '" ';
+            }
 
             html += '>' + label;
 
@@ -639,15 +647,109 @@ License: http://jqwidgets.com/license/
             }
         },
 
-        // adds an element.
-        // @param Array of items
-        // @param id of parent item.
-        addTo: function (items, parentElement, refresh) {
-            if (items == undefined || items == null) {
-                return;
-            }
-
+        hitTest: function (left, top) {
             var me = this;
+            var treeInstance = this;
+            var treeItem = null;
+            if (treeInstance._visibleItems) {
+                var hostLeft = parseInt(treeInstance.host.offset().left);
+                var hostWidth = treeInstance.host.outerWidth();
+
+                $.each(treeInstance._visibleItems, function (index) {
+                    if (left >= hostLeft && left < hostLeft + hostWidth)
+                        if (this.top + 5 < top && top < this.top + this.height) {
+                            var parentElement = $(this.element).parents('li:first');
+                            if (parentElement.length > 0) {
+                                treeItem = treeInstance.getItem(parentElement[0]);
+                                if (treeItem != null) {
+                                    treeItem.height = this.height;
+                                    treeItem.top = this.top;
+                                    return false;
+                                }
+                            }
+                        }
+                });
+            }
+            return treeItem;
+        },
+
+        //// adds an element.
+        //// @param Array of items
+        //// @param id of parent item.
+        //addTo: function (items, parentElement, refresh) {
+        //    if (items == undefined || items == null) {
+        //        return;
+        //    }
+
+        //    var me = this;
+        //    var array = new Array();
+
+        //    if (!$.isArray(items)) {
+        //        array[0] = items;
+        //    }
+        //    else array = items;
+
+        //    if (this.element.innerHTML.indexOf('UL')) {
+        //        var innerElement = me.host.find('ul:first');
+        //    }
+        //    if (innerElement.length == 0)
+        //        return;
+
+        //    $.each(array, function () {
+        //        var item = this;
+        //        var html = me._parseItem(item);
+        //        if (html.length > 0) {
+        //            if (parentElement == undefined && parentElement == null) {
+        //                var element = $(html);
+        //                innerElement.append(element);
+        //                me._createItem(element[0]);
+        //            }
+        //            else {
+        //                parentElement = $(parentElement);
+        //                var parentUL = parentElement.find('ul:first');
+        //                var element = null;
+        //                if (parentUL.length == 0) {
+        //                    ulElement = $('<ul></ul>');
+        //                    $(parentElement).append(ulElement);
+        //                    element = $(html);
+        //                    parentUL = parentElement.find('ul:first');
+        //                    var item = me.itemMapping["id" + parentElement[0].id].item;
+        //                    item.subtreeElement = parentUL[0];
+        //                    item.hasItems = true;
+        //                    parentUL.addClass(me.toThemeProperty('jqx-tree-dropdown'));
+        //                    parentUL.append(element);
+        //                    element = parentUL.find('li:first');
+        //                }
+        //                else {
+        //                    element = $(html);
+        //                    parentUL.append(element);
+        //                    if (this.items != undefined) {
+        //                        this.hasItems = true;
+        //                        element.find('ul').addClass(me.toThemeProperty('jqx-tree-dropdown'));
+        //                        this.subtreeElement = element.find('ul')[0];
+        //                    }
+        //                }
+        //                me._createItem(element[0]);
+        //            }
+        //        }
+        //    });
+
+        //    if (refresh == false) {
+        //        this._raiseEvent('4', { items: items });
+        //        return;
+        //    }
+
+        //    me._updateItemsNavigation();
+        //    me._render();
+        //    this._raiseEvent('4', { items: items });
+        //    if (this.allowDrag && this._enableDragDrop) {
+        //        this._enableDragDrop();
+        //    }
+        //},
+
+        addTo: function (items, parentElement, refresh) {
+            var treeInstance = this;
+        
             var array = new Array();
 
             if (!$.isArray(items)) {
@@ -655,57 +757,65 @@ License: http://jqwidgets.com/license/
             }
             else array = items;
 
-            if (this.element.innerHTML.indexOf('UL')) {
-                var innerElement = me.host.find('ul:first');
-            }
-            if (innerElement.length == 0)
-                return;
-
+            var html = "";
+            var me = this;
             $.each(array, function () {
-                var item = this;
-                var html = me._parseItem(item);
-                if (html.length > 0) {
-                    if (parentElement == undefined && parentElement == null) {
-                        var element = $(html);
-                        innerElement.append(element);
-                        me._createItem(element[0]);
-                    }
-                    else {
-                        parentElement = $(parentElement);
-                        var parentUL = parentElement.find('ul:first');
-                        var element = null;
-                        if (parentUL.length == 0) {
-                            ulElement = $('<ul></ul>');
-                            $(parentElement).append(ulElement);
-                            element = $(html);
-                            parentUL = parentElement.find('ul:first');
-                            var item = me.itemMapping["id" + parentElement[0].id].item;
-                            item.subtreeElement = parentUL[0];
-                            item.hasItems = true;
-                            parentUL.addClass(me.toThemeProperty('jqx-tree-dropdown'));
-                            parentUL.append(element);
-                            element = parentUL.find('li:first');
-                        }
-                        else {
-                            element = $(html);
-                            parentUL.append(element);
-                        }
-                        me._createItem(element[0]);
-                    }
-                }
+                html += me._parseItem(this);
             });
+            var el = $('<div>' + html + '</div>');
+            if (treeInstance.element.innerHTML.indexOf('UL')) {
+                var innerElement = treeInstance.host.find('ul:first');
+            }
+
+            if (parentElement == undefined && parentElement == null) {
+                innerElement.append(el);
+            }
+            else {
+                parentElement = $(parentElement);
+                var parentUL = parentElement.find('ul:first');
+                if (parentUL.length == 0) {
+                    ulElement = $('<ul></ul>');
+                    $(parentElement).append(ulElement);
+                    parentUL = parentElement.find('ul:first');
+                    var item = treeInstance.itemMapping["id" + parentElement[0].id].item;
+                    item.subtreeElement = parentUL[0];
+                    item.hasItems = true;
+                    parentUL.addClass(treeInstance.toThemeProperty('jqx-tree-dropdown'));
+                    parentUL.append(el);
+                    var element = parentUL.find('li:first');
+                    item.parentElement = element;
+                }
+                else {
+                    parentUL.append(el);
+                }
+            }
+
+            var liTags = $(el).find('li');
+            for (var index = 0; index < liTags.length; index++) {
+                this._createItem(liTags[index]);
+            }
+
+            var update = function (drag) {
+                me._refreshMapping(false);
+                me._updateItemsNavigation();
+                if (drag && me.allowDrag && me._enableDragDrop) {
+                    me._enableDragDrop();
+                }
+                if (me.selectedItem != null) {
+                    $(me.selectedItem.titleElement).addClass(me.toThemeProperty('jqx-fill-state-pressed'));
+                    $(me.selectedItem.titleElement).addClass(me.toThemeProperty('jqx-tree-item-selected'));
+                }
+            }
 
             if (refresh == false) {
-                this._raiseEvent('4', { items: items });
+                update(true);
+                this._raiseEvent('4', { items: this.getItems() });
                 return;
             }
 
-            me._updateItemsNavigation();
+            update(false);
             me._render();
-            this._raiseEvent('4', { items: items });
-            if (this.allowDrag && this._enableDragDrop) {
-                this._enableDragDrop();
-            }
+            this._raiseEvent('4', { items: this.getItems() });
         },
 
         // removes an element.
@@ -737,9 +847,6 @@ License: http://jqwidgets.com/license/
                 }
             }
             this._raiseEvent('5');
-            if (this.allowDrag && this._enableDragDrop) {
-                this._enableDragDrop();
-            }
         },
 
         clear: function () {
@@ -764,8 +871,8 @@ License: http://jqwidgets.com/license/
                 if (item.element == element) {
                     // me.collapseItem(item.element);
                     item.disabled = true;
-              //      $(item.titleElement).removeClass(me.toThemeProperty('jqx-fill-state-pressed'));
-              //      $(item.titleElement).removeClass(me.toThemeProperty('jqx-tree-item-selected'));
+                    //      $(item.titleElement).removeClass(me.toThemeProperty('jqx-fill-state-pressed'));
+                    //      $(item.titleElement).removeClass(me.toThemeProperty('jqx-tree-item-selected'));
                     $(item.titleElement).addClass(me.toThemeProperty('jqx-fill-state-disabled'));
                     $(item.titleElement).addClass(me.toThemeProperty('jqx-tree-item-disabled'));
                     if (me.checkboxes && item.checkBoxElement) {
@@ -774,6 +881,82 @@ License: http://jqwidgets.com/license/
                     return false;
                 }
             });
+        },
+
+        _updateInputSelection: function () {
+            if (this.input) {
+                if (this.selectedItem == null) {
+                    this.input.val("");
+                }
+                else {
+                    var label = this.selectItem.value;
+                    if (label == null) label = this.selectedItem.label;
+                    this.input.val(label);
+                }
+                if (this.checkboxes) {
+                    var items = this.getCheckedItems();
+                    if (this.submitCheckedItems) {
+                        var str = "";
+                        for (var i = 0; i < items.length; i++) {
+                            var value = items[i].value;
+                            if (value == null) value = items[i].label;
+                            if (i == items.length - 1) {
+                                str += value;
+                            }
+                            else {
+                                str += value + ",";
+                            }
+                        }
+                        this.input.val(str);
+                    }
+                }
+            }
+        },
+
+        getCheckedItems: function()
+        {
+            var checkedItems = new Array();
+            var me = this;
+            $.each(me.items, function () {
+                var item = this;
+                if (item.checked) checkedItems.push(item);
+            });
+            return checkedItems;
+        },
+
+        getUncheckedItems: function () {
+            var checkedItems = new Array();
+            var me = this;
+            $.each(me.items, function () {
+                var item = this;
+                if (!item.checked) checkedItems.push(item);
+            });
+            return checkedItems;
+        },
+
+        checkAll: function()
+        {
+            var me = this;
+            $.each(me.items, function () {
+                var item = this;
+                if (!item.disabled) {
+                    item.checked = true;
+                    $(item.checkBoxElement).jqxCheckBox('_setState', true);
+                 }
+            });
+            this._raiseEvent('6', { element: this, checked: true });
+        },
+
+        uncheckAll: function () {
+            var me = this;
+            $.each(me.items, function () {
+                var item = this;
+                if (!item.disabled) {
+                    item.checked = false;
+                    $(item.checkBoxElement).jqxCheckBox('_setState', false);
+                }
+            });
+            this._raiseEvent('6', { element: this, checked: false });
         },
 
         // checks a tree item.
@@ -797,7 +980,13 @@ License: http://jqwidgets.com/license/
 
             if (stateChanged) {
                 this._raiseEvent('6', { element: element, checked: checked });
+                this._updateInputSelection();
             }
+        },
+
+        uncheckItem: function(element)
+        {
+            this.checkItem(element, false);
         },
 
         // enables a tree item.
@@ -948,7 +1137,6 @@ License: http://jqwidgets.com/license/
                 return;
 
             var oldSelectedElement = this.selectedItem != null ? this.selectedItem.element : null;
-
             $.each(me.items, function () {
                 var item = this;
                 if (!item.disabled) {
@@ -966,7 +1154,7 @@ License: http://jqwidgets.com/license/
                     }
                 }
             });
-
+            this._updateInputSelection();
             this._raiseEvent('2', { element: element, prevElement: oldSelectedElement });
         },
 
@@ -1078,6 +1266,11 @@ License: http://jqwidgets.com/license/
                     checkboxes.css('opacity', 1);
                     $subtree.find('.chkbox').animate({ opacity: 0 }, 50);
                 }
+                var $arrowSpan = $(item.arrow);
+                if ($arrowSpan.length > 0) {
+                    $arrowSpan.removeClass();
+                    $arrowSpan.addClass(me.toThemeProperty('jqx-tree-item-arrow-collapse'));
+                }
 
                 $subtree.slideUp(me.animationHideDuration, function () {
                     item.isCollapsing = false;
@@ -1149,6 +1342,11 @@ License: http://jqwidgets.com/license/
 
             $subtree.slideDown(me.animationShowDuration, me.easing,
                         function () {
+                            var $arrowSpan = $(item.arrow);
+                            if ($arrowSpan.length > 0) {
+                                $arrowSpan.removeClass();
+                                $arrowSpan.addClass(me.toThemeProperty('jqx-tree-item-arrow-expand'));
+                            }
                             item.isExpanded = true;
                             item.isExpanding = false;
                             me._raiseEvent('0', { element: item.element });
@@ -1226,10 +1424,31 @@ License: http://jqwidgets.com/license/
             this.host.addClass(me.toThemeProperty('jqx-tree'));
             this._updateDisabledState();
 
+            var ie7 = $.browser.msie && $.browser.version < 8;
             $.each(this.items, function () {
                 var item = this;
                 $element = $(item.element);
                 var $arrowSpan = null;
+
+                if (!ie7) {
+                    if (!item.hasItems) {
+                        item.element.style.marginLeft = parseInt(me.toggleIndicatorSize) + 'px';
+                        var oldArrow = $(item.arrow);
+                        if (oldArrow.length > 0) {
+                            oldArrow.unbind('hover');
+                            oldArrow.remove();
+                            item.arrow = null;
+                        }
+                        return true;
+                    }
+                    else item.element.style.marginLeft = '0px';
+                }
+                else {
+                    if (!item.hasItems && $(item.element).find('ul').length > 0) {
+                        $(item.element).find('ul').remove();
+                    }
+                }
+
                 var oldArrow = $(item.arrow);
                 if (oldArrow.length > 0) {
                     oldArrow.unbind('hover');
@@ -1340,17 +1559,17 @@ License: http://jqwidgets.com/license/
         _renderHover: function ($treeElement, item, isTouchDevice) {
             var me = this;
             if (!isTouchDevice) {
-                $(item.titleElement).unbind('hover');
-                $(item.titleElement).hover(function () {
+                var $titleElement = $(item.titleElement);
+                me.addHandler($titleElement, 'mouseenter', function () {
                     if (!item.disabled && me.enableHover && !me.disabled) {
-                        $(item.titleElement).addClass(me.toThemeProperty('jqx-fill-state-hover'));
-                        $(item.titleElement).addClass(me.toThemeProperty('jqx-tree-item-hover'));
+                        $titleElement.addClass(me.toThemeProperty('jqx-fill-state-hover'));
+                        $titleElement.addClass(me.toThemeProperty('jqx-tree-item-hover'));
                     }
-                },
-                function () {
+                });
+                me.addHandler($titleElement, 'mouseleave', function () {
                     if (!item.disabled && me.enableHover && !me.disabled) {
-                        $(item.titleElement).removeClass(me.toThemeProperty('jqx-fill-state-hover'));
-                        $(item.titleElement).removeClass(me.toThemeProperty('jqx-tree-item-hover'));
+                        $titleElement.removeClass(me.toThemeProperty('jqx-fill-state-hover'));
+                        $titleElement.removeClass(me.toThemeProperty('jqx-tree-item-hover'));
                     }
                 });
             }
@@ -1365,12 +1584,27 @@ License: http://jqwidgets.com/license/
             }
         },
 
+        _addInput: function () {
+            if (this.input == null) {
+                var name = this.host.attr('name');
+                if (!name) name = this.element.id;
+                else {
+                    this.host.attr('name', "");
+                }
+
+                this.input = $("<input type='hidden'/>");
+                this.host.append(this.input);
+                this.input.attr('name', name);
+                this._updateInputSelection();
+            }
+        },
+
         render: function () {
             this._updateItemsNavigation();
             this._render();
         },
 
-        _render: function (mode, oldMode) {
+        _render: function (updateEvents, updateDrag) {
             if ($.browser.msie && $.browser.version < 8) {
                 var me = this;
                 $.each(this.items, function () {
@@ -1403,9 +1637,15 @@ License: http://jqwidgets.com/license/
                 this.toggleMode = 'click';
             }
 
-            $.each(this.items, function () {
-                me._updateItemEvents(me, this);
-            });
+            if (updateEvents == undefined || updateEvents == true) {
+                $.each(this.items, function () {
+                    me._updateItemEvents(me, this);
+                });
+            }
+            if (this.allowDrag && this._enableDragDrop && (updateDrag == undefined || updateDrag == true)) {
+                this._enableDragDrop();
+            }
+            this._addInput();
 
             // add panel.
             if (this.host.jqxPanel) {
@@ -1428,6 +1668,14 @@ License: http://jqwidgets.com/license/
                 }
 
                 panel.jqxPanel({ theme: this.theme, width: this.width, height: this.height, autoUpdateInterval: 30, touchMode: this.touchMode, autoUpdate: true, sizeMode: sizeMode });
+                if (this.height == null || (this.height != null && this.height.toString().indexOf('%') != -1)) {
+                    if (this.isTouchDevice()) {                       
+                        panel.unbind('touchend.touchScroll touchcancel.touchScroll');
+                        panel.unbind('touchmove.touchScroll');
+                        panel.unbind('touchstart.touchScroll');
+                    }
+                }
+
                 var panelInstance = $.data(panel[0], 'jqxPanel').instance;
                 if (panelInstance != null) {
                     this.vScrollInstance = panelInstance.vScrollInstance;
@@ -1461,20 +1709,33 @@ License: http://jqwidgets.com/license/
             var checkEventName = !isTouchDevice ? 'click' : 'touchend';
             me.removeHandler($(item.checkBoxElement), checkEventName);
             me.addHandler($(item.checkBoxElement), checkEventName, function (event) {
-                this.treeItem.checked = !this.treeItem.checked;
-                me.checkItem(this.treeItem.element, this.treeItem.checked);
-                if (me.hasThreeStates) {
-                    me.checkItems(this.treeItem, this.treeItem);
+                if (!me.disabled) {
+                    if (!this.treeItem.disabled) {
+                        this.treeItem.checked = !this.treeItem.checked;
+                        me.checkItem(this.treeItem.element, this.treeItem.checked);
+                        if (me.hasThreeStates) {
+                            me.checkItems(this.treeItem, this.treeItem);
+                        }
+                    }
                 }
                 return false;
             });
 
-            me.removeHandler($treeElement, 'mousedown');
-            me.removeHandler($treeElement, 'mouseenter');
-            me.removeHandler($treeElement, 'mouseleave');
-            me.removeHandler($treeElement, 'mousedown');
-            me.removeHandler($treeElement, 'mouseup');
-            me.removeHandler($treeElement, 'selectstart');
+            var $titleElement = $(item.titleElement);
+
+            me.removeHandler($treeElement);
+
+            var drag = this.allowDrag && this._enableDragDrop;
+            if (!drag) {
+                me.removeHandler($titleElement);
+            }
+            else {
+                me.removeHandler($titleElement, 'mousedown.item');
+                me.removeHandler($titleElement, 'click');
+                me.removeHandler($titleElement, 'dblclick');
+                me.removeHandler($titleElement, 'mouseenter');
+                me.removeHandler($titleElement, 'mouseleave');
+            }
 
             me._renderHover($treeElement, item, isTouchDevice);
             var $subtree = $(item.subtreeElement);
@@ -1483,22 +1744,19 @@ License: http://jqwidgets.com/license/
                 $subtree.css({ overflow: 'hidden', display: display })
                 $subtree.data('timer', {});
             }
-            me.removeHandler($(item.titleElement), 'dblclick');
-            me.removeHandler($(item.titleElement), 'click');
-
-            me.addHandler($(item.titleElement), 'selectstart', function (event) {
+      
+            me.addHandler($titleElement, 'selectstart', function (event) {
                 return false;
             });
 
             if ($.browser.opera) {
-                me.removeHandler($(item.titleElement), 'mousedown');
-                me.addHandler($(item.titleElement), 'mousedown', function (event) {
+                me.addHandler($titleElement, 'mousedown.item', function (event) {
                     return false;
                 });
             }
 
             if (me.toggleMode != 'click') {
-                me.addHandler($(item.titleElement), 'click', function (event) {
+                me.addHandler($titleElement, 'click', function (event) {
                     me.selectItem(item.element);
 
                     if (me.panel != null) {
@@ -1508,8 +1766,7 @@ License: http://jqwidgets.com/license/
                 });
             }
 
-            me.removeHandler($(item.titleElement), me.toggleMode);
-            me.addHandler($(item.titleElement), me.toggleMode, function (event) {
+            me.addHandler($titleElement, me.toggleMode, function (event) {
                 if ($subtree.length > 0) {
                     clearTimeout($subtree.data('timer').hide)
                 }
@@ -1545,6 +1802,7 @@ License: http://jqwidgets.com/license/
         },
 
         isTouchDevice: function () {
+            if (this._isTouchDevice != undefined) return this._isTouchDevice;
             var isTouchDevice = $.jqx.mobile.isTouchDevice();
             if (this.touchMode == true) {
                 isTouchDevice = true;
@@ -1552,6 +1810,7 @@ License: http://jqwidgets.com/license/
             else if (this.touchMode == false) {
                 isTouchDevice = false;
             }
+            this._isTouchDevice = isTouchDevice;
             return isTouchDevice;
         },
 
@@ -1589,9 +1848,6 @@ License: http://jqwidgets.com/license/
 
             this._updateItemsNavigation();
             this._updateCheckStates();
-            if (this.allowDrag && this._enableDragDrop) {
-                this._enableDragDrop();
-            }
         },
 
         _updateCheckLayout: function (level) {
@@ -1613,7 +1869,9 @@ License: http://jqwidgets.com/license/
                         item.titleElement.css('margin-left', parseInt(this.checkSize) + 25);
                     }
                     else {
-                        checkbox.css('margin-left', this.toggleIndicatorSize);
+                        if (item.hasItems) {
+                            checkbox.css('margin-left', this.toggleIndicatorSize);
+                        }
                     }
                 }
             }
@@ -1683,7 +1941,7 @@ License: http://jqwidgets.com/license/
             var innerElement = this.host.find('ul:first');
             var liTags = $(innerElement).find('li');
             var k = 0;
-            for (i = 0; i < liTags.length; i++) {
+            for (var i = 0; i < liTags.length; i++) {
                 var listTag = liTags[i];
                 if (this.itemMapping["id" + listTag.id]) {
                     var treeItem = this.itemMapping["id" + listTag.id].item;
@@ -1744,12 +2002,13 @@ License: http://jqwidgets.com/license/
                 $(item.titleElement).addClass(me.toThemeProperty('jqx-item'));
 
                 var $arrowSpan = $(item.arrow);
-
-                if (!item.isExpanded) {
-                    $arrowSpan.addClass(me.toThemeProperty('jqx-tree-item-arrow-collapse'));
-                }
-                else {
-                    $arrowSpan.addClass(me.toThemeProperty('jqx-tree-item-arrow-expand'));
+                if ($arrowSpan.length > 0) {
+                    if (!item.isExpanded) {
+                        $arrowSpan.addClass(me.toThemeProperty('jqx-tree-item-arrow-collapse'));
+                    }
+                    else {
+                        $arrowSpan.addClass(me.toThemeProperty('jqx-tree-item-arrow-expand'));
+                    }
                 }
 
                 if (item.checkBoxElement) {
@@ -1766,7 +2025,7 @@ License: http://jqwidgets.com/license/
             }
         },
 
-        _refreshMapping: function () {
+        _refreshMapping: function (updateEvents, tags) {
             var liTags = this.host.find('li');
             var itemMapping = new Array();
 
@@ -1775,17 +2034,23 @@ License: http://jqwidgets.com/license/
             var me = this;
             for (var index = 0; index < liTags.length; index++) {
                 var listTag = liTags[index];
+                var $listTag = $(listTag);
                 var item = storage[listTag.id];
                 newItems[newItems.length] = item;
-                this._updateItemEvents(this, item);
-                item.level = $(listTag).parents('li').length;
+                if (updateEvents == undefined || updateEvents == true) {
+                    this._updateItemEvents(this, item);
+                }
+                item.level = $listTag.parents('li').length;
                 item.treeInstance = this;
                 var parentElement = null;
                 var parentId = null;
-                $(item.titleElement).removeClass(me.toThemeProperty('jqx-fill-state-pressed'));
-                $(item.titleElement).removeClass(me.toThemeProperty('jqx-tree-item-selected'));
+                if (item.titleElement[0].className.indexOf('jqx-fill-state-pressed') != -1) {
+                    $(item.titleElement).removeClass(me.toThemeProperty('jqx-fill-state-pressed'));
+                    $(item.titleElement).removeClass(me.toThemeProperty('jqx-tree-item-selected'));
+                }
 
-                $(listTag).children().each(function () {
+                var children = $listTag.children();
+                children.each(function () {
                     if (this.tagName == 'ul' || this.tagName == 'UL') {
                         item.subtreeElement = this;
                         $(this).addClass(me.toThemeProperty('jqx-tree-dropdown'));
@@ -1793,7 +2058,8 @@ License: http://jqwidgets.com/license/
                     }
                 });
 
-                $(listTag).parents().each(function () {
+                var parents = $listTag.parents();
+                parents.each(function () {
                     if ((this.tagName == 'li' || this.tagName == 'LI')) {
                         parentId = this.id;
                         parentElement = this;
@@ -1844,7 +2110,7 @@ License: http://jqwidgets.com/license/
             var me = this;
             var parentElement = null;
 
-            $(listTag).children().each(function () {
+            $listTag.children().each(function () {
                 if (this.tagName == 'ul' || this.tagName == 'UL') {
                     me.items[k - 1].subtreeElement = this;
                     $(this).addClass(me.toThemeProperty('jqx-tree-dropdown'));
@@ -1852,7 +2118,7 @@ License: http://jqwidgets.com/license/
                 }
             });
 
-            $(listTag).parents().each(function () {
+            $listTag.parents().each(function () {
                 if ((this.tagName == 'li' || this.tagName == 'LI')) {
                     parentId = this.id;
                     parentElement = this;
@@ -1865,28 +2131,32 @@ License: http://jqwidgets.com/license/
                 expanded = false;
             }
             else expanded = true;
-            $listTag.removeAttr('item-expanded');
+            listTag.removeAttribute('item-expanded');
+        //    $listTag.removeAttr('item-expanded');
 
             var locked = element.getAttribute('item-locked');
             if (locked == null || locked == undefined || (locked != 'true' && locked != true)) {
                 locked = false;
             }
             else locked = true;
-            $listTag.removeAttr('item-locked');
+            listTag.removeAttribute('item-locked');
+       //     $listTag.removeAttr('item-locked');
 
             var selected = element.getAttribute('item-selected');
             if (selected == null || selected == undefined || (selected != 'true' && selected != true)) {
                 selected = false;
             }
             else selected = true;
-            $listTag.removeAttr('item-selected');
+//            $listTag.removeAttr('item-selected');
+            listTag.removeAttribute('item-selected');
 
             var disabled = element.getAttribute('item-disabled');
             if (disabled == null || disabled == undefined || (disabled != 'true' && disabled != true)) {
                 disabled = false;
             }
             else disabled = true;
-            $listTag.removeAttr('item-disabled');
+//            $listTag.removeAttr('item-disabled');
+            listTag.removeAttribute('item-disabled');
 
             var checked = element.getAttribute('item-checked');
             if (checked == null || checked == undefined || (checked != 'true' && checked != true)) {
@@ -1899,17 +2169,23 @@ License: http://jqwidgets.com/license/
             if (title == null || title == undefined || (title != 'true' && title != true)) {
                 title = false;
             }
-            $listTag.removeAttr('item-title');
+//            $listTag.removeAttr('item-title');
+            listTag.removeAttribute('item-title');
 
             var icon = element.getAttribute('item-icon');
             var iconsize = element.getAttribute('item-iconsize');
             var label = element.getAttribute('item-label');
             var value = element.getAttribute('item-value');
 
-            $listTag.removeAttr('item-icon');
-            $listTag.removeAttr('item-iconsize');
-            $listTag.removeAttr('item-label');
-            $listTag.removeAttr('item-value');
+            listTag.removeAttribute('item-icon');
+            listTag.removeAttribute('item-iconsize');
+            listTag.removeAttribute('item-label');
+            listTag.removeAttribute('item-value');
+
+            //$listTag.removeAttr('item-icon');
+            //$listTag.removeAttr('item-iconsize');
+            //$listTag.removeAttr('item-label');
+            //$listTag.removeAttr('item-value');
 
             var treeItem = this.items[k - 1];
             treeItem.id = id;
@@ -1928,8 +2204,8 @@ License: http://jqwidgets.com/license/
 
             this.itemMapping[k - 1] = { element: listTag, item: treeItem };
             this.itemMapping["id" + listTag.id] = this.itemMapping[k - 1];
-            var hasTitleAttribute = $(element).find('[item-title="true"]').length > 0;
-            var isSameLI = $(listTag).find('[item-title="true"]').parents('li:first')[0] == listTag;
+            var hasTitleAttribute = false;// $(element).find('[item-title="true"]').length > 0;
+            var isSameLI = false; // $(listTag).find('[item-title="true"]').parents('li:first')[0] == listTag;
             hasTitleAttribute = false;
             if (!hasTitleAttribute || !isSameLI) {
                 if ($(listTag.firstChild).length > 0) {
@@ -1949,7 +2225,8 @@ License: http://jqwidgets.com/license/
 
                     if (ulindex == -1) {
                         treeItem.originalTitle = listTag.innerHTML;
-                        $(listTag).wrapInner('<div style="display: inline-block;"/>');
+                        listTag.innerHTML = '<div style="display: inline-block;">' + listTag.innerHTML + '</div>';
+               //         $listTag.wrapInner('<div style="display: inline-block;"/>');
                         treeItem.titleElement = $($(listTag)[0].firstChild);
                     }
                     else {
@@ -1983,7 +2260,8 @@ License: http://jqwidgets.com/license/
             }
 
             var $itemTitle = $(treeItem.titleElement);
-            $itemTitle.addClass(this.toThemeProperty('jqx-rc-all'));
+            var itemTitleClassName = this.toThemeProperty('jqx-rc-all');
+
             if (this.allowDrag) {
                 $itemTitle.addClass('draggable');
             }
@@ -1995,10 +2273,12 @@ License: http://jqwidgets.com/license/
 
             $(listTag).addClass(this.toThemeProperty('jqx-tree-item-li'));
 
-            $itemTitle.addClass(this.toThemeProperty('jqx-tree-item'));
-            $itemTitle.addClass(this.toThemeProperty('jqx-item'));
+            itemTitleClassName += " " + this.toThemeProperty('jqx-tree-item') + " " + this.toThemeProperty('jqx-item');
+            $itemTitle[0].className = $itemTitle[0].className + " " + itemTitleClassName;
+
             treeItem.level = $(element).parents('li').length;
 
+            treeItem.hasItems = $(element).find('li').length > 0;
             if (this.checkboxes) {
                 if (this.host.jqxCheckBox) {
                     var checkbox = $('<div style="position: absolute; width: 18px; height: 18px;" tabIndex=0 class="chkbox"/>');
@@ -2006,7 +2286,7 @@ License: http://jqwidgets.com/license/
                     checkbox.height(parseInt(this.checkSize));
                     $(listTag).prepend(checkbox);
 
-                    checkbox.jqxCheckBox({ checked: treeItem.checked, boxSize: this.checkSize, animationShowDelay: 0, animationHideDelay: 0, disabled: disabled, theme: this.theme });
+                    checkbox.jqxCheckBox({hasInput: false, checked: treeItem.checked, boxSize: this.checkSize, animationShowDelay: 0, animationHideDelay: 0, disabled: disabled, theme: this.theme });
                     $itemTitle.css('margin-left', parseInt(this.checkSize) + 6);
                     treeItem.checkBoxElement = checkbox[0];
                     checkbox[0].treeItem = treeItem;
@@ -2017,7 +2297,9 @@ License: http://jqwidgets.com/license/
                         $itemTitle.css('margin-left', parseInt(this.checkSize) + 25);
                     }
                     else {
-                        checkbox.css('margin-left', this.toggleIndicatorSize);
+                        if (treeItem.hasItems) {
+                            checkbox.css('margin-left', this.toggleIndicatorSize);
+                        }
                     }
                 }
                 else {
@@ -2042,7 +2324,6 @@ License: http://jqwidgets.com/license/
                 $(listTag).css('margin', '0px');
                 $(listTag).css('padding', '0px');
             }
-            treeItem.hasItems = $(element).find('li').length > 0;
         },
 
         destroy: function () {
@@ -2069,6 +2350,10 @@ License: http://jqwidgets.com/license/
         propertyChangedHandler: function (object, key, oldvalue, value) {
             if (this.isInitialized == undefined || this.isInitialized == false)
                 return;
+
+            if (key == 'submitCheckedItems') {
+                object._updateInputSelection();
+            }
 
             if (key == 'disabled') {
                 object._updateDisabledState();
@@ -2104,6 +2389,7 @@ License: http://jqwidgets.com/license/
             }
 
             if (key == 'touchMode') {
+                object._isTouchDevice = null;
                 if (value) {
                     object.enableHover = false;
                 }
@@ -2112,24 +2398,56 @@ License: http://jqwidgets.com/license/
 
             if (key == 'source') {
                 if (this.source != null) {
-                    var html = this.loadItems(this.source);
-                    this.element.innerHTML = html;
-                    var innerElement = this.host.find('ul:first');
-                    if (innerElement.length > 0) {
-                        this.createTree(innerElement[0]);
-                        this._render();
+                    var expandedItems = [];
+                    $.each(object.items, function () {
+                        if (this.isExpanded) {
+                            expandedItems[expandedItems.length] = { label: this.label, level: this.level };
+                        }
+                    });
+
+                    var html = object.loadItems(object.source);
+                    if (!object.host.jqxPanel) {
+                        object.element.innerHTML = html;
                     }
+                    else {
+                        object.panel.jqxPanel('setcontent', html);
+                        object.host.css('border', 'none');
+                    }
+
+                    var disabled = object.disabled;
+                    var innerElement = object.host.find('ul:first');
+                    if (innerElement.length > 0) {
+                        object.createTree(innerElement[0]);
+                        object._render(); 
+                    }
+
+                    var me = object;
+                    var duration = me.animationShowDuration;
+                    me.animationShowDuration = 0;
+                    object.disabled = false;
+                    if (expandedItems.length > 0) {
+                        $.each(object.items, function () {
+                            for (var m = 0; m < expandedItems.length; m++) {
+                                if (expandedItems[m].label == this.label && expandedItems[m].level == this.level) {
+                                    var item = me.getItem(this.element);
+                                    me._expandItem(me, item);
+                                }
+                            }
+                        });
+                    }
+                    object.disabled = disabled;
+                    me.animationShowDuration = duration;
                 }
             }
 
             if (key == 'hasThreeStates') {
-                this._render();
-                this._updateCheckStates();
+                object._render();
+                object._updateCheckStates();
             }
 
             if (key == 'toggleIndicatorSize') {
-                this._updateCheckLayout();
-                this._render();
+                object._updateCheckLayout();
+                object._render();
             }
         }
     });

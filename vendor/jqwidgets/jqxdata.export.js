@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -155,7 +155,7 @@ License: http://jqwidgets.com/license/
             var textArea = document.createElement('textarea');
             textArea.name = name;
             textArea.value = value;
-            textArea.type = 'hidden';
+            //      textArea.type = 'hidden';
             form.appendChild(textArea);
             return textArea;
         }
@@ -191,7 +191,7 @@ License: http://jqwidgets.com/license/
                 return exportData(module, data, dataFields, styles);
             };
 
-            this.exportToFile = function (format, filename) {
+            this.exportToFile = function (format, filename, exportServer) {
                 var content = this.exportTo(format),
                     form = createForm(filename, format, content, exportServer);
                 form.submit();
@@ -215,7 +215,7 @@ License: http://jqwidgets.com/license/
 
         return exporter;
 
-    } ());
+    }());
 
     $.jqx.dataAdapter.ArrayExporter = ArrayExporter;
 
@@ -227,7 +227,7 @@ License: http://jqwidgets.com/license/
     //Defines common interface for all modules used for exportation
     var DataExportModuleBase = function () {
 
-       this.formatData = function (data, type, formatString) {
+        this.formatData = function (data, type, formatString) {
             if (type === 'date') {
                 var tmpdate = "";
                 if (typeof data === 'string') {
@@ -240,9 +240,12 @@ License: http://jqwidgets.com/license/
                 data = tmpdate;
             } else if (type === 'number') {
                 if (data === "" || data == null) return "";
-                var tmpdata = $.jqx.dataFormat.formatnumber(data, formatString);
-                if (tmpdata.toString() == "NaN") return "";
-                else data = tmpdata;
+
+                if (!isNaN(new Number(data))) {
+                    var tmpdata = $.jqx.dataFormat.formatnumber(data, formatString);
+                    if (tmpdata.toString() == "NaN") return "";
+                    else data = tmpdata;
+                }
             } else {
                 data = data;
             }
@@ -250,21 +253,18 @@ License: http://jqwidgets.com/license/
             return data;
         };
 
-        this.getFormat = function(dataOptions)
-        {
+        this.getFormat = function (dataOptions) {
             var formatString = dataOptions ? dataOptions['formatString'] : "";
             var dataType = 'string';
             dataType = dataOptions ? dataOptions['type'] : 'string';
-       
-            if (dataType == 'number')
-            {
+
+            if (dataType == 'number') {
                 if (!formatString) formatString = 'n2';
             }
-            if (dataType == 'date')
-            {
+            if (dataType == 'date') {
                 if (!formatString) formatString = 'd';
             }
-            return {type: dataType, formatString: formatString};
+            return { type: dataType, formatString: formatString };
         };
 
         this.beginFile = function () {
@@ -335,9 +335,8 @@ License: http://jqwidgets.com/license/
 
         this.appendHeaderCell = function (data, fieldName, style, exportHeader) {
             hasHeader = exportHeader;
-            if (exportHeader)
-            {
-                 appendCell(data.text);
+            if (exportHeader) {
+                appendCell(data.text);
             }
         };
 
@@ -350,8 +349,7 @@ License: http://jqwidgets.com/license/
         };
 
         this.beginRow = function () {
-            if ((rowIndex > 0) || (rowIndex == 0 && hasHeader))
-            {
+            if ((rowIndex > 0) || (rowIndex == 0 && hasHeader)) {
                 file += '\n';
             }
             rowIndex++;
@@ -377,7 +375,7 @@ License: http://jqwidgets.com/license/
 
         function prepareData(data, dataOptions) {
             if (dataOptions) {
-                var format = me.getFormat(dataOptions); 
+                var format = me.getFormat(dataOptions);
                 data = me.formatData(data, format.type, format.formatString);
             }
             if (data.toString().indexOf(valueSeparator) >= 0) {
@@ -395,12 +393,12 @@ License: http://jqwidgets.com/license/
 
     SvExporter.prototype = new $.jqx.dataAdapter.DataExportModuleBase();
 
-    var CsvExporter = function () {};
+    var CsvExporter = function () { };
     CsvExporter.prototype = new SvExporter(',');
 
-    var TsvExporter = function () {};
+    var TsvExporter = function () { };
     TsvExporter.prototype = new SvExporter('\t');
-    
+
     $.jqx.dataAdapter.ArrayExporter.extend('csv', new CsvExporter());
     $.jqx.dataAdapter.ArrayExporter.extend('tsv', new TsvExporter());
 
@@ -410,71 +408,127 @@ License: http://jqwidgets.com/license/
 (function ($) {
 
     var HtmlExporter = function () {
-
+        var isPDF = false;
         var file;
         var hasHeader;
         var rowIndex = 0;
 
+        this.setPDF = function () {
+            isPDF = true;
+        };
+
         this.beginFile = function () {
-            file = '<html>\n\t<head>\n\t\t<title></title>\n' +
-                   '\t\t<meta http-equiv=Content-type content=\"text/html; charset=UTF-8\">\n\t</head>\n\t<body>\n' +
-                   '\t\t<table style="empty-cells: show;" cellspacing="0" cellpadding="2">';
+            if (isPDF) {
+                file = '<table style="empty-cells: show;" cellspacing="0" cellpadding="2">';
+            }
+            else {
+                file = '<html>\n\t<head>\n\t\t<title></title>\n' +
+					   '\t\t<meta http-equiv=Content-type content=\"text/html; charset=UTF-8\">\n\t</head>\n\t<body>\n' +
+					   '\t\t<table style="empty-cells: show;" cellspacing="0" cellpadding="2">';
+            }
         };
 
         this.beginHeader = function () {
-            file += '\n\t\t\t<thead>';
+            if (isPDF) {
+                file += '\n\t<thead><tr>';
+            }
+            else {
+                file += '\n\t\t\t<thead>';
+            }
         };
 
         this.appendHeaderCell = function (data, fieldName, style, exportHeader) {
             hasHeader = exportHeader;
             if (!exportHeader) return;
-            if (data.width)
-            {
-                file += '\n\t\t\t\t<th style="width: ' + data.width + 'px; ' + buildStyle(style) + '">' + data.text + '</th>';
-            }
-            else
-            {
+
+            if (isPDF) {
                 file += '\n\t\t\t\t<th style="' + buildStyle(style) + '">' + data.text + '</th>';
+            }
+            else {
+                if (data.width) {
+                    file += '\n\t\t\t\t<th style="width: ' + data.width + 'px; ' + buildStyle(style) + '">' + data.text + '</th>';
+                }
+                else {
+                    file += '\n\t\t\t\t<th style="' + buildStyle(style) + '">' + data.text + '</th>';
+                }
             }
         };
 
         this.endHeader = function () {
-            file += '\n\t\t\t</thead>';
+            if (isPDF) {
+                file += '\n\t</tr></thead>';
+            }
+            else {
+                file += '\n\t\t\t</thead>';
+            }
         };
 
         this.beginBody = function () {
-            file += '\n\t\t\t<tbody>';
+            if (isPDF) {
+                file += '\n\t<tbody>';
+            }
+            else {
+                file += '\n\t\t\t<tbody>';
+            }
             rowIndex = 0;
         };
 
         this.beginRow = function () {
-            file += '\n\t\t\t\t<tr>';
+            if (isPDF) {
+                file += '\n\t<tr>';
+            }
+            else {
+                file += '\n\t\t\t\t<tr>';
+            }
             rowIndex++;
         };
 
         this.appendBodyCell = function (data, dataOptions, style) {
-            var format = this.getFormat(dataOptions); 
+            var format = this.getFormat(dataOptions);
             if (data === "") data = "&nbsp;";
-            if (rowIndex == 1 && !hasHeader)
-            {
-                file += '\n\t\t\t\t\t<td style="' + buildStyle(style) + ' border-top-width: 1px;">' + this.formatData(data, format.type, format.formatString) + '</td>';
+            if (isPDF) {
+                if (rowIndex == 1 && !hasHeader) {
+                    file += '\n\t\t\t\t\t<td style="' + buildStyle(style) + ' border-top-width: 1px;">' + this.formatData(data, format.type, format.formatString) + '</td>';
+                }
+                else {
+                    file += '\n\t\t\t\t\t<td style="' + buildStyle(style) + '">' + this.formatData(data, format.type, format.formatString) + '</td>';
+                }    
             }
-            else
-            {
-                file += '\n\t\t\t\t\t<td style="' + buildStyle(style) + '">' + this.formatData(data, format.type, format.formatString) + '</td>';
+            else {
+                if (rowIndex == 1 && !hasHeader) {
+                    file += '\n\t\t\t\t\t<td style="' + buildStyle(style) + ' border-top-width: 1px;">' + this.formatData(data, format.type, format.formatString) + '</td>';
+                }
+                else {
+                    file += '\n\t\t\t\t\t<td style="' + buildStyle(style) + '">' + this.formatData(data, format.type, format.formatString) + '</td>';
+                }
             }
         };
 
         this.endRow = function () {
-            file += '\n\t\t\t\t</tr>';
+            if (isPDF) {
+                file += '\n\t</tr>';
+            }
+            else {
+                file += '\n\t\t\t\t</tr>';
+            }
         };
 
         this.endBody = function () {
-            file += '\n\t\t\t</tbody>';
+            if (isPDF) {
+                file += '\n\t</tbody>';
+            }
+            else {
+                file += '\n\t\t\t</tbody>';
+            }
         };
 
         this.endFile = function () {
-            file += '\n\t\t</table>\n\t</body>\n</html>\n';
+            if (isPDF) {
+                file += '\n</table>';
+            }
+            else {
+                file += '\n\t\t</table>\n\t</body>\n</html>\n';
+            }
         };
 
         this.getFile = function () {
@@ -485,6 +539,9 @@ License: http://jqwidgets.com/license/
             var result = '';
             for (var style in styles) {
                 if (styles.hasOwnProperty(style)) {
+                    if (isPDF && style == 'font-size') {
+                        styles[style] = '100%';
+                    }
                     result += style + ':' + styles[style] + ';';
                 }
             }
@@ -494,7 +551,16 @@ License: http://jqwidgets.com/license/
 
     HtmlExporter.prototype = new $.jqx.dataAdapter.DataExportModuleBase();
 
-    $.jqx.dataAdapter.ArrayExporter.extend('html', new HtmlExporter());
+    var TableExporter = function () { };
+    TableExporter.prototype = new HtmlExporter();
+
+    var PDFExporter = function () { };
+    PDFExporter.prototype = new HtmlExporter();
+    var exporter = new PDFExporter();
+    exporter.setPDF();
+
+    $.jqx.dataAdapter.ArrayExporter.extend('html', new TableExporter());
+    $.jqx.dataAdapter.ArrayExporter.extend('pdf', exporter);
 
 })(jQuery);
 
@@ -507,7 +573,7 @@ License: http://jqwidgets.com/license/
             styleBuilder = {
 
                 style: '',
-                
+
                 stylesMap: {
                     'font': {
                         'color': 'Color',
@@ -519,8 +585,8 @@ License: http://jqwidgets.com/license/
                         'background-color': 'Color',
                         'background': 'Color'
                     },
-                    'alignment':{
-                        'left' : 'Left',
+                    'alignment': {
+                        'left': 'Left',
                         'center': 'Center',
                         'right': 'Right'
                     }
@@ -530,21 +596,17 @@ License: http://jqwidgets.com/license/
                     this.style += '\n\t\t<ss:Style ss:ID="' + styleName + '" ss:Name="' + styleName + '">';
                 },
 
-                buildAlignment: function(styles)
-                {
-                    if (styles['text-align'])
-                    {
+                buildAlignment: function (styles) {
+                    if (styles['text-align']) {
                         var alignment = this.stylesMap['alignment'][styles['text-align']];
                         var style = '\n\t\t\t<ss:Alignment ss:Vertical="Bottom" ss:Horizontal="' + alignment + '"/>';
                         this.style += style;
                     }
                 },
 
-                buildBorder: function(styles)
-                {
-                    if (styles['border-color'])
-                    {
-                        var border =  '\n\t\t\t<ss:Borders>';
+                buildBorder: function (styles) {
+                    if (styles['border-color']) {
+                        var border = '\n\t\t\t<ss:Borders>';
                         var bottomBorder = '\n\t\t\t\t<Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="' + styles['border-color'] + '"/>';
                         var leftBorder = '\n\t\t\t\t<Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="' + styles['border-color'] + '"/>';
                         var rightBorder = '\n\t\t\t\t<Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="' + styles['border-color'] + '"/>';
@@ -569,7 +631,7 @@ License: http://jqwidgets.com/license/
                             } else if (prop === 'font-weight' && styles[prop].toString().toLowerCase() === 'bold') {
                                 font += 'ss:Bold="1" ';
                             } else if (prop === 'color') {
-                                font += 'ss:' + map[prop] + '="' + styles[prop]  + '" ';
+                                font += 'ss:' + map[prop] + '="' + styles[prop] + '" ';
                             }
                         }
                     }
@@ -589,31 +651,25 @@ License: http://jqwidgets.com/license/
                     }
                     if (hasInterior)
                         interior += 'ss:Pattern="Solid"';
-                    
+
                     interior += '/>';
                     this.style += interior;
                 },
 
-                buildFormat: function(styles)
-                {
-                    if (styles['dataType'] == 'number')
-                    {
+                buildFormat: function (styles) {
+                    if (styles['dataType'] == 'number') {
                         var formatString = styles['formatString'];
-                        if (formatString == "" || formatString.indexOf('n') != -1)
-                        {
-                            this.style += '\n\t\t\t<ss:NumberFormat ss:Format="#,##0.00_);[Red]\(#,##0.00\)"/>';      
+                        if (formatString == "" || formatString.indexOf('n') != -1) {
+                            this.style += '\n\t\t\t<ss:NumberFormat ss:Format="#,##0.00_);[Red]\(#,##0.00\)"/>';
                         }
-                        else if (formatString.indexOf('p') != -1)
-                        {
+                        else if (formatString.indexOf('p') != -1) {
                             this.style += '\n\t\t\t<ss:NumberFormat ss:Format="Percent"/>';
                         }
-                        else if (formatString.indexOf('c') != -1)
-                        {
+                        else if (formatString.indexOf('c') != -1) {
                             this.style += '\n\t\t\t<ss:NumberFormat ss:Format="Currency"/>';
                         }
                     }
-                    else if (styles['dataType'] == 'date')
-                    {
+                    else if (styles['dataType'] == 'date') {
                         this.style += '\n\t\t\t<ss:NumberFormat ss:Format="Short Date"/>';
                     }
                 },
@@ -634,22 +690,22 @@ License: http://jqwidgets.com/license/
             styleCounter = 0;
             header = '<?xml version="1.0"?>' +
                             '\n\t<?mso-application progid="Excel.Sheet"?> ' +
-                            '\n\t<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" '+
-                            '\n\txmlns:o="urn:schemas-microsoft-com:office:office" '+
-                            '\n\txmlns:x="urn:schemas-microsoft-com:office:excel" '+
-                            '\n\txmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" '+
-                            '\n\txmlns:html="http://www.w3.org/TR/REC-html40"> '+
-                            '\n\t<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"> '+
-                            '\n\t<Version>12.00</Version> '+
-                            '\n\t</DocumentProperties> '+
-                            '\n\t<ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel"> '+
-                            '\n\t<WindowHeight>8130</WindowHeight> '+
-                            '\n\t<WindowWidth>15135</WindowWidth> '+
-                            '\n\t<WindowTopX>120</WindowTopX> '+
-                            '\n\t<WindowTopY>45</WindowTopY> '+
-                            '\n\t<ProtectStructure>False</ProtectStructure> '+
-                            '\n\t<ProtectWindows>False</ProtectWindows> '+
-                            '\n\t</ExcelWorkbook> '+
+                            '\n\t<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" ' +
+                            '\n\txmlns:o="urn:schemas-microsoft-com:office:office" ' +
+                            '\n\txmlns:x="urn:schemas-microsoft-com:office:excel" ' +
+                            '\n\txmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" ' +
+                            '\n\txmlns:html="http://www.w3.org/TR/REC-html40"> ' +
+                            '\n\t<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"> ' +
+                            '\n\t<Version>12.00</Version> ' +
+                            '\n\t</DocumentProperties> ' +
+                            '\n\t<ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel"> ' +
+                            '\n\t<WindowHeight>8130</WindowHeight> ' +
+                            '\n\t<WindowWidth>15135</WindowWidth> ' +
+                            '\n\t<WindowTopX>120</WindowTopX> ' +
+                            '\n\t<WindowTopY>45</WindowTopY> ' +
+                            '\n\t<ProtectStructure>False</ProtectStructure> ' +
+                            '\n\t<ProtectWindows>False</ProtectWindows> ' +
+                            '\n\t</ExcelWorkbook> ' +
                         '\n\t<ss:Styles>';
         };
 
@@ -662,13 +718,12 @@ License: http://jqwidgets.com/license/
         this.appendHeaderCell = function (data, fieldName, style) {
             var width = data.width != undefined ? data.width : data.text.length * 10;
             content += '\n\t\t\t<ss:Column ss:Width="' + width + '"/>';
-            headerFields.push(data);            
+            headerFields.push(data);
             headerStyles.push(style);
         };
 
         this.endHeader = function (exportHeader) {
-            if (exportHeader)
-            {
+            if (exportHeader) {
                 this.beginRow();
                 for (var i = 0; i < headerFields.length; i += 1) {
                     appendCell.call(this, headerFields[i]['text'], null, headerStyles[i]);
@@ -707,10 +762,10 @@ License: http://jqwidgets.com/license/
 
         function appendCell(data, dataOptions, style) {
             var columnType = "String";
-            var format = this.getFormat(dataOptions);    
+            var format = this.getFormat(dataOptions);
             data = this.formatData(data, format.type, format.formatString);
-                          
-            var styleId = getStyleId(style);         
+
+            var styleId = getStyleId(style);
             content += '\n\t\t\t\t<ss:Cell ss:StyleID="' + styleId + '"><ss:Data ss:Type="' + columnType + '">' + data + '</ss:Data></ss:Cell>';
         }
 
@@ -743,7 +798,7 @@ License: http://jqwidgets.com/license/
             styleBuilder.buildAlignment(style);
             styleBuilder.buildBorder(style);
             styleBuilder.buildFont(style);
-            styleBuilder.buildInterior(style); 
+            styleBuilder.buildInterior(style);
             styleBuilder.buildFormat(style);
             styleBuilder.closeStyle();
             header += styleBuilder.toString();
@@ -784,7 +839,7 @@ License: http://jqwidgets.com/license/
         }
 
         this.appendHeaderCell = function (data, fieldName) {
-             headerFields.push(fieldName);            
+            headerFields.push(fieldName);
         }
 
         this.endHeader = function () {
@@ -799,7 +854,7 @@ License: http://jqwidgets.com/license/
         }
 
         this.appendBodyCell = function (data, dataOptions) {
-            var format = this.getFormat(dataOptions);              
+            var format = this.getFormat(dataOptions);
             data = this.formatData(data, format.type, format.formatString);
 
             file += '\n\t\t<' + headerFields[index] + '>' + data + '</' + headerFields[index] + '>';
@@ -831,19 +886,19 @@ License: http://jqwidgets.com/license/
 //Exporting to JSON
 (function ($) {
 
-    var escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, 
+    var escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
         meta = {
-            '\b' : '\\b',
-            '\t' : '\\t',
-            '\n' : '\\n',
-            '\f' : '\\f',
-            '\r' : '\\r',
-            '"' : '\\"',
-            '\\' : '\\\\'
+            '\b': '\\b',
+            '\t': '\\t',
+            '\n': '\\n',
+            '\f': '\\f',
+            '\r': '\\r',
+            '"': '\\"',
+            '\\': '\\\\'
         };
 
     function quote(string) {
-        return '"' + string.replace(escapable, function(a) {
+        return '"' + string.replace(escapable, function (a) {
             var c = meta[a];
             return typeof c === 'string' ? c : '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
         }) + '"';
@@ -873,7 +928,7 @@ License: http://jqwidgets.com/license/
             partial.push(str(i, value) || 'null');
         }
 
-        return '[' + partial.join(',') + ']';        
+        return '[' + partial.join(',') + ']';
     }
 
     function stringifyObject(value) {
@@ -892,22 +947,22 @@ License: http://jqwidgets.com/license/
 
     function stringifyReference(value) {
         switch (Object.prototype.toString.call(value)) {
-        case '[object Date]':
-            return stringifyDate(value);
-        case '[object Array]':
-            return stringifyArray(value);
-        }        
+            case '[object Date]':
+                return stringifyDate(value);
+            case '[object Array]':
+                return stringifyArray(value);
+        }
         return stringifyObject(value);
     }
 
     function stringifyPrimitive(value, type) {
         switch (type) {
-        case 'string':
-            return quote(value);
-        case 'number':
-            return isFinite(value) ? value : 'null';
-        case 'boolean':
-            return value;
+            case 'string':
+                return quote(value);
+            case 'number':
+                return isFinite(value) ? value : 'null';
+            case 'boolean':
+                return value;
         }
         return 'null';
     }
@@ -931,7 +986,7 @@ License: http://jqwidgets.com/license/
             return window.JSON.stringify(value);
         }
 
-        return str("", {"": value});
+        return str("", { "": value });
     }
 
     var JsonExporter = function () {

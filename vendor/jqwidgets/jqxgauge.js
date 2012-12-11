@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -652,6 +652,16 @@ License: http://jqwidgets.com/license/
         },
 
         propertyChangedHandler: function (object, key, oldvalue, value) {
+            if (key == 'min') {
+                this.min = parseInt(value);
+            }
+            if (key == 'max') {
+                this.max = parseInt(value);
+            }
+            if (key == 'value') {
+                this.value = parseInt(value);
+            }
+
             if (key === 'disabled') {
                 if (value) {
                     this.disable();
@@ -875,10 +885,12 @@ License: http://jqwidgets.com/license/
 
         disable: function () {
             this.disabled = true;
+            this.host.addClass(this.toThemeProperty('jqx-fill-state-disabled'));
         },
 
         enable: function () {
             this.disabled = false;
+            this.host.removeClass(this.toThemeProperty('jqx-fill-state-disabled'));
         },
 
         destroy: function () {
@@ -1119,8 +1131,8 @@ License: http://jqwidgets.com/license/
         _init: function () {
             var border = this._getBorderSize(),
                 chartContainer;
-            this._width = this._getScale(this.width, 'width', this.host.parent()),
-            this._height = this._getScale(this.height, 'height', this.host.parent());
+            this._width = this._getScale(this.width, 'width', this.host.parent()) - 3;
+            this._height = this._getScale(this.height, 'height', this.host.parent()) - 3;
             this.element.innerHTML = '<div/>';
             this.host.width(this._width);
             this.host.height(this._height);
@@ -1145,7 +1157,7 @@ License: http://jqwidgets.com/license/
                 return;
             }
             var options = this.background.style,
-                border = this._getBorderSize(),
+                border = $.jqx._rup(this._getBorderSize()),
                 shape = 'rect',
                 rect;
             options = this._handleShapeOptions(options);
@@ -1185,8 +1197,8 @@ License: http://jqwidgets.com/license/
                     options.ry = this.background.borderRadius;
                 }
             }
-            options.width = this._width;
-            options.height = this._height;
+            options.width = this._width - 1;
+            options.height = this._height - 1;
             return options;
         },
 
@@ -1402,8 +1414,10 @@ License: http://jqwidgets.com/license/
                 offsetTop = this._getSize(this.ticksOffset[1], 'height'),
                 maxSize = this._getMaxTickSize(),
                 size = this._getSize(options.size),
-                top = this._valueToCoordinates(options.endValue),
-                height = Math.abs(this._valueToCoordinates(options.startValue) - top),
+                top = this._valueToCoordinates(options.endValue);
+                var startValue = options.startValue;
+                if (startValue < this.min) startValue = this.min;
+                var height = Math.abs(this._valueToCoordinates(startValue) - top),
                 rect, width;
             if (this.orientation === 'vertical') {
                 rect = this._r.rect(offsetLeft + maxSize + offset - size + border, top, options.size, height, options.style);
@@ -1540,6 +1554,16 @@ License: http://jqwidgets.com/license/
         },
 
         propertyChangedHandler: function (object, key, oldvalue, value) {
+            if (key == 'min') {
+                this.min = parseInt(value);
+            }
+            if (key == 'max') {
+                this.max = parseInt(value);
+            }
+            if (key == 'value') {
+                this.value = parseInt(value);
+            }
+
             if (key === 'disabled') {
                 if (value) {
                     this.disable();

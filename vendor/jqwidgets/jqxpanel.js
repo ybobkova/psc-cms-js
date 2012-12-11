@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -132,8 +132,17 @@ License: http://jqwidgets.com/license/
             this._addHandlers();
             this._arrange();
 
+
             $(window).resize(function () {
-                self._arrange();
+                var width = self.host.width();
+                var height = self.host.height();
+                if (width != self.__oldwidth && height != self.__oldheight) {
+                    self._arrange();
+                }
+
+                self.__oldwidth = width;
+                self.__oldheight = height;
+
             });
 
             this.contentWidth = me.content[0].scrollWidth;
@@ -212,6 +221,10 @@ License: http://jqwidgets.com/license/
             }
         },
 
+        setcontent: function (html) {
+            this.content[0].innerHTML = html;
+        },
+
         // prepend element.
         // @param element
         prepend: function (element) {
@@ -240,24 +253,52 @@ License: http://jqwidgets.com/license/
         _autoUpdate: function () {
             var me = this;
 
-            this.autoUpdateId = setInterval(function () {
-                var newWidth = me.content[0].scrollWidth;
-                var newHeight = me.content[0].scrollHeight;
-                var doarrange = false;
-                if (me.contentWidth != newWidth) {
-                    me.contentWidth = newWidth;
-                    doarrange = true;
-                }
+            if ($.browser.msie && $.browser.version < 8) {
+                try
+                {
+                    this.autoUpdateId = setInterval(function () {
+                        var newWidth = me.content[0].scrollWidth;
+                        var newHeight = me.content[0].scrollHeight;
+                        var doarrange = false;
+                        if (me.contentWidth != newWidth) {
+                            me.contentWidth = newWidth;
+                            doarrange = true;
+                        }
 
-                if (me.contentHeight != newHeight) {
-                    me.contentHeight = newHeight;
-                    doarrange = true;
-                }
+                        if (me.contentHeight != newHeight) {
+                            me.contentHeight = newHeight;
+                            doarrange = true;
+                        }
 
-                if (doarrange) {
-                    me._arrange();
+                        if (doarrange) {
+                            me._arrange();
+                        }
+                    }, this.autoUpdateInterval);
                 }
-            }, this.autoUpdateInterval);
+                catch(error)
+                {
+                }
+            }
+            else {
+                this.autoUpdateId = setInterval(function () {
+                    var newWidth = me.content[0].scrollWidth;
+                    var newHeight = me.content[0].scrollHeight;
+                    var doarrange = false;
+                    if (me.contentWidth != newWidth) {
+                        me.contentWidth = newWidth;
+                        doarrange = true;
+                    }
+
+                    if (me.contentHeight != newHeight) {
+                        me.contentHeight = newHeight;
+                        doarrange = true;
+                    }
+
+                    if (doarrange) {
+                        me._arrange();
+                    }
+                }, this.autoUpdateInterval);
+            }
         },
 
         _addHandlers: function () {
@@ -675,6 +716,7 @@ License: http://jqwidgets.com/license/
         destroy: function () {
             this._removeHandlers();
             $(window).unbind('unload');
+            this.host.remove();
         },
 
         _raiseevent: function (id, oldValue, newValue) {

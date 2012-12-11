@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -152,8 +152,14 @@ License: http://jqwidgets.com/license/
         },
 
         createInstance: function (args) {
-            var self = this;
+            this.render();
+        }, // createInstance
 
+        render: function()
+        {
+            this._mouseup = new Date();
+            var self = this;
+            this.element.innerHTML = "";
             this.host.append("<div id='jqxScrollOuterWrap' style='width:100%; height: 100%; align:left; border: 0px; valign:top; position: relative;'>" +
                 "<div id='jqxScrollWrap' style='width:100%; height: 100%; left: 0px; top: 0px; align:left; valign:top; position: absolute;'>" +
                 "<div id='jqxScrollBtnUp' style='align:left; valign:top; left: 0px; top: 0px; position: absolute;'/>" +
@@ -197,16 +203,34 @@ License: http://jqwidgets.com/license/
                 return;
             }
 
-            this.btnUp.jqxRepeatButton({ overrideTheme: true });
-            this.btnDown.jqxRepeatButton({ overrideTheme: true });
+            this.btnUp.jqxRepeatButton({ overrideTheme: true, disabled: this.disabled });
+            this.btnDown.jqxRepeatButton({ overrideTheme: true, disabled: this.disabled });
             this.btnDownInstance = $.data(this.btnDown[0], 'jqxRepeatButton').instance;
             this.btnUpInstance = $.data(this.btnUp[0], 'jqxRepeatButton').instance;
 
             this.areaUp.jqxRepeatButton({ overrideTheme: true, delay: 300 });
             this.areaDown.jqxRepeatButton({ overrideTheme: true, delay: 300 });
-            this.btnThumb.jqxButton({ overrideTheme: true });
+            this.btnThumb.jqxButton({ overrideTheme: true, disabled: this.disabled });
             this.propertyChangeMap['value'] = function (instance, key, oldVal, value) {
-                instance.setPosition(value);
+                if (!(isNaN(value))) {
+                    if (oldVal != value) {
+                        instance.setPosition(parseFloat(value), true);
+                    }
+                }
+            }
+
+            this.propertyChangeMap['width'] = function (instance, key, oldVal, value) {
+                if (instance.width != undefined && parseInt(instance.width) > 0) {
+                    instance.host.width(parseInt(instance.width));
+                    instance._arrange();
+                }
+            }
+
+            this.propertyChangeMap['height'] = function (instance, key, oldVal, value) {     
+                if (instance.height != undefined && parseInt(instance.height) > 0) {
+                    instance.host.height(parseInt(instance.height));
+                    instance._arrange();
+                }
             }
 
             this.propertyChangeMap['theme'] = function (instance, key, oldVal, value) {
@@ -214,16 +238,44 @@ License: http://jqwidgets.com/license/
             }
 
             this.propertyChangeMap['max'] = function (instance, key, oldVal, value) {
-                if (oldVal != value) {
-                    instance.setPosition(instance.value);
-                    instance._arrange();
+                if (!(isNaN(value))) {
+                    if (oldVal != value) {
+                        instance.max = parseInt(value);
+                        if (instance.min > instance.max)
+                            instance.max = instance.min + 1;
+
+                        instance._arrange();
+                        instance.setPosition(instance.value);
+                    }
                 }
             }
 
             this.propertyChangeMap['min'] = function (instance, key, oldVal, value) {
+                if (!(isNaN(value))) {
+                    if (oldVal != value) {
+                        instance.min = parseInt(value);
+                        if (instance.min > instance.max)
+                            instance.max = instance.min + 1;
+
+                        instance._arrange();
+                        instance.setPosition(instance.value);
+                    }
+                }
+            }
+
+            this.propertyChangeMap['disabled'] = function (instance, key, oldVal, value) {
                 if (oldVal != value) {
-                    instance.setPosition(instance.value);
-                    instance._arrange();
+                    if (value)
+                    {
+                        instance.host.addClass(instance.toThemeProperty('jqx-fill-state-disabled'));
+                    }
+                    else
+                    {
+                        instance.host.removeClass(instance.toThemeProperty('jqx-fill-state-disabled'));
+                    }
+                    instance.btnUp.jqxRepeatButton('disabled', instance.disabled);
+                    instance.btnDown.jqxRepeatButton('disabled', instance.disabled);
+                    instance.btnThumb.jqxButton('disabled', instance.disabled);
                 }
             }
 
@@ -240,7 +292,7 @@ License: http://jqwidgets.com/license/
             this.setPosition(this.value);
             this._addHandlers();
             this.setTheme();
-        }, // createInstance
+        },
 
         _updateTouchBehavior: function () {
             this.isTouchDevice = $.jqx.mobile.isTouchDevice();
@@ -305,7 +357,7 @@ License: http://jqwidgets.com/license/
 
                         self.handlemousemove(event);
                     }
-                });
+                }, self.element.id);
             }
 
             this.addHandler(this.btnUp, 'click', function (event) {
@@ -322,23 +374,29 @@ License: http://jqwidgets.com/license/
             });
 
             if (!this.isTouchDevice) {
-                if (window.frameElement) {
-                    if (window.top != null) {
-                        var eventHandle = function (event) {
-                            if (!self.disabled) self.handlemouseup(self, event);
-                        };
+                if (document.referrer != "" || window.frameElement) {
+                    if (window.top != null && window.top != window.self) {
+                        if (window.parent && document.referrer) {
+                            parentLocation = document.referrer;
+                        }
 
-                        if (window.top.document.addEventListener) {
-                            window.top.document.addEventListener('mouseup', eventHandle, false);
+                        if (parentLocation.indexOf(document.location.host) != -1) {
+                            var eventHandle = function (event) {
+                                if (!self.disabled) self.handlemouseup(self, event);
+                            };
 
-                        } else if (window.top.document.attachEvent) {
-                            window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                            if (window.top.document.addEventListener) {
+                                window.top.document.addEventListener('mouseup', eventHandle, false);
+
+                            } else if (window.top.document.attachEvent) {
+                                window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                            }
                         }
                     }
                 }
 
                 this.addHandler(this.btnDown, 'mouseup', function (event) {
-                    if (!self.btnDownInstance.base.disabled) {
+                    if (!self.btnDownInstance.base.disabled && self.buttonDownCapture) {
                         self.buttonDownCapture = false;
                         self.btnDown.removeClass(self.toThemeProperty('jqx-scrollbar-button-state-pressed'));
                         self.btnDown.removeClass(self.toThemeProperty('jqx-fill-state-pressed'));
@@ -349,7 +407,7 @@ License: http://jqwidgets.com/license/
                     }
                 });
                 this.addHandler(this.btnUp, 'mouseup', function (event) {
-                    if (!self.btnUpInstance.base.disabled) {
+                    if (!self.btnUpInstance.base.disabled && self.buttonUpCapture) {
                         self.buttonUpCapture = false;
                         self.btnUp.removeClass(self.toThemeProperty('jqx-scrollbar-button-state-pressed'));
                         self.btnUp.removeClass(self.toThemeProperty('jqx-fill-state-pressed'));
@@ -412,7 +470,13 @@ License: http://jqwidgets.com/license/
             this.addHandler($(document), 'mouseup.' + this.element.id, function (event) { if (!self.disabled) self.handlemouseup(self, event); });
 
             if (!this.isTouchDevice) {
-                this.addHandler($(document), 'mousemove.' + this.element.id, function (event) { if (!self.disabled) self.handlemousemove(event); });
+                var mousemoveFunc = function (event) {
+                    if (!self.disabled) {
+                        self.handlemousemove(event);
+                    }
+                }
+
+                this.addHandler($(document), 'mousemove.' + this.element.id, mousemoveFunc);
                 this.addHandler($(document), 'mouseleave.' + this.element.id, function (event) { if (!self.disabled) self.handlemouseleave(event); });
                 this.addHandler($(document), 'mouseenter.' + this.element.id, function (event) { if (!self.disabled) self.handlemouseenter(event); });
 
@@ -487,7 +551,14 @@ License: http://jqwidgets.com/license/
 
             this._removeHandlers();
             this.host.removeClass();
+            this.host.removeData();
             this.host.remove();
+            this.host = null;
+            this.btnUp = null;
+            this.btnDown = null;
+            this.scrollWrap = null;
+            this.areaUp = null;
+            this.areaDown = null;
         },
 
         _removeHandlers: function () {
@@ -502,6 +573,7 @@ License: http://jqwidgets.com/license/
             this.removeHandler(this.areaUp, 'click');
             this.removeHandler(this.areaDown, 'click');
             this.removeHandler(this.btnThumb, 'mousedown');
+            this.removeHandler(this.btnThumb, 'dragstart');
             this.removeHandler($(document), 'mouseup.' + this.element.id);
             this.removeHandler($(document), 'mousemove.' + this.element.id);
             this.removeHandler($(document), 'mouseleave.' + this.element.id);
@@ -573,41 +645,34 @@ License: http://jqwidgets.com/license/
             var areaDown = this.areaDown;
             var arrowUp = this.arrowUp;
             var arrowDown = this.arrowDown;
-            this.scrollWrap.removeClass();
-            this.host.removeClass();
-            arrowUp.removeClass();
-            arrowDown.removeClass();
-            areaDown.removeClass();
-            areaUp.removeClass();
-            btnDown.removeClass();
-            btnUp.removeClass();
-            btnThumb.removeClass();
-            this.scrollWrap.removeClass();
-            this.host.removeClass();
+     
+            this.scrollWrap[0].className = this.toThemeProperty('jqx-reset');
+            this.scrollOuterWrap[0].className = this.toThemeProperty('jqx-reset');
 
-            this.scrollWrap.addClass(this.toThemeProperty('jqx-reset'));
-            this.scrollOuterWrap.addClass(this.toThemeProperty('jqx-reset'));
-            this.areaUp.addClass(this.toThemeProperty('jqx-reset'));
-            this.areaDown.addClass(this.toThemeProperty('jqx-reset'));
-            this.host.addClass(this.toThemeProperty('jqx-scrollbar'));
-            this.host.addClass(this.toThemeProperty('jqx-widget'));
-            this.host.addClass(this.toThemeProperty('jqx-widget-content'));
+            var areaClassName = this.toThemeProperty('jqx-reset');
+            this.areaDown[0].className = areaClassName;
+            this.areaUp[0].className = areaClassName;
 
-            btnDown.addClass(this.toThemeProperty('jqx-scrollbar-button-state-normal'));
-            btnUp.addClass(this.toThemeProperty('jqx-scrollbar-button-state-normal'));
+            var hostClass = this.toThemeProperty('jqx-scrollbar') + " " + this.toThemeProperty('jqx-widget') + " " + this.toThemeProperty('jqx-widget-content');
+            this.element.className = hostClass;
 
+            btnDown[0].className = this.toThemeProperty('jqx-scrollbar-button-state-normal');
+            btnUp[0].className = this.toThemeProperty('jqx-scrollbar-button-state-normal');
+
+            var thumbClass = "";
             if (this.vertical) {
-                arrowUp.addClass(this.toThemeProperty("icon-arrow-up"));
-                arrowDown.addClass(this.toThemeProperty("icon-arrow-down"));
-                btnThumb.addClass(this.toThemeProperty('jqx-scrollbar-thumb-state-normal'));
+                arrowUp[0].className = areaClassName + " " + this.toThemeProperty("icon-arrow-up");
+                arrowDown[0].className = areaClassName + " " + this.toThemeProperty("icon-arrow-down");
+                thumbClass = this.toThemeProperty('jqx-scrollbar-thumb-state-normal');
             }
             else {
-                arrowUp.addClass(this.toThemeProperty("icon-arrow-left"));
-                arrowDown.addClass(this.toThemeProperty("icon-arrow-right"));
-                btnThumb.addClass(this.toThemeProperty('jqx-scrollbar-thumb-state-normal-horizontal'));
+                arrowUp[0].className = areaClassName + " " + this.toThemeProperty("icon-arrow-left");
+                arrowDown[0].className = areaClassName + " " + this.toThemeProperty("icon-arrow-right");
+                thumbClass = this.toThemeProperty('jqx-scrollbar-thumb-state-normal-horizontal');
             }
+            thumbClass += " " + this.toThemeProperty('jqx-fill-state-normal');
 
-            btnThumb.addClass(this.toThemeProperty('jqx-fill-state-normal'));
+            btnThumb[0].className = thumbClass;
 
             if (this.disabled) {
                 elWrap.addClass(this.toThemeProperty('jqx-fill-state-disabled'));
@@ -617,13 +682,40 @@ License: http://jqwidgets.com/license/
                 elWrap.addClass(this.toThemeProperty('jqx-scrollbar-state-normal'));
                 elWrap.removeClass(this.toThemeProperty('jqx-fill-state-disabled'));
             }
+          
+            if (this.roundedCorners == 'all') {
+                if (this.vertical) {
+                    var rct = $.jqx.cssroundedcorners('top');
+                    rct = this.toThemeProperty(rct);
+                    btnUp.addClass(rct);
 
-            if (btnUp.jqxRepeatButton('disabled') != this.disabled)
-                btnUp.jqxRepeatButton('disabled', this.disabled);
-            if (btnDown.jqxRepeatButton('disabled') != this.disabled)
-                btnDown.jqxRepeatButton('disabled', this.disabled);
-            if (btnThumb.jqxButton('disabled') != this.disabled)
-                btnThumb.jqxButton('disabled', this.disabled);
+                    var rcb = $.jqx.cssroundedcorners('bottom');
+                    rcb = this.toThemeProperty(rcb);
+                    btnDown.addClass(rcb);
+
+                }
+                else {
+                    var rcl = $.jqx.cssroundedcorners('left');
+                    rcl = this.toThemeProperty(rcl);
+                    btnUp.addClass(rcl);
+
+                    var rcr = $.jqx.cssroundedcorners('right');
+                    rcr = this.toThemeProperty(rcr);
+                    btnDown.addClass(rcr);
+                }
+            }
+            else {
+                var rc = $.jqx.cssroundedcorners(this.roundedCorners);
+                rc = this.toThemeProperty(rc);
+                elBtnUp.addClass(rc);
+                elBtnDown.addClass(rc);
+            }
+
+            var rc = $.jqx.cssroundedcorners(this.roundedCorners);
+            rc = this.toThemeProperty(rc);
+            if (!btnThumb.hasClass(rc)) {
+                btnThumb.addClass(rc);
+            }
 
             if (this.isTouchDevice && this.touchModeStyle != false) {
                 this.showButtons = false;
@@ -669,10 +761,14 @@ License: http://jqwidgets.com/license/
 
         _setElementPosition: function (element, x, y) {
             if (!isNaN(x)) {
-                element[0].style.left = x + 'px';
+                if (parseInt(element[0].style.left) != parseInt(x)) {
+                    element[0].style.left = x + 'px';
+                }
             }
             if (!isNaN(y)) {
-                element[0].style.top = y + 'px';
+                if (parseInt(element[0].style.top) != parseInt(y)) {
+                    element[0].style.top = y + 'px';
+                }
             }
         },
 
@@ -811,6 +907,12 @@ License: http://jqwidgets.com/license/
 
         handlemouseup: function (self, event) {
             var prevent = false;
+            try
+            {
+                self._mouseup = new Date();
+            }
+            catch (error) {
+            }
 
             if (this.thumbCapture) {
                 this.thumbCapture = false;
@@ -854,7 +956,7 @@ License: http://jqwidgets.com/license/
 
         // sets the value.
         // @param Number. Sets the ScrollBar's value.
-        setPosition: function (position) {
+        setPosition: function (position, update) {
             var element = this.element;
 
             if (position == undefined || position == NaN)
@@ -868,15 +970,17 @@ License: http://jqwidgets.com/license/
                 position = this.min;
             }
 
-            var event = new jQuery.Event('valuechanged');
-            if (this.value != position) {
+            if (this.value !== position || update == true) {
                 if (position == this.max) {
                     var completeEvent = new jQuery.Event('complete');
                     this.host.trigger(completeEvent);
                 }
-
-                event.previousValue = this.value;
-                event.currentValue = position;
+                var oldvalue = this.value;
+                if (this._triggervaluechanged) {
+                    var event = new jQuery.Event('valuechanged');
+                    event.previousValue = this.value;
+                    event.currentValue = position;
+                }
 
                 this.value = position;
                 this._positionelements();
@@ -887,7 +991,7 @@ License: http://jqwidgets.com/license/
                 }
 
                 if (this.valuechanged) {
-                    this.valuechanged({ currentValue: event.currentValue, previousvalue: event.previousValue });
+                    this.valuechanged({ currentValue: this.value, previousvalue: oldvalue });
                 }
             }
 
@@ -959,7 +1063,7 @@ License: http://jqwidgets.com/license/
                 btnAndThumbSize = Math.round(btnAndThumbSize);
             }
 
-            var upAreaSize = (scrollBarSize - btnAndThumbSize) / (this.max - this.min) * this.value;
+            var upAreaSize = (scrollBarSize - btnAndThumbSize) / (this.max - this.min) * (this.value - this.min);
             upAreaSize = Math.round(upAreaSize);
 
             if (this.vertical) {
@@ -991,45 +1095,12 @@ License: http://jqwidgets.com/license/
             var elThumb = this.btnThumb;
             var elWrap = this.scrollWrap;
 
-            if (this.roundedCorners == 'all') {
-                if (this.vertical) {
-                    elBtnUp.jqxRepeatButton();
-                    elBtnDown.jqxRepeatButton();
-                    var rct = $.jqx.cssroundedcorners('top');
-                    rct = this.toThemeProperty(rct);
-                    elBtnUp.addClass(rct);
+            var height = parseInt(this.element.style.height);
+            var width = parseInt(this.element.style.width);
 
-                    var rcb = $.jqx.cssroundedcorners('bottom');
-                    rcb = this.toThemeProperty(rcb);
-                    elBtnDown.addClass(rcb);
+            if (isNaN(height)) height = 0;
+            if (isNaN(width)) width = 0;
 
-                }
-                else {
-                    elBtnUp.jqxRepeatButton();
-                    elBtnDown.jqxRepeatButton();
-                    var rcl = $.jqx.cssroundedcorners('left');
-                    rcl = this.toThemeProperty(rcl);
-                    elBtnUp.addClass(rcl);
-
-                    var rcr = $.jqx.cssroundedcorners('right');
-                    rcr = this.toThemeProperty(rcr);
-                    elBtnDown.addClass(rcr);
-                }
-            }
-            else {
-                var rc = $.jqx.cssroundedcorners(this.roundedCorners);
-                rc = this.toThemeProperty(rc);
-                elBtnUp.addClass(rc);
-                elBtnDown.addClass(rc);
-            }
-
-            elThumb.jqxButton();
-            var rc = $.jqx.cssroundedcorners(this.roundedCorners);
-            rc = this.toThemeProperty(rc);
-            elThumb.addClass(rc);
-
-            var height = this.host.height();
-            var width = this.host.width();
             this._width = width;
             this._height = height;
             var btnSize = (!this.vertical) ? height : width;
@@ -1037,15 +1108,17 @@ License: http://jqwidgets.com/license/
                 btnSize = 0;
             }
 
-            elBtnUp.css({ width: btnSize + 'px' });
-            elBtnUp.css({ height: btnSize + 'px' });
-            elBtnDown.css({ width: btnSize + 'px' });
-            elBtnDown.css({ height: btnSize + 'px' });
-
-            if (this.vertical)
-                elWrap.css({ width: width + 2 + 'px' });
-            else
-                elWrap.css({ height: height + 2 + 'px' });
+            elBtnUp[0].style.width = btnSize + 'px';
+            elBtnUp[0].style.height = btnSize + 'px';
+            elBtnDown[0].style.width = btnSize + 'px';
+            elBtnDown[0].style.height = btnSize + 'px';
+         
+            if (this.vertical) {
+                elWrap[0].style.width = width + 2 + 'px';
+            }
+            else {
+                elWrap[0].style.height = height + 2 + 'px';
+            }
 
             // position the up button
             this._setElementPosition(elBtnUp, 0, 0);
@@ -1072,16 +1145,17 @@ License: http://jqwidgets.com/license/
             }
 
             if (!this.vertical) {
-                elThumb.css({ width: thumbSize + 'px' });
-                elThumb.css({ height: height + 'px' });
+                elThumb[0].style.width = thumbSize + 'px';
+                elThumb[0].style.height = height + 'px';
                 if (touchStyle) {
                     elThumb.css({ height: this.thumbTouchSize + 'px' });
                     elThumb.css('margin-top', (this.host.height() - this.thumbTouchSize) / 2);
                 }
             }
             else {
-                elThumb.css({ width: width + 'px' });
-                elThumb.css({ height: thumbSize + 'px' });
+                elThumb[0].style.width = width + 'px';
+                elThumb[0].style.height = thumbSize + 'px';
+        
                 if (touchStyle) {
                     elThumb.css({ width: this.thumbTouchSize + 'px' });
                     elThumb.css('margin-left', (this.host.width() - this.thumbTouchSize) / 2);
@@ -1098,31 +1172,38 @@ License: http://jqwidgets.com/license/
             this.btnSize = btnSize;
 
             var btnAndThumbSize = (this.vertical) ?
-                2 * this.btnSize + elThumb.outerHeight() :
-                2 * this.btnSize + elThumb.outerWidth();
+                2 * this.btnSize + (2 + parseInt(elThumb[0].style.height)) :
+                2 * this.btnSize + (2 + parseInt(elThumb[0].style.width));
 
             btnAndThumbSize = Math.round(btnAndThumbSize);
             this._btnAndThumbSize = btnAndThumbSize;
 
-            var upAreaSize = (scrollBarSize - btnAndThumbSize) / (this.max - this.min) * this.value;
+            var upAreaSize = (scrollBarSize - btnAndThumbSize) / (this.max - this.min) * (this.value- this.min);
             upAreaSize = Math.round(upAreaSize);
+            if (upAreaSize === -Infinity || upAreaSize == Infinity) upAreaSize = 0;
             if (isNaN(upAreaSize)) {
                 upAreaSize = 0;
             }
 
             if (this.vertical) {
-                elAreaDown.css({ height: (scrollBarSize - upAreaSize - btnAndThumbSize) + 'px', width: width + 'px' });
-                elAreaUp.css({ height: upAreaSize + 'px', width: width + 'px' });
+                var newAreaHeight = (scrollBarSize - upAreaSize - btnAndThumbSize);
+                if (newAreaHeight < 0) newAreaHeight = 0;
+                elAreaDown[0].style.height = newAreaHeight + 'px';
+                elAreaDown[0].style.width = width + 'px';
+                elAreaUp[0].style.height = upAreaSize + 'px';
+                elAreaUp[0].style.width = width + 'px';
+
                 var hostHeight = parseInt(this.host.height());
-                elThumb.css('visibility', 'inherit');
+                elThumb[0].style.visibility = 'inherit';
+
                 if (hostHeight - 3 * parseInt(btnSize) < 0) {
-                    elThumb.css('visibility', 'hidden');
+                    elThumb[0].style.visibility = 'hidden';
                 }
                 else if (hostHeight < btnAndThumbSize) {
-                    elThumb.css('visibility', 'hidden');
+                    elThumb[0].style.visibility = 'hidden';
                 }
-                else if (this.host.css('visibility') == 'visible') {
-                    elThumb.css('visibility', 'inherit');
+                else if (this.element.style.visibility == 'visible') {
+                    elThumb[0].style.visibility = 'inherit';
                 }
 
                 this._setElementPosition(elAreaUp, 0, btnSize);
@@ -1130,18 +1211,23 @@ License: http://jqwidgets.com/license/
                 this._setElementPosition(elAreaDown, 0, btnSize + upAreaSize + thumbSize);
             }
             else {
-                elAreaUp.css({ width: upAreaSize + 'px', height: height + 'px' });
-                elAreaDown.css({ width: (scrollBarSize - upAreaSize - btnAndThumbSize) + 'px', height: height + 'px' });
+                elAreaUp[0].style.width = upAreaSize + 'px';
+                elAreaUp[0].style.height = height + 'px';
+                var newAreaWidth = (scrollBarSize - upAreaSize - btnAndThumbSize);
+                if (newAreaWidth < 0) newAreaWidth = 0;
+                elAreaDown[0].style.width = newAreaWidth + 'px';
+                elAreaDown[0].style.height = height+ 'px';
+                
                 var hostWidth = parseInt(this.host.width());
-                elThumb.css('visibility', 'inherit');
+                elThumb[0].style.visibility = 'inherit';
                 if (hostWidth - 3 * parseInt(btnSize) < 0) {
-                    elThumb.css('visibility', 'hidden');
+                    elThumb[0].style.visibility = 'hidden';
                 }
                 else if (hostWidth < btnAndThumbSize) {
-                    elThumb.css('visibility', 'hidden');
+                    elThumb[0].style.visibility = 'hidden';
                 }
-                else if (this.host.css('visibility') == 'visible') {
-                    elThumb.css('visibility', 'inherit');
+                else if (this.element.style.visibility == 'visible') {
+                    elThumb[0].style.visibility = 'inherit';
                 }
 
                 this._setElementPosition(elAreaUp, btnSize, 0);

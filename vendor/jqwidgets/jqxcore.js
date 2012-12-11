@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -161,6 +161,7 @@ License: http://jqwidgets.com/license/
     }
 
     $.jqx.jqxWidget = function (name, base, params) {
+        var WinJS = false;
         try {
             jqxArgs = Array.prototype.slice.call(params, 0);
         }
@@ -168,8 +169,15 @@ License: http://jqwidgets.com/license/
             jqxArgs = '';
         }
 
-        var controlName = name;
+        try
+        {
+            WinJS = window.MSApp != undefined;
+        }
+        catch (e) {
+        }
 
+        var controlName = name;
+          
         var baseControl = '';
         if (base)
             baseControl = '_' + base;
@@ -189,7 +197,16 @@ License: http://jqwidgets.com/license/
                         vars.element = element;
                         vars.host = host;
                         vars.instance = new $.jqx['_' + controlName]();
+                        if (element.id == "") {
+                            element.id = $.jqx.utilities.createId();
+                        }
+                        vars.instance.get = vars.instance.set = vars.instance.call = function () {
+                            var args = Array.prototype.slice.call(arguments, 0);
+                            return $.jqx.jqxWidgetProxy(controlName, element, args);
+                        }
+
                         $.data(element, controlName, vars);
+                        $.data(element, 'jqxWidget', vars.instance);
 
                         var inits = new Array();
                         var instance = vars.instance;
@@ -209,10 +226,18 @@ License: http://jqwidgets.com/license/
                             if (i == 0) {
                                 instance.host = host;
                                 instance.element = element;
+                                instance.WinJS = WinJS;
                             }
                             if (instance != undefined) {
                                 if (instance.createInstance != null) {
-                                    instance.createInstance(args);
+                                    if (WinJS) {
+                                        MSApp.execUnsafeLocalFunction(function () {
+                                            instance.createInstance(args);
+                                        });
+                                    }
+                                    else {
+                                        instance.createInstance(args);
+                                    }
                                 }
                             }
                         }
@@ -223,7 +248,14 @@ License: http://jqwidgets.com/license/
                             } 
                         }
 
-                        vars.instance.refresh(true);
+                        if (WinJS) {
+                            MSApp.execUnsafeLocalFunction(function () {
+                                vars.instance.refresh(true);
+                            });
+                        }
+                        else {
+                            vars.instance.refresh(true);
+                        }
 
                         returnVal = this;
                     }
@@ -313,6 +345,18 @@ License: http://jqwidgets.com/license/
                         return false;
                     }
                     break;
+                case 'mousemove':
+                    if ($.browser.msie && $.browser.version >= 9) {
+                        if (window.removeEventListener) {
+                            source[0].removeEventListener('mousemove', func, false);
+                        }
+                    }
+                    break;
+            }
+
+            if (event == undefined) {
+                source.unbind();
+                return;
             }
 
             if (func == undefined) {
@@ -368,6 +412,55 @@ License: http://jqwidgets.com/license/
             for (var i = 0; i < classes.length; i += 1) {
                 element.addClass(classes[i]);
             }
+        },
+
+        getOffset: function(el)
+        {
+            var left = $.jqx.mobile.getLeftPos(el[0]);
+            var top = $.jqx.mobile.getTopPos(el[0]);
+            return { top: top, left: left };
+        },
+
+        hasTransform: function (el) {
+            var transform = "";
+            transform = el.css('transform');
+
+            if (transform == "" || transform == 'none') {
+                transform = el.parents().css('transform');
+                if (transform == "" || transform == 'none') {
+                    var browserInfo = $.jqx.utilities.getBrowser();
+                    if (browserInfo.browser == 'msie') {
+                        transform = el.css('-ms-transform');
+                        if (transform == "" || transform == 'none') {
+                            transform = el.parents().css('-ms-transform');
+                        }
+                    }
+                    else if (browserInfo.browser == 'chrome') {
+                        transform = el.css('-webkit-transform');
+                        if (transform == "" || transform == 'none') {
+                            transform = el.parents().css('-webkit-transform');
+                        }
+                    }
+                    else if (browserInfo.browser == 'opera') {
+                        transform = el.css('-o-transform');
+                        if (transform == "" || transform == 'none') {
+                            transform = el.parents().css('-o-transform');
+                        }
+                    }
+                    else if (browserInfo.browser == 'mozilla') {
+                        transform = el.css('-moz-transform');
+                        if (transform == "" || transform == 'none') {
+                            transform = el.parents().css('-moz-transform');
+                        }
+                    }
+                } else {
+                    return transform != "" && transform != 'none';
+                }
+            }
+            if (transform == "" || transform == 'none') {
+                transform = $(document.body).css('transform');
+            }
+            return transform != "" && transform != 'none' && transform != null;
         },
 
         getBrowser: function () {
@@ -464,6 +557,9 @@ License: http://jqwidgets.com/license/
         },
 
         isTouchDevice: function () {
+            if (this.touchDevice != undefined)
+                return this.touchDevice;
+
             var txt = "Browser CodeName: " + navigator.appCodeName + "";
             txt += "Browser Name: " + navigator.appName + "";
             txt += "Browser Version: " + navigator.appVersion + "";
@@ -495,11 +591,20 @@ License: http://jqwidgets.com/license/
             if (txt.indexOf('Chrome/17') != -1)
                 return false;
 
+            if (txt.indexOf('Opera') != -1 && txt.indexOf('Platform: Win') != -1) {
+                return false;
+            }
+
             // check for IPad, IPhone, IE and Chrome
             try {
+                if (this.touchDevice != undefined)
+                    return this.touchDevice;
+
+                this.touchDevice = true;
                 document.createEvent("TouchEvent");
                 return true;
             } catch (e) {
+                this.touchDevice = false;
                 return false;
             }
         },
@@ -645,7 +750,8 @@ License: http://jqwidgets.com/license/
             var scrollX = 0;
             var touchX = 0;
             var movedX = 0;
-            var scrolling = false;
+            if (!this.scrolling) this.scrolling = [];
+            this.scrolling[key] = false;
             var moved = false;
             var $element = $(element);
             var touchTags = ['select', 'input', 'textarea'];
@@ -670,7 +776,7 @@ License: http://jqwidgets.com/license/
                     me.dispatchMouseEvent('mousedown', touch, me.getRootNode(touch.target));
                 }
 
-                scrolling = true;
+                me.scrolling[key] = true;
                 moved = false;
                 touchY = touch.pageY;
                 touchX = touch.pageX;
@@ -688,10 +794,9 @@ License: http://jqwidgets.com/license/
                 if (!me.enableScrolling[key])
                     return true;
 
-                if (!scrolling) {
+                if (!me.scrolling[key]) {
                     return true;
                 }
-
                 var touches = me.getTouches(event);
                 if (touches.length > 1) {
                     return true;
@@ -723,13 +828,13 @@ License: http://jqwidgets.com/license/
 
             if (this.simulatetouches) {
                 $(window).bind('mouseup.touchScroll', function (event) {
-                    scrolling = false;
+                    me.scrolling[key] = false;
                 });
 
                 if (window.frameElement) {
                     if (window.top != null) {
                         var eventHandle = function (event) {
-                            scrolling = false;
+                            me.scrolling[key] = false;
                         };
 
                         if (window.top.document.addEventListener) {
@@ -742,10 +847,10 @@ License: http://jqwidgets.com/license/
                 }
 
                 $(document).bind('touchend', function (event) {
-                    if (!scrolling) {
+                    if (!me.scrolling[key]) {
                         return true;
                     }
-                    scrolling = false;
+                    me.scrolling[key] = false;
                     var touch = me.getTouches(event)[0],
 						target = me.getRootNode(touch.target);
 
@@ -760,10 +865,10 @@ License: http://jqwidgets.com/license/
                     return true;
 
                 var touch = me.getTouches(event)[0];
-                if (!scrolling) {
+                if (!me.scrolling[key]) {
                     return true;
                 }
-                scrolling = false;
+                me.scrolling[key] = false;
                 if (moved) {
                     me.dispatchMouseEvent('mouseup', touch, target);
                 } else {
@@ -935,7 +1040,6 @@ License: http://jqwidgets.com/license/
         }
     });
 })(jQuery);
-
 (function ($) {
     $.fn.extend({
         ischildof: function (filter_string) {
@@ -950,4 +1054,4 @@ License: http://jqwidgets.com/license/
             return false;
         }
     });
-})(jQuery); 
+})(jQuery);

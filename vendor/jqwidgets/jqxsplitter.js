@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -108,7 +108,9 @@ License: http://jqwidgets.com/license/
             //this._cursor = (this._cursor === 'auto') ? 'default' : this._cursor;
             this._isTouchDevice = $.jqx.mobile.isTouchDevice();
             this._validateProperties();
+            this._defaultLayout = true;
             this._refresh(true);
+            this._defaultLayout = false;
             var splitters = $.data(document.body, 'jqx-splitters') || [];
             splitters.push(this.host);
             $.data(document.body, 'jqx-splitters', splitters);
@@ -148,28 +150,35 @@ License: http://jqwidgets.com/license/
                     me._oldHeight = me.host.height();
                 }, 100);
             }
+            this.windowWidth = $(window).width();
+            this.windowHeight = $(window).height();
 
-            var hiddenParent = function () {
-                if (me.host.css('display') != 'block')
-                    return true;
-                var hiddenParent = false;
-                $.each(me.host.parents(), function () {
-                    if ($(this).css('display') != 'block') {
-                        hiddenParent = true;
-                        return false;
-                    }
-                });
-                return hiddenParent;
-            }
-
-            if (hiddenParent()) {
+            if (this._hiddenParent()) {
                 this._displayTimer = setInterval(function () {
-                    if (!hiddenParent()) {
+                    if (!me._hiddenParent()) {
                         clearInterval(me._displayTimer);
                         me.updateLayout();
                     }
                 }, 100);
             }
+        },
+
+        destroy: function () {
+            this.host.remove();
+        },
+
+        _hiddenParent: function () {
+            var me = this;
+            if (me.host.css('display') != 'block')
+                return true;
+            var hiddenParent = false;
+            $.each(me.host.parents(), function () {
+                if ($(this).css('display') != 'block') {
+                    hiddenParent = true;
+                    return false;
+                }
+            });
+            return hiddenParent;
         },
 
         _setSplitterSize: function () {
@@ -194,7 +203,9 @@ License: http://jqwidgets.com/license/
             }
             this.host.css('min-' + this._getDimention('size'), minSize);
             if (setMaxSize) {
-                this.host.css('max-' + this._getDimention('size'), panelMaxSize);
+                if (panelMaxSize < 9999) {
+                    this.host.css('max-' + this._getDimention('size'), panelMaxSize);
+                }
             }
         },
 
@@ -323,6 +334,17 @@ License: http://jqwidgets.com/license/
                 this._createSplitBars();
                 this._addCollapseButtons();
                 this._addPanelProperties();
+                var previous, next, splitBar;
+                for (var i = 0; i < this._splitPanels.length; i += 1) {
+                    if (i + 1 < this._splitPanels.length) {
+                        previous = this._splitPanels[i];
+                        next = this._splitPanels[i + 1];
+                        var splitBar = this._splitBars[i];
+                        if (!previous.options.resizable || !next.options.resizable) {
+                            splitBar.splitBar.css('cursor', 'default');
+                        }
+                    }
+                }
             }
             this._wrapperHandler();
         },
@@ -368,7 +390,9 @@ License: http://jqwidgets.com/license/
             this._addClasses();
             //this._performLayout();            
             this._validateSize();
-            this._applyOptions();
+            if (this._defaultLayout == true) {
+                this._applyOptions();
+            }
             this._performLayout();
         },
 
@@ -411,7 +435,6 @@ License: http://jqwidgets.com/license/
             this.theme = temp;
         },
 
-        //-[optimize]-
         _addPanelProperties: function () {
             var properties = ['max', 'min', 'size', 'collapsed', 'collapsible', 'resizable'],
                 panels = (this.panels instanceof Array) ? this.panels : [];
@@ -431,6 +454,27 @@ License: http://jqwidgets.com/license/
                                 this._splitPanels[i].options.size = Math.floor(this.host.width() / this._splitPanels.length);
                             }
                         }
+                    }
+                }
+            }
+        },
+
+        _addPanelSizeProperties: function()
+        {
+           panels = (this.panels instanceof Array) ? this.panels : [];
+            for (var i = 0; i < this._splitPanels.length; i += 1) {
+                var size = this._splitPanels[i][0].style[this._getDimention('size')];
+                if (size !== 'auto' && size !== '') {
+                    if (panels[i] != undefined) {
+                        this._splitPanels[i].options.size = panels[i].size;
+                    }
+                }
+                else {
+                    if (this.orientation == 'horizontal') {
+                        this._splitPanels[i].options.size = Math.floor(this.host.height() / this._splitPanels.length);
+                    }
+                    else {
+                        this._splitPanels[i].options.size = Math.floor(this.host.width() / this._splitPanels.length);
                     }
                 }
             }
@@ -513,8 +557,23 @@ License: http://jqwidgets.com/license/
 
             var displacementY = ($(element.parent()).height() - element.outerHeight()) / 2,
                 displacementX = ($(element.parent()).width() - element.outerWidth()) / 2;
-            element.css('margin-top', displacementY);
-            element.css('margin-left', displacementX);
+     //       element.css('margin-top', displacementY);
+       //     element.css('margin-left', displacementX);
+            element.css('position', 'relative');
+            if (this.orientation === 'vertical') {
+                element.css('top', '50%');
+                element.css('left', '0');
+                element.css('margin-top', '-23px');
+                element.css('margin-left', '-0px');
+            }
+            else
+            {
+                element.css('left', '50%');
+                element.css('top', '0');
+                element.css('margin-left', '-23px');
+                element.css('margin-top', '-0px');
+            }
+                //     element.css('margin-left', '50%');
             return element;
         },
 
@@ -524,7 +583,7 @@ License: http://jqwidgets.com/license/
                 sizeSum = (count - 1) * this._splitBars[0].splitBar[this._getDimention('outerSize')](true),
                 hostSize = this.host[this._getDimention('size')](),
                 currentPanel;
-            hostSize -= 2;
+           // hostSize -= 1;
             while (i < count) {
                 currentPanel = this._splitPanels[i];
                 i++;
@@ -665,6 +724,9 @@ License: http://jqwidgets.com/license/
 
             this.removeHandler($(document), this._getEvent('mouseup') + '.' + this.host.attr('id'));
             this.removeHandler($(document), this._getEvent('mousemove') + '.' + this.host.attr('id'));
+            this.removeHandler($(window), 'resize.' + this.element.id);
+            this.removeHandler(this.host, 'loadContent');
+
             while (count) {
                 count -= 1;
                 this._removeSplitBarHandlers(this._splitBars[count]);
@@ -693,40 +755,85 @@ License: http://jqwidgets.com/license/
                 self.autoResize = true;
             });
 
+            this.addHandler(this.host, 'loadContent', function () {
+                if (self._hiddenParent()) {
+                    return true;
+                }
+                var hasPercentageSize = false;
+                if ((typeof self.width === 'string' && self.width.indexOf('%') >= 0 && self.orientation == 'vertical') ||
+                   (typeof self.height === 'string' && self.height.indexOf('%') >= 0 && self.orientation == 'horizontal')) {
+                    for (var i = 0; i < self.panels.length; i += 1) {
+                        if (self.panels[i]["_size"] != undefined) {
+                            self.panels[i]["size"] = self.panels[i]["_size"];
+                            self._validatePanel("size", self.panels[i]);
+                            hasPercentageSize = true;
+                        }
+                    }
+                    if (hasPercentageSize) {
+                        self._addPanelSizeProperties();
+                    }
+                }
+                self._refreshLayout();
+                if (self._refreshWindowResizeTimer) clearTimeout(self._refreshWindowResizeTimer);
+                self._refreshWindowResizeTimer = setTimeout(function () {
+                    self._refreshLayout();
+                }, 100);
+            });
+
             this.addHandler($(document), this._getEvent('mousemove') + '.' + this.host.attr('id'), function (event) {
                 self._performDrag(self, event);
             });
 
             this.addHandler($(window), 'resize.' + this.element.id, function (event) {
-                if (!self.windowWidth) {
-                    self.windowWidth = $(window).width();
-                }
-                if (!self.windowHeight) {
-                    self.windowHeight = $(window).height();
-                }
+                var doWindowResize = function () {
+                    if (self._hiddenParent()) {
+                        return true;
+                    }
 
-                var windowWidth = $(window).width();
-                var windowHeight = $(window).height();
+                    if (!self.windowWidth) {
+                        self.windowWidth = $(window).width();
+                    }
+                    if (!self.windowHeight) {
+                        self.windowHeight = $(window).height();
+                    }
 
-                if (self.autoResize) {
-                    if (windowWidth != self.windowWidth || windowHeight != self.windowHeight) {
-                        if ((typeof self.width === 'string' && self.width.indexOf('%') >= 0 && self.orientation == 'vertical') ||
-                    (typeof self.height === 'string' && self.height.indexOf('%') >= 0 && self.orientation == 'horizontal')) {
-                            for (var i = 0; i < self.panels.length; i += 1) {
-                                if (self.panels[i]["_size"] != undefined) {
-                                    self.panels[i]["size"] = self.panels[i]["_size"];
-                                    self._validatePanel("size", self.panels[i]);
+                    var windowWidth = $(window).width();
+                    var windowHeight = $(window).height();
+
+                    if (self.autoResize) {
+                        if (windowWidth != self.windowWidth || windowHeight != self.windowHeight || self.hostWidth != self.host.width() || self.hostHeight != self.host.height()) {
+                            if ((typeof self.width === 'string' && self.width.indexOf('%') >= 0 && self.orientation == 'vertical') ||
+                        (typeof self.height === 'string' && self.height.indexOf('%') >= 0 && self.orientation == 'horizontal')) {
+                                var hasPercentageSize = false;
+                                for (var i = 0; i < self.panels.length; i += 1) {
+                                    if (self.panels[i]["_size"] != undefined) {
+                                        self.panels[i]["size"] = self.panels[i]["_size"];
+                                        self._validatePanel("size", self.panels[i]);
+                                        hasPercentageSize = true;
+                                    }
+                                }
+                                if (hasPercentageSize) {
+                                    self._addPanelSizeProperties();
                                 }
                             }
-                            self._addPanelProperties();
+                            self._refreshLayout();
+                            if (self._refreshWindowResizeTimer) clearTimeout(self._refreshWindowResizeTimer);
+                            self._refreshWindowResizeTimer = setTimeout(function () {
+                                self._refreshLayout();
+                            }, 100);
                         }
                     }
+
+                    self.windowWidth = $(window).width();
+                    self.windowHeight = $(window).height();
+                    self.hostWidth = self.host.width();
+                    self.hostHeight = self.host.height();
                 }
 
-                self.windowWidth = $(window).width();
-                self.windowHeight = $(window).height();
-
-                self._refreshLayout();
+                doWindowResize();
+                setTimeout(function () {
+                    doWindowResize();
+                }, 10);
             });
             while (count) {
                 count -= 1;
@@ -734,17 +841,23 @@ License: http://jqwidgets.com/license/
                 this._addCollapseButtonHandlers($(this._splitBars[count].splitBar.children(0)), count);
             }
 
-            if (window.frameElement) {
+            if (document.referrer != "" || window.frameElement) {
                 if (window.top != null) {
-                    var eventHandle = function (event) {
-                        self._stopDrag(self);
-                    };
+                    if (window.parent && document.referrer) {
+                        parentLocation = document.referrer;
+                    }
 
-                    if (window.top.document.addEventListener) {
-                        window.top.document.addEventListener('mouseup', eventHandle, false);
+                    if (parentLocation.indexOf(document.location.host) != -1) {
+                        var eventHandle = function (event) {
+                            self._stopDrag(self);
+                        };
 
-                    } else if (window.top.document.attachEvent) {
-                        window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                        if (window.top.document.addEventListener) {
+                            window.top.document.addEventListener('mouseup', eventHandle, false);
+
+                        } else if (window.top.document.attachEvent) {
+                            window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                        }
                     }
                 }
             }
@@ -990,6 +1103,9 @@ License: http://jqwidgets.com/license/
             this._setPanelSize(splitArea.previous, prevSize);
             this._setPanelSize(splitArea.next, nextSize);
             this._splittersLayout();
+            if (this.cookies) {
+                $.jqx.cookie.cookie("jqxSplitter" + this.element.id, this.exportLayout(), this.cookieOptions);
+            }
             if (prevPanelOldSize !== prevSize) {
                 var panelOptions = this._getPanelOptions();
                 this._raiseEvent(0, { firstPanel: { index: splitBarIndex, size: prevSize },
@@ -1026,9 +1142,7 @@ License: http://jqwidgets.com/license/
 
         _splittersLayout: function () {
             var splitters = $.data(document.body, 'jqx-splitters') || [];
-            if (this.cookies) {
-                $.jqx.cookie.cookie("jqxSplitter" + this.element.id, this.exportLayout(), this.cookieOptions);
-            }
+
             for (var i = 0; i < splitters.length; i += 1) {
                 if (splitters[i][0] !== this.element) {
                     $(splitters[i]).jqxSplitter('_performLayout');
@@ -1172,8 +1286,14 @@ License: http://jqwidgets.com/license/
                 this.panels = config.panels;
                 this.orientation = config.orientation;
                 this._validatePanels();
+//                this._addPanelProperties();
+//                this._refreshWidgetLayout();
+
+                this._setSplitterSize();
                 this._addPanelProperties();
-                this._refreshWidgetLayout();
+                this._refresh(false);
+                this._splittersLayout();
+                this._performLayout();
             } catch (exception) {
                 alert(exception);
             }
@@ -1195,8 +1315,8 @@ License: http://jqwidgets.com/license/
                 this._animateResize(toResize, toResize.options.size, animationDuration);
                 this._animateResize(toExpand, toExpand.options.size, animationDuration, function () {
                     var panelOptions = self._getPanelOptions();
-                    self._raiseEvent(1, { index: index, expandedPanel: panelOptions[index], panels: panelOptions });
-
+                    self._raiseEvent(0, { firstPanel: { index: index, size: toExpand.options.size }, secondPanel: { index: index + 1, size: toResize.options.size } });
+                    self._raiseEvent(1, { index: index, expandedPanel: panelOptions[index], panels: panelOptions });            
                 });
 
                 if (this.panels[index]) {
@@ -1211,6 +1331,9 @@ License: http://jqwidgets.com/license/
                             this.autoResize = true;
                         }
                     }
+                }
+                if (this.cookies) {
+                    $.jqx.cookie.cookie("jqxSplitter" + this.element.id, this.exportLayout(), this.cookieOptions);
                 }
             }
         },
@@ -1243,6 +1366,7 @@ License: http://jqwidgets.com/license/
                 this._animateResize(toCollapse, 0, animationDuration, function () {
                     if (refreshed == undefined) {
                         var panelOptions = self._getPanelOptions();
+                        self._raiseEvent(0, { firstPanel: { index: index, size: 0 }, secondPanel: { index: index + 1, size: toResize.options.size } });
                         self._raiseEvent(2, { index: index, collapsedPanel: panelOptions[index], panels: panelOptions });
                     }
                 });
@@ -1257,6 +1381,9 @@ License: http://jqwidgets.com/license/
                         }
                         this.autoResize = true;
                     }
+                }
+                if (this.cookies) {
+                    $.jqx.cookie.cookie("jqxSplitter" + this.element.id, this.exportLayout(), this.cookieOptions);
                 }
             }
         },

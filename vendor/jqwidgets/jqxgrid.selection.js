@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -44,7 +44,7 @@ License: http://jqwidgets.com/license/
         clearselection: function (refresh) {
             this.selectedrowindex = -1;
 
-            for (i = 0; i < this.selectedrowindexes.length; i++) {
+            for (var i = 0; i < this.selectedrowindexes.length; i++) {
                 this._raiseEvent(3, { rowindex: this.selectedrowindexes[i] });
             }
 
@@ -79,6 +79,130 @@ License: http://jqwidgets.com/license/
             }
 
             return cells;
+        },
+
+        _getcellsforcopypaste: function()
+        {
+            var cells = new Array();
+            if (this.selectionmode.indexOf('cell') == -1) {
+                var rows = this.selectedrowindexes;
+                for (var j = 0; j < rows.length; j++) {
+                    var index = rows[j];
+                    for (var i = 0; i < this.columns.records.length; i++) {
+                        var uniquekey = index + "_" + this.columns.records[i].datafield;
+                        var cell = { rowindex: index, datafield: this.columns.records[i].datafield };
+                        cells.push(cell);
+                    }
+                }
+            }
+            return cells;
+        },
+
+        deleteselection: function()
+        {
+            var self = this;
+            var cells = self.getselectedcells();
+            if (this.selectionmode.indexOf('cell') == -1) {
+                cells = this._getcellsforcopypaste();
+            }
+            if (cells != null && cells.length > 0) {
+                for (var cellIndex = 0; cellIndex < cells.length; cellIndex++) {
+                    var cell = cells[cellIndex];
+                    var column = self.getcolumn(cell.datafield);
+                    var cellValue = self.getcellvalue(cell.rowindex, cell.datafield);
+                    if (cellValue != "") {
+                        self._raiseEvent(17, { rowindex: cell.rowindex, datafield: cell.datafield, value: cellValue });
+                        if (cellIndex == cells.length - 1) {
+                            self.setcellvalue(cell.rowindex, cell.datafield, "", true);
+                        }
+                        else self.setcellvalue(cell.rowindex, cell.datafield, "", false);
+                        self._raiseEvent(18, { rowindex: cell.rowindex, datafield: cell.datafield, oldvalue: cellValue, value: "" });
+                    }
+                }
+                this.dataview.updateview();
+                this._renderrows(this.virtualsizeinfo);
+            }
+        },
+
+        copyselection: function()
+        {
+            var selectedtext = "";
+            var self = this;
+            this.clipboardselection = {};
+            this._clipboardselection = [];
+            var cells = self.getselectedcells();
+            if (this.selectionmode.indexOf('cell') == -1) {
+                cells = this._getcellsforcopypaste();
+            }
+
+            if (cells != null && cells.length > 0) {
+                var minrowindex = 999999999999999;
+                var maxrowindex = -1;
+                for (var cellIndex = 0; cellIndex < cells.length; cellIndex++) {
+                    var cell = cells[cellIndex];
+                    var column = self.getcolumn(cell.datafield);
+                    var cellValue = self.getcellvalue(cell.rowindex, cell.datafield);
+                    if (!this.clipboardselection[cell.rowindex]) this.clipboardselection[cell.rowindex] = {};
+                    this.clipboardselection[cell.rowindex][cell.datafield] = cellValue;
+                    minrowindex = Math.min(minrowindex, cell.rowindex);
+                    maxrowindex = Math.max(maxrowindex, cell.rowindex);
+                }
+                for (var i = minrowindex; i <= maxrowindex; i++) {
+                    var x = 0;
+                    this._clipboardselection[this._clipboardselection.length] = {};
+                    if (this.clipboardselection[i] != undefined) {
+                        $.each(this.clipboardselection[i], function (index, value) {
+                            if (x > 0) selectedtext += "\t";
+                            var text = value;
+                            if (value == null) text = "";
+                            self._clipboardselection[self._clipboardselection.length - 1][x] = text;
+                            x++;
+                            selectedtext += text;
+                        });
+                    }
+                    if (i < maxrowindex) {
+                        selectedtext += '\n';
+                    }
+                }
+            }
+            this.clipboardselectedtext = selectedtext;
+            return selectedtext;
+        },
+
+        pasteselection: function()
+        {
+            var self = this;
+            var cells = self.getselectedcells();
+            if (this.selectionmode.indexOf('cell') == -1) {
+                cells = this._getcellsforcopypaste();
+            }
+            if (cells != null && cells.length > 0) {
+                var rowindex = 0;
+                var lastrowindex = undefined;
+                var x = 0;
+                for (var cellIndex = 0; cellIndex < cells.length; cellIndex++) {
+                    var cell = cells[cellIndex];
+                    var column = self.getcolumn(cell.datafield);
+                    if (lastrowindex != undefined) {
+                        if (cell.rowindex != lastrowindex) {
+                            rowindex++;
+                            x = 0;
+                        }
+                    }
+                    lastrowindex = cell.rowindex;
+                    if (self._clipboardselection[rowindex]) {
+                        var cellvalue = null;
+                        cellvalue = self._clipboardselection[rowindex][x++];      
+                        if (cellvalue != null) {
+                            self._raiseEvent(17, { rowindex: cell.rowindex, datafield: cell.datafield, value: cellvalue });
+                            self.setcellvalue(cell.rowindex, cell.datafield, cellvalue, false);
+                            self._raiseEvent(18, { rowindex: cell.rowindex, datafield: cell.datafield, oldvalue: self.getcellvalue(cell.rowindex, cell.datafield), value: cellvalue });
+                        }
+                    }
+                }
+                this.dataview.updateview();
+                this._renderrows(this.virtualsizeinfo);
+            }
         },
 
         _applyrowselection: function (index, select, refresh, multiplerows, column) {
@@ -152,7 +276,7 @@ License: http://jqwidgets.com/license/
                 this.selectedcells = new Array();
             }
 
-            if (this.selectionmode == 'multiplecellsextended') {
+            if (this.selectionmode == 'multiplecellsextended' || this.selectionmode == 'multiplecellsadvanced') {
                 var oldcell = this.selectedcell;
                 if (oldcell != null) {
                     this._raiseEvent(16, { rowindex: oldcell.rowindex, datafield: oldcell.datafield });
@@ -311,6 +435,12 @@ License: http://jqwidgets.com/license/
                     else {
                         this._selectcellwithstyle(self, true, index, column, tablerow);
                     }
+                    if (shiftKey && this._lastClickedCell == undefined) {
+                        var cells = this.getselectedcells();
+                        if (cells && cells.length > 0) {
+                            this._lastClickedCell = {row: cells[0].rowindex, column: cells[0].datafield}; 
+                        }
+                    }
                     if (shiftKey && this._lastClickedCell) {
                         this._selectpath(row.boundindex, column);
                         this.mousecaptured = false;
@@ -321,12 +451,23 @@ License: http://jqwidgets.com/license/
                 }
                 else {
                     if (hasindex) {
-                        this._selectrowwithstyle(self, tablerow, false, column);
+                        if (ctrlKey) {
+                            this._applyrowselection(row.boundindex, false);
+                        }
+                        else {
+                            this._selectrowwithstyle(self, tablerow, false, column);
+                        }
                     }
                     else {
                         this._selectrowwithstyle(self, tablerow, true, column);
                     }
 
+                    if (shiftKey && this._lastClickedCell == undefined) {
+                        var indexes = this.getselectedrowindexes();
+                        if (indexes && indexes.length > 0) {
+                            this._lastClickedCell = { row: indexes[0], column: column };
+                        }
+                    }
                     if (shiftKey && this._lastClickedCell) {
                         this.selectedrowindexes = new Array();
                         var minRow = this._lastClickedCell ? Math.min(this._lastClickedCell.row, row.boundindex) : 0;
@@ -372,7 +513,7 @@ License: http://jqwidgets.com/license/
                 startindex = 1;
             }
 
-            for (i = startindex; i < cellslength; i++) {
+            for (var i = startindex; i < cellslength; i++) {
                 var tablecell = tablerow.cells[i];
                 if (select) {
                     $(tablecell).removeClass(this.toTP('jqx-grid-cell-hover'));
@@ -393,29 +534,213 @@ License: http://jqwidgets.com/license/
         },
 
         _handlemousemoveselection: function (event, self) {
-            if ((self.selectionmode == 'multiplerowsextended' || self.selectionmode == 'multiplecellsextended') && self.mousecaptured) {
+            if ((self.selectionmode == 'multiplerowsextended' || self.selectionmode == 'multiplecellsextended' || self.selectionmode == 'multiplecellsadvanced') && self.mousecaptured) {
                 var columnheaderheight = this.showheader ? this.columnsheader.height() + 2 : 0;
                 var groupsheaderheight = this._groupsheader() ? this.groupsheader.height() : 0;
                 var toolbarheight = this.showtoolbar ? this.toolbarheight : 0;
                 groupsheaderheight += toolbarheight;
                 var hostoffset = this.host.offset();
+                if (this.hasTransform) {
+                    hostoffset = $.jqx.utilities.getOffset(this.host);
+                }
+                var bodyOffset = this._getBodyOffset();
+                hostoffset.left += bodyOffset.left;
+                hostoffset.top += bodyOffset.top;
                 var x = event.pageX;
                 var y = event.pageY - groupsheaderheight;
-                var columnheadertop = parseInt(this.columnsheader.offset().top);
-                var columnheaderbottom = columnheaderheight;
-                if (y < columnheaderbottom) y = columnheaderbottom + 5;
-                var rectleft = parseInt(Math.min(self.mousecaptureposition.left, x));
-                var recttop = -5 + parseInt(Math.min(self.mousecaptureposition.top, y));
-                var rectwidth = parseInt(Math.abs(self.mousecaptureposition.left - x));
-                var rectheight = parseInt(Math.abs(self.mousecaptureposition.top - y));
-                rectleft -= self.host.offset().left;
-                recttop -= self.host.offset().top;
 
-                this.selectionarea.css('visibility', 'visible');
-                this.selectionarea.width(rectwidth);
-                this.selectionarea.height(rectheight);
-                this.selectionarea.css('left', rectleft);
-                this.selectionarea.css('top', recttop);
+                if (Math.abs(this.mousecaptureposition.left - x) > 3 || Math.abs(this.mousecaptureposition.top - y) > 3) {
+                    var columnheadertop = parseInt(this.columnsheader.offset().top);
+                    if (this.hasTransform) {
+                        columnheadertop = $.jqx.utilities.getOffset(this.columnsheader).top;
+                    }
+                    if (x < hostoffset.left) {
+                        x = hostoffset.left;
+                    }
+
+                    if (x > hostoffset.left + this.host.width()) {
+                        x = hostoffset.left + this.host.width();
+                    }
+                    var columnheaderbottom = hostoffset.top + columnheaderheight;
+                    if (y < columnheaderbottom) y = columnheaderbottom + 5;
+                    var rectleft = parseInt(Math.min(self.mousecaptureposition.left, x));
+                    var recttop = -5 + parseInt(Math.min(self.mousecaptureposition.top, y));
+                    var rectwidth = parseInt(Math.abs(self.mousecaptureposition.left - x));
+                    var rectheight = parseInt(Math.abs(self.mousecaptureposition.top - y));
+                    rectleft -= hostoffset.left;
+                    recttop -= hostoffset.top;
+
+                    this.selectionarea.css('visibility', 'visible');
+
+                    if (self.selectionmode == 'multiplecellsadvanced') {
+                        var x = rectleft;
+                        var arearight = x + rectwidth;
+                        var arealeft = x;
+                        var hScrollInstance = self.hScrollInstance;
+                        var horizontalscrollvalue = hScrollInstance.value;
+                        var tablerow = self.table[0].rows[0];
+                        var p = 0;
+
+                        var leftcellindex = self.mousecaptureposition.clickedcell;
+                        var rightcellindex = leftcellindex;
+                        var found = false;
+
+                        var starti = 0;
+                        var endi = tablerow.cells.length;
+                        if (self.mousecaptureposition.left <= event.pageX) {
+                            starti = leftcellindex;
+                        }
+
+                        for (var i = starti; i < endi; i++) {
+                            var columnleft = parseInt($(this.columnsrow[0].cells[i]).css('left'));
+                            var left = columnleft - horizontalscrollvalue;
+                            if (self.columns.records[i].pinned) {
+                                left = columnleft;
+                                continue;
+                            }
+
+                            var column = this._getcolumnat(i);
+                            if (column != null && column.hidden) {
+                                continue;
+                            }
+
+                            if (self.groupable && self.groups.length > 0) {
+                                if (i < self.groups.length) {
+                                    continue;
+                                }
+                            }
+
+                            var right = left + $(this.columnsrow[0].cells[i]).width();
+                            if (self.mousecaptureposition.left > event.pageX) {
+                                if (right >= x && x >= left) {
+                                    rightcellindex = i;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            else {
+                                if (right >= arearight && arearight >= left) {
+                                    rightcellindex = i;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!found) {
+                            if (self.mousecaptureposition.left > event.pageX) {
+                                $.each(this.columns.records, function (index, value) {
+                                    if (self.groupable && self.groups.length > 0) {
+                                        if (index < self.groups.length) {
+                                            return true;
+                                        }
+                                    }
+
+                                    if (!this.pinned && !this.hidden) {
+                                        rightcellindex = index;
+                                        return false;
+                                    }
+                                });
+                            }
+                            else {
+                                if (!self.groupable || (self.groupable && !self.groups.length > 0)) {
+                                    rightcellindex = tablerow.cells.length - 1;
+                                }
+                            }
+                        }
+                        var tmpindex = leftcellindex;
+                        leftcellindex = Math.min(leftcellindex, rightcellindex);
+                        rightcellindex = Math.max(tmpindex, rightcellindex);
+                        recttop += 5;
+                        recttop += groupsheaderheight;
+                        var startrowindex = self.table[0].rows.indexOf(self.mousecaptureposition.clickedrow);
+                        var increaseheight = 0;
+                        var startrow = -1;
+                        var endrow = -1;
+                        var offsettop = 0;
+                        for (var i = 0; i < self.table[0].rows.length; i++) {
+                            var row = $(self.table[0].rows[i]);
+                            if (i == 0) offsettop = row.offset().top;
+                            var rowheight = row.height();
+                            var rowtop = offsettop - hostoffset.top;
+                            if (startrow == -1 && rowtop + rowheight >= recttop) {
+                                var toContinue = false;
+                                for (var q = 0; q < self.groups.length; q++) {
+                                    var className = row[0].cells[q].className;
+                                    if (className.indexOf('jqx-grid-group-collapse') != -1 || className.indexOf('jqx-grid-group-expand') != -1) {
+                                        toContinue = true;
+                                        break;
+                                    }
+                                }
+                                if (toContinue) continue;
+
+
+                                startrow = i;
+                            }
+                            offsettop += rowheight;
+
+                            if (self.groupable && self.groups.length > 0) {
+                                var toContinue = false;
+                                for (var q = 0; q < self.groups.length; q++) {
+                                    var className = row[0].cells[q].className;
+                                    if (className.indexOf('jqx-grid-group-collapse') != -1 || className.indexOf('jqx-grid-group-expand') != -1) {
+                                        toContinue = true;
+                                        break;
+                                    }
+                                }
+                                if (toContinue) continue;
+
+                                var p = 0;
+                                for (var k = self.groups.length; k < row[0].cells.length; k++) {
+                                    var cell = row[0].cells[k];
+                                    if ($(cell).html() == "") {
+                                        p++;
+                                    }
+                                }
+                                if (p == row[0].cells.length - self.groups.length) {
+                                    continue;
+                                }
+                            }
+
+                            if (startrow != -1) {
+                                increaseheight += rowheight;
+                            }
+
+                            if (rowtop + rowheight > recttop + rectheight) {
+                                endrow = i;
+                                break;
+                            }
+                        }
+
+
+                        if (startrow != -1) {
+                            recttop = $(self.table[0].rows[startrow]).offset().top - hostoffset.top - groupsheaderheight - 2;
+                            var additionalHeight = 0;
+                            if (this.filterable && this.showfilterrow) {
+                                additionalHeight = this.filterrowheight;
+                            }
+
+                            if (parseInt(self.table[0].style.top) < 0 && recttop < this.rowsheight + additionalHeight) {
+                                recttop -= parseInt(self.table[0].style.top);
+                                increaseheight += parseInt(self.table[0].style.top);
+                            }
+
+                            rectheight = increaseheight;
+                            var leftcell = $(this.columnsrow[0].cells[leftcellindex]);
+                            var rightcell = $(this.columnsrow[0].cells[rightcellindex]);
+                            rectleft = parseInt(leftcell.css('left'));
+                            rectwidth = parseInt(rightcell.css('left')) - parseInt(rectleft) + rightcell.width() - 2;
+                            rectleft -= horizontalscrollvalue;
+                            if (self.editcell && self.editable && self.endcelledit && (leftcellindex != rightcellindex || startrow != endrow)) {
+                                self.endcelledit(self.editcell.row, self.editcell.column, true, true);
+                            }
+                        }
+                    }
+
+                    this.selectionarea.width(rectwidth);
+                    this.selectionarea.height(rectheight);
+                    this.selectionarea.css('left', rectleft);
+                    this.selectionarea.css('top', recttop);
+                }
             }
         },
 
@@ -425,7 +750,7 @@ License: http://jqwidgets.com/license/
                 return true;
             }
 
-            if (self.mousecaptured && (self.selectionmode == 'multiplerowsextended' || self.selectionmode == 'multiplecellsextended')) {
+            if (self.mousecaptured && (self.selectionmode == 'multiplerowsextended' || self.selectionmode == 'multiplecellsextended' || self.selectionmode == 'multiplecellsadvanced')) {
                 self.mousecaptured = false;
                 if (this.selectionarea.css('visibility') == 'visible') {
                     this.selectionarea.css('visibility', 'hidden');
@@ -435,8 +760,12 @@ License: http://jqwidgets.com/license/
                     var toolbarheight = this.showtoolbar ? this.toolbarheight : 0;
                     groupsheaderheight += toolbarheight;
                     var areaoffset = this.selectionarea.offset();
-
                     var hostoffset = this.host.offset();
+                    if (this.hasTransform) {
+                        hostoffset = $.jqx.utilities.getOffset(this.host);
+                        areaoffset = $.jqx.utilities.getOffset(this.selectionarea);
+                    }
+
                     var x = areaoffset.left - hostoffset.left;
                     var y = areaoffset.top - columnheaderheight - hostoffset.top - groupsheaderheight;
                     var m = y;
@@ -480,6 +809,9 @@ License: http://jqwidgets.com/license/
                         });
                     }
                     else {
+                        if (self.selectionmode == 'multiplecellsadvanced') {
+                            y += 2;
+                        }
                         var hScrollInstance = self.hScrollInstance;
                         var horizontalscrollvalue = hScrollInstance.value;
                         var tablerow = self.table[0].rows[0];
@@ -496,7 +828,7 @@ License: http://jqwidgets.com/license/
                             if (index != -1) {
                                 if (!indexes[index]) {
                                     indexes[index] = true;
-                                    for (i = 0; i < tablerow.cells.length; i++) {
+                                    for (var i = 0; i < tablerow.cells.length; i++) {
                                         var left = parseInt($(self.columnsrow[0].cells[i]).css('left')) - horizontalscrollvalue;
                                         var right = left + $(self.columnsrow[0].cells[i]).width();
                                         if ((arealeft >= left && arealeft <= right) || (arearight >= left && arearight <= right)
@@ -508,6 +840,9 @@ License: http://jqwidgets.com/license/
                             }
                             y += 5;
                         }
+                    }
+                    if (self.autosavestate) {
+                        if (self.savestate) self.savestate();
                     }
                     self._renderrows(self.virtualsizeinfo);
                 }
@@ -559,8 +894,28 @@ License: http://jqwidgets.com/license/
         },
 
         _handlekeydown: function (event, self) {
-            if (self.editcell) {
+            var key = event.charCode ? event.charCode : event.keyCode ? event.keyCode : 0;
+            if (self.editcell && self.selectionmode != 'multiplecellsadvanced') {
                 return true;
+            }
+            else if (self.editcell && self.selectionmode == 'multiplecellsadvanced') {
+                if (key >= 33 && key <= 40) {
+                    if (!event.altKey) {
+                        if (self._cancelkeydown == undefined || self._cancelkeydown == false) {
+                            self.endcelledit(self.editcell.row, self.editcell.column, false, true);
+                            self._cancelkeydown = false;
+                        }
+                        else {
+                            self._cancelkeydown = false;
+                            return true;
+                        }
+                    }
+                    else {
+                        self._cancelkeydown = false;
+                        return true;
+                    }
+                }
+                else return true;
             }
 
             if (self.selectionmode == 'none')
@@ -573,11 +928,45 @@ License: http://jqwidgets.com/license/
                 }
             }
 
-            var key = event.charCode ? event.charCode : event.keyCode ? event.keyCode : 0;
+            if (self.pageable) {
+                if ($(event.target).ischildof(this.pager)) {
+                    return true;
+                }
+            }
+
+            if (this.showtoolbar) {
+                if ($(event.target).ischildof(this.toolbar)) {
+                    return true;
+                }
+            }
+            if (this.showstatusbar) {
+                if ($(event.target).ischildof(this.statusbar)) {
+                    return true;
+                }
+            }
 
             var selectionchanged = false;
             if (event.altKey) {
                 return true;
+            }
+
+            if (event.ctrlKey) {
+                if (this.clipboard) {
+                    var pressedkey = String.fromCharCode(key).toLowerCase();
+
+                    if (pressedkey == 'c' || pressedkey == 'x') {
+                        var text = this.copyselection();
+                        if (window.clipboardData) {
+                            window.clipboardData.setData("Text", text);
+                        }
+                    }
+                    else if (pressedkey == 'v') {
+                        this.pasteselection();
+                    }
+                    if (pressedkey == 'x') {
+                        this.deleteselection();
+                    }
+                }
             }
 
             var hostHeight = Math.round(self._gettableheight());
@@ -589,6 +978,7 @@ License: http://jqwidgets.com/license/
                 case 'singlecell':
                 case 'multiplecells':
                 case 'multiplecellsextended':
+                case 'multiplecellsadvanced':
                     var selectedcell = self.getselectedcell();
 
                     if (selectedcell != null) {
@@ -623,7 +1013,7 @@ License: http://jqwidgets.com/license/
                             }
 
                             if (event.shiftKey && key != 9) {
-                                if (self.selectionmode == 'multiplecellsextended') {
+                                if (self.selectionmode == 'multiplecellsextended' || self.selectionmode == 'multiplecellsadvanced') {
                                     if (self._lastClickedCell) {
                                         self._selectpath(row, datafield);
                                         self.selectedcell = { rowindex: row, datafield: datafield };
@@ -829,6 +1219,10 @@ License: http://jqwidgets.com/license/
             }
 
             if (selectionchanged) {
+                if (self.autosavestate) {
+                    if (self.savestate) self.savestate();
+                }
+
                 if (self.editcell != null && self.endcelledit) {
                     self.endcelledit(self.editcell.row, self.editcell.column, true, true);
                 }
@@ -856,11 +1250,17 @@ License: http://jqwidgets.com/license/
                 var toolbarheight = this.showtoolbar ? this.toolbarheight : 0;
                 groupsheaderheight += toolbarheight;
                 hostoffset = this.host.offset();
+                if (this.hasTransform) {
+                    hostoffset = $.jqx.utilities.getOffset(this.host);
+                }
+                var bodyOffset = this._getBodyOffset();
+                hostoffset.left += bodyOffset.left;
+                hostoffset.top += bodyOffset.top;
                 x = event.pageX - hostoffset.left;
                 y = event.pageY - columnheaderheight - hostoffset.top - groupsheaderheight;
             }
 
-            if (self.selectionmode == 'multiplerowsextended' || self.selectionmode == 'multiplecellsextended') {
+            if (self.selectionmode == 'multiplerowsextended' || self.selectionmode == 'multiplecellsextended' || self.selectionmode == 'multiplecellsadvanced') {
                 if (self.mousecaptured == true) {
                     return;
                 }
@@ -900,6 +1300,8 @@ License: http://jqwidgets.com/license/
                     return;
                 }
 
+                if (event.clientX > $(tablerow).width() + $(tablerow).offset().left) return;
+
                 var startindex = 0;
                 if (self.rowdetails && self.showrowdetailscolumn) {
                     startindex = 1;
@@ -919,7 +1321,7 @@ License: http://jqwidgets.com/license/
                     var hScrollInstance = this.hScrollInstance;
                     var horizontalscrollvalue = hScrollInstance.value;
 
-                    for (i = 0; i < tablerow.cells.length; i++) {
+                    for (var i = 0; i < tablerow.cells.length; i++) {
                         var left = parseInt($(this.columnsrow[0].cells[i]).css('left')) - horizontalscrollvalue;
                         var right = left + $(this.columnsrow[0].cells[i]).width();
                         if (right >= x && x >= left) {
@@ -940,7 +1342,7 @@ License: http://jqwidgets.com/license/
                     return;
                 }
 
-                for (i = startindex; i < tablerow.cells.length; i++) {
+                for (var i = startindex; i < tablerow.cells.length; i++) {
                     var tablecell = tablerow.cells[i];
                     if (tablecell.className.indexOf('jqx-grid-group') == -1) {
                         $(tablecell).addClass(this.toTP('jqx-grid-cell-hover'));

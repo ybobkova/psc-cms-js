@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -52,13 +52,12 @@ License: http://jqwidgets.com/license/
 
             if (!this.overrideTheme) {
                 this.host.addClass(this.toThemeProperty($.jqx.cssroundedcorners(this.roundedCorners)));
+                this.host.addClass(this.toThemeProperty('jqx-button'));
+                this.host.addClass(this.toThemeProperty('jqx-widget'));
             }
 
-            this.host.onselectstart = function () { };
             this.isTouchDevice = $.jqx.mobile.isTouchDevice();
-
-            this.host.addClass(this.toThemeProperty('jqx-button'));
-            this.host.addClass(this.toThemeProperty('jqx-widget'));
+      
             this.host.css({ cursor: this.cursor });
 
             if (!this.isTouchDevice) {
@@ -77,16 +76,14 @@ License: http://jqwidgets.com/license/
                 });
             }
 
+            this.addHandler(this.host, 'selectstart', function (event) {
+                return false;
+            });
+
             this.addHandler(this.host, 'mousedown', function (event) {
                 if (!self.disabled) {
                     self.isPressed = true;
                     self.refresh();
-                }
-            });
-
-            this.addHandler(this.host, 'click', function (event) {
-                if (self.disabled) {
-                    alert('click');
                 }
             });
 
@@ -104,28 +101,41 @@ License: http://jqwidgets.com/license/
                 }
             });
 
-            this.addHandler($(document), 'mouseup.button' + this.element.id, function (event) {
+            this.mouseupfunc = function (event) {
                 if (!self.disabled) {
                     self.isPressed = false;
                     self.refresh();
                 }
-            });
+            }
 
-            if (window.frameElement) {
-                if (window.top != null) {
-                    var eventHandle = function (event) {
-                        self.isPressed = false;
-                        self.refresh();
-                    };
+            this.addHandler($(document), 'mouseup.button' + this.element.id, this.mouseupfunc);
 
-                    if (window.top.document) {
-                        if (window.top.document.addEventListener) {
-                            window.top.document.addEventListener('mouseup', eventHandle, false);
+            if (document.referrer != "" || window.frameElement) {
+                try {
+                    if (window.top != null && window.top != window.self) {
+                        var parentLocation = '';
+                        if (window.parent && document.referrer) {
+                            parentLocation = document.referrer;
+                        }
 
-                        } else if (window.top.document.attachEvent) {
-                            window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                        if (parentLocation.indexOf(document.location.host) != -1) {
+                            var eventHandle = function (event) {
+                                self.isPressed = false;
+                                self.refresh();
+                            };
+
+                            if (window.top.document) {
+                                if (window.top.document.addEventListener) {
+                                    window.top.document.addEventListener('mouseup', eventHandle, false);
+
+                                } else if (window.top.document.attachEvent) {
+                                    window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                                }
+                            }
                         }
                     }
+                }
+                catch (error) {
                 }
             }
 
@@ -141,8 +151,10 @@ License: http://jqwidgets.com/license/
                 instance.refresh();
             }
             this.propertyChangeMap['disabled'] = function (instance, key, oldVal, value) {
-                self.host[0].disabled = value;
-                instance.refresh();
+                if (oldVal != value) {
+                    self.host[0].disabled = value;
+                    instance.refresh();
+                }
             }
 
             this.propertyChangeMap['theme'] = function (instance, key, oldVal, value) {
@@ -153,6 +165,7 @@ License: http://jqwidgets.com/license/
                 if (!instance.overrideTheme) {
                     instance.host.addClass(instance.toThemeProperty($.jqx.cssroundedcorners(instance.roundedCorners)));
                 }
+                instance._oldCSSCurrent = null;
                 instance.refresh();
             }
         }, // createInstance
@@ -175,18 +188,21 @@ License: http://jqwidgets.com/license/
         },
 
         _removeHandlers: function () {
+            this.removeHandler(this.host, 'selectstart');
             this.removeHandler(this.host, 'click');
             this.removeHandler(this.host, 'focus');
             this.removeHandler(this.host, 'blur');
             this.removeHandler(this.host, 'mouseenter');
             this.removeHandler(this.host, 'mouseleave');
             this.removeHandler(this.host, 'mousedown');
-            this.removeHandler($(document), 'mouseup.button' + this.element.id);
+            this.removeHandler($(document), 'mouseup.button' + this.element.id, this.mouseupfunc);
+            this.mouseupfunc = null;
         },
 
         destroy: function () {
             this._removeHandlers();
             this.host.removeClass();
+            this.host.removeData();
             this.host.remove();
         },
 
@@ -221,28 +237,17 @@ License: http://jqwidgets.com/license/
                 }
             }
 
-            if (this.host.hasClass(cssDisabled) && cssDisabled != cssCurrent)
-                this.host.removeClass(cssDisabled);
-
-            if (this.host.hasClass(cssNormal) && cssNormal != cssCurrent)
-                this.host.removeClass(cssNormal);
-
-            if (this.host.hasClass(cssHover) && cssHover != cssCurrent)
-                this.host.removeClass(cssHover);
-
-            if (this.host.hasClass(cssPressed) && cssPressed != cssCurrent)
-                this.host.removeClass(cssPressed);
-
-            if (this.host.hasClass(cssPressedHover) && cssPressedHover != cssCurrent)
-                this.host.removeClass(cssPressedHover);
-
-            if (!this.host.hasClass(cssCurrent))
-                this.host.addClass(cssCurrent);
-
             if (this.isFocused) {
-                this.host.addClass(cssFocused);
+                cssCurrent += " " + cssFocused;
             }
-            else this.host.removeClass(cssFocused);
+
+            if (cssCurrent != this._oldCSSCurrent) {
+                if (this._oldCSSCurrent) {
+                    this.host.removeClass(this._oldCSSCurrent);
+                }
+                this.host.addClass(cssCurrent);
+                this._oldCSSCurrent = cssCurrent;
+            }
         }
     });
 
@@ -314,15 +319,18 @@ License: http://jqwidgets.com/license/
 
             var isTouchDevice = $.jqx.mobile.isTouchDevice();
 
-            this.addHandler($(document), 'mouseup', function (event) {
+            this.addHandler($(document), 'mouseup.' + this.base.element.id, function (event) {
                 if (!isTouchDevice) {
                     if (self.timeout != null) {
                         clearTimeout(self.timeout);
                         self.timeout = null;
+                        self.refresh();
                     }
-
-                    clearInterval(self.timer);
-                    self.timer = null;
+                    if (self.timer != undefined) {
+                        clearInterval(self.timer);
+                        self.timer = null;
+                        self.refresh();
+                    }
                 }
             });
 
@@ -349,6 +357,15 @@ License: http://jqwidgets.com/license/
                     }
                 }
             });
+        },
+
+        destroy: function()
+        {
+            this.removeHandler(this.base.host, 'mousemove');
+            this.removeHandler(this.base.host, 'mousedown');
+            this.removeHandler($(document), 'mouseup.' + this.base.element.id);
+            this.timer = null;
+            this.base.destroy();
         },
 
         stop: function () {

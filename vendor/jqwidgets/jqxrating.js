@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -73,15 +73,30 @@ License: http://jqwidgets.com/license/
             this._createRating();
         },
 
+        destroy: function()
+        {
+            this.host.remove();
+        },
+
         _createRating: function () {
             this.host.css('display', 'none');
             this.host.empty();
+            this._addInput();
             this._validateProperties();
             this._render();
             this._performLayout();
             this._removeEventHandlers();
             this._addEventHandlers();
             this.host.css('display', 'block');
+        },
+
+        _addInput: function () {
+            var name = this.host.attr('name');
+            if (!name) name = this.element.id;
+            this.input = $("<input type='hidden'/>");
+            this.host.append(this.input);
+            this.input.attr('name', name);
+            this.input.val(this.value.toString());
         },
 
         _render: function () {
@@ -282,6 +297,9 @@ License: http://jqwidgets.com/license/
             event.value = newValue;
             event.oldvalue = this.value;
             this.value = newValue;
+            if (this.input) {
+                this.input.val(this.value.toString());
+            }
             return this.host.trigger(event);
         },
 

@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -226,10 +226,11 @@ License: http://jqwidgets.com/license/
         _setWindowSize: function (window, options) {
             if (options.mode !== 'floating') {
                 if (window.ischildof(this.host)) {
+                    var newSize = window.parent().width() - (window.outerWidth() - window.width()) - 2 * this.windowsOffset;
                     if (this.orientation === 'vertical') {
-                        window.jqxWindow('width', window.parent().width() - (window.outerWidth() - window.width()) - 2 * this.windowsOffset);
+                        window.jqxWindow('width', newSize);
                     } else {
-                        window.jqxWindow('width', window.parent().width() - (window.outerWidth() - window.width()) - 2 * this.windowsOffset);
+                        window.jqxWindow('width', newSize);
                     }
                 }
             }

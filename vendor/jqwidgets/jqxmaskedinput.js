@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -133,6 +133,12 @@ License: http://jqwidgets.com/license/
 
         // creates the masked input's instance. 
         createInstance: function (args) {
+            this.render();
+        },
+
+        render: function()
+        {
+            this.element.innerHTML = "";
             this.host
 	        .attr({
 	            role: "maskedinput"
@@ -148,12 +154,17 @@ License: http://jqwidgets.com/license/
             this.maskbox.addClass(this.toThemeProperty('jqx-reset'));
             this.maskbox.addClass(this.toThemeProperty('jqx-input-content'));
             this.maskbox.addClass(this.toThemeProperty('jqx-widget-content'));
+            var name = this.host.attr('name');
+            if (!name) name = this.element.id;
+            this.maskbox.attr('name', name);
+
+            var me = this;
             this.propertyChangeMap['disabled'] = function (instance, key, oldVal, value) {
                 if (value) {
-                    instance.maskbox.addClass(this.toThemeProperty('jqx-input-disabled'));
+                    instance.maskbox.addClass(me.toThemeProperty('jqx-input-disabled'));
                 }
                 else {
-                    instance.maskbox.removeClass(this.toThemeProperty('jqx-input-disabled'));
+                    instance.maskbox.removeClass(me.toThemeProperty('jqx-input-disabled'));
                 }
             }
 
@@ -927,18 +938,20 @@ License: http://jqwidgets.com/license/
             }
 
             if (key === 'theme') {
-                $.jqx.utilities.setTheme(oldvalue, value, this.host);
+                $.jqx.utilities.setTheme(oldValue, value, this.host);
             }
 
-            if (self.disabled) {
-                object.maskbox.addClass(object.toThemeProperty('jqx-input-disabled'));
-                object.host.addClass(object.toThemeProperty('jqx-fill-state-disabled'));
-                object.maskbox.attr("disabled", true);
-            }
-            else {
-                object.host.removeClass(this.toThemeProperty('jqx-fill-state-disabled'));
-                object.host.removeClass(this.toThemeProperty('jqx-input-disabled'));
-                object.maskbox.attr("disabled", false);
+            if (key == 'disabled') {
+                if (value) {
+                    object.maskbox.addClass(object.toThemeProperty('jqx-input-disabled'));
+                    object.host.addClass(object.toThemeProperty('jqx-fill-state-disabled'));
+                    object.maskbox.attr("disabled", true);
+                }
+                else {
+                    object.host.removeClass(this.toThemeProperty('jqx-fill-state-disabled'));
+                    object.host.removeClass(this.toThemeProperty('jqx-input-disabled'));
+                    object.maskbox.attr("disabled", false);
+                }
             }
 
             if (key == "readOnly") {

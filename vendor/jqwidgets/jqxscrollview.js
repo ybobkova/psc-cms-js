@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -71,6 +71,10 @@ License: http://jqwidgets.com/license/
                     clearInterval(this.slideShowTimer);
                 }
             }
+        },
+
+        destroy: function () {
+            this.host.remove();
         },
 
         _getEvent: function (event) {
@@ -197,6 +201,36 @@ License: http://jqwidgets.com/license/
                 self._movePermited = false;
                 self._mouseDown = false;
             });
+            
+            try
+            {
+                if (document.referrer != "" || window.frameElement) {
+                    if (window.top != null) {
+                        if (window.parent && document.referrer) {
+                            parentLocation = document.referrer;
+                        }
+                    }
+
+                    if (parentLocation.indexOf(document.location.host) != -1) {
+                        var eventHandle = function (event) {
+                            if (self._movePermited) {
+                                self._dropTarget();
+                            }
+                            self._movePermited = false;
+                            self._mouseDown = false;
+                        };
+
+                        if (window.top.document.addEventListener) {
+                            window.top.document.addEventListener('mouseup', eventHandle, false);
+
+                        } else if (window.top.document.attachEvent) {
+                            window.top.document.attachEvent("on" + 'mouseup', eventHandle);
+                        }
+                    }                      
+                }
+            }
+            catch (error) {
+            }
         },
 
         _render: function () {

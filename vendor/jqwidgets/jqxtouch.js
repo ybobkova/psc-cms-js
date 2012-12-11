@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -137,10 +137,10 @@ License: http://jqwidgets.com/license/
             if (Math.abs(diff) >= this.swipeMin && !this._swipeEvent && !this._swipeLocked) {
                 this._swipeEvent = this._getSwipeEvent(diff, direction)
             }
-            if (Math.abs(diff) <= this.swipeMax) {
-                e.stopImmediatePropagation();
-                return false;
-            }
+            //if (Math.abs(diff) <= this.swipeMax) {
+             //   e.stopImmediatePropagation();
+           //     return false;
+           // }
             return true;
         },
 

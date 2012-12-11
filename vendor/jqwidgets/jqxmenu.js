@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -212,6 +212,7 @@ License: http://jqwidgets.com/license/
             if (items == null) {
                 return;
             }
+            if (items.length == 0) return "";
 
             var self = this;
             this.items = new Array();
@@ -243,6 +244,10 @@ License: http://jqwidgets.com/license/
             }
             if (!label) {
                 label = "Item";
+            }
+
+            if (typeof item === 'string') {
+                label = item;
             }
 
             var selected = false;
@@ -312,6 +317,7 @@ License: http://jqwidgets.com/license/
         },
 
         isTouchDevice: function () {
+            if (this._isTouchDevice != undefined) return this._isTouchDevice;
             var isTouchDevice = $.jqx.mobile.isTouchDevice();
             if (this.touchMode == true) {
                 isTouchDevice = true;
@@ -323,7 +329,7 @@ License: http://jqwidgets.com/license/
                 this.host.addClass(this.toThemeProperty('jqx-touch'));
                 $(".jqx-menu-item").addClass(this.toThemeProperty('jqx-touch'));
             }
-
+            this._isTouchDevice = isTouchDevice;
             return isTouchDevice;
         },
 
@@ -339,7 +345,9 @@ License: http://jqwidgets.com/license/
             $.each(items, function () {
                 var item = this;
                 if (item.hasItems == true) {
-                    me._closeItem(me, item);
+                    if (item.isOpen) {
+                        me._closeItem(me, item);
+                    }
                 }
             });
 
@@ -443,7 +451,7 @@ License: http://jqwidgets.com/license/
                 return false;
 
             var $submenu = $(item.subMenuElement);
-
+          
             var isTopItem = item.level == 0 && this.mode == 'horizontal';
             var subMenuOffset = this._getClosedSubMenuOffset(item);
             var top = subMenuOffset.top;
@@ -767,6 +775,11 @@ License: http://jqwidgets.com/license/
             var $popupElement = $submenu.closest('div.jqx-menu-popup');
             var $menuElement = $(item.element);
             var offset = item.level == 0 ? this._getOffset(item.element) : $menuElement.position()
+
+            if (item.level > 0 && this.hasTransform) {
+                var topTransform = parseInt($menuElement.offset().top) - parseInt(this._getOffset(item.element).top);
+                offset.top += topTransform;
+            }
 
             if (item.level == 0 && this.mode == 'popup') {
                 offset = $menuElement.offset();
@@ -1133,19 +1146,41 @@ License: http://jqwidgets.com/license/
             }
         },
 
+        _getBodyOffset: function () {
+            var top = 0;
+            var left = 0;
+            if ($('body').css('border-top-width') != '0px') {
+                top = parseInt($('body').css('border-top-width'));
+                if (isNaN(top)) top = 0;
+            }
+            if ($('body').css('border-left-width') != '0px') {
+                left = parseInt($('body').css('border-left-width'));
+                if (isNaN(left)) left = 0;
+            }
+            return { left: left, top: top };
+        },
+
         _getOffset: function (object) {
-            var scrollTop = $(window).scrollTop();
-            var scrollLeft = $(window).scrollLeft();
+     //       var scrollTop = $(window).scrollTop();
+     //       var scrollLeft = $(window).scrollLeft();
             var isSafari = $.jqx.mobile.isSafariMobileBrowser();
 
             var offset = $(object).offset();
             var top = offset.top;
             var left = offset.left;
-            if (isSafari != null && isSafari) {
+
+            if ($('body').css('border-top-width') != '0px') {
+                top = parseInt(top) + this._getBodyOffset().top;
+            }
+            if ($('body').css('border-left-width') != '0px') {
+                left = parseInt(left) + this._getBodyOffset().left;
+            }
+
+            if (this.hasTransform || (isSafari != null && isSafari)) {
                 var point = { left: $.jqx.mobile.getLeftPos(object), top: $.jqx.mobile.getTopPos(object) };
                 return point;
             }
-            else return $(object).offset();
+            else return { left: left, top: top };
         },
 
         _isRightClick: function (e) {
@@ -1320,22 +1355,22 @@ License: http://jqwidgets.com/license/
             var me = this;
             $.data(me.element, 'animationHideDelay', me.animationHideDelay);
             var isTouchDevice = this.isTouchDevice();
-            //    isTouchDevice = true;
             $.data(document.body, 'menuel', this);
 
             if (this.autoCloseOnClick) {
                 this.removeHandler($(document), 'mousedown.menu' + this.element.id, me._closeAfterClick);
                 this.addHandler($(document), 'mousedown.menu' + this.element.id, me._closeAfterClick, me);
-                this.removeHandler($(document), 'mouseup.menu' + this.element.id, me._closeAfterClick);
-                this.addHandler($(document), 'mouseup.menu' + this.element.id, me._closeAfterClick, me);
+       //         this.removeHandler($(document), 'mouseup.menu' + this.element.id, me._closeAfterClick);
+       //         this.addHandler($(document), 'mouseup.menu' + this.element.id, me._closeAfterClick, me);
                 if (isTouchDevice) {
                     this.addHandler($(document), 'touchstart.menu' + this.element.id, me._closeAfterClick, me);
                 }
             }
 
+            this.hasTransform = $.jqx.utilities.hasTransform(this.host);
+
             this._applyOrientation(mode, oldMode);
 
-            //      this.host.css('visibility', 'visible');
             if (me.enableRoundedCorners) {
                 this.host.addClass(me.toThemeProperty('jqx-rc-all'));
             }
@@ -1349,11 +1384,6 @@ License: http://jqwidgets.com/license/
                 }
 
                 me.removeHandler($menuElement, 'click');
-                //                me.removeHandler($menuElement, 'selectstart');
-                //                me.addHandler($menuElement, 'selectstart', function (e) {
-                //                    return false;
-                //                });
-
                 me.addHandler($menuElement, 'click', function (e) {
                     if (item.disabled)
                         return;
@@ -1388,12 +1418,20 @@ License: http://jqwidgets.com/license/
                             var href = anchor.attr('href');
                             var target = anchor.attr('target');
                             if (href != null) {
-                                if (target != null && target == "_blank") {
+                                if (target != null) {
                                     window.open(href, target);
                                 }
                                 else {
                                     window.location = href;
                                 }
+                                //if (target != null && target == "_blank") {
+                                //    window.open(href, target);
+                                //}
+                                //else {
+                                //   window.location = href;
+                                //    window.open(href, target);
+
+                                //}
                             }
                         }
                     }
@@ -1450,9 +1488,6 @@ License: http://jqwidgets.com/license/
                         me.addHandler($menuElement, 'mouseenter', function () {
                             if (me.autoOpen || (item.level > 0 && !me.autoOpen)) {
                                 clearTimeout($submenu.data('timer').hide)
-                                //                                if ($submenu != null) {
-                                //                                    $submenu.stop();
-                                //                                }
                             }
 
                             if (item.parentId && item.parentId != 0) {
@@ -1582,17 +1617,19 @@ License: http://jqwidgets.com/license/
             var liTags = $(uiObject).find('li');
             var k = 0;
             for (var index = 0; index < liTags.length; index++) {
+                var listItem = liTags[index];
+                var $listItem = $(listItem);
 
-                if (liTags[index].className.indexOf('jqx-menu') == -1 && this.autoGenerate == false)
+                if (listItem.className.indexOf('jqx-menu') == -1 && this.autoGenerate == false)
                     continue;
 
-                var id = liTags[index].id;
+                var id = listItem.id;
                 if (!id) {
                     id = this.createID();
                 }
 
                 if (refresh) {
-                    liTags[index].id = id;
+                    listItem.id = id;
                     this.items[k] = new $.jqx._jqxMenu.jqxMenuItem();
                     this.menuElements[id] = this.items[k];
                 }
@@ -1601,7 +1638,7 @@ License: http://jqwidgets.com/license/
                 var parentId = 0;
                 var me = this;
 
-                $(liTags[index]).children().each(function () {
+                $listItem.children().each(function () {
                     if (!refresh) {
                         $(this).removeClass();
 
@@ -1629,7 +1666,7 @@ License: http://jqwidgets.com/license/
                     }
                 });
 
-                $(liTags[index]).parents().each(function () {
+                $listItem.parents().each(function () {
                     if (this.className.indexOf('jqx-menu-item') != -1) {
                         parentId = this.id;
                         return false;
@@ -1642,8 +1679,8 @@ License: http://jqwidgets.com/license/
                 });
 
                 var separator = false;
-                var type = liTags[index].getAttribute('type');
-                var ignoretheme = liTags[index].getAttribute('ignoretheme');
+                var type = listItem.getAttribute('type');
+                var ignoretheme = listItem.getAttribute('ignoretheme');
 
                 if (ignoretheme) {
                     if (ignoretheme == 'true' || ignoretheme == true) {
@@ -1653,7 +1690,7 @@ License: http://jqwidgets.com/license/
                 else ignoretheme = false;
 
                 if (!type) {
-                    type = liTags[index].type;
+                    type = listItem.type;
                 }
                 else {
                     if (type == 'separator') {
@@ -1675,8 +1712,8 @@ License: http://jqwidgets.com/license/
                     menuItem.type = type;
                     menuItem.separator = separator;
                     menuItem.element = liTags[index];
-                    var anchor = $(liTags[index]).find('a:first');
-                    menuItem.level = $(liTags[index]).parents('li').length;
+                    var anchor = $listItem.find('a:first');
+                    menuItem.level = $listItem.parents('li').length;
                     menuItem.anchor = anchor.parents('li').length == menuItem.level + 1 ? anchor : null;
                 }
                 menuItem.ignoretheme = ignoretheme;
@@ -1691,26 +1728,26 @@ License: http://jqwidgets.com/license/
 
                 if (this.autoGenerate) {
                     if (type == 'separator') {
-                        $(liTags[index]).removeClass();
-                        $(liTags[index]).addClass(this.toThemeProperty('jqx-menu-item-separator'));
+                        $listItem.removeClass();
+                        $listItem.addClass(this.toThemeProperty('jqx-menu-item-separator'));
                     }
                     else {
                         if (!ignoretheme) {
-                            $(liTags[index]).removeClass();
+                            $listItem.removeClass();
                             if (menuItem.level > 0) {
-                                $(liTags[index]).addClass(this.toThemeProperty('jqx-item'));
-                                $(liTags[index]).addClass(this.toThemeProperty('jqx-menu-item'));
+                                $listItem.addClass(this.toThemeProperty('jqx-item'));
+                                $listItem.addClass(this.toThemeProperty('jqx-menu-item'));
                             }
                             else {
-                                $(liTags[index]).addClass(this.toThemeProperty('jqx-item'));
-                                $(liTags[index]).addClass(this.toThemeProperty('jqx-menu-item-top'));
+                                $listItem.addClass(this.toThemeProperty('jqx-item'));
+                                $listItem.addClass(this.toThemeProperty('jqx-menu-item-top'));
                             }
                         }
                     }
                 }
 
                 if (refresh && !ignoretheme) {
-                    menuItem.hasItems = $(liTags[index]).find('li').length > 0;
+                    menuItem.hasItems = $listItem.find('li').length > 0;
                 }
             }
         },
@@ -1732,6 +1769,9 @@ License: http://jqwidgets.com/license/
                 me.removeHandler($menuElement, 'mousedown');
                 me.removeHandler($menuElement, 'mouseleave');
             });
+            $.data(document.body, 'menuel', null);
+            this.items = new Array();
+            this.host.removeClass();
             this.host.remove();
         },
 
@@ -1757,30 +1797,6 @@ License: http://jqwidgets.com/license/
             return result;
         },
 
-        _refreshStyle: function () {
-            var me = this;
-            this.host.removeClass();
-            this.host.addClass(me.toThemeProperty('jqx-widget'));
-            this.host.addClass(me.toThemeProperty('jqx-widget-header'));
-
-            $.each(this.items, function (index) {
-                $(this.element).removeClass();
-                if (this.hasItems) {
-                    $(this.subMenuElement).addClass(me.toThemeProperty('jqx-widget-content'));
-                    $(this.subMenuElement).addClass(me.toThemeProperty('jqx-menu-dropdown'));
-                }
-
-                if (this.level == 0) {
-                    $(this.element).addClass(me.toThemeProperty('jqx-item'));
-                    $(this.element).addClass(me.toThemeProperty('jqx-menu-item-top'));
-                }
-                else {
-                    $(this.element).addClass(me.toThemeProperty('jqx-item'));
-                    $(this.element).addClass(me.toThemeProperty('jqx-menu-item'));
-                }
-            });
-        },
-
         propertyChangedHandler: function (object, key, oldvalue, value) {
             if (this.isInitialized == undefined || this.isInitialized == false)
                 return;
@@ -1789,6 +1805,7 @@ License: http://jqwidgets.com/license/
                 return;
 
             if (key == 'touchMode') {
+                this._isTouchDevice = null;
                 object._render(value, oldvalue);
             }
 

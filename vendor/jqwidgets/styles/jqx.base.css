@@ -102,7 +102,7 @@
 }
 
 /*jqxButton, jqxToggleButton, jqxRepeatButton Style*/
-.jqx-button{outline: none; border: 1px solid transparent; padding: 3px; margin: 0 0 0 0; cursor: default; }
+.jqx-button{outline: none; border: 1px solid transparent; padding: 3px; text-align: center; vertical-align: central; margin: 0 0 0 0; cursor: default; }
 .jqx-buttongroup{}
 /*applied to the link button's anchor element.*/
 .jqx-link
@@ -355,7 +355,6 @@
     border-width: 0px 0px 1px 0px;
     border-color: #aaa;
     white-space: nowrap;
-    border-style: solid;
     overflow: hidden;
     text-align: left;
     padding: 0px;
@@ -428,7 +427,6 @@
     border-color: transparent;  
     background: #fff;
     white-space: nowrap;
-    border-style: solid;
     font-weight: normal; 
     font-size: inherit;
  }
@@ -450,7 +448,6 @@
     border-width: 0px 0px 0px 0px;
     border-color: transparent;
     white-space: nowrap;
-    border-style: solid;
     overflow: hidden;
  }
  /*applied to a grid cell that is part of a rows group.*/
@@ -458,7 +455,6 @@
     border-style: solid;
     border-width: 0px 0px 1px 0px;
     white-space: nowrap;
-    border-style: solid;
     font-weight: normal;   
  }
  /*applied to a grid cell that is part of a details row and grouping is enabled.*/
@@ -496,6 +492,7 @@
  .jqx-grid-selectionarea {
     border: 1px solid transparent;
     opacity: 0.5;
+    filter: alpha(opacity=50);
  }
  /*applied to a hovered grid cell.*/
  .jqx-grid-cell-hover {
@@ -1149,6 +1146,8 @@
     cursor: pointer;
     margin: 0 0 0 0;
     padding: 0 0 0 0;
+    position: relative;
+    left: 5px;
 }
 /*applied to the tab close button when the tab is selected.*/
 .jqx-tabs-close-button-selected
@@ -1386,9 +1385,7 @@
 }
 .jqx-tabs-content-element
 {
-    height: 99%;
-    margin-left: 2px; 
-    margin-top: 2px; 
+    height: 100%;
     overflow: auto;
 }
 
@@ -1409,7 +1406,6 @@
     padding: 0px;
     border: 1px solid transparent;
     outline: none;
-    padding: 0px;
     margin: 0px 3px 0px 3px;
 }
 /*applied to the check box when the mouse cursor is over it.*/
@@ -1499,7 +1495,6 @@
     padding: 0px;
     border: 1px solid transparent;
     outline: none;
-    padding: 0px;
     margin: 1px 3px 0px 3px;
     -moz-border-radius: 7px;
     -webkit-border-radius: 7px;
@@ -1614,72 +1609,6 @@
     background-image: url(images/star_disabled.png);
     overflow: hidden;
 }
-/*jqxTooltip Style*/
-.jqx-tooltip-content
-{
-    -moz-border-radius: 0px;
-    -webkit-border-radius: 0px;
-    margin: 0px;
-    border-radius: 0px;
-    padding: 3px 6px 3px 6px;
-    border: 1px solid transparent;
-    border-collapse: collapse;
-    text-align: center;
-    font-weight: normal; 
-    border-spacing: 0px;
-}
-/*applied to the tooltip's header.*/
-.jqx-tooltip-header
-{
-    -moz-border-radius: 0px;
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
-    padding: 3px 6px 3px 6px;
-    border-style:solid;
-    border-color: transparent;
-    border-width: 1px;
-    border-collapse: collapse;
-    font-weight: bold;
-    border-spacing: 0px;
-}
-/*applied to the tooltip's content when the validation fails. For example: jqxNumberInput's value validation.*/
-.jqx-tooltip-content-invalid
-{
-    -moz-border-radius: 0px;
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
-    padding: 3px 6px 3px 6px;
-    border: 0px solid #aaaaaa;
-    border-collapse: collapse;
-    text-align: center;
-    font-weight: normal;
-    color: #FFFFFF;
-    background-color: #FF0000; 
-    border-spacing: 0px;
-}
-/*applied to the tooltip's header when the validation fails. For example: jqxNumberInput's value validation.*/
-.jqx-tooltip-header-invalid
-{
-    -moz-border-radius: 0px;
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
-    padding: 3px 6px 3px 6px;
-    border: 0px solid #aaaaaa;
-    border-collapse: collapse;
-    background-color: #FF0000;
-    color: #FFFFFF;
-    font-weight: bold;
-    border-spacing: 0px;
-}
-/*applied to the tooltip's table. The tooltip contains a table with 2 rows - header and content. This class is applied to the table element.*/
-.jqx-tooltip-table
-{
-    padding: 0px;
-    margin: 0px;
-    border: 1px solid transparent;
-    border-spacing: 0px;
-}
-
 /*jqxCalendar Style*/
 .jqx-calendar
 {
@@ -2145,6 +2074,9 @@ of the horizontal scrollbar.*/
     border: 0px solid #aaaaaa;
     -moz-background-clip: padding; background-clip: padding-box; -webkit-background-clip: padding-box;
 }
+.jqx-combobox-input::-ms-clear {
+    display: none;
+}
 /*applied to the ComboBox's content when the widget is disabled.*/
 .jqx-combobox-content-disabled
 {
@@ -2452,6 +2384,7 @@ of the horizontal scrollbar.*/
 .jqx-slider
 {
     outline: none;
+    clear: both;
 }
 /*applied to the ticks which can be in the top/bottom/both sides of the jqxSlider*/
 .jqx-slider-tick
@@ -2464,6 +2397,7 @@ of the horizontal scrollbar.*/
 {
     width: 1px;
     border-left: none;
+    margin-top: 1px;
 }
 /*applied to the ticks when the slider is in vertical mode*/
 .jqx-slider-tick-vertical
@@ -2531,6 +2465,7 @@ of the horizontal scrollbar.*/
 .jqx-slider-track-horizontal
 {
     height: 8px;
+    margin-top: 2px;
 }
 /*used in vertical slider*/
 .jqx-slider-track-vertical
@@ -2627,7 +2562,6 @@ of the horizontal scrollbar.*/
 }
 .jqx-draggable-disabled
 {
-    background-color: Aqua;
     cursor: default;
 }
 .jqx-validator-hint
@@ -2811,7 +2745,7 @@ of the horizontal scrollbar.*/
 .jqx-input{overflow: hidden; background-color: inherit; border-color: #c7c7c7;}
 
 /*applied to all widgets*/
-.jqx-widget{-moz-background-clip: padding; background-clip: padding-box; -webkit-background-clip: padding-box; direction: ltr; -webkit-tap-highlight-color: rgba(0,0,0,0); font-family: Verdana,Arial,sans-serif; font-style: normal; font-size: 13px;}
+.jqx-widget{zoom: 1; color: #000; -moz-background-clip: padding; background-clip: padding-box; -webkit-appearance: none; -webkit-background-clip: padding-box; direction: ltr; -webkit-tap-highlight-color: rgba(0,0,0,0); font-family: Verdana,Arial,sans-serif; font-style: normal; font-size: 13px;}
 
 .jqx-item{ color: inherit; border: 1px solid transparent; background: transparent; }
 
@@ -2876,6 +2810,28 @@ of the horizontal scrollbar.*/
     border-style: solid; 
     -moz-background-clip: padding; background-clip: padding-box; -webkit-background-clip: padding-box;
 }
+input[type=text].jqx-input, input[type=password].jqx-input {
+    min-height: 16px;
+    min-width: 16px;
+    margin: 0px;
+    border-width: 1px;
+    border-style: solid;
+    font-size: 13px;
+    padding: 0px;
+}
+.jqx-input::-ms-clear {
+    display: none;
+}
+.jqx-input-content::-ms-clear {
+    display: none;
+}
+.jqx-input::-ms-value {
+    margin: 0px;
+    padding: 0px;
+    min-height: 13px;
+    line-height: 13px;
+}
+
 /*applied to the input when the validation fails.*/
 .jqx-input-invalid
 {
@@ -2887,7 +2843,7 @@ of the horizontal scrollbar.*/
 .jqx-input-content
 {
     -webkit-appearance: none;
-    padding: 1 1 1 1;
+    padding: 1px;
     resize: none;
     outline: none;
     outline-width: 0px;
@@ -2898,12 +2854,12 @@ of the horizontal scrollbar.*/
 .jqx-input-disabled
 {
     -webkit-appearance: none;
-    padding: 1 1 1 1;
     resize: none;
     outline: none;
     outline-width: 0px;
     border: none;
 }
+
 /*applied to the jqxDateTimeInput's button header.*/
 .jqx-input-button-header
 {
@@ -3085,7 +3041,6 @@ ol.jqx-listmenu, ul.jqx-listmenu
     float: none;
     overflow: hidden;
     text-align: left;
-    cursor: pointer;
     position: relative;
 }
 
@@ -3156,4 +3111,53 @@ ol li .jqx-listmenu-item-label:before
 .jqx-listmenu-item-readonly
 {   
     cursor: default;
+}
+.jqx-tooltip
+{
+    position: absolute;
+    width: auto;
+    height: auto;
+}
+.jqx-tooltip-main
+{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    filter: inherit;
+    border-style: solid;
+    border-width: 1px;
+}
+.jqx-tooltip-text
+{
+    padding: 5px 8px;
+    overflow: hidden;
+    filter: inherit;
+}
+.jqx-tooltip, .jqx-tooltip-text, .jqx-tooltip-main {
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    -moz-background-clip: padding; background-clip: padding-box; -webkit-background-clip: padding-box;   
+}
+.jqx-tooltip-arrow
+{
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    display: block;
+    border-style: solid;
+    margin: -6px 0 0 -7px;
+    background: transparent !important;
+    filter: inherit;
+}
+.jqx-tooltip-arrow-t-b
+{
+    border-left-color: transparent !important;
+    border-right-color: transparent !important;
+}
+.jqx-tooltip-arrow-l-r
+{
+    border-top-color: transparent !important;
+    border-bottom-color: transparent !important;
 }

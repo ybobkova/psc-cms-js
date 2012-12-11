@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -28,7 +28,7 @@ License: http://jqwidgets.com/license/
             this.thumbSize = '40%';
             this.orientation = 'horizontal';
             this.switchRatio = '50%';
-
+            this.metroMode = false;
             this._isMouseDown = false;
             this._dimensions = {
                 horizontal: {
@@ -71,6 +71,11 @@ License: http://jqwidgets.com/license/
         },
 
         createInstance: function (args) {
+            if (this.theme && this.theme != "" && (this.theme.indexOf('metro') != -1 || this.theme.indexOf('office') != -1)) {
+                if (this.thumbSize == '40%') this.thumbSize = 12;
+                this.metroMode = true;
+            }
+
             var count = $.data(document.body, 'jqx-switchbutton') || 1;
             this._idHandler(count);
             $.data(document.body, 'jqx-draggables', ++count);
@@ -139,9 +144,9 @@ License: http://jqwidgets.com/license/
         },
 
         _render: function () {
-            this._thumb = $('<span/>');
-            this._onLabel = $('<span/>');
-            this._offLabel = $('<span/>');
+            this._thumb = $('<div/>');
+            this._onLabel = $('<div/>');
+            this._offLabel = $('<div/>');
             this._wrapper = $('<div/>');
             this._onLabel.appendTo(this.host);
             this._thumb.appendTo(this.host);
@@ -181,9 +186,42 @@ License: http://jqwidgets.com/license/
             wrapper.css(opSize, el[opSize]());
             this._thumbLayout();
             this._labelsLayout();
-            border = this._borders[this._dir('opposite')] / 2;
-            wrapper.css(size, el[size]() + this._offLabel[this._dir('oSize')]() + border + 0.8);
+            border = this._borders[this._dir('opposite')];
+            wrapper.css(size, el[size]() + this._offLabel[this._dir('oSize')]() + border);
             wrapper.css(opSize, el[opSize]());
+
+            if (this.metroMode || (this.theme && this.theme != "" && (this.theme.indexOf('metro') != -1 || this.theme.indexOf('office') != -1))) {
+                var thumb = this._thumb,
+                 onLabel = this._onLabel,
+                 offLabel = this._offLabel;
+                onLabel.css('position', 'relative');
+                onLabel.css('top', '1px');
+                onLabel.css('margin-left', '1px');
+                offLabel.css('position', 'relative');
+                offLabel.css('top', '1px');
+                offLabel.css('left', '-2px');
+                offLabel.css('margin-right', '1px');
+                offLabel.height(onLabel.height() - 2);
+                offLabel.width(onLabel.width() - 3);
+
+                onLabel.height(onLabel.height() - 2);
+                onLabel.width(onLabel.width() - 3);
+                this._thumb[this._dir('size')](this.thumbSize + 3);
+                this._thumb.css('top', '-1px');
+                this._thumb[this._dir('opSize')](el[this._dir('opSize')]() + 2);
+                this._thumb.css('position', 'relative');
+                this.host.css('overflow', 'visible');
+                if (this.checked) {
+                    this._onLabel.css('visibility', 'visible');
+                    this._offLabel.css('visibility', 'hidden');
+                    this._thumb.css('left', '0px');
+                }
+                else {
+                    this._onLabel.css('visibility', 'hidden');
+                    this._offLabel.css('visibility', 'visible');
+                    this._thumb.css('left', '-2px');
+                }
+            }
         },
 
         _thumbLayout: function () {
@@ -236,7 +274,7 @@ License: http://jqwidgets.com/license/
             if (this.orientation === 'horizontal') {
                 this._onLabel.css('float', 'left');
                 this._thumb.css('float', 'left');
-                this._offLabel.css('float', 'right');
+                this._offLabel.css('float', 'left');
             } else {
                 this._onLabel.css('display', 'block');
                 this._offLabel.css('display', 'block');
@@ -302,6 +340,11 @@ License: http://jqwidgets.com/license/
         _mouseDown: function (event) {
             var self = event.data.self,
                 wrapper = self._wrapper;
+            if (self.metroMode) {
+                self.host.css('overflow', 'hidden');
+                self._onLabel.css('visibility', 'visible');
+                self._offLabel.css('visibility', 'visible');
+            }
             self._mouseStartPosition = self._getMouseCoordinates(event);
             self._buttonStartPosition = {
                 left: parseInt(wrapper.css('margin-left'), 10) || 0,
@@ -318,6 +361,9 @@ License: http://jqwidgets.com/license/
 
         _mouseUp: function (event) {
             var self = event.data.self;
+            if (self.metroMode) {
+                self.host.css('overflow', 'visible');
+            }
             self._isMouseDown = false;
             self._thumb.removeClass(self.toThemeProperty('jqx-fill-state-pressed'));
             if (!self._isDistanceTraveled) {
@@ -388,6 +434,18 @@ License: http://jqwidgets.com/license/
         },
 
         _switchButton: function (check, duration, notTrigger) {
+            if (this.metroMode) {            
+                this.host.css('overflow', 'hidden');
+                this._onLabel.css('visibility', 'visible');
+                this._offLabel.css('visibility', 'visible');
+                if (check) {
+                    this._thumb.css('left', '0px');
+                }
+                else {
+                    this._thumb.css('left', '-2px');
+                }
+            }
+
             var wrapper = this._wrapper,
                 self = this,
                 options = {},
@@ -404,6 +462,16 @@ License: http://jqwidgets.com/license/
                 if (!notTrigger) {
                     self._handleEvent(check);
                 }
+                if (self.metroMode) self.host.css('overflow', 'visible');
+                if (check) {
+                    self._onLabel.css('visibility', 'visible');
+                    self._offLabel.css('visibility', 'hidden');
+                }
+                else {
+                    self._onLabel.css('visibility', 'hidden');
+                    self._offLabel.css('visibility', 'visible');
+                }
+
                 self.checked = check;
             });
         },

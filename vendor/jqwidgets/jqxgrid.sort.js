@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -82,7 +82,7 @@ License: http://jqwidgets.com/license/
                 if (records.length) {
                     var length = records.length;
                     // tries to loop through the records with for loop for better performance.
-                    for (i = 0; i < length; i++) {
+                    for (var i = 0; i < length; i++) {
                         var record = records[i];
                         if (record != null) {
                             var recordvalue = record;
@@ -193,9 +193,9 @@ License: http://jqwidgets.com/license/
 
             if (this.sortdirection) {
                 $.each(this.columns.records, function (i, value) {
-                    var groupingsortelements = $.data(document.body, "groupsortelements" + this.datafield);
+                    var groupingsortelements = $.data(document.body, "groupsortelements" + this.displayfield);
 
-                    if (sortcolumn == null || this.datafield != sortcolumn) {
+                    if (sortcolumn == null || this.displayfield != sortcolumn) {
                         $(this.sortasc).hide();
                         $(this.sortdesc).hide();
 
@@ -265,9 +265,9 @@ License: http://jqwidgets.com/license/
                     ascending = false;
                 }
 
-                var columnbydatafield = self.getcolumn(datafield);
-                if (columnbydatafield == undefined || columnbydatafield == null)
-                    return;
+                //var columnbydatafield = self.getcolumn(datafield);
+                //if (columnbydatafield == undefined || columnbydatafield == null)
+                //    return;
 
                 if (sortdirection != null) {
                     self.sortdirection = { 'ascending': ascending, 'descending': !ascending };
@@ -322,7 +322,7 @@ License: http://jqwidgets.com/license/
             if (column.sortable && self.sortable) {
                 var sortinformation = self.getsortinformation();
                 var checked = null;
-                if (sortinformation.sortcolumn != null && sortinformation.sortcolumn == column.datafield) {
+                if (sortinformation.sortcolumn != null && sortinformation.sortcolumn == column.displayfield) {
                     checked = sortinformation.sortdirection.ascending;
                     if (self.sorttogglestates > 1) {
                         if (checked == true) {
@@ -340,7 +340,7 @@ License: http://jqwidgets.com/license/
                     checked = true;
                 }
 
-                self.sortby(column.datafield, checked, null);
+                self.sortby(column.displayfield, checked, null);
             }
         }
     });

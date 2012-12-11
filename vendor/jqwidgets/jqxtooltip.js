@@ -1,595 +1,849 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
 
 /*
-* jqxtooltip.js
-*
-* This source is property of jqwidgets and/or its partners and is subject to jqwidgets Source Code License agreement and jqwidgets EULA.
-* Copyright (c) 2011 jqwidgets.
-* <Licensing info>
-* 
-* http://www.jQWidgets.com
-*
-*/
-/*
 * Depends:
-*   jqxcore.js*/
+*   jqxcore.js
+*/
+
 (function ($) {
 
     $.jqx.jqxWidget("jqxTooltip", "", {});
 
     $.extend($.jqx._jqxTooltip.prototype, {
         defineInstance: function () {
-            // Type: String
-            // Default: 'Header'
-            // Tooltip header.
-            this.header = "Header";
-            // Type: String
-            // Default: jqxTooltip
-            // Tooltip content.
-            this.content = "jqxTooltip";
-            //Type: Number
-            if (this.width == undefined) {
-                this.width = null;
-            }
+            //// properties
+            this.width = 'auto';
+            this.height = 'auto';
+            this.position = 'default'; // possible values: top, bottom, left, right, top-left, bottom-left, top-right, bottom-right, absolute, mouse, mouseenter, default
+            this.enableBrowserBoundsDetection = true; // possible values: true, false
+            this.content = '';
+            this.left = 0;
+            this.top = 0;
+            this.absolutePositionX = 0;
+            this.absolutePositionY = 0;
+            this.trigger = 'hover'; // possible values: hover, click
+            this.showDelay = 100;
+            this.autoHide = true; // possible values: true, false
+            this.autoHideDelay = 3000;
+            this.closeOnClick = true; // possible values: true, false
+            this.disabled = false; // possible values: true, false
+            this.animationShowDelay = 200;
+            this.animationHideDelay = 'fast';
+            this.showArrow = true; // possible values: true, false
+            this.name = '';
+            this.opacity = 0.9;
+          
+            this._isOpen = false;
 
-            //Type: Number
-            if (this.height == undefined) {
-                this.height = null;
-            }
-            //Type: String.
-            //Default: "bottom-right".
-            //Possible values: "top", "left", "bottom", "right", "bottom-right", "top-right", "top-left", "absolute", "relative"
-            this.location = "bottom-right",
-            // Type: Number
-            // Default: 0
-            // Gets or sets the horizontal offset of the tooltip when the location is set to 'absolute' or 'relative.
-            this.horizontalOffset = 0;
-            // Type: Number
-            // Default: 0
-            // Gets or sets the vertical offset of the tooltip when the location is set to 'absolute' or 'relative.
-            this.verticalOffset = 0;
-            // Type: Bool.
-            // Default true.
-            // Gets or sets whether the fade animation is enabled.  
-            this.enableAnimation = true;
-            // Type: Number
-            // Default: 450
-            // Gets or sets the delay of the fade animation when the tooltip is going to be opened.
-            this.animationShowDuration = 450,
-            // Type: Number
-            // Default: 250
-            // Gets or sets the delay of the fade animation when the tooltip is going to be hidden.
-            this.animationHideDuration = 250,
-            // Type: Number
-            // Default: 4000
-            // Gets or sets the delay of the fade animation when the tooltip is going to be closed. 
-            this.animationHideDelay = 4000,
-            // Type: Number
-            // Default: 100
-            // Gets or sets the initial delay before showing the tooltip
-            this.animationShowDelay = 100,
-            // Type: Bool
-            // Default: false
-            // Gets or sets whether to display html inside the tooltip
-            this.showHtml = false;
-            // Type: Bool
-            // Default: false
-            // Gets or sets whether the tooltip will always stay opened until the close method is called.
-            this.staysOpen = false;
-            // Type: Bool
-            // Default: false
-            // Gets whether the tooltip is opened.           
-            this.isOpen = false;
-            // Type: Bool
-            // Defualt: false
-            // Gets whether the tooltip is opened.
-            this.disabled = false;
+            this._eventsMap = {
+                'mousedown': 'touchstart',
+                'mouseup': 'touchend'
+            };
 
-            // Represents Tooltip events:
-            this.events =
-			[
-			    'shown', 'closed'
-            ];
+            //// events
+            this.events = ['open', 'close', 'opening', 'closing'];
         },
 
         createInstance: function (args) {
-            if (this.width != null && this.width.toString().indexOf("px") != -1) {
-                this.host.width(this.width);
-            }
-            else
-                if (this.width != undefined && !isNaN(this.width)) {
-                    this.host.width(this.width);
-                };
+            this._isTouchDevice = $.jqx.mobile.isTouchDevice();
 
-            if (this.height != null && this.height.toString().indexOf("px") != -1) {
-                this.host.height(this.height);
-            }
-            else if (this.height != undefined && !isNaN(this.height)) {
-                this.host.height(this.height);
+            // creates an array based on the name property for storing tooltip IDs
+            var id_array = $.data(document.body, "_tooltipIDArray" + this.name);
+            if (!id_array) {
+                this.ID_Array = new Array();
+                $.data(document.body, "_tooltipIDArray" + this.name, this.ID_Array);
+            } else {
+                this.ID_Array = id_array;
             };
 
-            this.elements = new Array();
-            this.index = 0;
+            // generates a new ID and adds it to an array, based on the name property
+            var key = this._generatekey();
+            var newID = 'jqxtooltip' + key;
+            this.ID_Array.push({ tooltipID: newID, tooltipHost: this.host });
+
+            // appends the tooltip div to the body
+            var tooltipHTML = $('<div id="' + newID + '"><div id ="' + newID + 'Main"><div id="' + newID + 'Text"></div></div><div id="' + newID + 'Arrow"></div></div>');
+            $("body").append(tooltipHTML);
+
+            // sets the tooltips theme and classes
+            this._setTheme();
+
+            // hides the tooltip divs
+            var $newID = $("#" + newID);
+            $newID.css("visibility", "hidden");
+            $newID.css("opacity", 0);
+            $newID.css("z-index", 9999);
+
+            // hides the tooltip's arrow
+            if (this.showArrow == false) {
+                $("#" + newID + "Arrow").css("visibility", "hidden");
+            };
+
+            // sets the width and height of the tooltip
+            this._setSize();
+
+            // sets the content of the tooltip
+            this._setContent();
+
+            //sets the initial position of the tooltip
+            this._initialPosition();
+
+            // triggers the tooltip
+            if (this.disabled == false) {
+                this._trigger();
+                if (this.closeOnClick == true) {
+                    this._clickHide();
+                };
+            };
         },
 
+        //// public methods
+
+        // opens (shows) the tooltip
+        open: function () {
+            if (this.disabled == false && this._id() != "removed") {
+                if (this.position == 'mouse' || this.position == 'mouseenter') {
+                    var tempPosition = this.position;
+                    this.position = 'default';
+                    this._setPosition();
+                    this._animateShow();
+                    this.position = tempPosition;
+                } else {
+                    this._raiseEvent('2');
+                    this._setPosition();
+                    this._animateShow();
+                };
+            };
+        },
+
+        // closes (hides) the tooltip
+        close: function (delay) {
+            var me = this;
+            if (delay == undefined) {
+                delay = this.animationHideDelay;
+            };
+            var opacityValue = new Number($(this._id()).css("opacity")).toFixed(2);
+            if (this._isOpen == true && opacityValue == this.opacity) {
+                clearTimeout(this.autoHideTimeout);
+                this._raiseEvent('3');
+                $(this._id()).animate({
+                    opacity: 0
+                }, delay, function () {
+                    $(me._id()).css("visibility", "hidden");
+                    me._raiseEvent('1');
+                    me._isOpen = false;
+                });
+            };
+        },
+
+        // removes the tooltip
         destroy: function () {
-            this.host
-			.removeClass("jqx-tooltip jqx-rc-all");
+            var length = this.ID_Array.length;
+            this._removeHandlers();
+            $(this._id()).remove();
+            for (var i = 0; i < length; i++) {
+                if (this.ID_Array[i].tooltipHost === this.host) {
+                    this.ID_Array.splice(i, 1);
+                    break;
+                };
+            };
+            $(this.element).removeData('jqxTooltip');
         },
 
-        _raiseEvent: function (id, arg) {
-            if (arg == undefined)
-                arg = { owner: null };
+        //// private methods
 
+        // refreshes the tooltip
+        refresh: function (initialRefresh) {
+            if (initialRefresh == true) {
+                return;
+            };
+
+            var me = this;
+            var opacityValue = new Number($(this._id()).css("opacity")).toFixed(2);
+            if (this._id() != "removed") {
+                if (this.disabled == true && this._isOpen == true && opacityValue == this.opacity) {
+                    clearTimeout(this.autoHideTimeout);
+                    $(this._id()).stop();
+                    $(this._id()).animate({
+                        opacity: 0
+                    }, this.animationHideDelay, function () {
+                        $(me._id()).css("visibility", "hidden");
+                        me._isOpen = false;
+                    });
+                };
+                this._setTheme();
+                this._setSize();
+                this._setContent();
+                this._removeHandlers();
+                if (this.disabled == false) {
+                    this._trigger();
+                    if (this.closeOnClick == true) {
+                        this._clickHide();
+                    };
+                };
+            };
+        },
+
+        // executed when a property is changed
+        propertyChangedHandler: function (object, key, oldvalue, value) {
+            object.refresh();
+        },
+
+        // raises an event
+        _raiseEvent: function (id, args) {
             var evt = this.events[id];
-            args = arg;
-            args.owner = this;
-            if (id == 0) {
-                this.isOpen = true;
-            }
-            if (id == 1) {
-                this.isOpen = false;
-            }
             var event = new jQuery.Event(evt);
             event.owner = this;
-            var result = this.host.trigger(event);
+            event.args = args;
+
+            try {
+                var result = this.host.trigger(event);
+            }
+            catch (error) {
+            }
+
             return result;
         },
 
-        // closes all opened tooltips
-        close: function (element) {
-            var self = this;
-            if (element == undefined || element == null) {
-                $.each(this.elements, function () {
-                    var tooltip = $.data(this.element[0], 'Tooltip');
-                    if (tooltip == undefined) {
-                        tooltip = $.data(self, 'Tooltip');
-                    }
+        // generates a random number, used for unique id
+        _generatekey: function () {
+            var S4 = function () {
+                return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+            };
+            return (S4() + S4());
+        },
 
-                    if (tooltip != null) {
-                        if (self.enableAnimation) {
-                            tooltip.stop().fadeOut(this.animationHideDuration, function () { $(this).remove(); });
+        // selects the id of the current tooltip
+        _id: function () {
+            var ID_tmp, True_ID;
+            var length = this.ID_Array.length;
+            for (var i = 0; i < length; i++) {
+                if (this.ID_Array[i].tooltipHost === this.host) {
+                    ID_tmp = this.ID_Array[i].tooltipID;
+                    True_ID = "#" + ID_tmp;
+                    break;
+                };
+            };
+            if (True_ID == undefined) {
+                True_ID = "removed";
+            };
+            return True_ID;
+        },
+
+        // positions the tooltip
+        _setPosition: function (event) {
+            if (this._isOpen == false && $(this._id()).css("opacity") == 0) {
+                this.documentTop = $(document).scrollTop();
+                this.documentLeft = $(document).scrollLeft();
+                this.windowWidth = $(window).width();
+                this.windowHeight = $(window).height();
+
+                this.host_width = this.host.outerWidth();
+                this.host_height = this.host.outerHeight();
+                this.tooltip_width = $(this._id()).width();
+                this.tooltip_height = $(this._id()).height();
+                this.host_offset = this.host.offset();
+                this.tooltip_offset = $(this._id()).offset();
+                this.default_offset = 30;
+
+                this.offset_horizontal = parseInt(this.left); // horizontal offset
+                this.offset_vertical = parseInt(this.top); // vertical offset
+
+                var $arrow = $(this._id() + 'Arrow');
+                var $main = $(this._id() + 'Main');
+
+                this.arrow_size = 5; // defines the size of the tooltip arrow
+                this.tooltip_main_offset = $main.offset();
+                this.tooltip_arrow_offset;
+             
+                switch (this.position) {
+                    case 'top':
+                        this.tooltip_offset.left = this.host_offset.left + this.host_width / 2 - this.tooltip_width / 2 + this.offset_horizontal;
+                        this.tooltip_offset.top = this.host_offset.top - this.tooltip_height - this.arrow_size + this.offset_vertical;
+
+                        this._detectBrowserBounds();
+
+                        // arrow specifications
+                        this.tooltip_main_offset = $main.offset();
+                        $arrow.removeClass(this.toThemeProperty("jqx-tooltip-arrow-l-r"));
+                        $arrow.addClass(this.toThemeProperty("jqx-tooltip-arrow-t-b"));
+                        $arrow.css({ "border-width": this.arrow_size + "px " + this.arrow_size + "px  0px" });
+                        this.tooltip_arrow_offset = $arrow.offset();
+                        this.tooltip_arrow_offset.left = this.tooltip_main_offset.left + (($main.width()) / 2 - this.arrow_size);
+                        this.tooltip_arrow_offset.top = this.tooltip_main_offset.top + $main.height();
+                        $arrow.offset({ top: this.tooltip_arrow_offset.top, left: this.tooltip_arrow_offset.left });
+                        break;
+
+                    case 'bottom':
+                        this.tooltip_offset.left = this.host_offset.left + this.host_width / 2 - this.tooltip_width / 2 + this.offset_horizontal;
+                        this.tooltip_offset.top = this.host_offset.top + this.host_height + this.arrow_size + this.offset_vertical;
+
+                        this._detectBrowserBounds();
+
+                        // arrow specifications
+                        this.tooltip_main_offset = $main.offset();
+                        $arrow.removeClass(this.toThemeProperty("jqx-tooltip-arrow-l-r"));
+                        $arrow.addClass(this.toThemeProperty("jqx-tooltip-arrow-t-b"));
+                        $arrow.css({ "border-width": "0 " + this.arrow_size + "px " + this.arrow_size + "px" });
+                        this.tooltip_arrow_offset = $arrow.offset();
+                        this.tooltip_arrow_offset.left = this.tooltip_main_offset.left + (($main.width()) / 2 - this.arrow_size);
+                        this.tooltip_arrow_offset.top = this.tooltip_main_offset.top - this.arrow_size;
+                        $arrow.offset({ top: this.tooltip_arrow_offset.top, left: this.tooltip_arrow_offset.left });
+                        break;
+
+                    case 'left':
+                        this.tooltip_offset.left = - 1 + this.host_offset.left - this.tooltip_width - this.arrow_size + this.offset_horizontal;
+                        this.tooltip_offset.top = this.host_offset.top + this.host_height / 2 - this.tooltip_height / 2 + this.offset_vertical;
+
+                        this._detectBrowserBounds();
+
+                        // arrow specifications
+                        this.tooltip_main_offset = $main.offset();
+                        $arrow.removeClass(this.toThemeProperty("jqx-tooltip-arrow-t-b"));
+                        $arrow.addClass(this.toThemeProperty("jqx-tooltip-arrow-l-r"));
+                        $arrow.css({ "border-width": this.arrow_size + "px 0px " + this.arrow_size + "px " + this.arrow_size + "px" });
+                        this.tooltip_main_offset = $main.offset();
+                        this.tooltip_arrow_offset = $arrow.offset();
+                        this.tooltip_arrow_offset.left = 1 + this.tooltip_main_offset.left + $main.width();
+                        this.tooltip_arrow_offset.top = this.tooltip_main_offset.top + ($main.height()) / 2 - this.arrow_size;
+                        $arrow.offset({ top: this.tooltip_arrow_offset.top, left: this.tooltip_arrow_offset.left });
+                        break;
+
+                    case 'right':
+                        this.tooltip_offset.left = this.host_offset.left + this.host_width + this.arrow_size + this.offset_horizontal;
+                        this.tooltip_offset.top = this.host_offset.top + this.host_height / 2 - this.tooltip_height / 2 + this.offset_vertical;
+
+                        this._detectBrowserBounds();
+
+                        // arrow specifications
+                        this.tooltip_main_offset = $main.offset();
+                        $arrow.removeClass(this.toThemeProperty("jqx-tooltip-arrow-t-b"));
+                        $arrow.addClass(this.toThemeProperty("jqx-tooltip-arrow-l-r"));
+                        $arrow.css({ "border-width": this.arrow_size + "px " + this.arrow_size + "px " + this.arrow_size + "px 0px" });
+                        this.tooltip_arrow_offset = $arrow.offset();
+                        this.tooltip_arrow_offset.left = (this.tooltip_main_offset.left - this.arrow_size);
+                        this.tooltip_arrow_offset.top = this.tooltip_main_offset.top + ($main.height()) / 2 - this.arrow_size;
+                        $arrow.offset({ top: this.tooltip_arrow_offset.top, left: this.tooltip_arrow_offset.left });
+                        break;
+
+                    case 'top-left':
+                        this.tooltip_offset.left = this.host_offset.left + this.default_offset - this.tooltip_width + this.offset_horizontal;
+                        this.tooltip_offset.top = this.host_offset.top - this.tooltip_height - this.arrow_size + this.offset_vertical;
+
+                        this._detectBrowserBounds();
+
+                        // arrow specifications
+                        this.tooltip_main_offset = $main.offset();
+                        $arrow.removeClass(this.toThemeProperty("jqx-tooltip-arrow-l-r"));
+                        $arrow.addClass(this.toThemeProperty("jqx-tooltip-arrow-t-b"));
+                        $arrow.css({ "border-width": this.arrow_size + "px " + this.arrow_size + "px  0px" });
+                        this.tooltip_arrow_offset = $arrow.offset();
+                        this.tooltip_arrow_offset.left = this.tooltip_main_offset.left + $main.width() - 6 * this.arrow_size;
+                        this.tooltip_arrow_offset.top = this.tooltip_main_offset.top + $main.height();
+                        $arrow.offset({ top: this.tooltip_arrow_offset.top, left: this.tooltip_arrow_offset.left });
+                        break;
+
+                    case 'bottom-left':
+                        this.tooltip_offset.left = this.host_offset.left + this.default_offset - this.tooltip_width + this.offset_horizontal;
+                        this.tooltip_offset.top = this.host_offset.top + this.host_height + this.arrow_size + this.offset_vertical;
+
+                        this._detectBrowserBounds();
+
+                        // arrow specifications
+                        this.tooltip_main_offset = $main.offset();
+                        $arrow.removeClass(this.toThemeProperty("jqx-tooltip-arrow-l-r"));
+                        $arrow.addClass(this.toThemeProperty("jqx-tooltip-arrow-t-b"));
+                        $arrow.css({ "border-width": "0 " + this.arrow_size + "px " + this.arrow_size + "px" });
+                        this.tooltip_arrow_offset = $arrow.offset();
+                        this.tooltip_arrow_offset.left = this.tooltip_main_offset.left + $main.width() - 6 * this.arrow_size;
+                        this.tooltip_arrow_offset.top = this.tooltip_main_offset.top - this.arrow_size;
+                        $arrow.offset({ top: this.tooltip_arrow_offset.top, left: this.tooltip_arrow_offset.left });
+                        break;
+
+                    case 'top-right':
+                        this.tooltip_offset.left = this.host_offset.left + this.host_width - this.default_offset + this.offset_horizontal;
+                        this.tooltip_offset.top = this.host_offset.top - this.tooltip_height - this.arrow_size + this.offset_vertical;
+
+                        this._detectBrowserBounds();
+
+                        // arrow specifications
+                        this.tooltip_main_offset = $main.offset();
+                        $arrow.removeClass(this.toThemeProperty("jqx-tooltip-arrow-l-r"));
+                        $arrow.addClass(this.toThemeProperty("jqx-tooltip-arrow-t-b"));
+                        $arrow.css({ "border-width": this.arrow_size + "px " + this.arrow_size + "px  0px" });
+                        this.tooltip_arrow_offset = $arrow.offset();
+                        this.tooltip_arrow_offset.left = this.tooltip_main_offset.left + 4 * this.arrow_size;
+                        this.tooltip_arrow_offset.top = this.tooltip_main_offset.top + $main.height();
+                        $arrow.offset({ top: this.tooltip_arrow_offset.top, left: this.tooltip_arrow_offset.left });
+                        break;
+
+                    case 'bottom-right':
+                        this.tooltip_offset.left = this.host_offset.left + this.host_width - this.default_offset + this.offset_horizontal;
+                        this.tooltip_offset.top = this.host_offset.top + this.host_height + this.arrow_size + this.offset_vertical;
+
+                        this._detectBrowserBounds();
+
+                        // arrow specifications
+                        this.tooltip_main_offset = $main.offset();
+                        $arrow.removeClass(this.toThemeProperty("jqx-tooltip-arrow-l-r"));
+                        $arrow.addClass(this.toThemeProperty("jqx-tooltip-arrow-t-b"));
+                        $arrow.css({ "border-width": "0 " + this.arrow_size + "px " + this.arrow_size + "px" });
+                        this.tooltip_arrow_offset = $arrow.offset();
+                        this.tooltip_arrow_offset.left = this.tooltip_main_offset.left + 4 * this.arrow_size;
+                        this.tooltip_arrow_offset.top = this.tooltip_main_offset.top - this.arrow_size;
+                        $arrow.offset({ top: this.tooltip_arrow_offset.top, left: this.tooltip_arrow_offset.left });
+                        break;
+
+                    case 'absolute':
+                        $(this._id()).offset({ top: this.absolutePositionY, left: this.absolutePositionX });
+
+                        // arrow specifications, NO arrow
+                        $arrow.css({ "border-width": "0px" });
+                        break;
+
+                    case 'mouse':
+                        var me = this;
+                        if (this._isTouchDevice == false) {
+                            switch (this.trigger) {
+                                case 'hover':
+                                    if (this.mouseHoverTimeout) {
+                                        clearTimeout(this.mouseHoverTimeout);
+                                    }
+                                    this.mouseHoverTimeout = setTimeout(function () {
+                                        me.tooltip_offset.left = event.pageX + 10;
+                                        me.tooltip_offset.top = event.pageY + 10;
+                                        me._detectBrowserBounds();
+                                    }, this.showDelay);
+                                    break;
+                                case 'click':
+                                    this.tooltip_offset.left = event.pageX + 10;
+                                    this.tooltip_offset.top = event.pageY + 10;
+                                    this._detectBrowserBounds();
+                                    break;
+                            };
                         } else {
-                            tooltip.remove();
+                            var x = event.pageX;
+                            var y = event.pageY;
+                            if (event.originalEvent) {
+                                var touch = null;
+                                if (event.originalEvent.touches && event.originalEvent.touches.length) {
+                                    var touch = event.originalEvent.touches[0];
+                                } else if (event.originalEvent.changedTouches && event.originalEvent.changedTouches.length) {
+                                    var touch = event.originalEvent.changedTouches[0];
+                                }
+                                if (touch != undefined)
+                                {
+                                    x = touch.pageX;
+                                    y = touch.pageY;
+                                }
+                            }
+                        
+                            this.tooltip_offset.left = x + 10;
+                            this.tooltip_offset.top = y + 10;
+                            this._detectBrowserBounds();
+                        };
+
+                        // arrow specifications, NO arrow
+                        $arrow.css({ "border-width": "0px" });
+
+                        break;
+
+                    case 'mouseenter':
+                        var mousecoordinates = { top: event.pageY, left: event.pageX };
+
+                        // mouse from TOP
+                        if ((mousecoordinates.top < (this.host_offset.top + 10)) && (mousecoordinates.top > (this.host_offset.top - 10))) {
+                            this.tooltip_offset.left = mousecoordinates.left - this.tooltip_width / 2;
+                            this.tooltip_offset.top = this.host_offset.top - this.tooltip_height - this.arrow_size;
+
+                            this._detectBrowserBounds();
+
+                            // arrow specifications, the same as TOP arrow
+                            this.tooltip_main_offset = $main.offset();
+                            $arrow.removeClass(this.toThemeProperty("jqx-tooltip-arrow-l-r"));
+                            $arrow.addClass(this.toThemeProperty("jqx-tooltip-arrow-t-b"));
+                            $arrow.css({ "border-width": this.arrow_size + "px " + this.arrow_size + "px  0px" });
+                            this.tooltip_arrow_offset = $arrow.offset();
+                            this.tooltip_arrow_offset.left = this.tooltip_main_offset.left + (($main.width()) / 2 - this.arrow_size);
+                            this.tooltip_arrow_offset.top = this.tooltip_main_offset.top + $main.height();
+                            $arrow.offset({ top: this.tooltip_arrow_offset.top, left: this.tooltip_arrow_offset.left });
                         }
-                        self._raiseEvent(1);
-                        $.data(this, 'Tooltip', null);
-                    }
-                });
-            }
-            else {
-                var tooltip = $.data(element, 'Tooltip');
-                if (tooltip == undefined) {
-                    tooltip = $.data(this, 'Tooltip');
-                }
+                        // mouse from BOTTOM
+                        else if ((mousecoordinates.top < ((this.host_offset.top + this.host_height) + 10)) && (mousecoordinates.top > ((this.host_offset.top + this.host_height) - 10))) {
+                            this.tooltip_offset.left = mousecoordinates.left - this.tooltip_width / 2;
+                            this.tooltip_offset.top = this.host_offset.top + this.host_height + this.arrow_size;
 
-                if (tooltip == undefined && element != null) {
-                    tooltip = $(document.body).find('#' + 'Tooltip' + element.id);
-                }
+                            this._detectBrowserBounds();
 
-                if (tooltip != null) {
-                    if (this.enableAnimation) {
-                        tooltip.stop().fadeOut(this.animationHideDuration, function () { $(this).remove(); });
-                    } else {
-                        tooltip.remove();
-                    }
+                            // arrow specifications, the same as BOTTOM arrow
+                            this.tooltip_main_offset = $main.offset();
+                            $arrow.removeClass(this.toThemeProperty("jqx-tooltip-arrow-l-r"));
+                            $arrow.addClass(this.toThemeProperty("jqx-tooltip-arrow-t-b"));
+                            $arrow.css({ "border-width": "0 " + this.arrow_size + "px " + this.arrow_size + "px" });
+                            this.tooltip_arrow_offset = $arrow.offset();
+                            this.tooltip_arrow_offset.left = this.tooltip_main_offset.left + (($main.width()) / 2 - this.arrow_size);
+                            this.tooltip_arrow_offset.top = this.tooltip_main_offset.top - this.arrow_size;
+                            $arrow.offset({ top: this.tooltip_arrow_offset.top, left: this.tooltip_arrow_offset.left });
+                        }
+                        // mouse from LEFT
+                        else if ((mousecoordinates.left < (this.host_offset.left + 10)) && (mousecoordinates.left > (this.host_offset.left - 10))) {
+                            this.tooltip_offset.left = this.host_offset.left - this.tooltip_width - this.arrow_size;
+                            this.tooltip_offset.top = mousecoordinates.top - this.tooltip_height / 2;
 
-                    this._raiseEvent(1);
-                    $.data(element, 'Tooltip', null);
-                }
-            }
+                            this._detectBrowserBounds();
+
+                            // arrow specifications, the same as LEFT arrow
+                            this.tooltip_main_offset = $main.offset();
+                            $arrow.removeClass(this.toThemeProperty("jqx-tooltip-arrow-t-b"));
+                            $arrow.addClass(this.toThemeProperty("jqx-tooltip-arrow-l-r"));
+                            $arrow.css({ "border-width": this.arrow_size + "px 0px " + this.arrow_size + "px " + this.arrow_size + "px" });
+                            this.tooltip_main_offset = $main.offset();
+                            this.tooltip_arrow_offset = $arrow.offset();
+                            this.tooltip_arrow_offset.left = this.tooltip_main_offset.left + $main.width();
+                            this.tooltip_arrow_offset.top = this.tooltip_main_offset.top + ($main.height()) / 2 - this.arrow_size;
+                            $arrow.offset({ top: this.tooltip_arrow_offset.top, left: this.tooltip_arrow_offset.left });
+                        }
+                        // mouse from RIGHT
+                        else if ((mousecoordinates.left < (this.host_offset.left + this.host_width + 10)) && (mousecoordinates.left > (this.host_offset.left + this.host_width - 10))) {
+                            this.tooltip_offset.left = this.host_offset.left + this.host_width + this.arrow_size;
+                            this.tooltip_offset.top = mousecoordinates.top - this.tooltip_height / 2;
+
+                            this._detectBrowserBounds();
+
+                            // arrow specifications, the same as RIGHT arrow
+                            this.tooltip_main_offset = $main.offset();
+                            $arrow.removeClass(this.toThemeProperty("jqx-tooltip-arrow-t-b"));
+                            $arrow.addClass(this.toThemeProperty("jqx-tooltip-arrow-l-r"));
+                            $arrow.css({ "border-width": this.arrow_size + "px " + this.arrow_size + "px " + this.arrow_size + "px 0px" });
+                            this.tooltip_main_offset = $main.offset();
+                            this.tooltip_arrow_offset = $arrow.offset();
+                            this.tooltip_arrow_offset.left = (this.tooltip_main_offset.left - this.arrow_size);
+                            this.tooltip_arrow_offset.top = this.tooltip_main_offset.top + ($main.height()) / 2 - this.arrow_size;
+                            $arrow.offset({ top: this.tooltip_arrow_offset.top, left: this.tooltip_arrow_offset.left });
+                        };
+                        break;
+
+                    case 'default':
+
+                        // similar to 'bottom-right' but without this.offset_horizontal and this.offset_vertical
+                        this.tooltip_offset.left = this.host_offset.left + this.host_width - this.default_offset;
+                        this.tooltip_offset.top = this.host_offset.top + this.host_height + this.arrow_size;
+
+                        this._detectBrowserBounds();
+
+                        // arrow specifications
+                        this.tooltip_main_offset = $main.offset();
+                        $arrow.removeClass(this.toThemeProperty("jqx-tooltip-arrow-l-r"));
+                        $arrow.addClass(this.toThemeProperty("jqx-tooltip-arrow-t-b"));
+                        $arrow.css({ "border-width": "0 " + this.arrow_size + "px " + this.arrow_size + "px" });
+                        this.tooltip_arrow_offset = $arrow.offset();
+                        this.tooltip_arrow_offset.left = this.tooltip_main_offset.left + 4 * this.arrow_size;
+                        this.tooltip_arrow_offset.top = this.tooltip_main_offset.top - this.arrow_size;
+                        $arrow.offset({ top: this.tooltip_arrow_offset.top, left: this.tooltip_arrow_offset.left });
+                        break;
+                };
+            };
         },
 
-        // opens a tooltip.
-        open: function () {
-            var args = Array.prototype.slice.call(arguments, 0);
-            var element = null;
-
-            if (args.length > 0) {
-                element = $(args[0]);
-            }
-            else return;
-
-            var content = "Tooltip";
-            if (args.length > 1) {
-                content = args[1];
-            }
-
-            var top = 0;
-            var left = 0;
-
-            if (args.length > 2) {
-                top = args[2];
-            }
-
-            if (args.length > 3) {
-                left = args[3];
-            }
-
-            var canOpen = false;
-
-            for (loopIndex = 0; loopIndex < this.elements.length; loopIndex++) {
-                if (this.elements[loopIndex].element[0] == element[0]) {
-                    canOpen = true;
-                    break;
-                }
-            }
-
-            var newElement = { element: element, header: "", content: content };
-
-            var tooltip = $.data(element[0], "Tooltip");
-            if (!tooltip) {
-                tooltip = $('<div><table><tr><td/></tr></table></div>');
-                $(tooltip.find('table')[0]).addClass(this.toThemeProperty('jqx-tooltip-table'));
-                $(tooltip.find('td')[0]).addClass(this.toThemeProperty('jqx-tooltip-content'));
-                $(tooltip.find('td')[0]).addClass(this.toThemeProperty('jqx-fill-state-normal'));
-
-                tooltip.css({ position: 'absolute', zIndex: 100000 });
-                tooltip[0].id = 'Tooltip' + element[0].id;
-                $.data(element[0], 'Tooltip', tooltip);
-                $.data(document.body, 'jqxOpenedTooltip', tooltip);
-            }
-
-            tooltip.remove().css({ top: 0, left: 0, visibility: 'hidden', display: 'block' }).appendTo(document.body);
-            tooltip.find('.' + this.toThemeProperty('jqx-tooltip-content', true))[this.showHtml ? 'html' : 'text'](content);
-
-            var currentPosition = element.offset();
-            var scrollTop = $(window).scrollTop();
-            var scrollLeft = $(window).scrollLeft();
-            var isSafari = $.jqx.mobile.isSafariMobileBrowser();
-            if (isSafari) {
-                currentPosition = { left: currentPosition.left - scrollLeft, top: currentPosition.top - scrollTop };
-            }
-            var tooltipWidth = parseInt(tooltip[0].offsetWidth);
-            var tooltipHeight = parseInt(tooltip[0].offsetHeight);
-            var elementWidth = parseInt(element[0].offsetWidth);
-            var elementHeight = parseInt(element[0].offsetHeight);
-
-            var toolTipPosition = { position: currentPosition, width: tooltipWidth, heigth: tooltipHeight, elementWidth: elementWidth, elementHeight: elementHeight };
-            $.data(element[0], 'TooltipBounds', toolTipPosition);
-
-            switch (this.location) {
-                case "bottom-right":
-                    tooltip.css({ top: currentPosition.top + elementHeight, left: currentPosition.left + elementWidth });
-                    break;
-                case "bottom":
-                    tooltip.css({ top: currentPosition.top + elementHeight, left: currentPosition.left + elementWidth / 2 - tooltipWidth / 2 });
-                    break;
-                case "top":
-                    tooltip.css({ top: currentPosition.top - tooltipHeight, left: currentPosition.left + elementWidth / 2 - tooltipWidth / 2 });
-                    break;
-                case "bottom-left":
-                    tooltip.css({ top: currentPosition.top + elementHeight, left: currentPosition.left - tooltipWidth });
-                    break;
-                case "top-left":
-                    tooltip.css({ top: currentPosition.top - tooltipHeight, left: currentPosition.left - tooltipWidth });
-                    break;
-                case "top-right":
-                    tooltip.css({ top: currentPosition.top - tooltipHeight, left: currentPosition.left + elementWidth });
-                    break;
-                case "right":
-                    tooltip.css({ top: currentPosition.top + elementHeight / 2 - tooltipHeight / 2, left: currentPosition.left + elementWidth });
-                    break;
-                case "left":
-                    tooltip.css({ top: currentPosition.top + elementHeight / 2 - tooltipHeight / 2, left: currentPosition.left - tooltipWidth });
-                    break;
-                case "absolute":
-                    tooltip.css({ top: parseInt(this.verticalOffset), left: parseInt(this.horizontalOffset) });
-                    break;
-                case "relative":
-                    tooltip.css({ top: parseInt(this.verticalOffset) + parseInt(currentPosition.top), left: parseInt(this.horizontalOffset) + parseInt(currentPosition.left) });
-                    break;
-            }
-
-            if (this.enableAnimation) {
-                tooltip.css({ opacity: 0, display: 'block', visibility: 'visible' }).animate({ opacity: 1.0 }, this.animationShowDuration);
-            }
-            else {
-                tooltip.css({ visibility: 'visible' });
-            }
-
-            var self = this;
-            setTimeout(function () {
-                if (tooltip == undefined || tooltip == null) {
-                    var tooltip = $.data(element[0], 'Tooltip');
-                    if (tooltip == undefined) {
-                        tooltip = $.data(document.body, 'jqxOpenedTooltip');
-                    }
-                }
-
-                if (tooltip != undefined && !self.staysOpen) {
-                    if (self.enableAnimation) {
-                        tooltip.stop().fadeOut(self.animationHideDuration, function () {
-                            $(this).remove();
-                        });
-                    } else {
-                        tooltip.remove();
-                    }
-                    self._raiseEvent(1);
-                }
-                else self.close();
-            }, self.animationHideDelay);
-
-            this._raiseEvent(0);
+        // sets the content of the tooltip
+        _setContent: function () {
+            $(this._id() + 'Text').html(this.content);
         },
 
-        // adds a tooltip to an element.
-        add: function (element, content, header) {
-            if (element == null || element == undefined)
-                return;
-
-            var self = this;
-            if (element[0] == undefined) {
-                element = $(element);
-            }
-
-            var alreadyAdded = false;
-            if (element[0] != null) {
-                $.each(this.elements, function () {
-                    if (this.element[0] == element[0]) {
-                        alreadyAdded = true;
-                        return false;
-                    }
-                });
-            }
-
-            if (alreadyAdded)
-                return;
-
-            var newElement = { element: element, header: header, content: content, canDisplay: true, index: this.index, timer: null };
-            this.elements[this.index] = newElement;
-            this.timer = null;
-
-            var element = this.elements[this.index];
-            this.index++;
-
-            this.isTouchDevice = $.jqx.mobile.isTouchDevice();
-            if (this.isTouchDevice) {
-                $(element.element).bind('click', function () {
-                    var tooltip = $.data(element.element[0], 'Tooltip');
-                    if (tooltip != undefined) {
-                        self.close(element.element[0]);
-                    }
-                    else self._open(self, element);
-                });
-                return;
-            }
-
-            $(element.element).bind('mouseleave', function () {
-                self._close(self, element);
-
-            });
-
-            $(element.element).bind('mouseenter', function (event) {
-                self._open(self, element);
-            });
-        },
-
-        _close: function (self, element) {
-            if (element.timer != null) {
-                window.clearTimeout(element.timer);
-            }
-
-            var tooltip = $.data(element.element[0], 'Tooltip');
-
-            if (tooltip != undefined && !self.staysOpen) {
-                element.canDisplay = false;
-                if (this.enableAnimation) {
-                    tooltip.stop().fadeOut(this.animationHideDuration, function () { $(this).remove(); });
-                } else {
-                    tooltip.remove();
-                }
-                element.canDisplay = true;
-                $(element.element).stop(true, true)
-                self._raiseEvent(1);
-            }
-        },
-
-        _open: function (self, element) {
-            if (element.timer != null) {
-                window.clearTimeout(element.timer);
-            }
-
-            element.timer = window.setTimeout(function () {
-
-                var hasHeaderAndContent = element.header != undefined && element.content != undefined && element.header != null && element.content != null && element.header.length > 0 && element.content.length > 0;
+        // shows the tooltip with animation
+        _animateShow: function () {
+            this._closeAll();
+            clearTimeout(this.autoHideTimeout);
+            var opacityValue = new Number($(this._id()).css("opacity")).toFixed(2);
+            if (this._isOpen == false && opacityValue == 0) {
                 var me = this;
+                var $id = $(this._id());
+                $id.css("visibility", "visible");
+                $id.stop();
+                $id.css('opacity', 0);
+                $id.animate({
+                    opacity: this.opacity
+                }, this.animationShowDelay, function () {
+                    me._raiseEvent('0');
+                    me._isOpen = true;
 
-                var tooltip = $.data(element.element[0], "Tooltip");
-
-                if (self.disabled) {
-                    return false;
-                }
-
-                if (!element.canDisplay) {
-                    return false;
-                }
-
-                if (tooltip != null && self.staysOpen) {
-                    return false;
-                }
-
-                if (!tooltip) {
-                    if (hasHeaderAndContent) {
-                        tooltip = $('<div><table><tr><td/></tr><tr><td/></tr></table></div>');
-                    }
-                    else tooltip = $('<div><table><tr><td/></tr></table></div>');
-
-                    if (tooltip.find('td').length > 1) {
-                        $(tooltip.find('td')[0]).addClass(self.toThemeProperty('jqx-tooltip-header'));
-                        $(tooltip.find('td')[1]).addClass(self.toThemeProperty('jqx-tooltip-content'));
-                        $(tooltip.find('td')[0]).addClass(self.toThemeProperty('jqx-fill-state-normal'));
-                        $(tooltip.find('td')[1]).addClass(self.toThemeProperty('jqx-fill-state-normal'));
-                    }
-                    else if (tooltip.find('td').length > 0) {
-                        $(tooltip.find('td')[0]).addClass(self.toThemeProperty('jqx-tooltip-content'));
-                        $(tooltip.find('td')[0]).addClass(self.toThemeProperty('jqx-fill-state-normal'));
+                    // creates a variable, showing the instance of the opened tooltip
+                    var opened_tooltip = $.data(document.body, "_openedTooltip" + me.name);
+                    if (opened_tooltip) {
+                        opened_tooltip._raiseEvent('3');
+                        opened_tooltip._raiseEvent('1');
                     }
 
-                    $(tooltip.find('table')[0]).addClass(self.toThemeProperty('jqx-tooltip-table'));
-                    $(tooltip.find('table')[0]).addClass(self.toThemeProperty('jqx-rc-all'));
-                    $(tooltip.find('table')[0]).addClass(self.toThemeProperty('jqx-widget'));
-
-                    tooltip.css({ position: 'absolute', zIndex: 100000 });
-                    $.data(element.element[0], 'Tooltip', tooltip);
-                }
-
-                tooltip.remove().css({ top: 0, left: 0, visibility: 'hidden', display: 'block' }).appendTo(document.body);
-
-                if (hasHeaderAndContent) {
-                    tooltip.find('.' + self.toThemeProperty('jqx-tooltip-header', true))[self.showHtml ? 'html' : 'text'](element.header);
-                }
-
-                tooltip.find('.' + self.toThemeProperty('jqx-tooltip-content', true))[self.showHtml ? 'html' : 'text'](element.content);
-
-                var currentPosition = element.element.offset();
-                var scrollTop = $(window).scrollTop();
-                var scrollLeft = $(window).scrollLeft();
-                var isSafari = $.jqx.mobile.isSafariMobileBrowser();
-                if (isSafari) {
-                    currentPosition = { left: currentPosition.left - scrollLeft, top: currentPosition.top - scrollTop };
-                }
-
-                var tooltipWidth = parseInt(tooltip[0].offsetWidth);
-                var tooltipHeight = parseInt(tooltip[0].offsetHeight);
-                var elementWidth = parseInt(element.element[0].offsetWidth);
-                var elementHeight = parseInt(element.element[0].offsetHeight);
-
-                var toolTipPosition = { position: currentPosition, width: tooltipWidth, heigth: tooltipHeight, elementWidth: elementWidth, elementHeight: elementHeight };
-                $.data(element.element[0], 'TooltipBounds', toolTipPosition);
-
-                switch (self.location) {
-                    case "bottom-right":
-                        tooltip.css({ top: currentPosition.top + elementHeight, left: currentPosition.left + elementWidth });
-                        break;
-                    case "bottom":
-                        tooltip.css({ top: currentPosition.top + elementHeight, left: currentPosition.left + elementWidth / 2 - tooltipWidth / 2 });
-                        break;
-                    case "top":
-                        tooltip.css({ top: currentPosition.top - tooltipHeight, left: currentPosition.left + elementWidth / 2 - tooltipWidth / 2 });
-                        break;
-                    case "bottom-left":
-                        tooltip.css({ top: currentPosition.top + elementHeight, left: currentPosition.left - tooltipWidth });
-                        break;
-                    case "top-left":
-                        tooltip.css({ top: currentPosition.top - tooltipHeight, left: currentPosition.left - tooltipWidth });
-                        break;
-                    case "top-right":
-                        tooltip.css({ top: currentPosition.top - tooltipHeight, left: currentPosition.left + elementWidth });
-                        break;
-                    case "right":
-                        tooltip.css({ top: currentPosition.top + elementHeight / 2 - tooltipHeight / 2, left: currentPosition.left + elementWidth });
-                        break;
-                    case "left":
-                        tooltip.css({ top: currentPosition.top + elementHeight / 2 - tooltipHeight / 2, left: currentPosition.left - tooltipWidth });
-                        break;
-                    case "absolute":
-                        tooltip.css({ top: parseInt(self.verticalOffset), left: parseInt(self.horizontalOffset) });
-                        break;
-                    case "relative":
-                        tooltip.css({ top: parseInt(self.verticalOffset) + parseInt(currentPosition.top), left: parseInt(self.horizontalOffset) + parseInt(currentPosition.left) });
-                        break;
-                }
-
-                $.each(self.elements, function () {
-                    if (this.element[0] != element.element[0]) {
-                        var myTooltip = $.data(this.element[0], "Tooltip");
-                        if (myTooltip != null) {
-                            myTooltip.remove();
-                        }
-                    }
+                    me.openedTooltip = me;
+                    $.data(document.body, "_openedTooltip" + me.name, me);
+                    if (me.autoHideTimeout) clearTimeout(me.autoHideTimeout);
+                    me.autoHideTimeout = setTimeout(function () {
+                        me._autoHide();
+                    }, me.autoHideDelay);
                 });
+            };
+        },
 
-                if (self.enableAnimation) {
-                    tooltip.css({ opacity: 0, display: 'block', visibility: 'visible' }).animate({ opacity: 1.0 }, self.animationShowDuration);
-                }
-                else {
-                    tooltip.css({ visibility: 'visible' });
-                }
+        // triggers the tooltip
+        _trigger: function () {
+            if (this._id() != "removed") {
+                this._enterFlag;
+                this._leaveFlag;
+                var me = this;
+                if (this._isTouchDevice == false) {
+                    switch (this.trigger) {
+                        case 'hover':
+                            if (this.position == 'mouse') {
+                                this.addHandler(this.host, 'mousemove.tooltip', function (event) {
+                                    if (me._enterFlag == 1) {
+                                        me._raiseEvent('2');
+                                        me._setPosition(event);
+                                        clearTimeout(me.hoverShowTimeout);
+                                        me.hoverShowTimeout = setTimeout(function () {
+                                            me._animateShow();
+                                            me._enterFlag = 0;
+                                        }, me.showDelay);
+                                    }
+                                });
+                                this.addHandler(this.host, 'mouseenter.tooltip', function () {
+                                    if (me._leaveFlag != 0) {
+                                        me._enterFlag = 1;
+                                    };
+                                });
+                                this.addHandler(this.host, 'mouseleave.tooltip', function (event) {
+                                    me._leaveFlag = 1;
+                                    clearTimeout(me.hoverShowTimeout);
 
-                setTimeout(function () {
-                    var tooltip = $.data(element.element[0], 'Tooltip');
+                                    var tooltipbounds = $(me._id()).offset();
+                                    var width = $(me._id()).width();
+                                    var height = $(me._id()).height();
 
-                    if (tooltip != undefined && !self.staysOpen) {
-                        if (self.enableAnimation) {
-                            tooltip.stop().fadeOut(self.animationHideDuration, function () {
-                                $(this).remove();
+                                    if (parseInt(event.pageX) < parseInt(tooltipbounds.left) || parseInt(event.pageX) > parseInt(tooltipbounds.left) + width) {
+                                        me.close();
+                                    }
+                                    if (parseInt(event.pageY) < parseInt(tooltipbounds.top) || parseInt(event.pageY) > parseInt(tooltipbounds.top) + height) {
+                                        me.close();
+                                    }
+                                });
+                                this.addHandler($(this._id()), 'mouseleave.tooltip', function (event) {
+                                    me._checkBoundariesAuto(event);
+                                    if (me._clickFlag != 0 && me._autoFlag != 0) {
+                                        me._leaveFlag = 0;
+                                    } else {
+                                        me._leaveFlag = 1;
+                                        me.close();
+                                    };
+                                });
+                            } else {
+                                this.addHandler(this.host, 'mouseenter.tooltip', function (event) {
+                                    clearTimeout(me.hoverShowTimeout);
+                                    me.hoverShowTimeout = setTimeout(function () {
+                                        me._raiseEvent('2');
+                                        me._setPosition(event);
+                                        me._animateShow();
+                                    }, me.showDelay);
+                                });
+                                this.addHandler(this.host, 'mouseleave.tooltip', function (event) {
+                                    me._leaveFlag = 1;
+                                    clearTimeout(me.hoverShowTimeout);
+
+                                    var tooltipbounds = $(me._id()).offset();
+                                    var width = $(me._id()).width();
+                                    var height = $(me._id()).height();
+
+                                    if (parseInt(event.pageX) < parseInt(tooltipbounds.left) || parseInt(event.pageX) > parseInt(tooltipbounds.left) + width) {
+                                        me.close();
+                                    }
+                                    if (parseInt(event.pageY) < parseInt(tooltipbounds.top) || parseInt(event.pageY) > parseInt(tooltipbounds.top) + height) {
+                                        me.close();
+                                    }
+                                });
+                                this.addHandler($(this._id()), 'mouseleave.tooltip', function (event) {
+                                    me._checkBoundariesAuto(event);
+                                    if (me._clickFlag != 0 && me._autoFlag != 0) {
+                                        me._leaveFlag = 0;
+                                    } else {
+                                        me._leaveFlag = 1;
+                                        me.close();
+                                    };
+                                });
+                            };
+                            break;
+                        case 'click':
+                            this.addHandler(this.host, 'click.tooltip', function (event) {
+                                if (me.position == 'mouseenter') {
+                                    me.position = 'mouse';
+                                };
+                                me._raiseEvent('2');
+                                me._setPosition(event);
+                                me._animateShow();
                             });
-                        } else {
-                            tooltip.remove();
-                        }
-                        self._raiseEvent(1);
-                    }
-                }, self.animationHideDelay);
-
-                self._raiseEvent(0);
-
-            }, self.animationShowDelay)
+                            break;
+                    };
+                } else {
+                    // if the device is touch
+                    this.addHandler(this.host, 'touchstart.tooltip', function (event) {
+                        if (me.position == 'mouseenter') {
+                            me.position = 'mouse';
+                        };
+                        me._raiseEvent('2');
+                        me._setPosition(event);
+                        me._animateShow();
+                    });
+                };
+            };
         },
 
-        hasTooltip: function (element) {
-            var found = false;
-            $.each(this.elements, function () {
-                var currentElement = this;
-                if (currentElement.element[0] == element[0]) {
-                    found = true;
-                    return false;
-                }
+        // automatically hides the tooltip
+        _autoHide: function () {
+            var me = this;
+    
+            var opacityValue = new Number($(this._id()).css("opacity")).toFixed(2);
+            if (this.autoHide == true && this._isOpen == true && opacityValue >= this.opacity) {
+                me._raiseEvent('3');
+                $(me._id()).animate({
+                    opacity: 0
+                }, me.animationHideDelay, function () {
+                    $(me._id()).css("visibility", "hidden");
+                    me._raiseEvent('1');
+                    me._isOpen = false;
+                });
+            };
+        },
+
+        // hides the tooltip when it is clicked
+        _clickHide: function () {
+            var me = this;
+            this.addHandler($(this._id()), 'click.tooltip', function (event) {
+                me._checkBoundariesClick(event);
+                me.close();
             });
-
-            return found;
         },
 
-        // removes a tooltip.
-        remove: function (element) {
-            if (element == undefined || element == null)
-                return;
-
-            if (element[0] == undefined) {
-                element = $(element);
-            }
-
-            this.close();
-            var self = this;
-            var index = 0;
-            var found = false;
-            $.each(this.elements, function () {
-                var currentElement = this;
-                if (currentElement.element[0] == element[0]) {
-                    $.data(currentElement.element[0], "Tooltip", null);
-                    found = true;
-                    return false;
-                }
-                index++;
-            });
-
-            if (found) {
-                this.elements.splice(index, 1);
-                this.index--;
-            }
-
-            if (element.element != null) {
-                if (element.element[0] != null) {
-                    var tooltip = $.data(element.element[0], "Tooltip");
-                }
-
-                $(element.element).unbind('mouseenter');
-                $(element.element).unbind('mouseleave');
-            }
-            else {
-                element.unbind('mouseenter');
-                element.unbind('mouseleave');
-            }
+        // sets the width and height of the tooltip
+        _setSize: function () {
+            $(this._id()).css({ "width": this.width, "height": this.height });
         },
 
-        propertyChangedHandler: function (object, key, oldvalue, value) {
-            if (this.isInitialized == undefined || this.isInitialized == false)
-                return;
+        // sets the tooltips theme and classes
+        _setTheme: function () {
+            var id = this._id();
+            var $main = $(id + 'Main');
+            var $text = $(id + 'Text');
+            var $arrow = $(id + 'Arrow');
 
+            $main.addClass(this.toThemeProperty("jqx-widget"));
+            $text.addClass(this.toThemeProperty("jqx-widget"));
+            $arrow.addClass(this.toThemeProperty("jqx-widget"));
+
+            $main.addClass(this.toThemeProperty("jqx-fill-state-normal"));
+            $text.addClass(this.toThemeProperty("jqx-fill-state-normal"));
+            $arrow.addClass(this.toThemeProperty("jqx-fill-state-normal"));
+
+            $(id).addClass(this.toThemeProperty("jqx-tooltip"));
+            $main.addClass(this.toThemeProperty("jqx-tooltip-main"));
+            $text.addClass(this.toThemeProperty("jqx-tooltip-text"));
+            $arrow.addClass(this.toThemeProperty("jqx-tooltip-arrow"));
+        },
+
+        // sets the initial position of the tooltip as 'default'
+        _initialPosition: function () {
+            var tempPosition = this.position;
+            this.position = 'default';
+            this._setPosition();
+            this.position = tempPosition;
+        },
+
+        // checks the tooltip for browser bounds conflicts and sets the tooltip's offset accordingly (if enableBrowserBoundsDetection == true), otherwise just sets the tooltip's offset
+        _detectBrowserBounds: function () {
+            var id = this._id();
+            if (this.enableBrowserBoundsDetection) {
+                // top and left
+                if (this.tooltip_offset.top < this.documentTop && this.tooltip_offset.left < 0) {
+                    $(id).offset({ top: this.documentTop, left: this.documentLeft });
+                    // top and right
+                } else if (this.tooltip_offset.top < this.documentTop && (this.tooltip_offset.left + this.tooltip_width) > this.windowWidth + this.documentLeft) {
+                    $(id).offset({ top: this.documentTop, left: (this.windowWidth + this.documentLeft - this.tooltip_width) });
+                    // top
+                } else if (this.tooltip_offset.top < this.documentTop) {
+                    $(id).offset({ top: this.documentTop, left: this.tooltip_offset.left });
+                    // bottom and left
+                } else if ((this.tooltip_offset.top + this.tooltip_height) > (this.windowHeight + this.documentTop) && this.tooltip_offset.left < 0) {
+                    $(id).offset({ top: (this.windowHeight + this.documentTop - this.tooltip_height), left: this.documentLeft });
+                    // bottom and right
+                } else if ((this.tooltip_offset.top + this.tooltip_height) > (this.windowHeight + this.documentTop) && (this.tooltip_offset.left + this.tooltip_width) > this.windowWidth + this.documentLeft) {
+                    $(id).offset({ top: (this.windowHeight + this.documentTop - this.tooltip_height), left: (this.windowWidth + this.documentLeft - this.tooltip_width) });
+                    // bottom
+                } else if ((this.tooltip_offset.top + this.tooltip_height) > (this.windowHeight + this.documentTop)) {
+                    $(id).offset({ top: (this.windowHeight + this.documentTop - this.tooltip_height), left: this.tooltip_offset.left });
+                    // left
+                } else if (this.tooltip_offset.left < 0) {
+                    $(id).offset({ top: this.tooltip_offset.top, left: this.documentLeft });
+                    // right
+                } else if ((this.tooltip_offset.left + this.tooltip_width) > this.windowWidth + this.documentLeft) {
+                    $(id).offset({ top: this.tooltip_offset.top, left: (this.windowWidth + this.documentLeft - this.tooltip_width) });
+                    // no conflict
+                } else {
+                    $(id).offset({ top: this.tooltip_offset.top, left: this.tooltip_offset.left });
+                };
+                // if enableBrowserBoundsDetection == false, the same as no conflict case
+            } else {
+                $(id).offset({ top: this.tooltip_offset.top, left: this.tooltip_offset.left });
+            };
+        },
+
+        // checks if a mouseevent was within the boundaries of the host
+        _checkBoundaries: function (event) {
+            if (event.pageX >= this.host_offset.left && event.pageX <= (this.host_offset.left + this.host_width) && event.pageY >= this.host_offset.top && event.pageY <= (this.host_offset.top + this.host_height)) {
+                return true;
+            } else {
+                return false;
+            };
+        },
+
+        // checks if a click was within the boundaries of the host
+        _checkBoundariesClick: function (event) {
+            if (this._checkBoundaries(event)) {
+                this._clickFlag = 1;
+            } else {
+                this._clickFlag = 0;
+            };
+        },
+
+        // checks if the mouse was was within the boundaries of the host when the tooltip was automatically closed
+        _checkBoundariesAuto: function (event) {
+            if (this._checkBoundaries(event)) {
+                this._autoFlag = 1;
+            } else {
+                this._autoFlag = 0;
+            };
+        },
+
+        // removes all event handlers
+        _removeHandlers: function () {
+            this.removeHandler(this.host, 'mouseenter.tooltip');
+            this.removeHandler(this.host, 'mousemove.tooltip');
+            this.removeHandler(this.host, 'mouseleave.tooltip');
+            this.removeHandler(this.host, 'click.tooltip');
+            this.removeHandler(this.host, 'touchstart.tooltip');
+            this.removeHandler($(this._id()), 'click.tooltip');
+            this.removeHandler($(this._id()), 'mouseleave.tooltip');
+        },
+
+        // closes all tooltips, created together
+        _closeAll: function () {
+            var length = this.ID_Array.length;
+            for (var i = 0; i < length; i++) {
+                var itterationID = "#" + this.ID_Array[i].tooltipID;
+                if (itterationID != this._id()) {
+                    $(itterationID).css({ opacity: 0, visibility: "hidden" });
+                    this._isOpen = false;
+                };
+            };
         }
     });
 })(jQuery);

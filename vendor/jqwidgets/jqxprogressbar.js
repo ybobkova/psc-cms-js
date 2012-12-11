@@ -1,5 +1,5 @@
 /*
-jQWidgets v2.4.2 (2012-Sep-12)
+jQWidgets v2.5.5 (2012-Nov-28)
 Copyright (c) 2011-2012 jQWidgets.
 License: http://jqwidgets.com/license/
 */
@@ -188,6 +188,7 @@ License: http://jqwidgets.com/license/
                     widget.refresh();
                 }
             }
+            if (key == "disabled") widget.refresh();
         },
 
         _value: function () {
@@ -230,7 +231,6 @@ License: http://jqwidgets.com/license/
             if (this.disabled) {
                 this.host.addClass(this.toThemeProperty('jqx-progressbar-disabled'));
                 this.host.addClass(this.toThemeProperty('jqx-fill-state-disabled'));
-                $(this.element.children[0]).hide();
                 return;
             }
             else {

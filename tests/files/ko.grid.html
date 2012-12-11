@@ -1,0 +1,18 @@
+<div style="margin-bottom: 10px;">
+            <input id="addButton" type="button" data-bind="click: addItem, jqxButton: {}" value="Add Item" />
+            <input id="removeButton" type="button" data-bind="click: removeItem, jqxButton: {}" value="Remove Item" />
+            <input id="updateButton" type="button" data-bind="click: updateItem, jqxButton: {}" value="Update Item" />
+            <div data-bind="jqxCheckBox: {checked: disabled }" style='margin-top: 5px;' id="checkBox">Disabled</div>
+        </div>
+        <div id="jqxGrid">
+        </div>
+        <table style="margin-top: 20px;">
+            <tbody data-bind="foreach: items">
+                <tr>
+                    <td data-bind="text: name"></td>
+                    <td data-bind="text: sales"></td>
+                    <td data-bind="text: price"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
