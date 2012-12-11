@@ -29,6 +29,7 @@ define(['psc-tests-assert','stacktrace','Psc/Code','Psc/WrongValueException','Ps
   });
   
   test("stacktrace thingy", function () {
+    /*globals a:true*/
     t.setup(this);
     
     var thiswillfail = function () {

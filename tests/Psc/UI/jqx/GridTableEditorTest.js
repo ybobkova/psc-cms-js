@@ -83,7 +83,7 @@ define(['psc-tests-assert','text!fixtures/ko.grid.html','jquery-simulate','Psc/U
       $fix.append($test = test.create());
       
       $test.click(function () {
-        console.log(that.editor.ko.rows());
+        //console.log(that.editor.ko.rows());
       });
       
       var $add, add = new Psc.UI.Button({
