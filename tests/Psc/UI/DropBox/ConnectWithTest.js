@@ -58,19 +58,19 @@ define(['psc-tests-assert',
       that.assertEquals(1, that.$dropBox1.length);
       that.assertEquals(1, that.$dropBox2.length);
       
-      that.assertInstanceOf(Psc.UI.DropBox, that.dropBox1, 'that.dropBox1 is a UI that.dropBox');
-      that.assertInstanceOf(Psc.UI.DropBox, that.dropBox2, 'that.dropBox2 is a UI that.dropBox');
+      that.assertInstanceOf(Psc.UI.DropBox, that.dropBox1, 'that.dropBox1 is a UI dropBox');
+      that.assertInstanceOf(Psc.UI.DropBox, that.dropBox2, 'that.dropBox2 is a UI dropBox');
       
       var $button1, $button2;
-      that.assertEquals(1, ($button1 = that.$dropBox1.find('button.psc-cms-ui-button')).length, 'button is in that.dropBox1');
-      that.assertEquals(1, ($button2 = that.$dropBox2.find('button.psc-cms-ui-button')).length, 'button is in that.dropBox2');
+      that.assertEquals(1, ($button1 = that.$dropBox1.find('button.psc-cms-ui-button')).length, 'button is in dropBox1');
+      that.assertEquals(1, ($button2 = that.$dropBox2.find('button.psc-cms-ui-button')).length, 'button is in dropBox2');
   
       that.assertTrue(that.dropBox1.hasButton($button1),'db1 has button1');
-      that.assertTrue(that.dropBox2.hasButton($button2), 'db2 has button2');
+      that.assertTrue(that.dropBox2.hasButton($button2),'db2 has button2');
       
       // connected hier über Kreuz connecten geht nicht (witziger weise)
-      that.assertEquals('div.psc-cms-ui-drop-box', that.dropBox1.unwrap().sortable('option', 'connectWith'), 'that.dropBox1 is connected to all');
-      that.assertEquals('div.psc-cms-ui-drop-box', that.dropBox2.isConnectedWith(), 'that.dropBox1 is connected to all');
+      that.assertEquals('div.psc-cms-ui-drop-box', that.dropBox1.unwrap().sortable('option', 'connectWith'), 'dropBox1 is connected to all');
+      that.assertEquals('div.psc-cms-ui-drop-box', that.dropBox2.isConnectedWith(), 'dropBox1 is connected to all');
       start();
     });
   });
@@ -78,6 +78,7 @@ define(['psc-tests-assert',
   asyncTest("sorting from box1 to box2 changes DOM", function () {
     $.when(setup(this)).then(function (that) {
       var $button2 = that.$dropBox2.find('button.psc-cms-ui-button');
+      var $b2 = $button2;
       
       that.drag.toElement($button2, that.$dropBox1);
       

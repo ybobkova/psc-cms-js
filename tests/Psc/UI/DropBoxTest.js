@@ -1,5 +1,5 @@
 define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
-        'Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable'
+        'Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/FastItem', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable'
        ], function(t, html) {
   
   module("Psc.UI.DropBox");
@@ -35,10 +35,11 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
   var setup = function(test, withButton) {
     var DefaultButtons = [];
     var button2, button3, button4;
+    var $button2, $button3, $button4;
 
-    DefaultButtons.push(button2 = new DefaultButton({id: 2}));
-    DefaultButtons.push(button3 = new DefaultButton({id: 3}));
-    DefaultButtons.push(button4 = new DefaultButton({id: 4}));
+    DefaultButtons.push(button2 = new DefaultButton({id: 2}), $button2 = button2.getHTMLCopy());
+    DefaultButtons.push(button3 = new DefaultButton({id: 3}), $button3 = button3.getHTMLCopy());
+    DefaultButtons.push(button4 = new DefaultButton({id: 4}), $button4 = button4.getHTMLCopy());
 
     var $fixture = $('#visible-fixture').html(html);
     var $dropBox = $fixture.find('.psc-cms-ui-drop-box');
@@ -53,6 +54,10 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
       button2: button2,
       button3: button3,
       button4: button4,
+
+      $button2: $button2,
+      $button3: $button3,
+      $button4: $button4,
       $fixture: $fixture,
       $dropBox: $dropBox,
       dropBox: dropBox
@@ -64,8 +69,7 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
       var $button = $('<button class="psc-cms-ui-button psc-guid-4fbf432195ba0 assigned-item">Button 10</button>');
       $dropBox.append($button);
   
-      new Psc.CMS.Item({ // linked sich selbst an $button
-        traits: [Psc.CMS.DropBoxButtonable],
+      new Psc.CMS.FastItem({ // linked sich selbst an $button
         tab: {"id":"test-button-10-form","label":"Button 10 Tab","url":"egal"},
         button: {"label":"Button 10","fullLabel":"Button 10","mode":2},
         identifier: 10,
@@ -97,16 +101,16 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
     
     that.$dropBox.hasClass('ui-widget-content ui-corner-all');
     
-    that.dropBox.addButton(that.button2);
-    that.dropBox.addButton(that.button3);
-    that.dropBox.addButton(that.button4);
+    that.dropBox.addButton(that.button2, that.$button2);
+    that.dropBox.addButton(that.button3, that.$button3);
+    that.dropBox.addButton(that.button4, that.$button4);
   });
 
   test("adds a button", function() {
     var that = setup(this);
     this.assertEquals(0, that.$dropBox.find('button.psc-cms-ui-button').length, 'dropbox is empty before');
     
-    that.dropBox.addButton(that.button2);
+    that.dropBox.addButton(that.button2, that.$button2);
     
     var $button2 = that.$dropBox.find('button.psc-cms-ui-button');
     this.assertEquals(1, $button2.length, 'dropbox has 1 button with psc-cms-ui-button class in it');
@@ -121,7 +125,7 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
     
     this.assertEquals(0, that.$dropBox.find('button.psc-cms-ui-button').length, 'dropbox is empty before');
     
-    that.dropBox.addButton(that.button3);
+    that.dropBox.addButton(that.button3, that.$button3);
     $button3 = that.$dropBox.find('button.psc-cms-ui-button');
     this.assertEquals(1, that.$dropBox.find('button.psc-cms-ui-button').length, 'dropbox has 1 button');
     
@@ -133,7 +137,7 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
   test("removes button on click", function() {
     var that = setup(this);
     
-    that.dropBox.addButton(that.button4);
+    that.dropBox.addButton(that.button4, that.$button4);
     var $button4 = that.$dropBox.find('button.psc-cms-ui-button');
     $button4.simulate('click');
     
@@ -145,9 +149,9 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
 
     that.dropBox.setName('buttons');
     
-    that.dropBox.addButton(that.button2);
-    that.dropBox.addButton(that.button3);
-    that.dropBox.addButton(that.button4);
+    that.dropBox.addButton(that.button2, that.$button2);
+    that.dropBox.addButton(that.button3, that.$button3);
+    that.dropBox.addButton(that.button4, that.$button4);
     
     var data = {};
     that.dropBox.serialize(data);
@@ -166,7 +170,7 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
     var that = setup(this, true);
     
     that.dropBox.setName('buttons');
-    that.dropBox.addButton(that.button2);
+    that.dropBox.addButton(that.button2, that.$button2);
     
     var data = {};
     that.dropBox.serialize(data);
@@ -179,7 +183,7 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
     var that = setup(this);
     this.assertFalse(that.dropBox.isMultiple(), 'dropbox is multiple');
     
-    that.dropBox.addButton(that.button2);
+    that.dropBox.addButton(that.button2, that.$button2);
     
     var multipleTriggered = false;
     that.dropBox.getEventManager().off('drop-box-multiple-violated'); // kein alert im test
@@ -190,7 +194,7 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
       multipleTriggered = true;
     });
     
-    that.dropBox.addButton(that.button2);
+    that.dropBox.addButton(that.button2, that.$button2);
     
     this.assertTrue(multipleTriggered, 'multiple was triggered after adding the same button twice');
   });
@@ -205,11 +209,38 @@ define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
   test("has button after adding", function() {
     var that = setup(this);
 
-    that.dropBox.addButton(that.button3);
+    that.dropBox.addButton(that.button3, that.$button3);
     this.assertTrue(that.dropBox.hasButton(that.button3), 'has button 3 as Joose Object');
     
-    var $button3 = that.dropBox.unwrap().find('button.psc-cms-ui-button');
-    this.assertTrue(that.dropBox.hasButton($button3), 'has button 3 as jquery');
+    this.assertTrue(that.dropBox.hasButton(that.$button3), 'has button 3 as jquery');
+  });
+
+  test("is linked to button after adding", function() {
+    var that = setup(this);
+    
+    that.dropBox.addButton(that.button3, that.$button3);
+    
+    this.assertSame(that.button3, that.$button3.data('dropBoxButton'));
+  });
+  
+  test("button can be added from linked fast item", function () {
+    var that = setup(this);
+    
+    var fastItem = new Psc.CMS.FastItem({ // linked sich selbst an $button
+        tab: {"id":"test-button-10-form","label":"Button 10 Tab","url":"egal"},
+        button: {"label":"Button 10","fullLabel":"Button 10","mode":2},
+        identifier: 10,
+        entityName: "default-button"
+    });
+    
+    var $button = fastItem.createButton();
+    fastItem.init($button);
+    
+    that.dropBox.addButtonFromLinkedFastItem($button);
+    
+    that.assertTrue(that.dropBox.hasButton($button));
+    that.assertTrue(that.dropBox.hasButton(fastItem.getDropBoxButton()));
+    
   });
   
   test("TODO: when sorted in connectedWith, hashes button (has) on sortable stop", function() {
