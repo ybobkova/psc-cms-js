@@ -1,3 +1,4 @@
+define(function () {
 /*!
  * jQuery Form Plugin
  * version: 3.20 (20-NOV-2012)
@@ -1119,3 +1120,5 @@ function log() {
 }
 
 })(jQuery);
+
+});
