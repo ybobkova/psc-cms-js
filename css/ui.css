@@ -10,6 +10,8 @@
   margin-top: 7px; /* damit das accordion in div.right mit der linie von dem form fieldset uf einer höhe ist */
 }
 
+.psc-cms-ui-form-panel .psc-cms-ui-right-accordion { margin-top: 0.4em; }
+
 #content div.psc-cms-ui-buttonset button.psc-cms-ui-button,
 #content div.psc-cms-ui-buttonset button.psc-cms-ui-button {
   margin-right: .4em;
@@ -47,7 +49,6 @@ button.psc-cms-ui-button {
 .ui-accordion .ui-accordion-content ul { margin-bottom: 0.6em;}
 .ui-accordion .ui-accordion-content ul li { padding-left: 0.6em;}
 
-.psc-cms-ui-tabs .psc-cms-ui-right-accordion { margin-top: 0.4em; }
 .ui-effects-transfer { border: 2px dotted gray; }
 
 #content .ui-autocomplete-input {
