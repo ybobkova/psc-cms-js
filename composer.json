@@ -1,0 +1,14 @@
+{
+    "name": "pscheit/psc-cms-js",
+    "description": "JS Library for Psc - CMS",
+    "authors": [
+        {
+            "name": "p.scheit",
+            "email": "p.scheit@ps-webforge.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+
+    }
+}
