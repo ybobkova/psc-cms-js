@@ -1,14 +1,17 @@
 {
-    "name": "pscheit/psc-cms-js",
-    "description": "JS Library for Psc - CMS",
-    "authors": [
-        {
-            "name": "p.scheit",
-            "email": "p.scheit@ps-webforge.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {
-
-    }
+  "name": "pscheit/psc-cms-js",
+  "type": "library",
+  "description": "js library for Psc CMS (pscheit/psc-cms).",
+  "keywords": ["cms", "framework"],
+  "homepage": "http://wiki.ps-webforge.com/psc-cms:start",
+  "license": "LGPL-3.0",
+  "authors": [
+    {"name": "Philipp Scheit", "email": "p.scheit@ps-webforge.com"}
+  ],
+  "require": {
+  },
+  "require-dev": {
+    "pscheit/psc-cms": "dev-master"
+  },
+  "minimum-stability": "dev"
 }
