@@ -1,4 +1,4 @@
-define(function () {
+define(['jquery'], function (jQuery) {
 /*!
  * jQuery Form Plugin
  * version: 3.20 (20-NOV-2012)
