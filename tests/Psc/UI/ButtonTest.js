@@ -23,4 +23,23 @@ define(['psc-tests-assert','Psc/UI/Button','Psc/Test/DoublesManager'], function(
     
     this.assertEquals({primary: 'ui-icon-circle-plus',secondary:null}, $button.button('option','icons'));
   });
+  
+  test("click can be given as property", function () {
+    setup(this);
+    
+    var wasClicked = false;
+    
+    var button = new Psc.UI.Button({
+      'label': 'clickable',
+      click: function() {
+        wasClicked = true;
+      }
+    });
+    
+    var $button = button.create();
+    
+    $button.trigger('click');
+    
+    this.assertTrue(wasClicked, 'button was clicked through trigger');
+  });
 });

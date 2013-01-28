@@ -151,7 +151,16 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 			QUnit.push( result, actual, true, this.formatMessage(message || "$('"+jQueryObject.selector+"').is("+expectedExpression+") ", result) );
 			return jQueryObject;
 		},
-
+		
+		assertjQueryHasWidget: function(expectedName, jQueryObject, message) {
+			this.assertjQuery(jQueryObject, 'actual is a jquery object [in assertJQueryHasWidget]');
+			
+			var actual = jQueryObject.data(expectedName);
+			var result = actual !== undefined;
+			QUnit.push( result, actual, true, this.formatMessage(message || "$('"+jQueryObject.selector+"') has jquery widget "+expectedName+" ", result) );
+			
+			//return jQueryObject;
+		},
 	
 		fail: function(message) {
 			//QUnit.push( false, message , sourceFromStacktrace(2));

@@ -49,9 +49,15 @@ define(['psc-tests-assert','Psc/UI/LayoutManagerComponent'], function(t) {
     expect(0);
     setup(this);
     
-    this.component.createWithMiniPanel();
-    var html = this.buildContent(this.component);
+    this.component.createWithMiniPanel({
+      'add-link': {
+        label: 'add a internal link',
+        click: function () {
+          alert('click');
+        }
+      }
+    });
     
-
+    var html = this.buildContent(this.component);
   });
 });
