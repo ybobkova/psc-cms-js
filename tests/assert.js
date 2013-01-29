@@ -61,7 +61,7 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 			var result = actual.search(expected) !== -1;
 			QUnit.push( result, actual, expected, this.formatMessage(message) || "string/object contains "+this.debug(expected), result);
 		},
-	
+		
 		assertNotSame: function(expected, actual, message) {
 			var result = actual !== expected;
 			QUnit.push( result, actual, expected, this.formatMessage(message || "objects reference not the same instance", result));

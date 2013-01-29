@@ -39,6 +39,13 @@ define(['psc-tests-assert','Psc/UI/Dragger'], function(t) {
     
     return ret;
   };
+  
+  test("regression: click is triggered after drag", function () {
+    var that = setup(this);
+    
+    
+    
+  });
 
   test("dragsDistance on Element", function() {
     var that = setup(this), drag = this.drag, $draggable = this.$draggable, oldPos = this.oldPos, pos;

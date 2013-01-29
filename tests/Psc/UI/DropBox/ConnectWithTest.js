@@ -24,7 +24,16 @@ define(['psc-tests-assert',
     };
       
     main.getEventManager().setLogging(true);
-    $fixture = $('#qunit-fixture').empty().append(html); // nicht visible nehmen das klappt in phantom nich
+    
+    $fixture = $('#visible-fixture').empty()
+      .css({
+        'position': 'absolute',
+        'top': 100,
+        'left': 200,
+        width: '600px'
+      })
+      .append(html); // nicht visible nehmen das klappt in phantom nich
+    //$fixture = $('#qunit-fixture').empty().append(html); // nicht visible nehmen das klappt in phantom nich
     
     $.when( main.getLoader().finished() ).then(function () {
       $dropBox1 = $fixture.find('div#drop-box1 div.psc-cms-ui-drop-box');

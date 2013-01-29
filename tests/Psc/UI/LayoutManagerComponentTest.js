@@ -3,7 +3,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManagerComponent'], function(t) {
   module("Psc.UI.LayoutManagerComponent");
   
   var setup = function(test) {
-    var layoutManagerComponentClass = Joose.Class('SomeComponent', {
+    var LayoutManagerComponentClass = Joose.Class('SomeComponent', {
         isa: Psc.UI.LayoutManagerComponent,
         
         has: {
@@ -18,24 +18,24 @@ define(['psc-tests-assert','Psc/UI/LayoutManagerComponent'], function(t) {
           },
           
           createContent: function() {
-            return this.$$testContent;
+            return this.$$content = this.$$testContent;
           }
         }
       }
     );
     
-    var layoutManagerComponent = new layoutManagerComponentClass({
+    var layoutManagerComponent = new LayoutManagerComponentClass({
       'label':'someComponent'
     });
     
     test = t.setup(test, {component: layoutManagerComponent});
     
-    var buildContent = function (component) {
+    test.buildContent = function (component) {
       if (!component) component = test.component;
       
       var html = component.create();
       
-      test.widget.html(html);
+      test.$widget.html(html);
       
       return html;
     };
@@ -51,10 +51,17 @@ define(['psc-tests-assert','Psc/UI/LayoutManagerComponent'], function(t) {
     
     this.component.createWithMiniPanel({
       'add-link': {
-        label: 'add a internal link',
+        leftIcon: 'link',
+        title: 'add a link',
         click: function () {
-          alert('click');
+          // do something
         }
+      },
+      'bold': {
+        label: 'B'
+      },
+      'strong': {
+        label: 'K'
       }
     });
     

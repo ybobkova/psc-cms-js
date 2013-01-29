@@ -13,6 +13,6 @@ define(['psc-tests-assert',"Psc/InvalidArgumentException"], function (t) {
     this.assertEquals("Psc.InvalidArgumentException", e.getName());
     this.assertEquals("method", e.getArg());
     this.assertEquals("POST|GET|DELETE|PUT", e.getExpected());
-    this.assertEquals("[Psc.InvalidArgumentException with Message 'Falscher Parameter für Argument: 'method'. Erwartet wird: POST|GET|DELETE|PUT']", e.toString());
+    this.assertContains("[Psc.InvalidArgumentException with Message 'Falscher Parameter für Argument: 'method'. Erwartet wird: POST|GET|DELETE|PUT']", e.toString());
   });
 });

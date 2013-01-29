@@ -18,7 +18,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(
   
   var setupWithHTML = function (test) {
     var $fs = $('<fieldset />').addClass('psc-cms-ui-navigation');
-    $('#visible-fixture').empty().append($fs);
+    $('#qunit-fixture').empty().append($fs);
     
     setup(test);
 
@@ -56,7 +56,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(
     
     this.assertEquals(3, $buttons.length, '3 buttons are in html');
   });
-
+  
   test("edit opens a popup", function () {
     var that = setupWithHTML(this);
     
@@ -90,7 +90,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(
     
     $titleDe.val('neuer titel fuer de');
     $titleEn.val('a new title for en');
-
+  
     dialog.submit();
     
     this.assertEquals('a new title for en', this.node.getTitle('en'));

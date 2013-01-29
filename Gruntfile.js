@@ -74,6 +74,9 @@ module.exports = function(grunt) {
         mapToUrl('tests/tiptoi/**/*.html', 'http://127.0.0.1:'+port+'/'),
         mapToUrl('tests/CoMun/**/*.html', 'http://127.0.0.1:'+port+'/')
       ],
+      nav: [
+        mapToUrl('tests/Psc/UI/Navigation*.html', 'http://127.0.0.1:'+port+'/'),
+      ],
       dropBox: [
         mapToUrl('tests/Psc/UI/DropBox/*.html', 'http://127.0.0.1:'+port+'/')
       ],
