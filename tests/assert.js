@@ -87,6 +87,10 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 			QUnit.push( result, actual, 'something not undefined', this.formatMessage(message || this.debug(actual)+" is not undefined ", result) );
 		},
 		
+		assertFunction: function(actual, message) {
+			var result = $.isFunction(actual);
+			QUnit.push( result, actual, 'a function', this.formatMessage(message || this.debug(actual)+" is a function", result) );
+		},
 		assertAttributeEquals: function(expected, actualAttribute, actualObject, message) {
 			var actual;
 			var result = actualObject[actualAttribute] && QUnit.equiv(expected, actual = actualObject[actualAttribute]);
