@@ -1,5 +1,4 @@
-        
-    ;!function () {;
+define(function () {
     var Joose = {}
     
     // configuration hash
@@ -3206,7 +3205,7 @@
         }
         
     
-    })
+    });
     
     
     Joose.Namespace.Manager.my.register('Singleton', Class({
@@ -3214,7 +3213,5 @@
         meta    : Joose.Meta.Class,
         
         does    : Joose.Meta.Singleton
-    }))
-    ;
-    ;
-    }();;
+    }));
+});
