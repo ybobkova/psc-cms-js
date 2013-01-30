@@ -10,10 +10,12 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
     
     var p = new Psc.UI.LayoutManager.Paragraph({
       label: 'Paragraph',
-      content: 'Lorem ipsum dolor sit amet...',
+      content: 'Lorem ipsum dolor sit amet...'
     });
     
-    test = t.setup(test, {paragraph: p, $container: $container});
+    var interactionProvider = dm.injectInteractionProvider(p);
+    
+    test = t.setup(test, {paragraph: p, $container: $container, interactionProvider: interactionProvider});
     
     var editor;
     test.editor = function () {
@@ -36,19 +38,22 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
     this.assertjQueryLength(1, $widget.find('button.add-link'));
   });
   
-  test("paragraph inserts a link template, when caret is somewhere in the text", function () {
+  test("paragraph inserts a link with prompting for both informations, when caret is somewhere in the text", function () {
     var that = setup(this);
     
     var $widget = this.paragraph.create();
     this.$container.append($widget);
     var $button = $widget.find('button.add-link');
     
+    this.interactionProvider.answerToPrompt("http://www.ps-webforge.com/");
+    this.interactionProvider.answerToPrompt("ps-webforge");
+    
     this.editor().move(12);
     
     $button.trigger('click');
     
     this.assertEquals(
-      "Lorem ipsum [[http://www.|Link-Beschreibung]] dolor sit amet...",
+      "Lorem ipsum [[http://www.ps-webforge.com/|ps-webforge]] dolor sit amet...",
       this.editor().getText(),
       "text template is inserted into textarea on position 4"
     );

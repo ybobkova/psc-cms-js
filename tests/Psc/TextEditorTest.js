@@ -147,4 +147,32 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquerypp/dom/selection'], functio
     
     this.assertEquals(undefined, this.textEditor.lookahead(21, 1));
   });
+  
+  test("textEditor can make a selection", function () {
+    setup(this);
+    
+    this.textEditor.select(0,5);
+    
+    this.assertEquals({
+        width: 5,
+        start: 0,
+        end: 5
+      },
+      this.$ta.selection()
+    );
+    
+    this.textEditor.setSelection(0,5);
+  });
+  
+  test("textEditor can delete the selection", function () {
+    var that = setup(this);
+    
+    this.textEditor.select(0,6);
+    this.textEditor.deleteSelection();
+    
+    this.assertEquals(
+      "ipsum sit amet..",
+      this.$ta.val()
+    );
+  });
 });
