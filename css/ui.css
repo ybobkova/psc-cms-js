@@ -158,3 +158,9 @@ fieldset.psc-cms-ui-navigation  li .button-panel { position: absolute; top: 0px;
 .lm-downloadslist li {
   margin-bottom: 10px;
 }
+
+/* mini-button-panel*/
+.psc-cms-ui-mini-button-panel {
+  padding: 0.3em;
+  margin-right: 0px;
+}

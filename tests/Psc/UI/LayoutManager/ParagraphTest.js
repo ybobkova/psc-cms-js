@@ -59,7 +59,7 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
     );
   });
   
-  test("paragraph replaces marked word with boldl tag", function () {
+  test("paragraph replaces marked word with bold tag", function () {
     var that = setup(this);
     
     
@@ -72,7 +72,7 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
     $button.trigger('click');
     
     this.assertEquals(
-      "[b]Lorem[/b] ipsum dolor sit amet...",
+      "**Lorem** ipsum dolor sit amet...",
       this.editor().getText(),
       "lorem is replaced with bold lorem"
     );
