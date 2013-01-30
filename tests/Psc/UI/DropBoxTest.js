@@ -1,6 +1,6 @@
-define(['psc-tests-assert', 'text!fixtures/dropbox.html', 'jquery-simulate',
+define(['psc-tests-assert', 'joose', 'text!fixtures/dropbox.html', 'jquery-simulate',
         'Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/FastItem', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable'
-       ], function(t, html) {
+       ], function(t, Joose, html) {
   
   module("Psc.UI.DropBox");
 

@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/ContextMenuManager','Psc/UI/Menu'], function(t) {
+define(['psc-tests-assert','joose', 'Psc/UI/ContextMenuManager','Psc/UI/Menu'], function(t, Joose) {
   module("Psc.UI.ContextMenuManager");
   
   var setup = function(test) {

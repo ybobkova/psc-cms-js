@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/EventDispatching','Psc/EventManager'], function(t) {
+define(['psc-tests-assert', 'joose', 'Psc/EventDispatching','Psc/EventManager'], function(t, Joose) {
   
   module("Psc.EventDispatching");
   

@@ -1,4 +1,4 @@
-define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
+define(['jquery', 'joose', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($, Joose) {
 	var baseAssertions = {
 		
 		formatMessage: function(message, result) {

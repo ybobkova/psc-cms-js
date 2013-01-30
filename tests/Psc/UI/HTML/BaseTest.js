@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/HTML/Base'], function(t) {
+define(['psc-tests-assert', 'joose', 'Psc/UI/HTML/Base'], function(t, Joose) {
   
   module("Psc.UI.HTML.Base");
   

@@ -1,4 +1,4 @@
-define(['psc-tests-assert','jquery-simulate','Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/AjaxHandler','Psc/AjaxResponse','Psc/Loader','Psc/UI/Tab'], function(t) {
+define(['psc-tests-assert', 'joose', 'jquery-simulate','Psc/UI/AutoComplete','Psc/EventManagerMock','Psc/AjaxHandler','Psc/AjaxResponse','Psc/Loader','Psc/UI/Tab'], function(t, Joose) {
   var html, $html, $autoComplete;
   
   module("Psc.UI.AutoComplete");

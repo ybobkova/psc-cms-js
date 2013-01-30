@@ -1,5 +1,5 @@
 /*globals TestRole*/
-define(['psc-tests-assert','stacktrace','Psc/Code','Psc/WrongValueException','Psc/InvalidArgumentException','Psc/Request'], function (t, printStackTrace) {
+define(['psc-tests-assert','stacktrace','joose', 'Psc/Code','Psc/WrongValueException','Psc/InvalidArgumentException','Psc/Request'], function (t, printStackTrace, Joose) {
   
   module("Psc.Code");
   

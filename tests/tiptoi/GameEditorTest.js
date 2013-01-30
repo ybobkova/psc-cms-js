@@ -1,4 +1,4 @@
-define(['psc-tests-assert','tiptoi/GameEditor'], function(t) {
+define(['psc-tests-assert', 'joose', 'tiptoi/GameEditor'], function(t, Joose) {
   
   module("tiptoi.GameEditor");
   

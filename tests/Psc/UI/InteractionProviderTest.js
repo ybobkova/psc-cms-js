@@ -18,17 +18,17 @@ define(['psc-tests-assert', 'Psc/UI/InteractionProvider', 'Psc/UI/InteractionCan
     
   });
   
-  test("prompt() acceptance for cancel", function () {
-    setup(this);
-    
-    try {
-      this.interactionProvider.prompt("please cancel this");
-      
-    } catch (ex) {
-      this.assertInstanceOf(Psc.UI.InteractionCanceledException, ex, 'exception of type Psc.UI.InteractionCanceledException was thrown');
-      return;
-    }
-    
-    this.fail('no expected exception is thrown');
-  });
+  //test("prompt() acceptance for cancel", function () {
+  //  setup(this);
+  //  
+  //  try {
+  //    this.interactionProvider.prompt("please cancel this");
+  //    
+  //  } catch (ex) {
+  //    this.assertInstanceOf(Psc.UI.InteractionCanceledException, ex, 'exception of type Psc.UI.InteractionCanceledException was thrown');
+  //    return;
+  //  }
+  //  
+  //  this.fail('no expected exception is thrown');
+  //});
 });

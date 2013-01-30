@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/Exception','Psc/InvalidArgumentException','Psc/AjaxException'], function (t) {
+define(['psc-tests-assert', 'joose', 'Psc/Exception','Psc/InvalidArgumentException','Psc/AjaxException'], function (t, Joose) {
   
   module("Psc.Exception");
   

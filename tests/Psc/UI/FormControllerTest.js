@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/FormController', 'Psc/EventManagerMock','Psc/AjaxHandler', 'Psc/AjaxFormHandler'], function(t) {
+define(['psc-tests-assert','joose', 'Psc/UI/FormController', 'Psc/EventManagerMock','Psc/AjaxHandler', 'Psc/AjaxFormHandler'], function(t, Joose) {
   
   module("Psc.UI.FormController");
   

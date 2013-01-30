@@ -1,4 +1,4 @@
-define(['psc-tests-assert','text!fixtures/tabs-for-main.html','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventManager','Psc/EventManagerMock','Psc/Response', 'Psc/ResponseMetaReader','Psc/UI/FormController'], function(t, tabsHTML) {
+define(['psc-tests-assert','joose', 'text!fixtures/tabs-for-main.html','Psc/UI/Main','Psc/UI/Tabs','Psc/UI/Tab','Psc/EventManager','Psc/EventManagerMock','Psc/Response', 'Psc/ResponseMetaReader','Psc/UI/FormController'], function(t, Joose, tabsHTML) {
   module("Psc.UI.Main");
   
   var setup = function(test) {

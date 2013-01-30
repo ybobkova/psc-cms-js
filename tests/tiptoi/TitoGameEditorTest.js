@@ -1,5 +1,6 @@
 define(
   ['psc-tests-assert',
+   'joose',
    'text!fixtures/tiptoi/FEE-Game1.tito',
    'text!fixtures/tiptoi/tito-editor.html',
    'text!fixtures/tiptoi/FEE-Game1.html',
@@ -12,7 +13,7 @@ define(
    'Psc/AjaxResponse',
    'Psc/Response'
    ],
-  function(t, titoSourceCode, html, titoHighlighted, syncedTito, syncExceptionText) {
+  function(t, Joose, titoSourceCode, html, titoHighlighted, syncedTito, syncExceptionText) {
   
   module("tiptoi.TitoGameEditor");
   

@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/FormFields', 'Psc/UI/FormReader', 'Psc/UI/FormBuilder', 'Psc/Test/DoublesManager'], function(t) {
+define(['psc-tests-assert','joose', 'Psc/UI/FormFields', 'Psc/UI/FormReader', 'Psc/UI/FormBuilder', 'Psc/Test/DoublesManager'], function(t, Joose) {
   
   module("Psc.UI.FormFields");
   
