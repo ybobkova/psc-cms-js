@@ -6,7 +6,7 @@ define(['psc-tests-assert','jquery-simulate'], function(t) {
     
     var $someDiv = $('<div />')
        .css('height', '110px')
-       .css('width', '550px')
+       .css('width', '550px');
        
     
     var $draggable = $('<button class="child-class"></button>')
@@ -19,15 +19,13 @@ define(['psc-tests-assert','jquery-simulate'], function(t) {
     $fixture.append($someDiv);
     
     test.findCenter = function findCenter( elem ) {
-    	var offset,
-  		document = $( elem.ownerDocument );
-    	elem = $( elem );
-    	offset = elem.offset();
+      var offset, document = $( elem.ownerDocument ); elem = $( elem ); offset =
+      elem.offset();
 
-    	return {
-    		x: offset.left + elem.outerWidth() / 2 - document.scrollLeft(),
-    		y: offset.top + elem.outerHeight() / 2 - document.scrollTop()
-    	};
+      return {
+        x: offset.left + elem.outerWidth() / 2 - document.scrollLeft(), y:
+        offset.top + elem.outerHeight() / 2 - document.scrollTop()
+      };
     };
     
     return $.extend(test, {
@@ -44,17 +42,14 @@ define(['psc-tests-assert','jquery-simulate'], function(t) {
     var clicked = false;
     
     this.$someDiv.on('click', function (e) {
-      console.log(e);
       clicked = true;
     });
 
     this.$someDiv.on('click', '.child-class', function (e) {
-      console.log(e);
       clicked = true;
     });
     
     this.$draggable.on('click', function (e) {
-      console.log('gulp');
     });
     
     
