@@ -170,7 +170,9 @@ define(['jquery', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($) {
 			//QUnit.push( false, message , sourceFromStacktrace(2));
 			QUnit.pushFailure( "failed: "+message );
 		},
-		
+		ok: function(message) {
+			QUnit.ok(message);
+		},
 		assertType: function(expectedType, actual, message) {
 			var result;
 			if (expectedType === 'array') {

@@ -1,4 +1,4 @@
-define(function () {
+define(function (require, exports, module) {
     var Joose = {}
     
     // configuration hash
@@ -3214,4 +3214,6 @@ define(function () {
         
         does    : Joose.Meta.Singleton
     }));
+    
+  return Joose;
 });

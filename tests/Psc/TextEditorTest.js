@@ -22,7 +22,7 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquerypp/dom/selection'], functio
     return t.setup(test, {textEditor: textEditor, $ta: $ta, assertCaretPosition: assertCaretPosition});
   };
   
-  test("textEditor can move caret to position", function() {
+  test("can move caret to position", function() {
     var that = setup(this), l = "Lorem ipsum sit amet..".length;
 
     this.textEditor.move(11);
@@ -38,7 +38,7 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquerypp/dom/selection'], functio
     this.assertCaretPosition(l, 'cat is moved after the last char (to the end), with overflow');
   });
   
-  test("textEditor getCaret reflects position", function () {
+  test("getCaret reflects position", function () {
     var that = setup(this);
     
     this.textEditor.move(8);
@@ -85,7 +85,7 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquerypp/dom/selection'], functio
     this.assertEquals("Lorem", this.textEditor.getSelectionText(), 'getSelectionText returns selected substring from ta');
   });
   
-  test("textEditor can insert text at given caret position", function() {
+  test("can insert text at given caret position", function() {
     var that = setup(this);
     
     this.textEditor.move(12);
@@ -94,7 +94,7 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquerypp/dom/selection'], functio
     this.assertEquals("Lorem ipsum dolor sit amet..", this.$ta.val(), 'text is inserted correctly');
   });
 
-  test("textEditor insert spaced inserts the text at given caret position, but with spaces on each side - pad left", function() {
+  test("insert spaced inserts the text at given caret position, but with spaces on each side - pad left", function() {
     var that = setup(this);
     //Lorem ipsum sit amet.
     //           ^ 11
@@ -105,7 +105,7 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquerypp/dom/selection'], functio
     this.assertEquals("Lorem ipsum dolor sit amet..", this.$ta.val(), 'text is inserted with spaces correctly');
   });
     
-  test("textEditor insert spaced inserts the text at given caret position, but with spaces on each side - pad right", function() {
+  test("insert spaced inserts the text at given caret position, but with spaces on each side - pad right", function() {
     var that = setup(this);
     //Lorem ipsum sit amet.
     //            ^ 12
@@ -116,7 +116,7 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquerypp/dom/selection'], functio
     this.assertEquals("Lorem ipsum dolor sit amet..", this.$ta.val(), 'text is inserted with spaces correctly');
   });
   
-  test("textEditor (helper): lookbehind returns the chars with length LEFT from position", function () {
+  test("(helper): lookbehind returns the chars with length LEFT from position", function () {
     var that = setup(this);
     //Lorem ipsum sit amet.
     //  ^ 2              ^ 19
@@ -133,7 +133,7 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquerypp/dom/selection'], functio
     this.assertEquals(undefined, this.textEditor.lookbehind(-1, 1));
   });
 
-  test("textEditor (helper): lookahead returns the chars with length RIGHT from position+1", function () {
+  test("(helper): lookahead returns the chars with length RIGHT from position+1", function () {
     var that = setup(this);
     //Lorem ipsum sit amet.
     //  ^ 2              ^ 19
@@ -148,7 +148,7 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquerypp/dom/selection'], functio
     this.assertEquals(undefined, this.textEditor.lookahead(21, 1));
   });
   
-  test("textEditor can make a selection", function () {
+  test("can make a selection", function () {
     setup(this);
     
     this.textEditor.select(0,5);
@@ -164,7 +164,20 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquerypp/dom/selection'], functio
     this.textEditor.setSelection(0,5);
   });
   
-  test("textEditor can delete the selection", function () {
+  test("does not allowed a negative range for selection", function () {
+    setup(this);
+    
+    try {
+      this.textEditor.setSelection(6,5);
+    } catch (ex) {
+      QUnit.ok('Exception is raised');
+      return;
+    }
+    
+    this.fail('Exception was not raised');
+  });
+  
+  test("can delete the selection", function () {
     var that = setup(this);
     
     this.textEditor.select(0,6);

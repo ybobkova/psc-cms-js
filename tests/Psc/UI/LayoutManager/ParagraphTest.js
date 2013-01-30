@@ -26,24 +26,31 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
       return editor;
     };
     
+    test.setupButton = function (button) {
+      var $widget = test.paragraph.create();
+      test.$container.append($widget);
+      
+      return $widget.find('button.'+button);
+    };
+    
+    test.setupLinkButton = function() {
+      return test.setupButton('add-link');
+    };
+    
     return test;
   };
 
   test("paragraph shows a button to add a link", function() {
     setup(this);
+    var $button = this.setupLinkButton();
     
-    var $widget = this.paragraph.create();
-    this.$container.append($widget);
-    
-    this.assertjQueryLength(1, $widget.find('button.add-link'));
+    this.assertjQueryLength(1, $button);
+    this.assertjQueryHasClass('psc-cms-ui-button', $button);
   });
   
   test("paragraph inserts a link with prompting for both informations, when caret is somewhere in the text", function () {
     var that = setup(this);
-    
-    var $widget = this.paragraph.create();
-    this.$container.append($widget);
-    var $button = $widget.find('button.add-link');
+    var $button = this.setupLinkButton();
     
     this.interactionProvider.answerToPrompt("http://www.ps-webforge.com/");
     this.interactionProvider.answerToPrompt("ps-webforge");
@@ -59,16 +66,31 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
     );
   });
   
-  test("paragraph replaces marked word with bold tag", function () {
+  test("when link button is cancelled, no link is inputted", function () {
     var that = setup(this);
+    var $button = this.setupLinkButton();
     
+    this.editor().setSelection(0,73); // all
     
-    var $widget = this.paragraph.create();
-    this.$container.append($widget);
-    var $button = $widget.find('button.bold');
+    // cancel url prompt
+    this.interactionProvider.cancelNextPrompt();
+    // to "fake" the browser behaviour the second is given
+    this.interactionProvider.answerToPrompt('link-description');
+    
+    $button.click();
+    
+    this.assertEquals(
+      "Lorem ipsum dolor sit amet...",
+      this.editor().getText(),
+      "text template should be non modified, because button cancelled"
+    );
+  });
+  
+  test("paragraph replaces marked word with bold tag", function () {
+    var that = setup(this);    
+    var $button = this.setupButton('bold');
     
     this.editor().unwrap().selection(0,5);
-    
     $button.trigger('click');
     
     this.assertEquals(
@@ -77,4 +99,33 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
       "lorem is replaced with bold lorem"
     );
   });
+
+
+  test("paragraph replaces marked word with // tag", function () {
+    var that = setup(this);    
+    var $button = this.setupButton('italic');
+    
+    this.editor().unwrap().selection(0,5);
+    $button.trigger('click');
+    
+    this.assertEquals(
+      "//Lorem// ipsum dolor sit amet...",
+      this.editor().getText(),
+      "lorem is replaced with italic lorem"
+    );
+  });
+  
+  test("paragraph replaces marked word with underline tag", function () {
+    var that = setup(this);    
+    var $button = this.setupButton('underlined');
+    
+    this.editor().unwrap().selection(6,11);
+    $button.trigger('click');
+    
+    this.assertEquals(
+      "Lorem __ipsum__ dolor sit amet...",
+      this.editor().getText(),
+      "lorem is replaced with underline ipsum"
+    );
+  });  
 });

@@ -57,7 +57,6 @@ module.exports = function(grunt) {
         jquery: true,
         globals: {
           $: true,
-          Joose: true,
           define: true, require: true,
           
           Psc: true,
@@ -150,7 +149,7 @@ module.exports = function(grunt) {
     if (!grunt.file.exists(file) || grunt.cli.options.overwrite) {
       traits = _.rest(arguments, 2);
   
-      var deps = traits;
+      var deps = _.clone(traits);
       
       if (isa) {
         deps.push(isa);
