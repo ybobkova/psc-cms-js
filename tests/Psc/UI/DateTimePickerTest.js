@@ -83,4 +83,22 @@ define(['psc-tests-assert','text!fixtures/datetimepicker.html', 'jquery-simulate
     that.assertEquals('12:22', data['start[time]']);
     that.assertEquals('12.12.2012', data['start[date]']);
   });
+  
+  test("datetimepicker without a real value can still be constructed, and date is current", function () {
+    var that = setup(this);
+    
+    var datePicker = new Psc.UI.DateTimePicker({
+      dateFormat: 'd.m.Y',
+      timeFormat: 'h:i',
+      value: null,
+      widget: that.$widget
+    });
+    
+    var current = new Psc.Date();
+    
+    this.assertEquals(
+      current.format('d.m.Y'),
+      datePicker.getValue().format('d.m.Y')
+    );
+  });
 });

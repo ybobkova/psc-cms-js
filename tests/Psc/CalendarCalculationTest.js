@@ -42,4 +42,12 @@ define(['psc-tests-assert','Psc/CalendarCalculation','Psc/Date','Psc/Test/Double
     this.assertEquals([20,21,22,23,24,25,26], this.daysToNum(mr[3].days));
     this.assertEquals([27,28,29,1,2,3,4], this.daysToNum(mr[4].days));
   });
+  
+  test("regression: calendar calcuation can to canBeDisplayed for non defined years", function () {
+    setup(this);
+    
+    this.calendarCalculation.setDate(new Psc.Date.create({year: 2012, day: 1, month: 1}));
+    
+    this.assertFalse(this.calendarCalculation.canBeDisplayed(new Psc.Date.create({year: 2013, day: 1, month: 1})));
+  });
 });
