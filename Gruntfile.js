@@ -129,11 +129,10 @@ module.exports = function(grunt) {
     }
   });
 
-  // Default task.
-  grunt.registerTask('pack', ['jshint', 'requirejs']);
-  grunt.registerTask('default', ['jshint', 'connect', 'qunit', 'requirejs']);
-  grunt.registerTask('test', ['connect', 'qunit']);
-  grunt.registerTask('travis', ['jshint', 'connect', 'qunit']);
+  grunt.task.registerTask('pack', ['jshint', 'requirejs']);
+  grunt.task.registerTask('default', ['jshint', 'connect', 'qunit', 'requirejs']);
+  grunt.task.registerTask('test', ['connect', 'qunit']);
+  grunt.task.registerTask('travis', ['jshint', 'connect', 'qunit']);
   
   grunt.registerTask("create-class", "crates a new Class Stub", function (className, isa, traits) {
     var _ = grunt.util._;
