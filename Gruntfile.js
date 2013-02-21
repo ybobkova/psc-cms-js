@@ -8,17 +8,22 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
+
+  var port = 8000;
+  var hostname = 'localhost';
   
-  var mapToUrl = function(files, baseUrl) {
-    return grunt.util._.map(
-      grunt.file.expandFiles(files),
+  var mapToUrl = function(files) {
+    var baseUrl = 'http://'+hostname+':'+port+'/';
+    
+    var urls = grunt.util._.map(
+      grunt.file.expand(files),
       function (file) {
         return baseUrl+file;
       }
     );
+    
+    return urls;
   };
-  
-  var port = 8000;
 
   // Project configuration.
   grunt.initConfig({
@@ -68,17 +73,26 @@ module.exports = function(grunt) {
     },
     
     qunit: {
-      all: [
-        mapToUrl('tests/Psc/**/*.html', 'http://127.0.0.1:'+port+'/'),
-        mapToUrl('tests/tiptoi/**/*.html', 'http://127.0.0.1:'+port+'/'),
-        mapToUrl('tests/CoMun/**/*.html', 'http://127.0.0.1:'+port+'/')
-      ],
-      nav: [
-        mapToUrl('tests/Psc/UI/Navigation*.html', 'http://127.0.0.1:'+port+'/')
-      ],
-      dropBox: [
-        mapToUrl('tests/Psc/UI/DropBox/*.html', 'http://127.0.0.1:'+port+'/')
-      ],
+      all: {
+        options: {
+          urls: grunt.util._.extend(
+            [],
+            mapToUrl('tests/Psc/**/*.html'),
+            mapToUrl('tests/tiptoi/**/*.html'),
+            mapToUrl('tests/CoMun/**/*.html')
+          )
+        }
+      },
+      nav: {
+        options: {
+          urls: mapToUrl('tests/Psc/UI/Navigation*.html')
+        }
+      },
+      dropBox: {
+        options: {
+          urls: mapToUrl('tests/Psc/UI/DropBox/*.html')
+        }
+      },
       options: {
         timeout: 12000,
         inject: false
@@ -121,10 +135,12 @@ module.exports = function(grunt) {
     }
     */
     connect: {
-      options: {
-        hostname: "127.0.0.1",
-        port: 8000,
-        base: '.'
+      server: {
+        options: {
+          hostname: hostname,
+          port: port,
+          base: '.'
+        }
       }
     }
   });
@@ -216,7 +232,7 @@ module.exports = function(grunt) {
   });
 
   grunt.registerMultiTask("update-tests", "updates the index / and singleTestFiles for all test files", function() {
-    var filepaths = grunt.file.expandFiles(grunt.util._.pluck(this.files, 'src'));
+    var filepaths = grunt.file.expand(grunt.util._.pluck(this.files, 'src'));
     var _ = grunt.util._;
     
     // all files are relative to the grunt.js file
