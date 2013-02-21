@@ -17,7 +17,7 @@
 .jqx-tree-item-arrow-expand-ui-start, .jqx-tree-item-arrow-expand-hover-ui-start{background-position:-65px -16px; background-image:url(images/start/ui-icons_222222_256x240.png)}
 .jqx-tree-item-arrow-collapse-ui-start, .jqx-tree-item-arrow-collapse-hover-ui-start{background-position:-32px -16px; background-image:url(images/start/ui-icons_222222_256x240.png)}
 .jqx-menu-item-arrow-right-ui-start, .jqx-menu-item-arrow-right-selected-ui-start{background-position:-32px -16px; background-image:url(images/start/ui-icons_222222_256x240.png)}
-.jqx-menu-item-arrow-left-ui-start, .jqx-menu-item-arrow-left-selected-ui-start{background-position:-96px -16px; background-image:url(images/start/ui-icons_222222_256x240.png)}
+.jqx-menu-item-arrow-left-ui-start, .jqx-menu-item-arrow-left-selected-ui-start, .jqx-tree-item-arrow-collapse-rtl-ui-start, .jqx-tree-item-arrow-collapse-hover-rtl-ui-start{background-position:-96px -16px; background-image:url(images/start/ui-icons_222222_256x240.png)}
 /*Tabs*/
 .jqx-tabs-title-ui-start{border-color:#77d5f7; border-bottom-color: transparent; background: #0078ae url(images/start/ui-bg_glass_45_0078ae_1x400.png) 50% 50% repeat-x;}
 .jqx-tabs-header-ui-start{border-width: 1px; padding-bottom: 0px; margin:2px; border-radius:5px; moz-border-radius:5px; webkit-border-radius:5px}

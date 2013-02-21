@@ -15,7 +15,7 @@
 .jqx-tree-item-arrow-expand-ui-sunny, .jqx-tree-item-arrow-expand-hover-ui-sunny{background-position:-65px -16px; background-image:url(images/sunny/ui-icons_3d3d3d_256x240.png)}
 .jqx-tree-item-arrow-collapse-ui-sunny, .jqx-tree-item-arrow-collapse-hover-ui-sunny{background-position:-32px -16px; background-image:url(images/sunny/ui-icons_3d3d3d_256x240.png)}
 .jqx-menu-item-arrow-right-ui-sunny, .jqx-menu-item-arrow-right-selected-ui-sunny{background-position:-32px -16px; background-image:url(images/sunny/ui-icons_3d3d3d_256x240.png)}
-.jqx-menu-item-arrow-left-ui-sunny, .jqx-menu-item-arrow-left-selected-ui-sunny{background-position:-96px -16px; background-image:url(images/sunny/ui-icons_3d3d3d_256x240.png)}
+.jqx-menu-item-arrow-left-ui-sunny, .jqx-menu-item-arrow-left-selected-ui-sunny, .jqx-tree-item-arrow-collapse-rtl-ui-sunny, .jqx-tree-item-arrow-collapse-hover-rtl-ui-sunny{background-position:-96px -16px; background-image:url(images/sunny/ui-icons_3d3d3d_256x240.png)}
 /*Tabs*/
 .jqx-tabs-title-ui-sunny{font-weight: bold; border-color: #d19405; border-bottom-color: transparent; background: #fece2f url(images/sunny/ui-bg_gloss-wave_60_fece2f_500x100.png) 50% 50% repeat-x;color: #4c3000; }
 .jqx-tabs-title-bottom-ui-sunny{border-bottom-color:#d19405; border-top-color: transparent;}

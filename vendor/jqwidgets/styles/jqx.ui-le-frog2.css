@@ -58,7 +58,7 @@
 .icon-arrow-right-selected-ui-le-frog{background-position:-32px -17px; background-image:url(images/le-frog/ui-icons_ffffff_256x240.png)}
 .icon-arrow-up-selected-ui-le-frog, .jqx-menu-item-arrow-up-selected-ui-le-frog, .jqx-menu-item-arrow-up-ui-le-frog, .jqx-menu-item-arrow-up-hover-ui-le-frog{background-position:0 -16px; background-image:url(images/le-frog/ui-icons_ffffff_256x240.png)}
 .icon-arrow-down-selected-ui-le-frog, .jqx-menu-item-arrow-down-selected-ui-le-frog, .jqx-menu-item-arrow-down-ui-le-frog, .jqx-menu-item-arrow-down-hover-ui-le-frog{background-position:-65px -16px; background-image:url(images/le-frog/ui-icons_ffffff_256x240.png)}
-.icon-arrow-left-selected-ui-le-frog, .jqx-tree-item-arrow-collapse-rtl-ui-le-frog, .jqx-tree-item-arrow-collapse-hover-rtl-ui-le-frog{background-position:-96px -17px; background-image:url(images/le-frog/ui-icons_ffffff_256x240.png)}
+.icon-arrow-left-selected-ui-le-frog{background-position:-96px -17px; background-image:url(images/le-frog/ui-icons_ffffff_256x240.png)}
 .icon-arrow-right-selected-ui-le-frog{background-position:-32px -17px; background-image:url(images/le-frog/ui-icons_ffffff_256x240.png)}
 .icon-close-ui-le-frog{background-image:url(images/le-frog/ui-icons_ffffff_256x240.png); background-position:-80px -128px; cursor:pointer}
 .icon-close-hover-ui-le-frog{background-image:url(images/le-frog/ui-icons_ffffff_256x240.png); background-position:-80px -128px; cursor:pointer}
@@ -143,7 +143,6 @@
 .jqx-expander-arrow-bottom-ui-le-frog{background-position:0 -16px; background-image:url(images/le-frog/ui-icons_ffffff_256x240.png)}
 .jqx-tabs-arrow-right-ui-le-frog{background-position:-32px -16px; background-image:url(images/le-frog/ui-icons_ffffff_256x240.png)}
 .jqx-tabs-arrow-left-ui-le-frog{background-position:-96px -16px; background-image:url(images/le-frog/ui-icons_ffffff_256x240.png)}
-
 /*Scroll Bar*/
 .jqx-scrollbar-ui-le-frog .icon-arrow-up-ui-le-frog{width: 16px; height: 16px; margin-left: auto;}
 .jqx-scrollbar-ui-le-frog .icon-arrow-down-ui-le-frog{width: 16px; height: 16px; margin-left: auto;}

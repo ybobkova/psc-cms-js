@@ -54,7 +54,7 @@
 .icon-arrow-right-selected-ui-darkness{background-position:-32px -17px; background-image:url(images/darkness/ui-icons_cccccc_256x240.png)}
 .icon-arrow-up-selected-ui-darkness{background-position:0 -16px; background-image:url(images/darkness/ui-icons_cccccc_256x240.png)}
 .icon-arrow-down-selected-ui-darkness{background-position:-65px -16px; background-image:url(images/darkness/ui-icons_cccccc_256x240.png)}
-.icon-arrow-left-selected-ui-darkness{background-position:-96px -17px; background-image:url(images/darkness/ui-icons_cccccc_256x240.png)}
+.icon-arrow-left-selected-ui-darkness, .jqx-tree-item-arrow-collapse-rtl-ui-darkness, .jqx-tree-item-arrow-collapse-hover-rtl-ui-darkness{background-position:-96px -17px; background-image:url(images/darkness/ui-icons_cccccc_256x240.png)}
 .icon-arrow-right-selected-ui-darkness{background-position:-32px -17px; background-image:url(images/darkness/ui-icons_cccccc_256x240.png)}
 .icon-close-ui-darkness{background-image:url(images/darkness/ui-icons_cccccc_256x240.png); background-position:-80px -128px; cursor:pointer}
 .icon-close-hover-ui-darkness{background-image:url(images/darkness/ui-icons_cccccc_256x240.png); background-position:-80px -128px; cursor:pointer}

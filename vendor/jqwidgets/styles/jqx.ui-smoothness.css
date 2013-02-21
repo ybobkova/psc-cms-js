@@ -15,7 +15,7 @@
 .jqx-tree-item-arrow-expand-ui-smoothness, .jqx-tree-item-arrow-expand-hover-ui-smoothness{background-position:-65px -16px; background-image:url(images/smoothness/ui-icons_222222_256x240.png)}
 .jqx-tree-item-arrow-collapse-ui-smoothness, .jqx-tree-item-arrow-collapse-hover-ui-smoothness{background-position:-32px -16px; background-image:url(images/smoothness/ui-icons_222222_256x240.png)}
 .jqx-menu-item-arrow-right-ui-smoothness, .jqx-menu-item-arrow-right-selected-ui-smoothness{background-position:-32px -16px; background-image:url(images/smoothness/ui-icons_222222_256x240.png)}
-.jqx-menu-item-arrow-left-ui-smoothness, .jqx-menu-item-arrow-left-selected-ui-smoothness{background-position:-96px -16px; background-image:url(images/smoothness/ui-icons_222222_256x240.png)}
+.jqx-menu-item-arrow-left-ui-smoothness, .jqx-menu-item-arrow-left-selected-ui-smoothness, .jqx-tree-item-arrow-collapse-rtl-ui-smoothness, .jqx-tree-item-arrow-collapse-hover-rtl-ui-smoothness{background-position:-96px -16px; background-image:url(images/smoothness/ui-icons_222222_256x240.png)}
 /*Tabs*/
 .jqx-tabs-title-ui-smoothness{border:1px solid #ccc; background:#E6E6E6 url(images/smoothness/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x;}
 .jqx-tabs-header-ui-smoothness{border-width: 1px; margin:2px; border-radius:4px; moz-border-radius:4px; webkit-border-radius:4px}

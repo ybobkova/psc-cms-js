@@ -15,7 +15,7 @@
 .jqx-tree-item-arrow-expand-ui-redmond, .jqx-tree-item-arrow-expand-hover-ui-redmond{background-position:-65px -16px; background-image:url(images/redmond/ui-icons_6da8d5_256x240.png)}
 .jqx-tree-item-arrow-collapse-ui-redmond, .jqx-tree-item-arrow-collapse-hover-ui-redmond{background-position:-32px -16px; background-image:url(images/redmond/ui-icons_6da8d5_256x240.png)}
 .jqx-menu-item-arrow-right-ui-redmond, .jqx-menu-item-arrow-right-selected-ui-redmond{background-position:-32px -16px; background-image:url(images/redmond/ui-icons_6da8d5_256x240.png)}
-.jqx-menu-item-arrow-left-ui-redmond, .jqx-menu-item-arrow-left-selected-ui-redmond{background-position:-96px -16px; background-image:url(images/redmond/ui-icons_6da8d5_256x240.png)}
+.jqx-menu-item-arrow-left-ui-redmond, .jqx-menu-item-arrow-left-selected-ui-redmond, .jqx-tree-item-arrow-collapse-rtl-ui-redmond, .jqx-tree-item-arrow-collapse-hover-rtl-ui-redmond{background-position:-96px -16px; background-image:url(images/redmond/ui-icons_6da8d5_256x240.png)}
 /*Tabs*/
 .jqx-tabs-title-ui-redmond{font-weight: bold; border-color: #c5dbec; background: #dfeffc url(images/redmond/ui-bg_glass_85_dfeffc_1x400.png) 50% 50% repeat-x; color: #2e6e9e;}
 .jqx-tabs-header-ui-redmond{margin-left:2px; margin-right: 2px; margin-top: 2px; border-radius:5px; moz-border-radius:5px; webkit-border-radius:5px}

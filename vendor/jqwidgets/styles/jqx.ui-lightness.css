@@ -49,7 +49,7 @@
 .jqx-slider-ui-lightness .jqx-fill-state-pressed-ui-lightness{background:#f6a828 url(images/lightness/ui-bg_gloss-wave_35_f6a828_500x100.png) 50% 50% repeat-x; border-color:#e78f08}
 .icon-arrow-up-ui-lightness{background-position:0 -16px; background-image:url(images/lightness/ui-icons_ef8c08_256x240.png)}
 .icon-arrow-down-ui-lightness{background-position:-65px -16px; background-image:url(images/lightness/ui-icons_ef8c08_256x240.png)}
-.icon-arrow-left-ui-lightness{background-position:-96px -17px; background-image:url(images/lightness/ui-icons_ef8c08_256x240.png)}
+.icon-arrow-left-ui-lightness, .jqx-tree-item-arrow-collapse-rtl-ui-lightness, .jqx-tree-item-arrow-collapse-hover-rtl-ui-lightness{background-position:-96px -17px; background-image:url(images/lightness/ui-icons_ef8c08_256x240.png)}
 .icon-arrow-right-ui-lightness{background-position:-32px -17px; background-image:url(images/lightness/ui-icons_ef8c08_256x240.png)}
 .icon-arrow-up-hover-ui-lightness{background-position:0 -16px; background-image:url(images/lightness/ui-icons_222222_256x240.png)}
 .icon-arrow-down-hover-ui-lightness{background-position:-65px -16px; background-image:url(images/lightness/ui-icons_222222_256x240.png)}
