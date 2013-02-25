@@ -203,7 +203,7 @@ define(['psc-tests-assert','joose', 'Psc/UI/LayoutManager','Psc/Test/DoublesMana
 
   test("creates Downloalist", function() {
     setup(this);
-    var type = 'downloadslist';
+    var type = 'DownloadsList';
     
     var widget = this.layoutManager.createWidget(type);
     this.assertSame(widget.getUploadService(), this.layoutManager.getUploadService());
