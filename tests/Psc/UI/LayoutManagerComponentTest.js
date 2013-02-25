@@ -1,35 +1,11 @@
-define(['psc-tests-assert', 'joose', 'Psc/UI/LayoutManagerComponent'], function(t, Joose) {
+define(['psc-tests-assert', 'joose', 'Psc/Test/DoublesManager', 'Psc/UI/LayoutManagerComponent'], function(t, Joose) {
   
   module("Psc.UI.LayoutManagerComponent");
   
   var setup = function(test) {
-    var LayoutManagerComponentClass = Joose.Class({
-        isa: Psc.UI.LayoutManagerComponent,
-        
-        has: {
-          testContent: { is : 'rw', required: false, isPrivate: true },
-          testType: { is : 'rw', required: false, isPrivate: true, init: "some-widget" }
-        },
-        
-        before: {
-          initialize: function () {
-            this.$$type = this.$$testType;
-          }
-        },
-        
-        methods: {
-          createWithMiniPanel: function(buttons) {
-            var panel = this.createMiniButtonPanel(buttons);
-            
-            this.$$testContent = panel.html();
-          },
-          
-          createContent: function() {
-            return this.$$content = this.$$testContent;
-          }
-        }
-      }
-    );
+    var dm = new Psc.Test.DoublesManager();
+    
+    var LayoutManagerComponentClass = dm.getLayoutManagerComponentMockClass();
 
     var BadLayoutManagerComponentClass = Joose.Class({
         isa: Psc.UI.LayoutManagerComponent,
@@ -136,4 +112,17 @@ define(['psc-tests-assert', 'joose', 'Psc/UI/LayoutManagerComponent'], function(
       this.fail(e);
     }
   });
+  
+  test("has a serialize function per default that does nothing", function () {
+    setup(this);
+    
+    this.assertFunction(this.component.serialize);
+  });
+
+  test("has a isEmpty function which returns false per default", function () {
+    setup(this);
+    
+    this.assertFunction(this.component.isEmpty);
+    this.assertFalse(this.component.isEmpty());
+  });  
 });

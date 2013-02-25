@@ -12,10 +12,19 @@ define(['psc-tests-assert','Psc/UI/LayoutManager/Websitewidget','Psc/Test/Double
     return t.setup(test, {websitewidget: websitewidget});
   };
 
-  test("acceptance", function() {
+  test("label can be injected", function() {
     setup(this);
-    expect(0);
   
-    // this.websitewidget.doSomething();
+    this.assertEquals("Kalendar", this.websitewidget.getLabel());
   });
+  
+  test("label can be left out", function() {
+    setup(this);
+    
+    var wsw = new Psc.UI.LayoutManager.Websitewidget({
+      name: 'something'
+    });
+  
+    this.assertEquals("unknown website-widget", wsw.getLabel());
+  });  
 });
