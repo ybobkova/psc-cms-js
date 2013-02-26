@@ -11,7 +11,12 @@
   "require": {
   },
   "require-dev": {
-    "pscheit/psc-cms": "dev-master"
+    "pscheit/psc-cms": "dev-master",
+        "jms/twig-js": "dev-master"
   },
-  "minimum-stability": "dev"
+  "minimum-stability": "dev",
+  
+  "config": {
+    "vendor-dir": "composer/"
+  }   
 }
