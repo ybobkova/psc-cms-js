@@ -165,8 +165,10 @@ fieldset.psc-cms-ui-navigation  li .button-panel { position: absolute; top: 0px;
   margin-right: -6px;
 }
 
-
-
+/* fix little quirk in jqx for the header of a calender picker */
+tr.jqx-calendar-title-header > td {
+  vertical-align: middle;
+}
 
 
 
