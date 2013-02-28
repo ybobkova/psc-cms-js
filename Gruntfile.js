@@ -8,9 +8,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-hogan');
 
   var port = 8000;
   var hostname = 'localhost';
+  var nodepath = require("path");
   
   var mapToUrl = function(files) {
     var baseUrl = 'http://'+hostname+':'+port+'/';
@@ -122,6 +124,23 @@ module.exports = function(grunt) {
       dist: {
         src: ['dist/<%= pkg.name %>-<%= pkg.version %>.js'],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js'
+      }
+    },
+    
+    hogan: {
+      'amd': {
+        binderName : "amd",
+        templates : "./templates/src/**/*.mustache",
+        output : "./templates/compiled.js",
+        nameFunc: function(fileName) {
+          fileName = nodepath.normalize(fileName);
+          
+          var pathParts = fileName.split(nodepath.sep).slice(['templates', 'src'].length, -1);
+          var namespace = pathParts.length > 0 ? pathParts.join('.')+'.' : '';
+        
+          var templateName = namespace+nodepath.basename(fileName, nodepath.extname(fileName));
+          return templateName;
+        }
       }
     },
     
