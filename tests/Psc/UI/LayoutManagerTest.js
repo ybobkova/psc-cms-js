@@ -1,9 +1,9 @@
-define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function(t) {
+define(['psc-tests-assert','joose', 'Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function(t, Joose) {
   
   module("Psc.UI.LayoutManager");
   
   var setup = function (test, params) {
-    var dbm = new Psc.Test.DoublesManager();
+    var dm = new Psc.Test.DoublesManager();
     var $fixture = $('#visible-fixture').empty();
     var $html = $('<div class="psc-cms-ui-splitpane psc-cms-ui-serializable psc-cms-ui-layout-manager">'+
                         '<div class="left"><fieldset class="psc-cms-ui-group"><legend>Layout Test</legend><div class="content"></div></fieldset></div>'+
@@ -22,7 +22,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
 
     var layoutManager = new Psc.UI.LayoutManager($.extend({
       widget: $html,
-      uploadService: dbm.getUploadService()
+      uploadService: dm.getUploadService()
     }, params || []));
     
     return t.setup(test, {
@@ -39,7 +39,8 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
       },
       uploadService: layoutManager.getUploadService(),
       '$fixture': $fixture,
-      layoutManager: layoutManager
+      layoutManager: layoutManager,
+      doublesManager: dm
     });
   };
 
@@ -137,6 +138,31 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
     this.assertEquals(expectedData, data, 'layoutManager is serializing correct');
   });
   
+  test("serializes a widget with a generic function", function () {
+    setup(this);
+    
+    var component = this.doublesManager.getLayoutManagerComponentMock("some-serializing-component", "no content");
+    component.setLabel("the label");
+    component.serialize = function (serialized) {
+      serialized.content = "the serialized";
+    };
+    
+    component.create();
+    
+    this.layoutManager.appendWidget(component);
+    
+    var expectedData = {
+      layoutManager: [
+        {type: "some-serializing-component", label: "the label", content:"the serialized"}
+      ]
+    };
+    
+    var data = {};
+    this.layoutManager.serialize(data);
+    
+    this.assertEquals(expectedData, data, "layoutManager serializes from a component with serialize function");
+  });
+  
   test("layoutManager unserializes widgets structure", function () {
     setup(this);
     
@@ -177,7 +203,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager','Psc/Test/DoublesManager'], fu
 
   test("creates Downloalist", function() {
     setup(this);
-    var type = 'downloadslist';
+    var type = 'DownloadsList';
     
     var widget = this.layoutManager.createWidget(type);
     this.assertSame(widget.getUploadService(), this.layoutManager.getUploadService());

@@ -89,7 +89,7 @@ define(['jquery', 'joose', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($, Joose) {
 		
 		assertFunction: function(actual, message) {
 			var result = $.isFunction(actual);
-			QUnit.push( result, actual, 'a function', this.formatMessage(message || this.debug(actual)+" is a function", result) );
+			QUnit.push( result, actual, '(a javascript function)', this.formatMessage(message || this.debug(actual)+" is a function", result) );
 		},
 		assertAttributeEquals: function(expected, actualAttribute, actualObject, message) {
 			var actual;

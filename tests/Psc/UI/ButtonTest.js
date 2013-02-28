@@ -8,8 +8,14 @@ define(['psc-tests-assert','Psc/UI/Button','Psc/Test/DoublesManager'], function(
       label: 'mynicebutton',
       leftIcon: 'circle-plus'
     });
+
+    var classesButton = new Psc.UI.Button({
+      label: 'mynicebutton',
+      leftIcon: 'circle-plus',
+      classes: ['add-it']
+    });
     
-    return t.setup(test, {button: button});
+    return t.setup(test, {button: button, classesButton: classesButton});
   };
 
   test("acceptance", function() {
@@ -41,5 +47,14 @@ define(['psc-tests-assert','Psc/UI/Button','Psc/Test/DoublesManager'], function(
     $button.trigger('click');
     
     this.assertTrue(wasClicked, 'button was clicked through trigger');
+  });
+  
+  test("classes as attribute adds to created html some classes", function() {
+    setup(this);
+    
+    var $button = this.classesButton.create();
+    
+    this.assertjQueryHasClass('add-it', $button);
+    
   });
 });
