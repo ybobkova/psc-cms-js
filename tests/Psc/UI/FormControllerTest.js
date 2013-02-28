@@ -145,4 +145,34 @@ define(['psc-tests-assert','joose', 'Psc/UI/FormController', 'Psc/EventManagerMo
     
     formController.save();
   });
+  
+  test("formCOntroller has a static function that changes/reads the hidden input revision field to a new revision", function () {
+    var that = setup(this);
+    
+    this.$form.append(
+      '<input class="psc-cms-ui-http-header" type="hidden" name="X-Psc-Cms-Revision" value="unknown"/>'
+    );
+    
+    var read = function () {
+      return that.$form.find('input[name="X-Psc-Cms-Revision"]').val();
+    };
+    
+    this.assertEquals(
+      'unknown',
+      read()
+    );
+    
+    var newRevision = 'preview-1';
+    Psc.UI.FormController.changeRevision(newRevision, this.$form); // use some unique preview identifier because of concurrency
+    
+    this.assertEquals(
+      newRevision,
+      read()
+    );
+    
+    this.assertSame(
+      read(),
+      Psc.UI.FormController.readRevision(this.$form)
+    );
+  });
 });
