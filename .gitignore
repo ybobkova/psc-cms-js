@@ -5,3 +5,5 @@
 /.komodotools
 /build
 /vendor/jqwidgets/jqx-all.js
+/composer
+/composer.lock
