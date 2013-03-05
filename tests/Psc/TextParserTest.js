@@ -91,7 +91,7 @@ define(['psc-tests-assert','Psc/TextParser'], function(t) {
     
     this.assertParsing([
         {value: "Nach Klick auf „Partner“ erscheinen zwei Unterrubriken:", type: 'paragraph'},
-        {value: ["Technologie", "Internationale Vertriebs-Partner"], type: 'list'},
+        {value: ["Technologie", "Internationale Vertriebs-Partner"], type: 'list'},
         
         {value: "Nach Klick auf „Technologie-Partner“ erscheint folgender Text", type: 'paragraph'},
         
@@ -120,7 +120,7 @@ define(['psc-tests-assert','Psc/TextParser'], function(t) {
     
     this.assertParsing([
         {value: "Nach Klick auf „Partner“ erscheinen zwei Unterrubriken:", type: 'paragraph'},
-        {value: ["Technologie", "Internationale Vertriebs-Partner"], type: 'list'},
+        {value: ["Technologie", "Internationale Vertriebs-Partner"], type: 'list'},
         
         {value: "Nach Klick auf „Technologie-Partner“ erscheint folgender Text", type: 'paragraph'},
         
