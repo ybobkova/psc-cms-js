@@ -1,4 +1,4 @@
-define(['psc-tests-assert', 'Psc/TextEditor', 'jquerypp/dom/selection'], function(t) {
+define(['psc-tests-assert', 'Psc/TextEditor', 'jquery-simulate', 'jquerypp/dom/selection'], function(t) {
   
   module("Psc.TextEditor");
 
@@ -43,6 +43,36 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquerypp/dom/selection'], functio
     
     this.textEditor.move(8);
     this.assertEquals(8, this.textEditor.getCaret());
+
+    this.textEditor.move(0);
+    this.assertEquals(0, this.textEditor.getCaret());
+    
+  });
+  
+  test("getCaret reflects position with button", function () {
+    var that = setup(this), $button, testRun = false;
+    
+    //this.textEditor.move(0);
+    
+    $('#visible-fixture').append(
+      $button = $('<button>click to test</button>').click(function (e) {
+        if (!testRun) {
+          start();
+          that.assertEquals(
+            0, that.textEditor.getCaret(),
+            "button should trigger caret 0"
+          );
+          
+          testRun = true;
+        } else { // acceptance
+          alert(that.textEditor.getCaret());
+        }
+        
+      })
+    );
+    
+    stop();
+    $button.simulate('click');
   });
   
   test("getCaret returns false if text is selected", function () {

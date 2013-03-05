@@ -66,6 +66,24 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
     );
   });
   
+  test("paragraph inserts a link with prompting for both informations, when caret is at the really beginning of the text", function () {
+    var that = setup(this);
+    var $button = this.setupLinkButton();
+
+    this.interactionProvider.answerToPrompt("http://www.ps-webforge.com/");
+    this.interactionProvider.answerToPrompt("ps-webforge");
+
+    this.editor().move(0);
+    
+    $button.trigger('click');
+
+    this.assertEquals(
+      "[[http://www.ps-webforge.com/|ps-webforge]] Lorem ipsum dolor sit amet...",
+      this.editor().getText(),
+      "link template is inserted into textarea on position 0"
+    );
+  });
+  
   test("when link button is cancelled, no link is inputted", function () {
     var that = setup(this);
     var $button = this.setupLinkButton();
