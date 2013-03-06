@@ -295,6 +295,8 @@ define(['psc-tests-assert','joose', 'text!fixtures/tabs-for-main.html','Psc/UI/M
 
   test("preview button in tab triggers save but with hacked revision prefixed with preview", function() {
     var that = formSetup(this), main;
+    
+    main = that.main;
         
     // mock save from main to do nothing
     main.save = function ($form, tabHook, additionalData) {

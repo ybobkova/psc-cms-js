@@ -1,3 +1,4 @@
+/*globals alert*/
 define(['psc-tests-assert', 'Psc/TextEditor', 'jquery-simulate', 'jquerypp/dom/selection'], function(t) {
   
   module("Psc.TextEditor");

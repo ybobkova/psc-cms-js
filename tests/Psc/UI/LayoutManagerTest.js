@@ -32,7 +32,7 @@ define(['psc-tests-assert','joose', 'Psc/UI/LayoutManager','Psc/Test/DoublesMana
         };
         
         this.assertTrue($widget.hasClass('widget'), m('has class widget'));
-        this.assertTrue($widget.hasClass(assert.type), m('has class for type'));
+        this.assertTrue($widget.hasClass(assert.type.toLowerCase()), m('has class for type'));
         this.assertEquals(1, $widget.find('h3.widget-header').length, m('has a header'));
         this.assertEquals(1, $widget.find('h3.widget-header span.ui-icon-close').length, m('has a close button'));
         this.assertEquals(1, $widget.find('div.widget-content').length, 'has a content div');
@@ -47,7 +47,7 @@ define(['psc-tests-assert','joose', 'Psc/UI/LayoutManager','Psc/Test/DoublesMana
   test("create List without content creates a widget with an empty textarea", function() {
     setup(this);
   
-    var list = this.layoutManager.createWidget('li');
+    var list = this.layoutManager.createWidget('Li');
     var $list = list.unwrap(), $ta;
     
     this.assertWidget({type:'li'}, $list);
@@ -60,7 +60,7 @@ define(['psc-tests-assert','joose', 'Psc/UI/LayoutManager','Psc/Test/DoublesMana
   test("paragraph creates a widget with an empty textarea", function() {
     setup(this);
   
-    var widget = this.layoutManager.createWidget('paragraph');
+    var widget = this.layoutManager.createWidget('Paragraph');
     var $widget = widget.unwrap(), ta;
     
     this.assertWidget({type:'paragraph'}, $widget);
@@ -73,16 +73,16 @@ define(['psc-tests-assert','joose', 'Psc/UI/LayoutManager','Psc/Test/DoublesMana
   test("createWidget sends content parameter to subclass", function() {
     setup(this);
   
-    var widget = this.layoutManager.createWidget('paragraph', 'mycontent');
+    var widget = this.layoutManager.createWidget('Paragraph', {content: 'mycontent'});
     
     this.assertEquals("mycontent", widget.unwrap().find('div.widget-content textarea').val());
   });
 
   test("headline creates a widget with an empty input", function() {
     setup(this);
-    var type = "headline";
+    var type = "Headline";
   
-    var widget = this.layoutManager.createWidget(type);
+    var widget = this.layoutManager.createWidget(type, {level: 1});
     var $widget = widget.unwrap();
     
     this.assertWidget({type:type}, $widget);
@@ -95,7 +95,7 @@ define(['psc-tests-assert','joose', 'Psc/UI/LayoutManager','Psc/Test/DoublesMana
   test("creates an image with the upload service as dpi", function() {
     setup(this);
     
-    var type = "image";
+    var type = "Image";
     
     var widget = this.layoutManager.createWidget(type);
     this.assertSame(widget.getUploadService(), this.layoutManager.getUploadService());
@@ -108,8 +108,8 @@ define(['psc-tests-assert','joose', 'Psc/UI/LayoutManager','Psc/Test/DoublesMana
   test("appendWidget appends to the layout from the layoutManager", function () {
     setup(this);
     
-    this.layoutManager.appendWidget(this.layoutManager.createWidget('headline', 'the headline'));
-    this.layoutManager.appendWidget(this.layoutManager.createWidget('sub-headline', 'the second headline'));
+    this.layoutManager.appendWidget(this.layoutManager.createWidget('Headline', {content: 'the headline', level: 1}));
+    this.layoutManager.appendWidget(this.layoutManager.createWidget('Headline', {content: 'the second headline', level: 2}));
     
     this.assertEquals(2,this.layoutManager.getWidgets().length);
     
@@ -118,17 +118,17 @@ define(['psc-tests-assert','joose', 'Psc/UI/LayoutManager','Psc/Test/DoublesMana
   test("layoutManager serializes all appended widgets", function () {
     setup(this);
     
-    this.layoutManager.appendWidget(this.layoutManager.createWidget('headline', 'the headline'));
-    this.layoutManager.appendWidget(this.layoutManager.createWidget('paragraph', 'content of paragraph 1'));
-    this.layoutManager.appendWidget(this.layoutManager.createWidget('list', ['list1', 'list2']));
-    this.layoutManager.appendWidget(this.layoutManager.createWidget('paragraph', 'content of paragraph 2'));
+    this.layoutManager.appendWidget(this.layoutManager.createWidget('Headline', {content:'the headline', level: 1}));
+    this.layoutManager.appendWidget(this.layoutManager.createWidget('Paragraph', {content:'content of paragraph 1'}));
+    this.layoutManager.appendWidget(this.layoutManager.createWidget('Li', {content: ['list1', 'list2']}));
+    this.layoutManager.appendWidget(this.layoutManager.createWidget('Paragraph', {content: 'content of paragraph 2'}));
     
     var expectedData = {
       layoutManager: [
-        {type: 'headline', label: "Überschrift", content:"the headline", level: 1},
-        {type: 'paragraph', label: "Absatz", content:"content of paragraph 1"},
-        {type: 'li', label: "Aufzählung", content:["list1", "list2"]},
-        {type: 'paragraph', label: "Absatz", content:"content of paragraph 2"}
+        {type: 'Headline', label: "Überschrift", content:"the headline", level: 1},
+        {type: 'Paragraph', label: "Absatz", content:"content of paragraph 1"},
+        {type: 'Li', label: "Aufzählung", content:["list1", "list2"]},
+        {type: 'Paragraph', label: "Absatz", content:"content of paragraph 2"}
       ]
     };
     
@@ -168,11 +168,11 @@ define(['psc-tests-assert','joose', 'Psc/UI/LayoutManager','Psc/Test/DoublesMana
     
     var serialized = {
       layoutManager: [
-      {type: 'headline', label: "Überschrift", content:"the headline", level: 2},
-      {type: 'paragraph', label: "Absatz", content:"content of paragraph 1"},
-      {type: 'image', label: "Bild", content:""},
-      {type: 'li', label: "Aufzählung", content:["list1", "list2"]},
-      {type: 'paragraph', label: "Absatz", content:"content of paragraph 2"}
+      {type: 'Headline', label: "Überschrift", content:"the headline", level: 2},
+      {type: 'Paragraph', label: "Absatz", content:"content of paragraph 1"},
+      {type: 'Image', label: "Bild", content:""},
+      {type: 'Li', label: "Aufzählung", content:["list1", "list2"]},
+      {type: 'Paragraph', label: "Absatz", content:"content of paragraph 2"}
       ]
     };
     
@@ -180,7 +180,7 @@ define(['psc-tests-assert','joose', 'Psc/UI/LayoutManager','Psc/Test/DoublesMana
     this.assertEquals(5, this.layoutManager.getWidgets().length);
     
     var headline = this.layoutManager.getLinkedWidget(this.layoutManager.getLayout().find('div.widget').first());
-    this.assertEquals('headline', headline.getType());
+    this.assertEquals('Headline', headline.getType());
     this.assertEquals('Überschrift', headline.getLabel());
     this.assertEquals(2, headline.getLevel());
     
@@ -189,11 +189,11 @@ define(['psc-tests-assert','joose', 'Psc/UI/LayoutManager','Psc/Test/DoublesMana
   test("layoutManager unserializes widgets on init", function () {
     setup(this, {
       serializedWidgets: [
-        {type: 'headline', label: "Überschrift", content:"the headline", level: 2},
-        {type: 'paragraph', label: "Absatz", content:"content of paragraph 1"},
-        {type: 'image', label: "Bild", content:""},
-        {type: 'li', label: "Aufzählung", content:["list1", "list2"]},
-        {type: 'paragraph', label: "Absatz", content:"content of paragraph 2"}
+        {type: 'Headline', label: "Überschrift", content:"the headline", level: 2},
+        {type: 'Paragraph', label: "Absatz", content:"content of paragraph 1"},
+        {type: 'Image', label: "Bild", content:""},
+        {type: 'Li', label: "Aufzählung", content:["list1", "list2"]},
+        {type: 'Paragraph', label: "Absatz", content:"content of paragraph 2"}
       ]
     });
     
@@ -205,7 +205,7 @@ define(['psc-tests-assert','joose', 'Psc/UI/LayoutManager','Psc/Test/DoublesMana
     setup(this);
     var type = 'DownloadsList';
     
-    var widget = this.layoutManager.createWidget(type);
+    var widget = this.layoutManager.createWidget(type, {downloads: [], headline: undefined});
     this.assertSame(widget.getUploadService(), this.layoutManager.getUploadService());
     
     var $widget = widget.unwrap();

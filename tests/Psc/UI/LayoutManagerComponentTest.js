@@ -104,7 +104,7 @@ define(['psc-tests-assert', 'joose', 'Psc/Test/DoublesManager', 'Psc/UI/LayoutMa
     
     try {
       var lc = new this.LayoutManagerComponentClass({
-        testType: 'paragraph'
+        testType: 'Paragraph'
       });
       
       this.assertEquals("Absatz", lc.getLabel());

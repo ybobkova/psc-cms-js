@@ -9,7 +9,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager/WebsiteWidget','Psc/Test/Double
       'label': 'Kalendar'
     });
     
-    return t.setup(test, {WebsiteWidget: websiteWidget});
+    return t.setup(test, {websiteWidget: websiteWidget});
   };
 
   test("label can be injected", function() {
@@ -21,7 +21,7 @@ define(['psc-tests-assert','Psc/UI/LayoutManager/WebsiteWidget','Psc/Test/Double
   test("label can be left out", function() {
     setup(this);
     
-    var wsw = new Psc.UI.LayoutManager.websiteWidget({
+    var wsw = new Psc.UI.LayoutManager.WebsiteWidget({
       name: 'something'
     });
   
