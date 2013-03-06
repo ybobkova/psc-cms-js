@@ -54,6 +54,22 @@ define(['psc-tests-assert','Psc/Date','Psc/Test/DoublesManager'], function(t) {
     this.assertEquals('27.8.2012', beginSep.add({days: -5}).format('$d.m.yy'));
   });
   
+  test("createDate creates a jqx safe date", function () {
+    setup(this);
+    
+    var now = Psc.Date.create({ day: 17,  month: 9, year: 2012 });
+    
+    var jqxDate = now.format('jqx');
+    
+    var nativePscDate = now.getDate();
+    var nativeJQXDate = jqxDate.dateTime;
+    
+    this.assertEquals(
+      nativePscDate, nativeJQXDate,
+      nativePscDate+'==='+nativeJQXDate
+    );
+  });
+  
   test("equalsDate equals in Date", function () {
     setup(this);
 
@@ -109,7 +125,7 @@ define(['psc-tests-assert','Psc/Date','Psc/Test/DoublesManager'], function(t) {
       'date': "1353279600",
       'timezone': "Europe/Berlin"}
     );
-    var expectedDate = Psc.Date.create({year: 2012, month: 11, day: 19});
+    var expectedDate = Psc.Date.create({year: 2012, month: 11, day: 19, hour: 12, minute: 0, second: 0});
     
     this.assertDateEquals(expectedDate, date);
   });

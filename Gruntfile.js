@@ -75,12 +75,9 @@ module.exports = function(grunt) {
     qunit: {
       all: {
         options: {
-          urls: grunt.util._.extend(
-            [],
-            mapToUrl('tests/Psc/**/*.html'),
-            mapToUrl('tests/tiptoi/**/*.html'),
-            mapToUrl('tests/CoMun/**/*.html')
-          )
+          urls: [].concat(mapToUrl('tests/Psc/**/*.html'))
+                  .concat(mapToUrl('tests/tiptoi/**/*.html'))
+                  .concat(mapToUrl('tests/CoMun/**/*.html'))
         }
       },
       nav: {
