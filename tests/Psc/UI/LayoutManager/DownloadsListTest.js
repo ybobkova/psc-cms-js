@@ -67,15 +67,15 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/Dialog','Psc/UI/WidgetWrapp
     this.assertEquals(1, ($right = $splitPane.find('> div.right')).length, 'right');
     this.assertEquals(1, ($left = $splitPane.find('> div.left')).length, 'left');
     
-    this.assertjQueryLength(1, $ul = $right.find('ul.lm-DownloadsList'));
-    this.assertjQueryLength(1, $selectButton = $right.find('ul.lm-DownloadsList ~ .psc-cms-ui-button'));
+    this.assertjQueryLength(1, $ul = $right.find('ul.lm-downloadslist'));
+    this.assertjQueryLength(1, $selectButton = $right.find('ul.lm-downloadslist ~ .psc-cms-ui-button'));
   });
   
   test("when click on select button the select dialog is opened", function () {
     setup(this);
     
     var $widget = this.createWidget(this.list), dialog;
-    var $selectButton = this.assertjQueryLength(1, $widget.find('div.right ul.lm-DownloadsList ~ .psc-cms-ui-button'));
+    var $selectButton = this.assertjQueryLength(1, $widget.find('div.right ul.lm-downloadslist ~ .psc-cms-ui-button'));
     
     $selectButton.simulate('click');
     
@@ -147,7 +147,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/Dialog','Psc/UI/WidgetWrapp
     var that = setup(this), evm = this.list.getEventManager();
     
     var $widget = this.createWidget(this.list);
-    var $ul = this.assertjQueryLength(1, $widget.find('div.psc-cms-ui-splitpane:first > div.right ul.lm-DownloadsList'));
+    var $ul = this.assertjQueryLength(1, $widget.find('div.psc-cms-ui-splitpane:first > div.right ul.lm-downloadslist'));
     
     this.assertjQueryLength(1, $ul.find('li'));
     

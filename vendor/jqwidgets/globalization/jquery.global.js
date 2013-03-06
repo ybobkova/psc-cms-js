@@ -1,4 +1,4 @@
-
+define(['jquery'], function(jQuery) {
 /*!
  * jQuery globalization Plugin v1.0.0pre
 
@@ -8,8 +8,6 @@
  * Dual licensed under the MIT or GPL Version 2 licenses.
  * http://jquery.org/license
  */
-(function() {
-
 var globalization = {}, localized = { en: {} };
 localized["default"] = localized.en;
 
@@ -1354,7 +1352,6 @@ function formatDate(value, format, culture) {
 }
 
 // EXPORTS
-jQuery.global = globalization;
+return jQuery.global = globalization;
 
-})();
-
+});

@@ -17,6 +17,19 @@ define(['psc-tests-assert','joose', 'text!fixtures/tabs-for-main.html','Psc/UI/M
     });
   };
   
+  var formSetup = function (test) {
+    test = setup(test);
+    var main = test.main, $tabs = test.tabs.unwrap();
+    
+    main.attachHandlers();
+    main.getEventManager().setLogging(true);
+    
+    test.$saveButton = test.assertjQueryLength(1, $tabs.find('#tabs-3 button.psc-cms-ui-button-save'), 'save-button was found in fixture');
+    test.$tabForm = test.assertjQueryLength(1, $tabs.find('#tabs-3 .psc-cms-ui-form'), 'form was found in fixture');
+    
+    return test;
+  };
+  
   test("constructInitsEventManager", function() {
     setup(this);
     this.assertInstanceOf(Psc.EventManager, this.main.getEventManager());
@@ -277,5 +290,32 @@ define(['psc-tests-assert','joose', 'text!fixtures/tabs-for-main.html','Psc/UI/M
 
   test("TODO: save and save-close delegates postData until formcontroller", function() {
     expect(0);
+  });
+
+
+  test("preview button in tab triggers save but with hacked revision prefixed with preview", function() {
+    var that = formSetup(this), main;
+    
+    main = that.main;
+        
+    // mock save from main to do nothing
+    main.save = function ($form, tabHook, additionalData) {
+      var revision;
+      
+      that.assertNotFalse(
+        revision = Psc.UI.FormController.readRevision($form),
+        'revision is found in form'
+      );
+      
+      that.assertContains(
+        'preview-',
+        revision,
+        'revision field is hacked in formular to have a preview revision'
+      );
+    };
+    
+    var $button = that.assertjQueryLength(1, main.getTabs().unwrap().find('#tabs-3 button.psc-cms-ui-button-preview'));
+    
+    $button.trigger('click');
   });
 });

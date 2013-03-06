@@ -1,4 +1,4 @@
-
+define(['jquery', 'jquery-global'], function(jQuery) {
 (function($) {
     var cultures = $.global.cultures,
         en = cultures.en,
@@ -54,3 +54,4 @@
     }, cultures["de-DE"]);
     culture.calendar = culture.calendars.standard;
 })(jQuery);
+});
