@@ -93,6 +93,11 @@ module.exports = function(grunt) {
           urls: mapToUrl('tests/Psc/UI/DropBox/*.html')
         }
       },
+      textEditor: {
+        options: {
+          urls: mapToUrl('tests/Psc/TextEditor*.html')
+        }
+      },
       options: {
         timeout: 12000,
         inject: false
