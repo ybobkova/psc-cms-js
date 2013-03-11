@@ -315,7 +315,7 @@ define(['psc-tests-assert','joose', 'text!fixtures/tabs-for-main.html','Psc/UI/M
         '/articles/7?revision=preview-1172',
         url
       );
-    }
+    };
     
     main.getEventManager().trigger('form-saved', [that.$tabForm, metaResponse, undefined]);
     
