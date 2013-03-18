@@ -45,6 +45,7 @@ define(['psc-tests-assert','Psc/Date','Psc/Test/DoublesManager'], function(t) {
     var addedYearMonth = now.add({months: 1, years: 1});
     var endAugust = Psc.Date.create({ day: 31,  month: 8, year: 2012 });
     var beginSep = Psc.Date.create({ day: 1,  month: 9, year: 2012 });
+    var end2012 = Psc.Date.create({ day: 31, month: 12, year: 2012});
     
     this.assertEquals('17.9.2012', now.format('$d.m.yy'));
     this.assertEquals('17.9.2012', copy.format('$d.m.yy'));
@@ -52,6 +53,18 @@ define(['psc-tests-assert','Psc/Date','Psc/Test/DoublesManager'], function(t) {
     this.assertEquals('17.10.2013', addedYearMonth.format('$d.m.yy'));
     this.assertEquals('26.8.2012', endAugust.add({days: -5}).format('$d.m.yy'));
     this.assertEquals('27.8.2012', beginSep.add({days: -5}).format('$d.m.yy'));
+    this.assertEquals('1.1.2013', end2012.add({days: 1}).format('$d.m.yy'));
+  });
+
+  test("addDate adds or substracts hours from the currentDate", function () {
+    setup(this);
+
+    var now = Psc.Date.create({ day: 17,  month: 9, year: 2012, hour: 0, minute: 0 });
+    var end2012 = Psc.Date.create({ day: 31, month: 12, year: 2012, hour: 23, minute: 0});
+
+    this.assertEquals('17.9.2012 01:00', now.add({hours: 1}).format('$d.m.yy hh:ii'));
+    this.assertEquals('1.1.2013 00:00', end2012.add({hours: 1}).format('$d.m.yy hh:ii'));
+    this.assertEquals('16.9.2012 23:00', now.add({hours: -1}).format('$d.m.yy hh:ii'));
   });
   
   test("createDate creates a jqx safe date", function () {
@@ -117,15 +130,24 @@ define(['psc-tests-assert','Psc/Date','Psc/Test/DoublesManager'], function(t) {
     
     this.assertTrue(me.equals(copy));
   });
+
+  test("Date creation with utc: true creates UTC date", function () {
+    setup(this);
+
+    var expectedDate = Psc.Date.create({year: 2012, month: 11, day: 19, hour: 7, minute: 0, second: 0, utc:true});
+
+    // we cannot compare with format() because the output is timezone related
+    this.assertEquals(1353308400*1000, expectedDate.getTimeStamp(), 'utc: true is  treated correctly');
+  });
   
   test("Date.create can create AjaxFormat of Psc.DateTime.DateTime ", function () {
     setup(this);
     
     var date = Psc.Date.create({
-      'date': "1353279600",
-      'timezone': "Europe/Berlin"}
-    );
-    var expectedDate = Psc.Date.create({year: 2012, month: 11, day: 19, hour: 12, minute: 0, second: 0});
+      'date': "1353308400",
+      'timezone': "Europe/Berlin"
+    });
+    var expectedDate = Psc.Date.create({year: 2012, month: 11, day: 19, hour: 7, minute: 0, second: 0, utc:true});
     
     this.assertDateEquals(expectedDate, date);
   });

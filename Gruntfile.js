@@ -95,6 +95,11 @@ module.exports = function(grunt) {
           urls: mapToUrl('tests/Psc/TextEditor*.html')
         }
       },
+      date: {
+        options: {
+          urls: mapToUrl('tests/Psc/Date*.html')
+        }
+      },
       options: {
         timeout: 12000,
         inject: false
