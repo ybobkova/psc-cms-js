@@ -9,7 +9,7 @@ define(['psc-tests-assert','text!fixtures/datetimepicker.html', 'jquery-simulate
     var datePicker = new Psc.UI.DateTimePicker({
       dateFormat: 'd.m.Y',
       timeFormat: 'h:i',
-      //  21.11.2012 12:15:04
+      //  21.11.2012 11:15:04 (UTC)
       value: {'date': "1353496504", 'timezone': "Europe/Berlin"},
       widget: $widget
     });
@@ -31,7 +31,7 @@ define(['psc-tests-assert','text!fixtures/datetimepicker.html', 'jquery-simulate
     
     var widgetDate = new Psc.Date.create($date.jqxDateTimeInput('getDate'));
     
-    var expectedDate = Psc.Date.create({month: 11, day: 21, year: 2012, hours: 12, minute: 15, second: 4});
+    var expectedDate = Psc.Date.create({month: 11, day: 21, year: 2012, hours: 11, minute: 15, second: 4, utc:true});
     this.assertTrue(
       widgetDate.equals(expectedDate),
       'date field does not equal: '+expectedDate+' == '+widgetDate
