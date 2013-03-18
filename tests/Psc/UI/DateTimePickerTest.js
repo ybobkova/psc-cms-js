@@ -10,7 +10,7 @@ define(['psc-tests-assert','text!fixtures/datetimepicker.html', 'jquery-simulate
       dateFormat: 'd.m.Y',
       timeFormat: 'h:i',
       //  21.11.2012 11:15:04 (UTC)
-      value: {'date': "1353496504", 'timezone': "Europe/Berlin"},
+      value: {'date': "1353496504", 'timezone': "not relevant"},
       widget: $widget
     });
     

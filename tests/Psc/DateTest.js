@@ -145,7 +145,7 @@ define(['psc-tests-assert','Psc/Date','Psc/Test/DoublesManager'], function(t) {
     
     var date = Psc.Date.create({
       'date': "1353308400",
-      'timezone': "Europe/Berlin"
+      'timezone': "not relevant"
     });
     var expectedDate = Psc.Date.create({year: 2012, month: 11, day: 19, hour: 7, minute: 0, second: 0, utc:true});
     
