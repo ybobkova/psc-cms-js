@@ -63,7 +63,7 @@ module.exports = function(grunt) {
         globals: {
           $: true,
           define: true, require: true,
-          
+
           Psc: true,
           tiptoi: true,
           CoMun: true,
