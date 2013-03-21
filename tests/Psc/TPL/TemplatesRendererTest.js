@@ -1,4 +1,4 @@
-define(['psc-tests-assert', 'Psc/TPL/TemplatesRenderer'], function(t) {
+define(['psc-tests-assert', 'knockout', 'Psc/TPL/TemplatesRenderer'], function(t, ko) {
   
   module("Psc.TPL.TemplatesRenderer");
 
@@ -47,6 +47,29 @@ define(['psc-tests-assert', 'Psc/TPL/TemplatesRenderer'], function(t) {
         'what': 'Template Engine'
       })
     );
+  });
+
+  test("using injected input in non-quoted variable can be knockouted", function() {
+    var that = setup(this);
     
+    var html = this.tpl.render(
+      'SCE.Components.Teaser',
+      {
+        headline: {
+          description: "Überschrift des Teasers",
+          input: '<input data-bind="value: headline" name="headline" type="text" value="die Überschrift" />'
+        }
+      }
+    );
+
+    $('#visible-fixture').html(html);
+
+    ko.applyBindings({
+      headline: "value for headline"
+    });
+
+    var $headlineInput = this.assertjQueryLength(1, $("#visible-fixture input[name=headline]"));
+
+    this.assertEquals("value for headline", $headlineInput.val());
   });
 });

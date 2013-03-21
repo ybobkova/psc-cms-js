@@ -1,0 +1,10 @@
+{
+  "name": "Teaser",
+
+  "fields": {
+    "headline": { "type": "string", "label": "Überschrift", "defaultValue": "die Überschrift" },
+    "image": { "type": "image", "label": "Bild" },
+    "text": { "type": "text", "label": "Inhalt", "defaultValue": "Hier ist ein langer Text, der dann in der Teaserbox angezeigt wird..." },
+    "link": {"type": "link", "label": "Link-Ziel"}
+  }
+}
