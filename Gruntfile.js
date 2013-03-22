@@ -167,6 +167,14 @@ module.exports = function(grunt) {
           port: port,
           base: '.'
         }
+      },
+      listenserver: {
+        options: {
+          hostname: hostname,
+          port: port,
+          base: '.',
+          keepalive: true
+        }
       }
     }
   });
@@ -174,6 +182,7 @@ module.exports = function(grunt) {
   grunt.task.registerTask('pack', ['jshint', 'requirejs']);
   grunt.task.registerTask('default', ['jshint', 'connect', 'qunit', 'requirejs']);
   grunt.task.registerTask('test', ['connect', 'qunit']);
+  grunt.task.registerTask('server', ['connect:listenserver']);
   grunt.task.registerTask('travis', ['jshint', 'connect', 'qunit']);
   
   grunt.registerTask("create-class", "crates a new Class Stub", function (className, isa, traits) {
