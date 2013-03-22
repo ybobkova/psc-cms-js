@@ -77,12 +77,6 @@ module.exports = function(grunt) {
     qunit: {
       all: {
         options: {
-          urls: grunt.util._.extend(
-            [],
-            mapToUrl('tests/Psc/**/*.html'),
-            mapToUrl('tests/tiptoi/**/*.html'),
-            mapToUrl('tests/CoMun/**/*.html')
-          )
         }
       },
       nav: {
@@ -93,6 +87,11 @@ module.exports = function(grunt) {
       dropBox: {
         options: {
           urls: mapToUrl('tests/Psc/UI/DropBox/*.html')
+        }
+      },
+      textParser: {
+        options: {
+          urls: mapToUrl('tests/Psc/TextParser*.html')
         }
       },
       options: {
