@@ -148,6 +148,14 @@ module.exports = function(grunt) {
           port: port,
           base: '.'
         }
+      },
+      listenserver: {
+        options: {
+          hostname: hostname,
+          port: port,
+          base: '.',
+          keepalive: true
+        }
       }
     }
   });
