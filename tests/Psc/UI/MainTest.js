@@ -290,8 +290,38 @@ define(['psc-tests-assert','joose', 'text!fixtures/tabs-for-main.html','Psc/UI/M
 
   test("TODO: save and save-close delegates postData until formcontroller", function() {
     expect(0);
+  });  
+  test("response with view in linkrelations and preview saved revision opens a new window", function () {
+    var that = formSetup(this), main = that.main;
+    
+    var metaResponse = new Psc.ResponseMetaReader({
+      response: undefined,
+      data: {
+        revision: 'preview-1172',
+        links: [
+          {
+            rel: 'view',
+            href: '/articles/7'
+          }
+        ]
+      }
+    });
+    
+    var opened = false;
+    main.getUIController().openWindow = function (url) {
+      opened = true;
+      
+      that.assertEquals(
+        '/articles/7?revision=preview-1172',
+        url
+      );
+    };
+    
+    main.getEventManager().trigger('form-saved', [that.$tabForm, metaResponse, undefined]);
+    
+    this.assertTrue(opened, 'uiController openWindow() was called');
+    
   });
-
 
   test("preview button in tab triggers save but with hacked revision prefixed with preview", function() {
     var that = formSetup(this), main;
@@ -317,5 +347,4 @@ define(['psc-tests-assert','joose', 'text!fixtures/tabs-for-main.html','Psc/UI/M
     var $button = that.assertjQueryLength(1, main.getTabs().unwrap().find('#tabs-3 button.psc-cms-ui-button-preview'));
     
     $button.trigger('click');
-  });
-});
+  });});

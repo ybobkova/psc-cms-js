@@ -11,8 +11,7 @@
   "require": {
   },
   "require-dev": {
-    "pscheit/psc-cms": "dev-master",
-        "jms/twig-js": "dev-master"
+    "pscheit/psc-cms": "1.2.*@dev"
   },
   "minimum-stability": "dev",
   "extra": {
