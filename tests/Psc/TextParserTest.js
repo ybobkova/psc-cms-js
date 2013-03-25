@@ -7,22 +7,22 @@ define(['psc-tests-assert','Psc/TextParser'], function(t) {
     var textParser = new Psc.TextParser({ });
     
     var lines = [
-      "sichergestellt, dass Nachhaltigkeit versprechende Lösungen aus der Region Leuchtturmwirkung erzielen und",
-      "maghrebinischen Städten ergänzt, so dass das Wissen und die Erfahrungen deutscher Kommunen,",
-      "CoMun bietet für die Partner eine Kombination aus Dialog, Erfahrungsaustausch und technischer Beratung. Das Programm  arbeitet",
-      "sowie verschiedenen deutschen Städten, dem Marseille Center for Mediterranean Integration (CMI"
+      "sichergestellt, dass Nachhaltigkeit versprechende Lï¿½sungen aus der Region Leuchtturmwirkung erzielen und",
+      "maghrebinischen Stï¿½dten ergï¿½nzt, so dass das Wissen und die Erfahrungen deutscher Kommunen,",
+      "CoMun bietet fï¿½r die Partner eine Kombination aus Dialog, Erfahrungsaustausch und technischer Beratung. Das Programm  arbeitet",
+      "sowie verschiedenen deutschen Stï¿½dten, dem Marseille Center for Mediterranean Integration (CMI"
     ];
     
     var listPoints = [
       "Familienunternehmen mit mehr als 30 Jahren Erfahrung und Wissen",
-      "Unternehmergeist durch und durch – langfristige Fortführung des Unternehmens durch Söhne des Firmengründers",
+      "Unternehmergeist durch und durch ï¿½ langfristige Fortfï¿½hrung des Unternehmens durch Sï¿½hne des Firmengrï¿½nders",
       "Mehr als 12 000 zufriedene Kunden weltweit",
       "Umfangreiche Innovationskraft und Erfindertum"
     ];
     
     var numberedListText =
       "1\tFamilienunternehmen mit mehr als 30 Jahren Erfahrung und Wissen \n"+
-      "2\tUnternehmergeist durch und durch – langfristige Fortführung des Unternehmens durch Söhne des Firmengründers    \n"+
+      "2\tUnternehmergeist durch und durch ï¿½ langfristige Fortfï¿½hrung des Unternehmens durch Sï¿½hne des Firmengrï¿½nders    \n"+
       "3\tMehr als 12 000 zufriedene Kunden weltweit\n"+
       "4\tUmfangreiche Innovationskraft und Erfindertum      \n";
   
@@ -58,14 +58,14 @@ define(['psc-tests-assert','Psc/TextParser'], function(t) {
     this.assertParsing([
         {value: this.lines[0], type: "paragraph"},
         {value: this.lines[1], type: "paragraph"},
-        {value: "Mit dem Vorhaben CoMun fördert die:", type: "paragraph"},
+        {value: "Mit dem Vorhaben CoMun fï¿½rdert die:", type: "paragraph"},
         {value: ["list1", "list2"], type: "list"},
         {value: this.lines[2], type: "paragraph"}
       ],
 
       this.lines[0]+"\n\n"+
       this.lines[1]+"\n\n"+
-      "Mit dem Vorhaben CoMun fördert die:\n"+
+      "Mit dem Vorhaben CoMun fï¿½rdert die:\n"+
       "-\tlist1\n"+
       "-\tlist2\n"+
       "\n"+
@@ -91,27 +91,27 @@ define(['psc-tests-assert','Psc/TextParser'], function(t) {
     setup(this);
     
     this.assertParsing([
-        {value: "Nach Klick auf „Partner“ erscheinen zwei Unterrubriken:", type: 'paragraph'},
+        {value: "Nach Klick auf Partner erscheinen zwei Unterrubriken:", type: 'paragraph'},
         {value: ["Technologie", "Internationale Vertriebs-Partner"], type: 'list'},
         
-        {value: "Nach Klick auf „Technologie-Partner“ erscheint folgender Text", type: 'paragraph'},
+        {value: "Nach Klick auf ï¿½Technologie-Partnerï¿½ erscheint folgender Text", type: 'paragraph'},
         
         {value: "Kanefusa\n"+
-                "Kanefusa ist Japans größter Hersteller von Qualitäts-Werkzeugen für die Branchen Metall,\n"+
-                "als überaus verlässlich und langlebig erwiesen.\n",
+                "Kanefusa ist Japans grÃ¶ÃŸter Hersteller von QualitÃ¤ts-Werkzeugen fÃ¼r die Branchen Metall,\n"+
+                "als Ã¼beraus verlÃ¤sslich und langlebig erwiesen.\n",
          type: 'paragraph'
         }
       ],
       
-      "Nach Klick auf „Partner“ erscheinen zwei Unterrubriken: \n"+
-      "•\tTechnologie \n"+
-      "•\tInternationale Vertriebs-Partner   \n"+
+      "Nach Klick auf Partner erscheinen zwei Unterrubriken: \n"+
+      "-\tTechnologie \n"+
+      "-\tInternationale Vertriebs-Partner   \n"+
       "\n"+
-      "Nach Klick auf „Technologie-Partner“ erscheint folgender Text \n"+
+      "Nach Klick auf Technologie-Partner erscheint folgender Text \n"+
       "\t\n"+
       "\tKanefusa \n"+
-      "\tKanefusa ist Japans größter Hersteller von Qualitäts-Werkzeugen für die Branchen Metall, \n"+
-      "\tals überaus verlässlich und langlebig erwiesen. \n"+
+      "\tKanefusa ist Japans grÃ¶ÃŸter Hersteller von QualitÃ¤ts-Werkzeugen fÃ¼r die Branchen Metall, \n"+
+      "\tals Ã¼beraus verlÃ¤sslich und langlebig erwiesen. \n"+
       "\n"
     );
   });
@@ -120,24 +120,24 @@ define(['psc-tests-assert','Psc/TextParser'], function(t) {
     setup(this);
     
     this.assertParsing([
-        {value: "Nach Klick auf „Partner“ erscheinen zwei Unterrubriken:", type: 'paragraph'},
+        {value: "Nach Klick auf ï¿½Partnerï¿½ erscheinen zwei Unterrubriken:", type: 'paragraph'},
         {value: ["Technologie", "Internationale Vertriebs-Partner"], type: 'list'},
         
-        {value: "Nach Klick auf „Technologie-Partner“ erscheint folgender Text", type: 'paragraph'},
+        {value: "Nach Klick auf ï¿½Technologie-Partnerï¿½ erscheint folgender Text", type: 'paragraph'},
         
         {value: "Kanefusa", type: 'headline'},
         {value: 
-                "Kanefusa ist Japans größter Hersteller von Qualitäts-Werkzeugen für die Branchen Metall,"+
-                "Holzbearbeitung, Papier und Kunststoff. Alle hergestellten Sägeblätter, Schneiden und",
+                "Kanefusa ist Japans grï¿½ï¿½ter Hersteller von Qualitï¿½ts-Werkzeugen fï¿½r die Branchen Metall,"+
+                "Holzbearbeitung, Papier und Kunststoff. Alle hergestellten Sï¿½geblï¿½tter, Schneiden und",
          type: 'paragraph'
         }
       ],
 
       "Kanefusa \n"+
-      "\tKanefusa ist Japans größter Hersteller von Qualitäts-Werkzeugen für die Branchen Metall, \n"+
-      "\tHolzbearbeitung, Papier und Kunststoff. Alle hergestellten Sägeblätter, Schneiden und \n"
+      "\tKanefusa ist Japans grï¿½ï¿½ter Hersteller von Qualitï¿½ts-Werkzeugen fï¿½r die Branchen Metall, \n"+
+      "\tHolzbearbeitung, Papier und Kunststoff. Alle hergestellten Sï¿½geblï¿½tter, Schneiden und \n"
     );
     
-    // die headline ist dadurch erkennbar, dass die nächsten Zeilen eingrückt sind mit einem tab
+    // die headline ist dadurch erkennbar, dass die nï¿½chsten Zeilen eingrï¿½ckt sind mit einem tab
   });
 });
