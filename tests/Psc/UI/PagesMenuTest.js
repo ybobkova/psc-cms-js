@@ -16,6 +16,27 @@ define(['psc-tests-assert', 'fixtures/navigation.comun.flat', 'jquery-simulate',
           name: entityName,
           id: identifier
         });
+      },
+
+      openTabsSelection: function (title, tabButtonItems, dialogAttributes) {
+        test.selection = {
+          title: title,
+          tabButtonItems: tabButtonItems,
+          dialogAttributes: dialogAttributes
+        };
+      },
+
+      createTabButtonItem: function (tab, button) {
+        return {
+          tab: tab,
+          button: button
+        };
+      },
+      tab: function () {
+        return arguments;
+      },
+      button: function () {
+        return arguments;
       }
     };
     
@@ -27,7 +48,7 @@ define(['psc-tests-assert', 'fixtures/navigation.comun.flat', 'jquery-simulate',
       flat: flat
     });
     
-    return t.setup(test, {pages: pages, $widget: $widget, openedTabs: []});
+    return t.setup(test, {pages: pages, $widget: $widget, openedTabs: [], selection: undefined});
   };
 
   test("jqxMenu is created in widget", function() {
@@ -36,7 +57,7 @@ define(['psc-tests-assert', 'fixtures/navigation.comun.flat', 'jquery-simulate',
     var $menu = this.assertjQueryIs('.jqx-menu.jqx-menu-horizontal', this.$widget);
   });
   
-  asyncTest("on click on item the select-page is triggered and tabOpen is called for uiController", function () {
+  asyncTest("on click on item the select-page is triggered and openTabsSelection is called for uiController", function () {
     var that = setup(this);
     
     var $menu = this.assertjQueryIs('.jqx-menu.jqx-menu-horizontal', this.$widget);
@@ -47,7 +68,10 @@ define(['psc-tests-assert', 'fixtures/navigation.comun.flat', 'jquery-simulate',
       
       stop();
       setTimeout(function afterEventNotDefaultPrevented() {
-        that.assertEquals([{name: 'page', id: 20}], that.openedTabs, 'uiController openTab should be called');
+        that.assertNotUndefined(that.selection, 'openTabsSelection should have been called');
+        
+        //that.assertEquals([{name: 'page', id: 20}], that.openedTabs, 'uiController openTab should be called');
+        that.assertEquals(3, that.selection.tabButtonItems.length, 'cs1, cs2 and page buttons are avaible');
         
         start();
       }, 20); 

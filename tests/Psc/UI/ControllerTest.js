@@ -28,4 +28,57 @@ define(['psc-tests-assert', 'Psc/UI/Controller', 'Psc/UI/Tab'], function(t) {
       start();
     });
   });
+
+  asyncTest("openTabsSelection creates a popup with tab buttons to select one from", function () {
+    var that = setup(this), ui = this.controller;
+
+    var tabButtons = [
+      ui.createTabButtonItem(
+        ui.tab('contentstream', 59, 'form', "Seiteninhalt: Ben Guerdane (FR)"),
+        ui.button("Seiteninhalt f\u00fcr FR bearbeiten", 1)
+      ),
+      ui.createTabButtonItem(
+        ui.tab('contentstream', 58, 'form', "Seiteninhalt: Ben Guerdane (DE)"),
+        ui.button("Seiteninhalt f\u00fcr DE bearbeiten", 1)
+      ),
+      ui.createTabButtonItem(
+        ui.tab('page', 4, 'form', "Seite: Ben Guerdane"),
+        ui.button("Seiteninformationen f\u00fcr Ben Guerdane bearbeiten", 3)
+      )
+    ];
+
+    $.when(this.controller.openTabsSelection("choose one!", tabButtons)).then(function (dialog) {
+      var $dialog = dialog.unwrap();
+      var $buttons = that.assertjQueryLength(3, $dialog.find('.psc-cms-ui-button'), 'three buttons are rendered');
+
+      start();
+
+      dialog.close();
+    });
+  });
+
+  test("creatTabButtonItem creates a FastItem with attached widget", function () {
+    var that = setup(this), ui = this.controller;
+
+    var tabButtonItem = ui.createTabButtonItem(
+      ui.tab('contentstream', 59, 'form', "Seiteninhalt: Ben Guerdane (FR)"),
+      ui.button("Seiteninhalt f\u00fcr FR bearbeiten", 1)
+    );
+
+    this.assertInstanceOf(Psc.CMS.FastItem, tabButtonItem);
+    var $button = tabButtonItem.unwrap();
+    this.assertNotUndefined($button);
+    this.assertjQueryIs('.psc-cms-ui-button', $button);
+    this.assertjQueryIs('.psc-cms-ui-tab-button-openable', $button);
+
+    that.$widget.html($button);
+  });
+
+  test("create tab can have subresource as array", function () {
+    var that = setup(this), ui = this.controller;
+    var tab = ui.tab('page', 17, ['contentstream', 'de'], 'Seiteninhalt von für DE');
+
+    this.assertEquals("entities/page/17/contentstream/de", tab.url);
+
+  });
 });
