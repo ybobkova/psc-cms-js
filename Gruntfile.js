@@ -4,10 +4,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-qunit');
-  grunt.loadNpmTasks('grunt-contrib-requirejs');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-watch');
+//  grunt.loadNpmTasks('grunt-contrib-requirejs');
+//  grunt.loadNpmTasks('grunt-contrib-concat');
+//  grunt.loadNpmTasks('grunt-contrib-uglify');
+//  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-hogan');
 
   var port = 8000;
@@ -65,7 +65,7 @@ module.exports = function(grunt) {
         globals: {
           $: true,
           define: true, require: true,
-          
+
           Psc: true,
           tiptoi: true,
           CoMun: true,
@@ -100,6 +100,11 @@ module.exports = function(grunt) {
       textEditor: {
         options: {
           urls: mapToUrl('tests/Psc/TextEditor*.html')
+        }
+      },
+      date: {
+        options: {
+          urls: mapToUrl('tests/Psc/Date*.html')
         }
       },
       options: {
@@ -180,10 +185,10 @@ module.exports = function(grunt) {
   });
 
   grunt.task.registerTask('pack', ['jshint', 'requirejs']);
-  grunt.task.registerTask('default', ['jshint', 'connect', 'qunit', 'requirejs']);
-  grunt.task.registerTask('test', ['connect', 'qunit']);
+  grunt.task.registerTask('default', ['jshint', 'connect', 'qunit:all', 'requirejs']);
+  grunt.task.registerTask('test', ['connect', 'qunit:all']);
   grunt.task.registerTask('server', ['connect:listenserver']);
-  grunt.task.registerTask('travis', ['jshint', 'connect', 'qunit']);
+  grunt.task.registerTask('travis', ['jshint', 'connect', 'qunit:all']);
   
   grunt.registerTask("create-class", "crates a new Class Stub", function (className, isa, traits) {
     var _ = grunt.util._;

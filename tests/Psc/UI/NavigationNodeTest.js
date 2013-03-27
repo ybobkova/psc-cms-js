@@ -3,17 +3,27 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(
   module("Psc.UI.NavigationNode");
   
   var setup =  function (test) {
-      var node = new Psc.UI.NavigationNode({
-        id: 2,
-        title: {en: 'home', de: 'Startseite'},
-        parent: null,
-        depth: 0,
-        locale: 'en',
-        languages: ['de','en'],
-        pageId: 17
-      });
-      
-      return t.setup(test, {node: node});
+    var uiController = {
+      openTab: function (entityName, identifier, attributes, $target) {
+        test.openedTabs.push({
+          entityName: entityName,
+          identifier: identifier
+        });
+      }
+    };
+
+    var node = new Psc.UI.NavigationNode({
+      uiController: uiController,
+      id: 2,
+      title: {en: 'home', de: 'Startseite'},
+      parent: null,
+      depth: 0,
+      locale: 'en',
+      languages: ['de','en'],
+      pageId: 17
+    });
+    
+    return t.setup(test, {node: node, uiController: uiController, openedTabs: []});
   };
   
   var setupWithHTML = function (test) {
@@ -34,6 +44,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(
     var that = setup(this);
     var node = new Psc.UI.NavigationNode({
       id: 2,
+      uiController: that.uiController,
       title: {en: 'BMW', de: 'Bayrische Motoren Werke'},
       parent: null,
       depth: 0,
@@ -110,5 +121,20 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(
     
     this.node.refreshTitle();
     this.assertEquals('refreshed home', this.$html.find('span.title').text());
+  });
+
+
+  test("page button triggers openTab in uiController", function () {
+    var that = setupWithHTML(this);
+
+    var $pageButton = this.assertjQueryLength(1, this.$html.find('.psc-cms-ui-button:first'));
+
+    $pageButton.click();
+
+    this.assertEquals(1, this.openedTabs.length, 'tab was opened from uiController');
+    var tab = this.openedTabs[0];
+
+    this.assertEquals(17, tab.identifier);
+    this.assertEquals('page', tab.entityName);
   });
 });
