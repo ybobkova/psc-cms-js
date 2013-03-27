@@ -87,7 +87,7 @@ define(['psc-tests-assert','Psc/TextParser'], function(t) {
     );	
 	});
 	
-	test("parser detects list only in lines", function() {
+	test("parser detects two lists following each other", function() {
     setup(this);
     
     this.assertParsing([
