@@ -25,6 +25,13 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
       
       return editor;
     };
+
+    test.setupHTML = function () {
+      var $widget = test.paragraph.create();
+      test.$container.append($widget);
+
+      return $widget;
+    };
     
     test.setupButton = function (button) {
       var $widget = test.paragraph.create();
@@ -146,4 +153,25 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
       "lorem is replaced with underline ipsum"
     );
   });  
+
+  test("isEmpty reflects if ta has text", function () {
+    var that = setup(this);
+    this.setupHTML();
+
+    this.assertFalse(this.paragraph.isEmpty());
+    this.editor().setText('');
+
+    this.assertTrue(this.paragraph.isEmpty());
+  });
+
+  test("serializes the content from ta", function () {
+    var that = setup(this), s = {type: 'paragraph', 'label':'none'};
+    this.setupHTML();
+
+    this.editor().setText('its serialized');
+
+    this.paragraph.serialize(s);
+
+    this.assertEquals('its serialized', s.content);
+  });
 });

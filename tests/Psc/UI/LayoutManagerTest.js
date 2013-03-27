@@ -162,6 +162,44 @@ define(['psc-tests-assert','joose', 'Psc/UI/LayoutManager','Psc/Test/DoublesMana
     
     this.assertEquals(expectedData, data, "layoutManager serializes from a component with serialize function");
   });
+
+  test("removes widgets which return isEmpty true on serialize", function () {
+    setup(this);
+    
+    var component = this.doublesManager.getLayoutManagerComponentMock("some-empty-component", "no content"), removed = false;
+    component.setLabel("the label");
+    component.isEmpty = function () { return true; };
+    component.serialize = function () { throw new Error('Should not be called, ever'); };
+    component.remove = function () { removed = true; };
+    component.create();
+    
+    this.layoutManager.appendWidget(component);
+    
+    var expectedData = {
+      layoutManager: [
+      ]
+    };
+    
+    var data = {};
+    this.layoutManager.serialize(data);
+
+    this.assertEquals(expectedData, data, "layoutManager should remove this component");
+    this.assertTrue(removed, 'removed should be called on component');
+  });
+
+  test("calls cleanup on serialize", function () {
+    setup(this);
+    
+    var component = this.doublesManager.getLayoutManagerComponentMock("some-empty-component", "no content"), cleanedup = false;
+    component.setLabel("the label");
+    component.cleanup = function () { cleanedup = true; };
+    component.create();
+
+    this.layoutManager.appendWidget(component);
+    this.layoutManager.serialize({});
+
+    this.assertTrue(cleanedup, 'cleanedup should be called on component');
+  });
   
   test("layoutManager unserializes widgets structure", function () {
     setup(this);

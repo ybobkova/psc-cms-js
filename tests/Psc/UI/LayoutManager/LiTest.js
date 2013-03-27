@@ -32,4 +32,35 @@ define(['psc-tests-assert', 'Psc/UI/LayoutManager/Li'], function(t) {
     this.assertjQueryLength(2, this.$container.find('textarea'), 'both list points are rendered as textarea');
     
   });
+
+  test("when cleanup is called before isEmpty reflects if li has items", function () {
+    var that = setup(this);
+
+    this.li.cleanup();
+    this.assertFalse(this.li.isEmpty());
+
+    this.$container.find('div.li textarea').val(''); // empty all
+    this.li.cleanup();
+    this.assertTrue(this.li.isEmpty());
+  });
+
+  test("when cleanup is called before searlize returns the listitems as content", function () {
+    var that = setup(this), s = {type: 'li', 'label': 'none'};
+
+    this.li.cleanup();
+    this.li.serialize(s);
+
+    this.assertLength(2, s.content);
+  });
+
+  test("when cleanup is called before serialize returns the current listitems as content", function () {
+    var that = setup(this), s = {type: 'li', 'label': 'none'};
+
+    this.$container.find('div.li textarea:last').val(''); // empty last (1of2)
+
+    this.li.cleanup();
+    this.li.serialize(s);
+    
+    this.assertLength(1, s.content);
+  });
 });

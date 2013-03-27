@@ -164,4 +164,49 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/Dialog','Psc/UI/WidgetWrapp
     
     this.assertjQueryLength(2, $ul.find('li'));
   });
+
+
+  test("isEmpty returns if downloads are in list", function () {
+    var that = setup(this), evm = this.list.getEventManager();
+
+    this.assertTrue(this.list.isEmpty());
+
+    var $widget = this.createWidget(this.list);
+    var file = {
+      name: 'aFile.txt',
+      size: 200,
+      url: '/path/to/the/aFile.txt',
+      id: 9,
+      hash: '9348dsoip98dfkdf900k',
+      description: ''
+    };
+    
+    evm.triggerEvent('select-file', {}, [file]);
+    
+    this.assertFalse(this.list.isEmpty());
+  });
+
+  test("serialize puts selected downloads in list into s", function () {
+    var that = setup(this), evm = this.list.getEventManager();
+
+    var $widget = this.createWidget(this.list);
+    var file = {
+      name: 'aFile.txt',
+      size: 200,
+      url: '/path/to/the/aFile.txt',
+      id: 9,
+      hash: '9348dsoip98dfkdf900k',
+      description: ''
+    };
+    
+    evm.triggerEvent('select-file', {}, [file]);
+
+    var s = {type: 'list', label: 'some'};
+
+    this.list.serialize(s);
+    
+    this.assertLength(1, s.downloads);
+    var uplFile = s.downloads[0];
+    this.assertEquals(9, uplFile.file);
+  });
 });
