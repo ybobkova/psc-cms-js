@@ -92,7 +92,7 @@ define(['psc-tests-assert','Psc/TextParser'], function(t) {
     
     this.assertParsing([
         {value: ["list1", "list2", "list3"], type:"list"},
-				{value: ["list4", "list5", "list6"], type:"list"}
+			  {value: ["list4", "list5", "list6"], type:"list"}
       ],
       
       "\n"+
