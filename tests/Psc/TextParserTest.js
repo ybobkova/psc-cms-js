@@ -84,60 +84,24 @@ define(['psc-tests-assert','Psc/TextParser'], function(t) {
       " - list1\n"+
       " - list2\n"+
       " - list3\n"
-    );
-  });
-
-  test("parser detects a wrong formatted headline between paragraph and a list", function() {
+    );	
+	});
+	
+	test("parser detects list only in lines", function() {
     setup(this);
     
     this.assertParsing([
-        {value: "Nach Klick auf Partner erscheinen zwei Unterrubriken:", type: 'paragraph'},
-        {value: ["Technologie", "Internationale Vertriebs-Partner"], type: 'list'},
-        
-        {value: "Nach Klick auf �Technologie-Partner� erscheint folgender Text", type: 'paragraph'},
-        
-        {value: "Kanefusa\n"+
-                "Kanefusa ist Japans größter Hersteller von Qualitäts-Werkzeugen für die Branchen Metall,\n"+
-                "als überaus verlässlich und langlebig erwiesen.\n",
-         type: 'paragraph'
-        }
+        {value: ["list1", "list2", "list3"], type:"list"},
+				{value: ["list4", "list5", "list6"], type:"list"}
       ],
       
-      "Nach Klick auf Partner erscheinen zwei Unterrubriken: \n"+
-      "-\tTechnologie \n"+
-      "-\tInternationale Vertriebs-Partner   \n"+
       "\n"+
-      "Nach Klick auf Technologie-Partner erscheint folgender Text \n"+
-      "\t\n"+
-      "\tKanefusa \n"+
-      "\tKanefusa ist Japans größter Hersteller von Qualitäts-Werkzeugen für die Branchen Metall, \n"+
-      "\tals überaus verlässlich und langlebig erwiesen. \n"+
-      "\n"
+      " - list1\n"+
+      " - list2\n"+
+      " - list3\n"+
+			"\n"+
+      " - list4\n"+
+      " - list5\n"+
+      " - list6\n"
     );
   });
-  
-  test("parser detects a correctly formatted headline before an indented block", function() {
-    setup(this);
-    
-    this.assertParsing([
-        {value: "Nach Klick auf �Partner� erscheinen zwei Unterrubriken:", type: 'paragraph'},
-        {value: ["Technologie", "Internationale Vertriebs-Partner"], type: 'list'},
-        
-        {value: "Nach Klick auf �Technologie-Partner� erscheint folgender Text", type: 'paragraph'},
-        
-        {value: "Kanefusa", type: 'headline'},
-        {value: 
-                "Kanefusa ist Japans gr��ter Hersteller von Qualit�ts-Werkzeugen f�r die Branchen Metall,"+
-                "Holzbearbeitung, Papier und Kunststoff. Alle hergestellten S�gebl�tter, Schneiden und",
-         type: 'paragraph'
-        }
-      ],
-
-      "Kanefusa \n"+
-      "\tKanefusa ist Japans gr��ter Hersteller von Qualit�ts-Werkzeugen f�r die Branchen Metall, \n"+
-      "\tHolzbearbeitung, Papier und Kunststoff. Alle hergestellten S�gebl�tter, Schneiden und \n"
-    );
-    
-    // die headline ist dadurch erkennbar, dass die n�chsten Zeilen eingr�ckt sind mit einem tab
-  });
-});
