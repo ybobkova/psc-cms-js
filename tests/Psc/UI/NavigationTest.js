@@ -5,8 +5,11 @@ define(['psc-tests-assert','Psc/UI/Navigation'], function(t) {
   
   var setup = function (test) {
     $('#qunit-fixture').html('<div class="psc-cms-ui-navigation-container"><fieldset class="psc-cms-ui-navigation"><legend>Navigation</legend><div class="content"><ul class="ui-widget"></ul></div></fieldset></div>');
+
+    var uiController = {};
       
     var navigation = new Psc.UI.Navigation({
+      uiController: uiController,
         widget: $('#qunit-fixture div.psc-cms-ui-navigation-container'),
         /* das hier lässt sich mit
           $em->getRepository('Entities\NavigationNode')->getTreeForUI()
