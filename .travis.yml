@@ -9,6 +9,7 @@ coffee:
 branches:
   only:
     - master
+    - sce
 
 before_script:
   - npm install -g grunt-cli
