@@ -105,3 +105,4 @@ define(['psc-tests-assert','Psc/TextParser'], function(t) {
       " - list6\n"
     );
   });
+});
