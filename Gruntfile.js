@@ -10,7 +10,7 @@ module.exports = function(grunt) {
 //  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-hogan');
 
-  var port = 8000;
+  var port = 8007;
   var hostname = 'localhost';
   var nodepath = require("path");
   
