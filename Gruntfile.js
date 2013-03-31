@@ -10,7 +10,7 @@ module.exports = function(grunt) {
 //  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-hogan');
 
-  var port = 8007;
+  var port = 8000;
   var hostname = 'localhost';
   var nodepath = require("path");
   
@@ -185,10 +185,10 @@ module.exports = function(grunt) {
   });
 
   grunt.task.registerTask('pack', ['jshint', 'requirejs']);
-  grunt.task.registerTask('default', ['jshint', 'connect', 'qunit:all', 'requirejs']);
-  grunt.task.registerTask('test', ['connect', 'qunit:all']);
+  grunt.task.registerTask('default', ['jshint', 'connect:server', 'qunit:all', 'requirejs']);
+  grunt.task.registerTask('test', ['connect:server', 'qunit:all']);
   grunt.task.registerTask('server', ['connect:listenserver']);
-  grunt.task.registerTask('travis', ['jshint', 'connect', 'qunit:all']);
+  grunt.task.registerTask('travis', ['jshint', 'connect:server', 'qunit:all']);
   
   grunt.registerTask("create-class", "crates a new Class Stub", function (className, isa, traits) {
     var _ = grunt.util._;
