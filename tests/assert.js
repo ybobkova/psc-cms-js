@@ -1,4 +1,12 @@
 define(['jquery', 'joose', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($, Joose) {
+
+	// extend jQuery with contentEquals
+  $.expr[':'].contentEquals = function(el, idx, meta) {
+    return $(el).text() === meta[3];
+  };
+
+
+
 	var baseAssertions = {
 		
 		formatMessage: function(message, result) {

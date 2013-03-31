@@ -1,30 +1,37 @@
-define(['psc-tests-assert','joose', 'Psc/UI/LayoutManager','Psc/Test/DoublesManager'], function(t, Joose) {
+define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutManager','Psc/UI/LayoutManager/Control','Psc/Test/DoublesManager'], function(t, Joose, accordionHTML) {
   
   module("Psc.UI.LayoutManager");
   
   var setup = function (test, params) {
     var dm = new Psc.Test.DoublesManager();
     var $fixture = $('#visible-fixture').empty();
-    var $html = $('<div class="psc-cms-ui-splitpane psc-cms-ui-serializable psc-cms-ui-layout-manager">'+
-                        '<div class="left"><fieldset class="psc-cms-ui-group"><legend>Layout Test</legend><div class="content"></div></fieldset></div>'+
-                        '<div class="right"><div class="psc-cms-ui-accordion"></div></div>'+
-                      '</div>'
-                    );
-    
+
+    var $html = $('<div class="joose-widget-wrapper" />');
     $fixture.append($html);
-/*
-<fieldset class="ui-corner-all ui-widget-content psc-cms-ui-group magic-helper"><legend>Magic Box</legend>
-  <div class="content"><textarea style="height: 200px; width: 100%" name="magic" id="" class="textarea ui-widget-content ui-corner-all magic-box"></textarea>
-<button class="psc-cms-ui-button psc-guid-5017deab7f428 ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false"><span class="ui-button-text">umwandeln</span></button>
-<small class="hint">in die Magic Box kann ein gesamter Text eingefügt werden. Der Text wird dann analysiert und automatisch in Abschnitte und Elemente unterteilt</small>
-</div></fieldset>
-*/
+
+    var control = function (className, label, params) {
+      return new Psc.UI.LayoutManager.Control({
+        type: className,
+        label: label,
+        params: params
+      });
+    };
 
     var layoutManager = new Psc.UI.LayoutManager($.extend({
       widget: $html,
-      uploadService: dm.getUploadService()
+      uploadService: dm.getUploadService(),
+
+      controls: [
+        control('Headline', 'Überschrift', {'level':1}),
+        control('Headline', 'Zwischenüberschrift', {'level':2}),
+        control('Paragraph', 'Absatz'),
+        control('Li', 'Aufzählung'),
+        control('Image', 'Bild'),
+        control('DownloadsList', 'Download-Liste', {'headline':'', 'downloads':[]}),
+        control('WebsiteWidget', 'Kalender', {'label':'Kalender', 'name':'calendar'})
+      ]
     }, params || []));
-    
+
     return t.setup(test, {
       assertWidget: function (assert, $widget) {
         var m = function (msg) {
@@ -43,6 +50,38 @@ define(['psc-tests-assert','joose', 'Psc/UI/LayoutManager','Psc/Test/DoublesMana
       doublesManager: dm
     });
   };
+
+  test("creates whole layout for everything", function () {
+    var that = setup(this), $html = that.layoutManager.unwrap();
+
+    var $layoutManager = this.assertjQueryLength(1, $html.find('.psc-cms-ui-layout-manager'));
+    this.assertjQueryHasClass('psc-cms-ui-serializable', $layoutManager);
+    this.assertjQueryHasClass('psc-cms-ui-splitpane', $layoutManager);
+
+    var $left = this.assertjQueryLength(1, $layoutManager.find('> .left'));
+    var $right = this.assertjQueryLength(1, $layoutManager.find('> .right'));
+
+    var $accordion = this.assertjQueryLength(1, $right.find('.psc-cms-ui-accordion'));
+    var $magicBox = this.assertjQueryLength(1, $right.find('fieldset.magic-helper'));
+
+    var $layout = this.assertjQueryLength(1, $left.find('fieldset.psc-cms-ui-group > div.content'));
+
+  });
+
+  test("creates all given buttons in the accordion (drag n drop acceptance, too)", function() {
+    var that = setup(this);
+
+    var $accordion = this.assertjQueryLength(1, that.$fixture.find('div.right .psc-cms-ui-accordion'));
+    this.assertjQueryLength(7, $accordion.find('div.text-und-bilder button'));
+
+    var buttons = ['Überschrift', 'Zwischenüberschrift', 'Absatz', 'Aufzählung', 'Bild', 'Download-Liste', 'Kalender'];
+
+    for (var i = 0, button; i<buttons.length; i++) {
+      button = buttons[i];
+
+      this.assertjQueryLength(1, $accordion.find('button:has(.ui-button-text:contentEquals("'+button+'"))'), button+' is found under buttons');
+    }
+  });
 
   test("create List without content creates a widget with an empty textarea", function() {
     setup(this);

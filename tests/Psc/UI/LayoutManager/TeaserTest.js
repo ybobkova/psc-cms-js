@@ -21,7 +21,7 @@ define(['psc-tests-assert', 'text!templates/src/SCE/Components/Teaser.json', 'Ps
     this.assertEquals("Teaser", this.teaser.getType());
   });
   
-  test("render html", function() {
+  test("render cms html", function() {
     var that = setup(this);
 
     var $html = this.teaser.create();

@@ -155,6 +155,10 @@ fieldset.psc-cms-ui-navigation  li .button-panel { position: absolute; top: 0px;
 }
 
 /* layout manager */
+.psc-cms-ui-layout-manager > .left > fieldset > div.content {
+  min-height: 600px;
+}
+
 .lm-downloadslist li {
   margin-bottom: 10px;
 }
