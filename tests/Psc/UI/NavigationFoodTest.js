@@ -7,6 +7,7 @@ define(['psc-tests-assert','text!fixtures/navigation.food.json','Psc/UI/Navigati
     
     var nodes;  
     var navigation = new Psc.UI.Navigation({
+      uiController: {},
       widget: $html,
         /* the example is from the webforge-testdata-repository: FoodCategories
          *
