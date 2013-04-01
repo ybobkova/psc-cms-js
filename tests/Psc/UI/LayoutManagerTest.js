@@ -55,7 +55,7 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
     var that = setup(this), $html = that.layoutManager.unwrap();
 
     var $layoutManager = this.assertjQueryLength(1, $html.find('.psc-cms-ui-layout-manager'));
-    this.assertjQueryHasClass('psc-cms-ui-serializable', $layoutManager);
+    this.assertjQueryHasNotClass('psc-cms-ui-serializable', $layoutManager);
     this.assertjQueryHasClass('psc-cms-ui-splitpane', $layoutManager);
 
     var $left = this.assertjQueryLength(1, $layoutManager.find('> .left'));

@@ -291,6 +291,7 @@ define(['psc-tests-assert','joose', 'text!fixtures/tabs-for-main.html','Psc/UI/M
   test("TODO: save and save-close delegates postData until formcontroller", function() {
     expect(0);
   });  
+
   test("response with view in linkrelations and preview saved revision opens a new window", function () {
     var that = formSetup(this), main = that.main;
     
@@ -329,14 +330,7 @@ define(['psc-tests-assert','joose', 'text!fixtures/tabs-for-main.html','Psc/UI/M
     main = that.main;
         
     // mock save from main to do nothing
-    main.save = function ($form, tabHook, additionalData) {
-      var revision;
-      
-      that.assertNotFalse(
-        revision = Psc.UI.FormController.readRevision($form),
-        'revision is found in form'
-      );
-      
+    main.save = function ($form, tabHook, additionalData, revision) {
       that.assertContains(
         'preview-',
         revision,
@@ -347,4 +341,5 @@ define(['psc-tests-assert','joose', 'text!fixtures/tabs-for-main.html','Psc/UI/M
     var $button = that.assertjQueryLength(1, main.getTabs().unwrap().find('#tabs-3 button.psc-cms-ui-button-preview'));
     
     $button.trigger('click');
-  });});
+  });
+});

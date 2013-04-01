@@ -155,6 +155,15 @@ define(['jquery', 'joose', 'Psc/UI/Tabs', 'Psc/UI/Main'], function ($, Joose) {
 			return jQueryObject;
 		},
 
+		assertjQueryHasNotClass: function(expectedClass, jQueryObject, message) {
+			this.assertjQuery(jQueryObject, 'actual is a jquery object [in assertJQueryHasClass]');
+			
+			var actualClasses = jQueryObject.attr('class');
+			var result = !jQueryObject.hasClass(expectedClass);
+			QUnit.push( result, actualClasses, "NOT: "+expectedClass, this.formatMessage(message || "$('"+jQueryObject.selector+"').hasNOTClass('"+expectedClass+"') ", result) );
+			return jQueryObject;
+		},
+
     assertjQueryIs: function(expectedExpression, jQueryObject, message) {
 			this.assertjQuery(jQueryObject, 'actual is a jquery object [in assertJQueryIs]');
 			
