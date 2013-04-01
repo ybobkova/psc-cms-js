@@ -15,7 +15,7 @@ define(['psc-tests-assert','require','Psc/UI/LayoutManager/Image','Psc/UI/Resiza
       url: require.toUrl('fixtures/img/normalImage.jpg'),
       caption: null,
       align: null,
-      imageId: 17
+      imageEntity: 17
     });
 
     var emptyImage = new Psc.UI.LayoutManager.Image({
@@ -80,7 +80,7 @@ define(['psc-tests-assert','require','Psc/UI/LayoutManager/Image','Psc/UI/Resiza
         url: require.toUrl('fixtures/img/normalImage.jpg'),
         caption: null,
         align: null,
-        imageId: 17
+        imageEntity: 17
       },
       s
     );
