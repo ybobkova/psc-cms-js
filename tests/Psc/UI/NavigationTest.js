@@ -9,6 +9,7 @@ define(['psc-tests-assert','Psc/UI/Navigation'], function(t) {
     var uiController = {};
       
     var navigation = new Psc.UI.Navigation({
+      languages: ['de', 'en'],
       uiController: uiController,
         widget: $('#qunit-fixture div.psc-cms-ui-navigation-container'),
         /* das hier lässt sich mit
