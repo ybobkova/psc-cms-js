@@ -70,7 +70,6 @@ define(['psc-tests-assert', 'fixtures/navigation.comun.flat', 'jquery-simulate',
       setTimeout(function afterEventNotDefaultPrevented() {
         that.assertNotUndefined(that.selection, 'openTabsSelection should have been called');
         
-        //that.assertEquals([{name: 'page', id: 20}], that.openedTabs, 'uiController openTab should be called');
         that.assertEquals(3, that.selection.tabButtonItems.length, 'cs1, cs2 and page buttons are avaible');
         
         start();
