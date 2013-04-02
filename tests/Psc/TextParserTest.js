@@ -126,10 +126,10 @@ define(['psc-tests-assert','Psc/TextParser'], function(t) {
     text += "1  Familienunternehmen mit mehr als 30 Jahren Erfahrung und Wissen \n";
     text += "2  Unternehmergeist durch und durch – langfristige Fortführung des Unternehmens durch Söhne des Firmengründers    \n";
     text += "3  Mehr als 12 000 zufriedene Kunden weltweit\n";
-    text += "4  Umfangreiche Innovationskraft und Erfindertum      \n";
+    text += "14  Umfangreiche Innovationskraft und Erfindertum      \n";
 
     this.assertParsing([
-        {value: ["Mehrwerte, die Sie überzeugen werden:"], type:"paragraph"},
+        {value: "Mehrwerte, die Sie überzeugen werden:", type:"paragraph"},
         {type: "list", value: [
           "Familienunternehmen mit mehr als 30 Jahren Erfahrung und Wissen",
           "Unternehmergeist durch und durch – langfristige Fortführung des Unternehmens durch Söhne des Firmengründers",
@@ -154,7 +154,7 @@ define(['psc-tests-assert','Psc/TextParser'], function(t) {
     text += "•  Umfangreiche Innovationskraft und Erfindertum      \n";
 
     this.assertParsing([
-        {value: ["Mehrwerte, die Sie überzeugen werden:"], type:"paragraph"},
+        {value: "Mehrwerte, die Sie überzeugen werden:", type:"paragraph"},
         {type: "list", value: [
           "Familienunternehmen mit mehr als 30 Jahren Erfahrung und Wissen",
           "Unternehmergeist durch und durch – langfristige Fortführung des Unternehmens durch Söhne des Firmengründers",
