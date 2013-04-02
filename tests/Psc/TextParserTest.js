@@ -141,5 +141,30 @@ define(['psc-tests-assert','Psc/TextParser'], function(t) {
       text
     );
   });
+
+  test("bullet list tabbed", function () {
+    setup(this);
+
+    var text = '';
+    text += "Mehrwerte, die Sie überzeugen werden: \n";
+    text += "\n";
+    text += "•  Familienunternehmen mit mehr als 30 Jahren Erfahrung und Wissen \n";
+    text += "•  Unternehmergeist durch und durch – langfristige Fortführung des Unternehmens durch Söhne des Firmengründers    \n";
+    text += "•  Mehr als 12 000 zufriedene Kunden weltweit\n";
+    text += "•  Umfangreiche Innovationskraft und Erfindertum      \n";
+
+    this.assertParsing([
+        {value: ["Mehrwerte, die Sie überzeugen werden:"], type:"paragraph"},
+        {type: "list", value: [
+          "Familienunternehmen mit mehr als 30 Jahren Erfahrung und Wissen",
+          "Unternehmergeist durch und durch – langfristige Fortführung des Unternehmens durch Söhne des Firmengründers",
+          "Mehr als 12 000 zufriedene Kunden weltweit",
+          "Umfangreiche Innovationskraft und Erfindertum"
+        ]}
+      ],
+     
+      text
+    );
+  });
 });
 
