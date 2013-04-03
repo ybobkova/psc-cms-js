@@ -296,6 +296,10 @@ define(['jquery', 'joose', 'knockout', 'Psc/UI/Tabs', 'Psc/UI/Main', 'Psc/UI/Wid
         binding.update($element[0], valueAccessor);
       };
 
+      test.getObservable = function() {
+        return observable;
+      };
+
       return test;
     }
   };

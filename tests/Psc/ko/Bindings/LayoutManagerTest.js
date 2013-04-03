@@ -85,4 +85,34 @@ define(['psc-tests-assert', 'knockout', 'test-files/navigation.comun.flat', 'Psc
 
     this.assertEquals("new val", ko.utils.unwrapObservable(model.t1.value));
   });
+
+  test("singleImage populates value on image change", function() {
+    var $element = $('<div />'), that = t.setupBinding(setup(this), 'singleImage', $element), initValue;
+
+    that.koInit(initValue = {
+      url: '/some/url.jpg',
+      imageEntity: 7
+    });
+
+    var image = this.assertHasJooseWidget(Psc.UI.UploadableImage, $element);
+
+    that.assertEquals(initValue, 
+      {
+        url: image.getUrl(),
+        imageEntity: image.getId()
+      }, 
+      "image is init with value from ko:Init"
+    );
+
+    image.getEventManager().triggerEvent('image-edited', {}, [image, 8, '/new/url.jpg']);
+
+    that.assertEquals({
+        url: '/new/url.jpg',
+        imageEntity: 8
+      }, ko.utils.unwrapObservable(that.getObservable(),
+        "ko value is value from changed image"
+      )
+    );
+
+  });
 });
