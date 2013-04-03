@@ -9,7 +9,7 @@ define(['psc-tests-assert', 'knockout', 'Psc/Test/DoublesManager', 'Psc/ko/Bindi
       uploadService: dm.getUploadService()
     });
     
-    return t.setup(test, {bindings: bindings});
+    return t.setup(test, {bindings: bindings, bindingNames: ['singleImage', 'navigationSelect']});
   };
   
   test("injects some bindings into layoutManager", function() {
@@ -17,9 +17,8 @@ define(['psc-tests-assert', 'knockout', 'Psc/Test/DoublesManager', 'Psc/ko/Bindi
 
     that.bindings.activate();
 
-    var bindings = ['singleImage'];
-    for (var i = 0; i<bindings.length; i++) {
-      this.assertNotUndefined(ko.bindingHandlers[ bindings[i] ], 'binding '+bindings[i]+' is injected');
+    for (var i = 0; i<this.bindingNames.length; i++) {
+      this.assertNotUndefined(ko.bindingHandlers[ this.bindingNames[i] ], 'binding "'+this.bindingNames[i]+'" is injected');
     }
   });
 });

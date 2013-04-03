@@ -4,6 +4,7 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
   
   var setup = function (test, params) {
     var dm = new Psc.Test.DoublesManager();
+    var container = params && params.container || dm.getContainer();
     var $fixture = $('#visible-fixture').empty();
 
     var $html = $('<div class="joose-widget-wrapper" />');
@@ -20,6 +21,7 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
     var layoutManager = new Psc.UI.LayoutManager($.extend({
       widget: $html,
       uploadService: dm.getUploadService(),
+      container: container,
 
       controls: [
         control('Headline', 'Überschrift', {'level':1}),
@@ -47,7 +49,8 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
       uploadService: layoutManager.getUploadService(),
       '$fixture': $fixture,
       layoutManager: layoutManager,
-      doublesManager: dm
+      doublesManager: dm,
+      container: container
     });
   };
 
@@ -291,5 +294,22 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
     this.uploadService.setApiUrl('/upload-manager/api/pages');
     this.uploadService.setUiUrl('/upload-manager/pages');
     this.layoutManager.appendWidget(widget);
+  });
+
+  test("injectNavigationFlat property sets the new navigation flat in the servie from dependency container", function () {
+    // inject a container with a mocked navigationService into our setup
+    var container = (new Psc.Test.DoublesManager()).getContainer();
+    var injectedFlat;
+
+    container.getNavigationService().setFlat = function(flat) {
+      injectedFlat = flat;
+    };
+
+    var fakeFlat = ['fake', true];
+
+    // do setup (which should call the inject hack)
+    setup(this, { container: container, injectNavigationFlat: fakeFlat });
+    
+    this.assertEquals(fakeFlat, injectedFlat);
   });
 });

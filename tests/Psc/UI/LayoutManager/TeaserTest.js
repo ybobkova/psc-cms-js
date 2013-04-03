@@ -1,12 +1,16 @@
-define(['psc-tests-assert', 'text!templates/src/SCE/Components/Teaser.json', 'Psc/Test/DoublesManager', 'Psc/UI/LayoutManager/Teaser'], function(t, teaserSpec) {
+define(['psc-tests-assert', 'text!templates/src/SCE/Widgets/Teaser.json', 'test-files/navigation.comun.flat','Psc/Test/DoublesManager', 'Psc/UI/LayoutManager/Teaser'], function(t, teaserSpec, comunFlat) {
   
   module("Psc.UI.LayoutManager.Teaser");
 
   var setup = function (test) {
     var dm = new Psc.Test.DoublesManager();
+    var container = dm.getContainer();
+
+    container.getNavigationService().setFlat(comunFlat);
 
     var teaser = new Psc.UI.LayoutManager.TemplateWidget({
       specification: teaserSpec,
+      container: container,
       uploadService: dm.getUploadService()
     });
     
@@ -26,9 +30,9 @@ define(['psc-tests-assert', 'text!templates/src/SCE/Components/Teaser.json', 'Ps
 
     var $html = this.teaser.create();
 
-    this.assertjQueryLength(2, $html.find('input:text'));
+    this.assertjQueryLength(1, $html.find('input:text'));
     this.assertjQueryLength(1, $html.find('textarea'));
-    this.assertjQueryLength(1, $html.find('div.span4:contains("Überschrift")'));
-    this.assertjQueryLength(1, $html.find('div.span4:contains("Link-Ziel")'));
+    this.assertjQueryLength(1, $html.find('div:contentEquals("Überschrift")'));
+    this.assertjQueryLength(1, $html.find('div:contentEquals("Link-Ziel")'));
   });
 });
