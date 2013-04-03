@@ -5,6 +5,7 @@ define(['psc-tests-assert', 'knockout', 'Psc/Test/DoublesManager', 'Psc/ko/Bindi
   var setup = function (test) {
     var dm = new Psc.Test.DoublesManager();
     var bindings = new Psc.ko.Bindings.LayoutManager({
+      container: dm.getContainer(),
       knockout: ko,
       uploadService: dm.getUploadService()
     });
