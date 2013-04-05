@@ -124,6 +124,12 @@ fieldset.psc-cms-ui-navigation ul li {
 }
 fieldset.psc-cms-ui-navigation  li .button-panel { position: absolute; top: 0px; right: 0px; }
 
+.psc-cms-ui-uploadable-image.placeholder {
+  padding: 0.5em;
+  height: 120px;
+  width: 120px;
+}
+
 /* resizable image und handles von ui */
 .psc-cms-ui-resizable-image .ui-resizable-handle {
   height: 16px;
