@@ -130,7 +130,7 @@ define(['psc-tests-assert', 'joose', 'Psc/Test/DoublesManager', 'Psc/UI/LayoutMa
     var input = this.component.createInternalLinkSelection('field');
     var $input = $(input);
 
-    this.assertjQueryIs('*[data-bind="navigationSelect: field"]', $input);
+    this.assertEquals('navigationSelect: field.value', $input.attr('data-bind'), $input);
     // see Psc.ko.Bindings.LayoutManager
   });
 });
