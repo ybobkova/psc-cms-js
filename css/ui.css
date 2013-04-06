@@ -124,10 +124,21 @@ fieldset.psc-cms-ui-navigation ul li {
 }
 fieldset.psc-cms-ui-navigation  li .button-panel { position: absolute; top: 0px; right: 0px; }
 
+
+/* uploadable image */
 .psc-cms-ui-uploadable-image.placeholder {
   padding: 0.5em;
   height: 120px;
   width: 120px;
+}
+
+.psc-cms-ui-uploadable-image img {
+  max-width: 300px;
+}
+
+.row-fluid .psc-cms-ui-uploadable-image img {
+  max-width: none;
+  width: 100%;
 }
 
 /* resizable image und handles von ui */
