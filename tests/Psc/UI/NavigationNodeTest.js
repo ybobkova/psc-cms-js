@@ -86,7 +86,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(
     
     var $textInputs = $dialog.find('input[type="text"]');
     
-    this.assertEquals(this.node.getLanguages().length+1, $textInputs.length, 'inputs title de, inputs title fr are there, img is there');
+    this.assertEquals(this.node.getLanguages().length, $textInputs.length, 'inputs title de, inputs title fr are there');
     dialog.close();
   });
   
