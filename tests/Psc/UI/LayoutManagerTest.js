@@ -10,11 +10,12 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
     var $html = $('<div class="joose-widget-wrapper" />');
     $fixture.append($html);
 
-    var control = function (className, label, params) {
+    var control = function (className, label, params, section) {
       return new Psc.UI.LayoutManager.Control({
         type: className,
         label: label,
-        params: params
+        params: params,
+        section: section
       });
     };
 
@@ -24,13 +25,13 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
       container: container,
 
       controls: [
-        control('Headline', 'Überschrift', {'level':1}),
-        control('Headline', 'Zwischenüberschrift', {'level':2}),
-        control('Paragraph', 'Absatz'),
-        control('Li', 'Aufzählung'),
-        control('Image', 'Bild'),
-        control('DownloadsList', 'Download-Liste', {'headline':'', 'downloads':[]}),
-        control('WebsiteWidget', 'Kalender', {'label':'Kalender', 'name':'calendar'})
+        control('Headline', 'Überschrift', {'level':1}, 'text'),
+        control('Headline', 'Zwischenüberschrift', {'level':2}, 'text'),
+        control('Paragraph', 'Absatz', undefined, 'text'),
+        control('Li', 'Aufzählung', undefined, 'text'),
+        control('Image', 'Bild', undefined, 'images'),
+        control('DownloadsList', 'Download-Liste', {'headline':'', 'downloads':[]}, 'misc'),
+        control('WebsiteWidget', 'Kalender', {'label':'Kalender', 'name':'calendar'}, 'misc')
       ]
     }, params || []));
 
@@ -75,7 +76,7 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
     var that = setup(this);
 
     var $accordion = this.assertjQueryLength(1, that.$fixture.find('div.right .psc-cms-ui-accordion'));
-    this.assertjQueryLength(7, $accordion.find('div.text-und-bilder button'));
+    this.assertjQueryLength(7, $accordion.find('div button'));
 
     var buttons = ['Überschrift', 'Zwischenüberschrift', 'Absatz', 'Aufzählung', 'Bild', 'Download-Liste', 'Kalender'];
 
