@@ -1,15 +1,15 @@
-define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(t) {
+define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode', 'Psc/UI/Controller'], function(t) {
   
   module("Psc.UI.NavigationNode");
   
   var setup =  function (test) {
-    var uiController = {
-      openTab: function (entityName, identifier, attributes, $target) {
-        test.openedTabs.push({
-          entityName: entityName,
-          identifier: identifier
-        });
-      }
+    var uiController = new Psc.UI.Controller({tabs: {}});
+
+    uiController.openTab = function (entityName, identifier, attributes, $target) {
+      test.openedTabs.push({
+        entityName: entityName,
+        identifier: identifier
+      });
     };
 
     var node = new Psc.UI.NavigationNode({
@@ -136,5 +136,17 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(
 
     this.assertEquals(17, tab.identifier);
     this.assertEquals('page', tab.entityName);
+  });
+
+
+  test("popup has cs buttons", function () {
+    var that = setupWithHTML(this);
+    
+    this.node.openEditDialog();
+    var dialog = this.node.getDialog(), $dialog = dialog.unwrap();
+    
+    var $csButtons = this.assertjQueryLength(2, $dialog.find('.psc-cms-ui-button'));
+
+    dialog.close();
   });
 });
