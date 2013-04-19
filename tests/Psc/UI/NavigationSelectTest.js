@@ -1,4 +1,4 @@
-define(['psc-tests-assert', 'test-files/navigation.comun.flat', 'Psc/UI/NavigationSelect'], function(t, comunFlat) {
+define(['psc-tests-assert', 'test-files/navigation.comun.flat', 'Psc/UI/NavigationSelect', 'Psc/UI/NavigationNode'], function(t, comunFlat) {
   
   module("Psc.UI.NavigationSelect");
 
@@ -29,7 +29,7 @@ define(['psc-tests-assert', 'test-files/navigation.comun.flat', 'Psc/UI/Navigati
 
     this.assertEquals('can be rubbish', $input.val());
 
-    this.assertEquals({label: 'can be rubbish', value: 15}, this.navigationSelect.getValue());
+    this.assertEquals({label: 'can be rubbish', value: 15}, this.navigationSelect.getSelected());
   });
 
   test("selectedNodeId passed will select the current item just with value", function () {
@@ -45,6 +45,19 @@ define(['psc-tests-assert', 'test-files/navigation.comun.flat', 'Psc/UI/Navigati
     that.assertEquals({
        label: " / Wer ? / Unser Lernnetzwerk",
        value: 15
-    }, navigationSelect.getValue());
+    }, navigationSelect.getSelected());
+  });
+
+  test("getSelectedNode will return Psc.UI.NvaigationNode", function () {
+    var that = setup(this);
+
+    this.navigationSelect.setDisplayLocale('fr');
+    this.navigationSelect.setSelectedFromNodeId(24);
+
+    var node = this.navigationSelect.getSelectedNode();
+
+    this.assertInstanceOf(Psc.UI.NavigationNode, node);
+    this.assertEquals(24, node.getId());
+    this.assertEquals('fr', node.getLocale());
   });
 });
