@@ -24,7 +24,7 @@ define(['jquery'], function (jQuery) {
             //If we are still over the sortable, we fake the stop event of the sortable, but also remove helper
             var inst = $(this).data("draggable"),
                 uiSortable = $.extend({}, ui, { item: inst.element });
-    
+
             $.each(inst.sortables, function() {
                 if(this.instance.isOver) {
     
@@ -44,7 +44,8 @@ define(['jquery'], function (jQuery) {
                     //If the helper has been the original item, restore properties in the sortable
                     if(inst.options.helper == 'original')
                         this.instance.currentItem.css({ top: 'auto', left: 'auto' });
-    
+
+                    this.instance._trigger('morphStop', event, this.instance.currentItem);
                 } else {
                     this.instance.cancelHelperRemoval = false; //Remove the helper in the sortable instance
                     this.instance._trigger("deactivate", event, uiSortable);

@@ -176,6 +176,10 @@ fieldset.psc-cms-ui-navigation  li .button-panel { position: absolute; top: 0px;
   min-height: 600px;
 }
 
+.psc-cms-ui-layout-manager .active-content-stream-container.contentstreamwidget > div.widget-content {
+  border: 1px solid #06ff00;
+}
+
 .lm-downloadslist li {
   margin-bottom: 10px;
 }

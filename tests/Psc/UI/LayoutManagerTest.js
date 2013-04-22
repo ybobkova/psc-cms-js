@@ -51,7 +51,14 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
       '$fixture': $fixture,
       layoutManager: layoutManager,
       doublesManager: dm,
-      container: container
+      container: container,
+      serialize: function (widget) {
+        var serialized = {};
+        widget.cleanup();
+        widget.serialize(serialized);
+
+        return serialized;
+      }
     });
   };
 
@@ -312,5 +319,53 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
     setup(this, { container: container, injectNavigationFlat: fakeFlat });
     
     this.assertEquals(fakeFlat, injectedFlat);
+  });
+
+  test("layoutManager with contentstream widget acceptance", function () {
+    var that = setup(this);
+
+    var type = 'ContentStreamWrapper';
+    
+    var widget = this.layoutManager.createWidget(type, {wrapped: {locale: "de", type: "page-content", revision: "default", entries: []}, headline: 'Stream'});
+    var $widget = widget.unwrap();
+
+    this.assertWidget({type:type}, $widget);
+
+    that.layoutManager.appendWidget(widget);
+
+    var p1 = this.layoutManager.createWidget('Paragraph', {content: "a1"});
+    var p2 = this.layoutManager.createWidget('Paragraph', {content: "a2"});
+
+    $widget.find('div.content-stream').append(p1.unwrap()).append(p2.unwrap());
+
+    var serialized = {};
+    that.layoutManager.serialize(serialized);
+
+    this.assertEquals(
+      [
+        {
+          type: "ContentStreamWrapper",
+          label: "ContentStreamWrapper",
+          wrapped: {
+            "locale": "de",
+            "type": "page-content",
+            "revision": "default",
+            "entries": [
+            {
+              "content": "a1",
+              "label": "Absatz",
+              "type": "Paragraph"
+            },
+            {
+              "content": "a2",
+              "label": "Absatz",
+              "type": "Paragraph"
+            }
+            ]
+          }
+       }
+     ],
+     serialized.layoutManager
+   );
   });
 });
