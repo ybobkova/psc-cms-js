@@ -5,7 +5,12 @@ define(['psc-tests-assert', 'Psc/UI/LayoutManager/ContentStreamWrapper'], functi
   var setup = function (test) {
     //var dm = new Psc.Test.DoublesManager();
     var contentStreamWrapper = new Psc.UI.LayoutManager.ContentStreamWrapper({
-      content: []
+      wrapped: {
+        locale: "de",
+        type: "page-content",
+        revision: "default",
+        entries: []
+      }
     });
 
     var $container = $('<div/>');
