@@ -67,7 +67,9 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode', 'Psc/UI/Co
     
     this.assertEquals(3, $buttons.length, '3 buttons are in html');
   });
-  
+
+/*
+@TODO move this to navigation  
   test("edit opens a popup", function () {
     var that = setupWithHTML(this);
     
@@ -77,6 +79,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode', 'Psc/UI/Co
     this.assertTrue(dialog.isOpen(), 'dialog is there and open');
     dialog.close();
   });
+*/  
   
   test("popup has input fields", function () {
     var that = setupWithHTML(this);
@@ -124,6 +127,8 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode', 'Psc/UI/Co
   });
 
 
+/*
+move this to navigation
   test("page button triggers openTab in uiController", function () {
     var that = setupWithHTML(this);
 
@@ -137,6 +142,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode', 'Psc/UI/Co
     this.assertEquals(17, tab.identifier);
     this.assertEquals('page', tab.entityName);
   });
+*/  
 
 
   test("popup has cs buttons", function () {
