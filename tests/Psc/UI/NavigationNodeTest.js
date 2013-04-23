@@ -20,7 +20,8 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode', 'Psc/UI/Co
       depth: 0,
       locale: 'en',
       languages: ['de','en'],
-      pageId: 17
+      pageId: 17,
+      pageIsActive: true
     });
     
     return t.setup(test, {node: node, uiController: uiController, openedTabs: []});
@@ -59,7 +60,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode', 'Psc/UI/Co
     this.assertEquals('blubb', node.setParent('blubb').getParent(), 'blubb equals');
   });
   
-  test("html has the poppy edit - button", function () {
+  test("html has the page, edit, delete - button", function () {
     var that = setupWithHTML(this);
     
     var $html = this.node.html(), $buttons = $html.find('button');
