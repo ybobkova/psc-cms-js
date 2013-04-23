@@ -13,7 +13,6 @@ define(['jquery'], function (jQuery) {
             } else {
                 $sortables = $(o.connectMorphSortable);
             }
-            console.log($sortables);
 
             $sortables.each(function() {
                 var sortable = $.data(this, 'sortable');
