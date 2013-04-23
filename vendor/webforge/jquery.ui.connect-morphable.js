@@ -6,7 +6,16 @@ define(['jquery'], function (jQuery) {
             var inst = $(this).data("draggable"), o = inst.options,
                 uiSortable = $.extend({}, ui, { item: inst.element });
             inst.sortables = [];
-            $(o.connectMorphSortable).each(function() {
+
+            var $sortables;
+            if ($.isFunction(o.connectMorphSortable)) {
+                $sortables = (o.connectMorphSortable)();
+            } else {
+                $sortables = $(o.connectMorphSortable);
+            }
+            console.log($sortables);
+
+            $sortables.each(function() {
                 var sortable = $.data(this, 'sortable');
                 if (sortable && !sortable.options.disabled) {
                     inst.sortables.push({
