@@ -1,15 +1,15 @@
-define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(t) {
+define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode', 'Psc/UI/Controller'], function(t) {
   
   module("Psc.UI.NavigationNode");
   
   var setup =  function (test) {
-    var uiController = {
-      openTab: function (entityName, identifier, attributes, $target) {
-        test.openedTabs.push({
-          entityName: entityName,
-          identifier: identifier
-        });
-      }
+    var uiController = new Psc.UI.Controller({tabs: {}});
+
+    uiController.openTab = function (entityName, identifier, attributes, $target) {
+      test.openedTabs.push({
+        entityName: entityName,
+        identifier: identifier
+      });
     };
 
     var node = new Psc.UI.NavigationNode({
@@ -20,7 +20,8 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(
       depth: 0,
       locale: 'en',
       languages: ['de','en'],
-      pageId: 17
+      pageId: 17,
+      pageIsActive: true
     });
     
     return t.setup(test, {node: node, uiController: uiController, openedTabs: []});
@@ -59,7 +60,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(
     this.assertEquals('blubb', node.setParent('blubb').getParent(), 'blubb equals');
   });
   
-  test("html has the poppy edit - button", function () {
+  test("html has the page, edit, delete - button", function () {
     var that = setupWithHTML(this);
     
     var $html = this.node.html(), $buttons = $html.find('button');
@@ -67,7 +68,9 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(
     
     this.assertEquals(3, $buttons.length, '3 buttons are in html');
   });
-  
+
+/*
+@TODO move this to navigation  
   test("edit opens a popup", function () {
     var that = setupWithHTML(this);
     
@@ -77,6 +80,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(
     this.assertTrue(dialog.isOpen(), 'dialog is there and open');
     dialog.close();
   });
+*/  
   
   test("popup has input fields", function () {
     var that = setupWithHTML(this);
@@ -86,7 +90,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(
     
     var $textInputs = $dialog.find('input[type="text"]');
     
-    this.assertEquals(this.node.getLanguages().length+1, $textInputs.length, 'inputs title de, inputs title fr are there, img is there');
+    this.assertEquals(this.node.getLanguages().length, $textInputs.length, 'inputs title de, inputs title fr are there');
     dialog.close();
   });
   
@@ -124,6 +128,8 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(
   });
 
 
+/*
+move this to navigation
   test("page button triggers openTab in uiController", function () {
     var that = setupWithHTML(this);
 
@@ -136,5 +142,18 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode'], function(
 
     this.assertEquals(17, tab.identifier);
     this.assertEquals('page', tab.entityName);
+  });
+*/  
+
+
+  test("popup has cs buttons", function () {
+    var that = setupWithHTML(this);
+    
+    this.node.openEditDialog();
+    var dialog = this.node.getDialog(), $dialog = dialog.unwrap();
+    
+    var $csButtons = this.assertjQueryLength(2, $dialog.find('.psc-cms-ui-button'));
+
+    dialog.close();
   });
 });

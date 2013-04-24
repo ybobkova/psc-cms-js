@@ -1,4 +1,4 @@
-define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Paragraph','Psc/Test/DoublesManager'], function(t, require) {
+define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Paragraph','Psc/Test/DoublesManager', 'Psc/UI/NavigationSelect'], function(t, require) {
   
   module("Psc.UI.TextEditor");
   
@@ -10,7 +10,8 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
     
     var p = new Psc.UI.LayoutManager.Paragraph({
       label: 'Paragraph',
-      content: 'Lorem ipsum dolor sit amet...'
+      content: 'Lorem ipsum dolor sit amet...',
+      navigationService: dm.getNavigationService()
     });
     
     var interactionProvider = dm.injectInteractionProvider(p);
@@ -42,6 +43,10 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
     
     test.setupLinkButton = function() {
       return test.setupButton('add-link');
+    };
+
+    test.setupInternalLinkButton = function() {
+      return test.setupButton('add-internal-link');
     };
     
     return test;
@@ -173,5 +178,45 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
     this.paragraph.serialize(s);
 
     this.assertEquals('its serialized', s.content);
+  });
+
+  test("paragraph shows a button to add a internal link", function() {
+    setup(this);
+    var $button = this.setupInternalLinkButton();
+    
+    this.assertjQueryLength(1, $button);
+    this.assertjQueryHasClass('psc-cms-ui-button', $button);
+  });
+  
+  asyncTest("paragraph inserts an internal link with prompting for label and selecting with navigation select, when caret is somewhere in the text", function () {
+    start();
+    var that = setup(this);
+    var $button = this.setupInternalLinkButton();
+    
+    this.interactionProvider.answerToPrompt("Datenschutz");
+    
+    this.editor().move(12);
+    
+    $button.trigger('click');
+
+    stop();
+    $('body').on('psc-cms-ui-dialog-open', function (e, dialog, $dialog) {
+      start();
+
+      var $navSelect = that.assertjQueryLength(1, $dialog.find('.psc-cms-ui-navigation-select'));
+      var navSelect = that.assertHasJooseWidget(Psc.UI.NavigationSelect, $navSelect);
+
+      navSelect.setSelectedFromNodeId(24);
+      that.assertNotUndefined(navSelect.getSelected(), 'self-test: can select item in navigationselect with nodeId');
+
+      var $okButton = that.assertjQueryLength(1, $dialog.parent().find('.ui-dialog-buttonset button:eq(0)'));
+      $okButton.trigger('click');
+
+      that.assertEquals(
+        "Lorem ipsum [[#24|Datenschutz]] dolor sit amet...",
+        that.editor().getText(),
+        "text internal-link template is inserted into textarea on position 4"
+      );
+    });
   });
 });

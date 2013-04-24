@@ -1,4 +1,4 @@
-define(['psc-tests-assert', 'knockout', 'Psc/TPL/TemplatesRenderer'], function(t, ko) {
+define(['psc-tests-assert', 'knockout', 'templates/test-compiled', 'Psc/TPL/TemplatesRenderer'], function(t, ko, otherTemplates) {
   
   module("Psc.TPL.TemplatesRenderer");
 
@@ -49,11 +49,12 @@ define(['psc-tests-assert', 'knockout', 'Psc/TPL/TemplatesRenderer'], function(t
     );
   });
 
+  // this is a fragile, understanding-other-libraries test :)
   test("using injected input in non-quoted variable can be knockouted", function() {
     var that = setup(this);
     
     var html = this.tpl.render(
-      'SCE.Components.Teaser',
+      'SCE.Widgets.Teaser',
       {
         headline: {
           description: "Überschrift des Teasers",
@@ -71,5 +72,13 @@ define(['psc-tests-assert', 'knockout', 'Psc/TPL/TemplatesRenderer'], function(t
     var $headlineInput = this.assertjQueryLength(1, $("#visible-fixture input[name=headline]"));
 
     this.assertEquals("value for headline", $headlineInput.val());
+  });
+
+  test("other templates can be merged with the existing ones", function () {
+    var that = setup(this);
+
+    this.tpl.extendWith(otherTemplates);
+
+    this.assertNotUndefined(this.tpl.render('TEST.Other.Template'));
   });
 });

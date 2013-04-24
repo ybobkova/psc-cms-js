@@ -1,17 +1,24 @@
 <div class="psc-cms-ui-splitpane psc-cms-ui-layout-manager">
   <div class="left" style="float: left; width: 70%; height: 100%; margin-right: 1%">
     <fieldset class="ui-corner-all ui-widget-content psc-cms-ui-group">
-      <div style="min-height: 600px" class="content"><div>
+      <div style="min-height: 600px" class="content content-stream"></div>
     </fieldset>
   </div>
 
   <div style="width: 29%; float: left; height: 100%" class="right">
     <div class="should-scroll" style="margin-top: -7px">
       <div class="psc-cms-ui-accordion psc-cms-ui-right-accordion right-accordion widget-not-initialized" data-widget="accordion" data-widget-options='{"collapsible": true, "autoHeight": true}'>
-        <h3 class="text-und-bilder"><a href="#">Text und Bilder</a></h3>
-        <div class="text-und-bilder">
-        </div>
+      {{#sections}}
+        <h3 class="{{name}}"><a href="#">{{label}}</a></h3>
+        <div class="{{name}}"></div>
+      {{/sections}}
       </div>
+
+      <fieldset class="hidden psc-cms-ui-group ui-corner-all ui-widget-content content-stream-active">
+        <div class="content">
+          Es ist ein Unter-Content-Stream aktiv. Sie können nur in diesen Content-Stream Elemente ziehen. <button class="widget-not-initialized deactivate-content-stream" data-widget="button" data-widget-options='{"leftIcon": "close"}'>deaktivieren</button>
+        </div>
+      </fieldset>
 
       <fieldset class="psc-cms-ui-group ui-corner-all ui-widget-content magic-helper">
         <legend>Magic Box</legend>

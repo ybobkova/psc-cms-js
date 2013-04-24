@@ -4,31 +4,34 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
   
   var setup = function (test, params) {
     var dm = new Psc.Test.DoublesManager();
+    var container = params && params.container || dm.getContainer();
     var $fixture = $('#visible-fixture').empty();
 
     var $html = $('<div class="joose-widget-wrapper" />');
     $fixture.append($html);
 
-    var control = function (className, label, params) {
+    var control = function (className, label, params, section) {
       return new Psc.UI.LayoutManager.Control({
         type: className,
         label: label,
-        params: params
+        params: params,
+        section: section
       });
     };
 
     var layoutManager = new Psc.UI.LayoutManager($.extend({
       widget: $html,
       uploadService: dm.getUploadService(),
+      container: container,
 
       controls: [
-        control('Headline', 'Überschrift', {'level':1}),
-        control('Headline', 'Zwischenüberschrift', {'level':2}),
-        control('Paragraph', 'Absatz'),
-        control('Li', 'Aufzählung'),
-        control('Image', 'Bild'),
-        control('DownloadsList', 'Download-Liste', {'headline':'', 'downloads':[]}),
-        control('WebsiteWidget', 'Kalender', {'label':'Kalender', 'name':'calendar'})
+        control('Headline', 'Überschrift', {'level':1}, 'text'),
+        control('Headline', 'Zwischenüberschrift', {'level':2}, 'text'),
+        control('Paragraph', 'Absatz', undefined, 'text'),
+        control('Li', 'Aufzählung', undefined, 'text'),
+        control('Image', 'Bild', undefined, 'images'),
+        control('DownloadsList', 'Download-Liste', {'headline':'', 'downloads':[]}, 'misc'),
+        control('WebsiteWidget', 'Kalender', {'label':'Kalender', 'name':'calendar'}, 'misc')
       ]
     }, params || []));
 
@@ -47,7 +50,15 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
       uploadService: layoutManager.getUploadService(),
       '$fixture': $fixture,
       layoutManager: layoutManager,
-      doublesManager: dm
+      doublesManager: dm,
+      container: container,
+      serialize: function (widget) {
+        var serialized = {};
+        widget.cleanup();
+        widget.serialize(serialized);
+
+        return serialized;
+      }
     });
   };
 
@@ -72,7 +83,7 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
     var that = setup(this);
 
     var $accordion = this.assertjQueryLength(1, that.$fixture.find('div.right .psc-cms-ui-accordion'));
-    this.assertjQueryLength(7, $accordion.find('div.text-und-bilder button'));
+    this.assertjQueryLength(7, $accordion.find('div button'));
 
     var buttons = ['Überschrift', 'Zwischenüberschrift', 'Absatz', 'Aufzählung', 'Bild', 'Download-Liste', 'Kalender'];
 
@@ -291,5 +302,70 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
     this.uploadService.setApiUrl('/upload-manager/api/pages');
     this.uploadService.setUiUrl('/upload-manager/pages');
     this.layoutManager.appendWidget(widget);
+  });
+
+  test("injectNavigationFlat property sets the new navigation flat in the servie from dependency container", function () {
+    // inject a container with a mocked navigationService into our setup
+    var container = (new Psc.Test.DoublesManager()).getContainer();
+    var injectedFlat;
+
+    container.getNavigationService().setFlat = function(flat) {
+      injectedFlat = flat;
+    };
+
+    var fakeFlat = ['fake', true];
+
+    // do setup (which should call the inject hack)
+    setup(this, { container: container, injectNavigationFlat: fakeFlat });
+    
+    this.assertEquals(fakeFlat, injectedFlat);
+  });
+
+  test("layoutManager with contentstream widget acceptance", function () {
+    var that = setup(this);
+
+    var type = 'ContentStreamWrapper';
+    
+    var widget = this.layoutManager.createWidget(type, {wrapped: {locale: "de", type: "page-content", revision: "default", entries: []}, headline: 'Stream'});
+    var $widget = widget.unwrap();
+
+    this.assertWidget({type:type}, $widget);
+
+    that.layoutManager.appendWidget(widget);
+
+    var p1 = this.layoutManager.createWidget('Paragraph', {content: "a1"});
+    var p2 = this.layoutManager.createWidget('Paragraph', {content: "a2"});
+
+    $widget.find('div.content-stream').append(p1.unwrap()).append(p2.unwrap());
+
+    var serialized = {};
+    that.layoutManager.serialize(serialized);
+
+    this.assertEquals(
+      [
+        {
+          type: "ContentStreamWrapper",
+          label: "ContentStreamWrapper",
+          wrapped: {
+            "locale": "de",
+            "type": "page-content",
+            "revision": "default",
+            "entries": [
+            {
+              "content": "a1",
+              "label": "Absatz",
+              "type": "Paragraph"
+            },
+            {
+              "content": "a2",
+              "label": "Absatz",
+              "type": "Paragraph"
+            }
+            ]
+          }
+       }
+     ],
+     serialized.layoutManager
+   );
   });
 });

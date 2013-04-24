@@ -1,26 +1,33 @@
-define(['psc-tests-assert', 'Psc/UI/LayoutManager/Paragraph', 'Psc/UI/LayoutManager/CollectionWidget'], function(t) {
+define(['psc-tests-assert', 'Psc/UI/LayoutManager/Paragraph', 'Psc/Test/DoublesManager', 'Psc/UI/LayoutManager/CollectionWidget'], function(t) {
   
   module("Psc.UI.LayoutManager.CollectionWidget");
 
   var setup = function (test) {
-    //var dm = new Psc.Test.DoublesManager();
+    var dm = new Psc.Test.DoublesManager();
 
     var $container = $('<div/>');
     $('#visible-fixture').empty().append($container);
 
+    var navigationService = dm.getNavigationService();
+
     var collectionWidget = new Psc.UI.LayoutManager.CollectionWidget({
       label: 'multiple paragraphs',
       collectionable: {
-        constructor: Psc.UI.LayoutManager.Paragraph
+        constructor: Psc.UI.LayoutManager.Paragraph,
+        parameters: {
+          navigationService: navigationService
+        }
       },
       content: [
         new Psc.UI.LayoutManager.Paragraph({
           label: 'Absatz',
-          content: "Familienunternehmen mit mehr als 30 Jahren Erfahrung und Wissen"
+          content: "Familienunternehmen mit mehr als 30 Jahren Erfahrung und Wissen",
+          navigationService: navigationService
         }), 
         new Psc.UI.LayoutManager.Paragraph({
           label: 'Absatz',
-          content: "Unternehmergeist durch und durch – langfristige Fortführung des Unternehmens durch Söhne des Firmengründers"
+          content: "Unternehmergeist durch und durch – langfristige Fortführung des Unternehmens durch Söhne des Firmengründers",
+          navigationService: navigationService
         })
       ]
     });

@@ -124,6 +124,23 @@ fieldset.psc-cms-ui-navigation ul li {
 }
 fieldset.psc-cms-ui-navigation  li .button-panel { position: absolute; top: 0px; right: 0px; }
 
+
+/* uploadable image */
+.psc-cms-ui-uploadable-image.placeholder {
+  padding: 0.5em;
+  height: 120px;
+  width: 120px;
+}
+
+.psc-cms-ui-uploadable-image img {
+  max-width: 300px;
+}
+
+.row-fluid .psc-cms-ui-uploadable-image img {
+  max-width: none;
+  width: 100%;
+}
+
 /* resizable image und handles von ui */
 .psc-cms-ui-resizable-image .ui-resizable-handle {
   height: 16px;
@@ -157,6 +174,10 @@ fieldset.psc-cms-ui-navigation  li .button-panel { position: absolute; top: 0px;
 /* layout manager */
 .psc-cms-ui-layout-manager > .left > fieldset > div.content {
   min-height: 600px;
+}
+
+.psc-cms-ui-layout-manager .active-content-stream-container.contentstreamwrapper > div.widget-content {
+  border: 1px solid #06ff00;
 }
 
 .lm-downloadslist li {

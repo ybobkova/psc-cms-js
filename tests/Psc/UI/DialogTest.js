@@ -80,9 +80,9 @@ define(['psc-tests-assert','Psc/UI/Dialog'], function(t) {
     var $buttons = $dialog.find('.ui-dialog-buttonset button');
     
     this.assertEquals(2, $buttons.length, 'two buttons are in the set');
-    
-    this.assertEquals('abbrechen', $($buttons.get(0)).text());
-    this.assertEquals('Ok', $($buttons.get(1)).text());
+
+    this.assertEquals('Ok', $($buttons.get(0)).text());    
+    this.assertEquals('abbrechen', $($buttons.get(1)).text());
     
     this.dialog.close();
   });
