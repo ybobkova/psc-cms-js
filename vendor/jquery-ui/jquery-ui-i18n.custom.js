@@ -6,7 +6,6 @@ define(['jquery', 'jquery-ui'], function (jQuery) {
 	
 	/* German initialisation for the jQuery UI date picker plugin. */
 	/* Written by Milian Wolff (mail@milianw.de). */
-	jQuery(function($){
 		$.datepicker.regional['de'] = {
 			closeText: 'schließen',
 			prevText: '&#x3c;zurück',
@@ -25,14 +24,11 @@ define(['jquery', 'jquery-ui'], function (jQuery) {
 			isRTL: false,
 			showMonthAfterYear: false,
 			yearSuffix: ''};
-		$.datepicker.setDefaults($.datepicker.regional['de']);
-	});
 	
 	/* French initialisation for the jQuery UI date picker plugin. */
 	/* Written by Keith Wood (kbwood{at}iinet.com.au),
 								Stéphane Nahmani (sholby@sholby.net),
 								Stéphane Raimbault <stephane.raimbault@gmail.com> */
-	jQuery(function($){
 		$.datepicker.regional['fr'] = {
 			closeText: 'Fermer',
 			prevText: 'Précédent',
@@ -51,6 +47,4 @@ define(['jquery', 'jquery-ui'], function (jQuery) {
 			isRTL: false,
 			showMonthAfterYear: false,
 			yearSuffix: ''};
-		$.datepicker.setDefaults($.datepicker.regional['fr']);
-	});
 });
