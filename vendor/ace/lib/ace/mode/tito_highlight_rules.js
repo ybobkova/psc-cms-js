@@ -5,14 +5,18 @@ define(function(require, exports, module) {
   var TextHighlightRules = require("ace/mode/text_highlight_rules").TextHighlightRules;
 
   var TitoHighlightRules = function() {
-    var identifier = "[a-zA-ZöäüÖÄÜ]";
+    var word = "[A-Za-zöäüÖÄÜ\\d]*[A-Za-zöäüÖÄÜ][A-Za-zöäüÖÄÜ\\d]*";
     var soundOperator = "\\s*\\>\\s*|\\s*\\*\\s*\\>";
     var gotoOperator = "^\\s*\\=\\s*\\>";
-    var ifElse = "Oder|Wenn|Ansonsten";
-    var soundType = "\\[|\\]|\\(|\\)";
-    var preposition = "(?:aus|zu|zum|zur|in|jedes|für)";
+    var soundVariable = "\\s*\\:\\s*\\>";
+    var bedingungIf = "(?:Oder Wenn|Wenn)\\s*";
+    var bedingungElse = "Ansonsten\\s*";
+    var timerCommand = "(?:Start|Stop)\\s+";
+    var soundType = "\\[|\\]|\\((?=[^\\s]+\\)\\s*$)|\\)\\s*$";
+    var preposition = "(?:aus|zu|zum|zur|in|für jedes|für)";
     var equals = "\\s*\\:\\=\\s*";
-    var operator = "\\<|\\>|\\=\\=|\\>\\=|\\<\\=";
+    var operator = "(?:\\<|\\>|\\=\\=|\\>\\=|\\<\\=)";
+    var arrayElement = "\\[\\s*.+?\\s*\\]"
 
     var tokenMap = {
       "variable": "support.function",
@@ -29,14 +33,22 @@ define(function(require, exports, module) {
         token: tokenMap.control,
         regex: "Spiel:\\s*"
       }, {
+        token: tokenMap.variable, // Deklaration eines Elementes eines Arrays
+        regex: "^\\s*" + word + "(?=\\s*" + arrayElement + ")",
+        next: "element"
+      }, {
         token: tokenMap.variable, // Variablendeklaration, keine Tabelle
-        regex: identifier + "+(?=" + equals + "\\d+)"
+        regex: "^\\s*" + word + "(?=\\s*" + equals + "\\d+)"
+      }, {
+        token: tokenMap.variable,
+        regex: "^\\s*" + word + "(?=\\s*\\:\\>)",
+        next: "sound"
       }, {
         token: tokenMap.variable, // Wenn nach := eine variable steht
-        regex: identifier + "+(?!" + equals + "\\d+)(?=" + equals + ")",
+        regex: "^\\s*" + word + "(?!\\s*" + equals + "\\d+)(?=\\s*" + equals + ")",
         next: "variable"
       }, {
-        token: tokenMap.comment, // Wenn nach := eine variable steht
+        token: tokenMap.comment,
         regex: "\\#",
         next: "comment"
       }, {
@@ -44,30 +56,34 @@ define(function(require, exports, module) {
         regex: "\\s*\\:",
         next: "declaration"
       }, {
+        token: tokenMap.plaintext,
+        regex: timerCommand,
+        next: "timer"
+      }, {
         token: tokenMap.functions, // Anfang einer Funktiondeklaration
         regex: "^.*\\:\\s*$"
       }, {
         token: tokenMap.control, //Kontrollesymbole
-        regex: ifElse
+        regex: bedingungIf,
+        next: "bedingung"
       }, {
-        token: tokenMap.control, //"Für jedes"
-        regex: "für jedes\\s*",
-        next: "variableImText"
+        token: tokenMap.control, //Kontrollesymbole
+        regex: bedingungElse
       }, {
         token: tokenMap.control, //Goto
         regex: gotoOperator,
         next: "gotoFunction"
       }, {
-        token: tokenMap.sound, // Soundsymbole
-        regex: soundOperator,
-        next: "sound"
-      }, {
-        token: tokenMap.variable, // Variablen mit < oder > oder ==
-        regex: identifier + "+\\s*(?=" + operator + "\\s*)",
+        token: tokenMap.sound,
+        regex: "^(?:" + soundOperator + ")(?=\\:)",
         next: "variable"
       }, {
+        token: tokenMap.sound, // Soundsymbole
+        regex: "^(?:" + soundOperator + ")",
+        next: "sound"
+      }, {
         token: tokenMap.variable, // Variablen mit < oder > oder == einer Value
-        regex: identifier + "+(?=\\s*(?:" + operator + ")\\s*\\d+)"
+        regex: word + "(?=\\s*(?:" + operator + ")\\s*\\d+)"
       }, {
         token: tokenMap.plaintext,
         regex: "^\\s*Füge\\s*",
@@ -81,13 +97,28 @@ define(function(require, exports, module) {
         regex: preposition + "\\s+",
         next: "variableImText"
       }],
-      variable: [{
+      element: [{
+        token: tokenMap.plaintext,
+        regex: "\\["
+      }, {
         token: tokenMap.variable,
-        regex: "\\s*" + identifier
+        regex: word
       }, {
         token: tokenMap.plaintext,
-        regex: "true|false|\\s|$",
+        regex: "\\](?=\\s*" + operator + ")",
+        next: "variable"
+      }, {
+        token: tokenMap.plaintext,
+        regex: "\\]",
+        next: "sound"
+      }],
+      variable: [{
+        token: tokenMap.plaintext,
+        regex: "true|false|$",
         next: "start"
+      }, {
+        token: tokenMap.variable,
+        regex: word
       }],
       comment: [{
         token: tokenMap.plaintext,
@@ -103,29 +134,26 @@ define(function(require, exports, module) {
         next: "variableImText"
       }, {
         token: tokenMap.plaintext,
-        regex: "etwas",
-        next: "start"
-      }, {
-        token: tokenMap.plaintext,
-        regex: "[0-9]+\\s*",
-        next: "variableNachZahl"
-      }, {
-        token: tokenMap.variable,
-        regex: identifier + "+",
-        next: "start"
+        regex: "aus\\s*",
+        next: "poolMitZahlen"
       }],
+      poolMitZahlen: [{
+        token: tokenMap.variable,
+        regex: "\\d+\\s*" + word,
+        next: "start"
+      }],      
       fuegeEinen: [{
         token: tokenMap.plaintext,
-        regex: "(?:einen|eine|ein|von der)\\s+",
+        regex: "(?:einen|eine|ein)\\s+",
         next: "variableImText"
       }, {
         token: tokenMap.variable,
-        regex: identifier + "+",
+        regex: word,
         next: "start"
       }],
       variableImText: [{
         token: tokenMap.variable,
-        regex: identifier + "+"
+        regex: word
       }, {
         token: tokenMap.plaintext,
         regex: "\\s*\\d+\\s*",
@@ -141,19 +169,17 @@ define(function(require, exports, module) {
         next: "start"
       }, {
         token: tokenMap.variable,
-        regex: identifier + "+"
+        regex: word
       }],
       sound: [{
-        token: tokenMap.plaintext,
-        regex: "$",
-        next: "start"
+        token: tokenMap.sound,
+        regex: "\\:\\>"
       }, {
         token: tokenMap.sound,
         regex: soundType
       }, {
-        token: tokenMap.plaintext,
-        regex: "\\s*\\:\\s*",
-        next: "variable"
+        regex: "$",
+        next: "start"
       }],
       gotoFunction: [{
         token: tokenMap.plaintext,
@@ -169,7 +195,66 @@ define(function(require, exports, module) {
         next: "start"
       }, {
         token: tokenMap.variable,
-        regex: identifier
+        regex: word
+      }],
+      bedingung: [{
+        token: tokenMap.plaintext,
+        regex: "auf etwas",
+        next: "start"
+      }, {
+        token: tokenMap.plaintext,
+        regex: "auf (?:einen|eine|ein)\\s*",
+        next: "variableImText"
+      }, {
+        token: tokenMap.plaintext,
+        regex: "auf",
+        next: "aufVariableGetippt"
+      }, {
+        token: tokenMap.plaintext,
+        regex: "innerhalb des\\s*",
+        next: "variableImText"
+      }, {
+        token: tokenMap.plaintext,
+        regex: "alle|A",
+        next: "start"
+      }, {
+        token: tokenMap.variable, // Variablen <>== einer Variable
+        regex: word + "\\s*(?=" + operator + "\\s*)",
+        next: "variable"
+      },  {
+        token: tokenMap.variable, // Variablen <>== einer Variable
+        regex: word + "\\." + word + "\\s*(?=" + operator + "\\s*)",
+        next: "variable"
+      },  {
+        token: tokenMap.variable, // Variablen <>== einer Variable
+        regex: word + "(?=\\s*" + arrayElement + ")",
+        next: "element"
+      },  {
+        token: tokenMap.variable,
+        regex: word,
+        next: "start"
+      }],
+      aufVariableGetippt: [{
+        token: tokenMap.variable,
+        regex: ".+?(?=(?:angetippt|getippt wurde))",
+        next: "start"
+      }],
+      timer: [ {
+        token: tokenMap.plaintext,
+        regex: "mit ",
+        next: "mitSekunden"
+      }, {
+        token: tokenMap.variable,
+        regex: word
+      },  {
+        token: tokenMap.plaintext,
+        regex: "\\.",
+        next: "start"
+      }],
+      mitSekunden: [{
+        token: tokenMap.variable,
+        regex: ".+(?=Sekunden)",
+        next: "start"
       }]
     };
   };
