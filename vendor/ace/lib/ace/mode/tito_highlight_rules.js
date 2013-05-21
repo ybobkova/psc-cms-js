@@ -11,7 +11,7 @@ define(function(require, exports, module) {
     var soundVariable = "\\s*\\:\\s*\\>";
     var bedingungIf = "(?:Oder Wenn|Wenn)\\s*";
     var bedingungElse = "Ansonsten\\s*";
-    var timerCommand = "(?:Start|Stop)\\s+";
+    var timerCommand = "(?:Start|Stop den)\\s+";
     var soundType = "\\[|\\]|\\((?=[^\\s]+\\)\\s*$)|\\)\\s*$";
     var preposition = "(?:aus|zu|zum|zur|in|für jedes|für)";
     var equals = "\\s*\\:\\=\\s*";
