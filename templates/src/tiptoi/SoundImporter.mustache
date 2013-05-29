@@ -1,0 +1,23 @@
+<fieldset class="ui-corner-all ui-widget-content psc-cms-ui-group">
+  <legend data-bind="text: label"></legend>
+  <div style="min-height: 350px" class="content">
+    <table class="psc-cms-ui-table psc-cms-ui-grid ui-widget ui-widget-content psc-cms-ui-grid-table">
+      <thead>
+        <tr class="first ui-widget-header">
+          <th class="first sound-number">Nummer</th>
+          <th class="sound-content">Inhalt</th>
+          <th class="sound-speaker">Sprecher</th>
+          <th class="sound-status last">Status</th>
+        </tr>
+      </thead>
+      <tbody data-bind="foreach: sounds">
+        <tr>
+          <td class="first" data-bind="text: number"></td>
+          <td data-bind="text: content"></td>
+          <td data-bind="text: formatSpeakers()"></td>
+          <td class="last" data-bind="text: formatErrors()"></td>
+        </tr>
+      </tbody>
+    </table>  
+  </div>
+</fieldset>
