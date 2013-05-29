@@ -1,0 +1,3 @@
+[submodule "vendor/qunit-assert"]
+	path = vendor/qunit-assert
+	url = https://github.com/pscheit/qunit-assert
