@@ -1,14 +1,9 @@
 define(['psc-tests-assert','Psc/Table'], function(t) {
-  var table, insertRow;
+
+  module("Psc.Table");
   
   var setup = function(test) {
-    t.setup(test);
-  };
-  
-  module("Psc.Table", {
-    setup: function () {
-      
-      table = new Psc.Table({
+    var table = new Psc.Table({
         columns: [
                   {name:"number", type: "String"},
                   {name:"sound", type: "String"},
@@ -40,12 +35,13 @@ define(['psc-tests-assert','Psc/Table'], function(t) {
           ]
       });
       
-      insertRow = ['2-TEST_0001', 'Die S-Bahn-Station', [11046]];
-    }
-  });
+    var insertRow = ['2-TEST_0001', 'Die S-Bahn-Station', [11046]];
+
+    return t.setup(test, { table: table, insertRow: insertRow });      
+  };
 
   test("acceptance", function() {
-    setup(this);
+    var that = setup(this), table = that.table;
     this.assertTrue(table.hasColumn('number'),'table has Column number');
     this.assertTrue(table.hasColumn('sound'), 'table has column sound');
     
@@ -54,16 +50,30 @@ define(['psc-tests-assert','Psc/Table'], function(t) {
   });
   
   test("insertRow: -1 appends", function () {
-    setup(this);
+    var that = setup(this), table = that.table, insertRow = this.insertRow;
     table.insertRow(insertRow, -1);
     
     this.assertSame(table.getRow(21), insertRow, 'row wurde an stelle 21 eingefügt');
   });
 
   test("insertRow: 1 prepends", function () {
-    setup(this);
+    var that = setup(this), table = that.table, insertRow = this.insertRow;
     table.insertRow(insertRow, 1);
     
     this.assertSame(table.getRow(1), insertRow, 'row wurde an stelle 1 eingefügt');
   });  
+
+  test("getCell gets the value of a cell in the table", function () {
+    var that = setup(this), table = that.table, insertRow = this.insertRow;
+
+    this.assertEquals("Das Parkhaus", table.getCell(4, "sound"));
+
+  });
+
+  test("setCell sets the value of a cell in the table", function () {
+    var that = setup(this);
+
+    that.table.setCell(4, "sound", "Das Schlafhaus");
+    this.assertEquals("Das Schlafhaus", that.table.getCell(4, "sound"));
+  });
 });
