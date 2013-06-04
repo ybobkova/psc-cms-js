@@ -98,4 +98,15 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
     
     this.editor.getDialog().close();
   });
+  
+  test("opens dialog when one cell in CorrectOID is doubleclicked", function () {
+    setup(this);
+    
+    var $OIDs = this.$fixture.find('table tr:eq(5) td:eq(2)');
+    $OIDs.simulate('dblclick');
+    
+    var $dialog = $('body').find('.ui-dialog:visible');
+    
+    this.assertEquals(1, $dialog.length, 'Ein Dialog wurde geöffnet');
+  });
 });
