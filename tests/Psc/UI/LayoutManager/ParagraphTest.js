@@ -1,6 +1,6 @@
-define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Paragraph','Psc/Test/DoublesManager', 'Psc/UI/NavigationSelect'], function(t, require) {
+define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Paragraph', 'Psc/Test/DoublesManager', 'Psc/UI/NavigationSelect', 'jquerypp/dom/selection'], function(t, require) {
   
-  module("Psc.UI.TextEditor");
+  module("Psc.TextEditor");
   
   var setup = function(test) {
     var dm = new Psc.Test.DoublesManager();
