@@ -1,6 +1,6 @@
 define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Paragraph', 'Psc/Test/DoublesManager', 'Psc/UI/NavigationSelect', 'jquerypp/dom/selection'], function(t, require) {
   
-  module("Psc.TextEditor");
+  module("Psc.UI.LayoutManager.Paragraph");
   
   var setup = function(test) {
     var dm = new Psc.Test.DoublesManager();
@@ -212,11 +212,17 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
       var $okButton = that.assertjQueryLength(1, $dialog.parent().find('.ui-dialog-buttonset button:eq(0)'));
       $okButton.trigger('click');
 
-      that.assertEquals(
-        "Lorem ipsum [[#24|Datenschutz]] dolor sit amet...",
-        that.editor().getText(),
-        "text internal-link template is inserted into textarea on position 4"
-      );
+      stop();
+
+      window.setTimeout(function () {
+        start();
+        
+        that.assertEquals(
+          "Lorem ipsum [[#24|Datenschutz]] dolor sit amet...",
+          that.editor().getText(),
+          "text internal-link template is inserted into textarea on position 4"
+        );
+      }, 15);
     });
   });
 });
