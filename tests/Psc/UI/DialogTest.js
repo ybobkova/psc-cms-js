@@ -81,8 +81,12 @@ define(['psc-tests-assert','Psc/UI/Dialog'], function(t) {
     
     this.assertEquals(2, $buttons.length, 'two buttons are in the set');
 
-    this.assertEquals('Ok', $($buttons.get(0)).text());    
-    this.assertEquals('abbrechen', $($buttons.get(1)).text());
+    var $ok = $buttons.eq(0), $close = $buttons.eq(1);
+
+    this.assertEquals('Ok', $ok.text());
+    this.assertjQueryHasClass('submit', $ok);
+    this.assertEquals('abbrechen', $close.text());
+    this.assertjQueryHasClass('close', $close);
     
     this.dialog.close();
   });
