@@ -110,4 +110,39 @@ define(['psc-tests-assert','Psc/UI/GridTable','Psc/Table','Psc/UI/WidgetWrapper'
     
     this.assertEquals(grid.getExport(), data.agrid);
   });
+
+  test("findCell returns a jqueryObject from one td in one specific row", function () {
+    var that = setup(this), $grid = this.assertjQueryLength(1, this.$fixture.find('table'));
+
+    var $tdRathaus = this.assertjQueryLength(1, this.grid.findCell(3, 1)); // 3 third-content-row, second column
+    this.assertEquals('Das Rathaus', $tdRathaus.text());
+
+    var $header = this.assertjQueryLength(1, this.grid.findCell(0, 0));
+    this.assertEquals('Sound No.', $header.text());
+  });
+
+  test("findCell returns a jqueryObject from one td in one specific row by name", function () {
+    var that = setup(this), $grid = this.assertjQueryLength(1, this.$fixture.find('table'));
+
+    var $tdRathaus = this.assertjQueryLength(1, this.grid.findCell(3, "sound")); // 3 third-content-row, sound column
+    this.assertEquals('Das Rathaus', $tdRathaus.text());
+
+    var $header = this.assertjQueryLength(1, this.grid.findCell(0, "number"));
+    this.assertEquals('Sound No.', $header.text());
+  });
+
+  test("refresh does refresh the data into the grid", function () {
+    var that = setup(this), 
+      $grid = this.assertjQueryLength(1, this.$fixture.find('table')),
+      $td = this.assertjQueryLength(1, this.grid.findCell(3, 1)); // 3 third-content-row, second column
+
+    // pre condition
+    this.assertEquals('Das Rathaus', $td.text());
+
+    that.grid.setCell(3, "sound", "Das geänderte Rathaus");
+    that.grid.refresh();
+
+    $td = this.assertjQueryLength(1, this.grid.findCell(3, "sound")); // 3 third-content-row, second column
+    this.assertEquals('Das geänderte Rathaus', $td.text());
+  });
 });
