@@ -28,6 +28,11 @@ define(['psc-tests-assert', 'Psc/Test/DoublesManager', 'Psc/Container', 'Psc/TPL
 
     that.container.setLocale('de');
     this.assertEquals('de', translator.trans('test.loaded-language'));
+    this.assertEquals('de', that.container.getLocale());
+    this.assertEquals(
+      'Seite für Navigations-Punkt: Home', 
+      that.container.transf('navigation.openPage', ['Home'])
+    );
 
     that.container.setLocale('en');
     this.assertEquals('en', translator.trans('test.loaded-language'));
