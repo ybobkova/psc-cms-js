@@ -33,10 +33,10 @@ define(['psc-tests-assert', 'Psc/UI/LayoutManager/Headline'], function(t) {
   test("headline h1/h2 uses the headline-label for level 1/2", function() {
     var that = setup(this);
     
-    this.assertEquals("Überschrift", this.h1.getLabel());
-    this.assertEquals("Zwischenüberschrift", this.h2.getLabel());
+    this.assertEquals(undefined, this.h1.getLabel());
+    this.assertEquals(undefined, this.h2.getLabel());
     
-    this.assertEquals("Zwischenüberschrift 4", this.h4.getLabel());
+    this.assertEquals(undefined, this.h4.getLabel());
   });
   
   test("headline label can be injected", function () {

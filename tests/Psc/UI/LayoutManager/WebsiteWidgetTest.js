@@ -25,6 +25,6 @@ define(['psc-tests-assert','Psc/UI/LayoutManager/WebsiteWidget','Psc/Test/Double
       name: 'something'
     });
   
-    this.assertEquals("unknown website-widget", wsw.getLabel());
+    this.assertEquals(undefined, wsw.getLabel());
   });  
 });
