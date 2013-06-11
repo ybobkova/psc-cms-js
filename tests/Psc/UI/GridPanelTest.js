@@ -1,4 +1,4 @@
-define(['psc-tests-assert','jquery','text!fixtures/entitygridpanel.html','js/main','Psc/UI/GridPanel','Psc/UI/Tab','Psc/UI/Tabs','Psc/UI/Main'], function(t, $, panelHTML) {
+define(['psc-tests-assert','jquery','text!fixtures/entitygridpanel.html','js/main','Psc/UI/GridPanel','Psc/UI/Tab','Psc/UI/Tabs','Psc/UI/Main', 'Psc/Test/DoublesManager'], function(t, $, panelHTML) {
   
   module("Psc.UI.GridPanel");
 

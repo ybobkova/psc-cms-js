@@ -175,10 +175,10 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
     
     var expectedData = {
       layoutManager: [
-        {type: 'Headline', label: "Überschrift", content:"the headline", level: 1},
-        {type: 'Paragraph', label: "Absatz", content:"content of paragraph 1"},
-        {type: 'Li', label: "Aufzählung", content:["list1", "list2"]},
-        {type: 'Paragraph', label: "Absatz", content:"content of paragraph 2"}
+        {type: 'Headline', content:"the headline", level: 1},
+        {type: 'Paragraph', content:"content of paragraph 1"},
+        {type: 'Li', content:["list1", "list2"]},
+        {type: 'Paragraph', content:"content of paragraph 2"}
       ]
     };
     
@@ -192,7 +192,6 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
     setup(this);
     
     var component = this.doublesManager.getLayoutManagerComponentMock("some-serializing-component", "no content");
-    component.setLabel("the label");
     component.serialize = function (serialized) {
       serialized.content = "the serialized";
     };
@@ -203,7 +202,7 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
     
     var expectedData = {
       layoutManager: [
-        {type: "some-serializing-component", label: "the label", content:"the serialized"}
+        {type: "some-serializing-component", content:"the serialized"}
       ]
     };
     
@@ -256,11 +255,11 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
     
     var serialized = {
       layoutManager: [
-      {type: 'Headline', label: "Überschrift", content:"the headline", level: 2},
-      {type: 'Paragraph', label: "Absatz", content:"content of paragraph 1"},
-      {type: 'Image', label: "Bild", content:""},
-      {type: 'Li', label: "Aufzählung", content:["list1", "list2"]},
-      {type: 'Paragraph', label: "Absatz", content:"content of paragraph 2"}
+      {type: 'Headline', content:"the headline", level: 2},
+      {type: 'Paragraph', content:"content of paragraph 1"},
+      {type: 'Image', content:""},
+      {type: 'Li', content:["list1", "list2"]},
+      {type: 'Paragraph', content:"content of paragraph 2"}
       ]
     };
     
@@ -269,7 +268,6 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
     
     var headline = this.layoutManager.getLinkedWidget(this.layoutManager.getLayout().find('div.widget').first());
     this.assertEquals('Headline', headline.getType());
-    this.assertEquals('Überschrift', headline.getLabel());
     this.assertEquals(2, headline.getLevel());
     
   });
@@ -277,11 +275,11 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
   test("layoutManager unserializes widgets on init", function () {
     setup(this, {
       serializedWidgets: [
-        {type: 'Headline', label: "Überschrift", content:"the headline", level: 2},
-        {type: 'Paragraph', label: "Absatz", content:"content of paragraph 1"},
-        {type: 'Image', label: "Bild", content:""},
-        {type: 'Li', label: "Aufzählung", content:["list1", "list2"]},
-        {type: 'Paragraph', label: "Absatz", content:"content of paragraph 2"}
+        {type: 'Headline', content:"the headline", level: 2},
+        {type: 'Paragraph',  content:"content of paragraph 1"},
+        {type: 'Image', content:""},
+        {type: 'Li', content:["list1", "list2"]},
+        {type: 'Paragraph', content:"content of paragraph 2"}
       ]
     });
     
@@ -345,7 +343,6 @@ define(['psc-tests-assert','joose', 'Psc/UI/WidgetInitializer', 'Psc/UI/LayoutMa
       [
         {
           type: "ContentStreamWrapper",
-          label: "ContentStreamWrapper",
           wrapped: {
             "locale": "de",
             "type": "page-content",
