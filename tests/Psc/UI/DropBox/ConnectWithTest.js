@@ -10,6 +10,7 @@ define(['psc-tests-assert',
 
     // we bootstrap our own main, because the inline scripts register the gridPanel to main
     var main = new Psc.UI.Main({
+      translator: {},
       tabs: new Psc.UI.Tabs({
         widget: $('<div />')
       })

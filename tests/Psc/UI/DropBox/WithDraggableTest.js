@@ -1,6 +1,6 @@
 define(['psc-tests-assert',
         'text!fixtures/dropbox-with-draggable.html',
-        'Psc/UI/DropBox', 'Psc/UI/Dragger','Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable', 'Psc/UI/WidgetWrapper'
+        'Psc/UI/DropBox', 'Psc/Test/DoublesManager', 'Psc/UI/Dragger','Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable', 'Psc/UI/WidgetWrapper'
        ], function(t, html) {
   
   module('Psc.UI.DropBox (withDraggable)');
@@ -9,6 +9,7 @@ define(['psc-tests-assert',
     var $dropBox1, dropBox1, $draggable, drag, $fixture, d = $.Deferred(), fastItem;
 
     var main = new Psc.UI.Main({
+      translator: (new Psc.Test.DoublesManager()).getTranslator(),
       tabs: new Psc.UI.Tabs({
         widget: $('<div />')
       })
