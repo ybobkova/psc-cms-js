@@ -11,12 +11,12 @@
   "require": {
   },
   "require-dev": {
-    "pscheit/psc-cms": "1.2.*@dev"
+    "pscheit/psc-cms": "1.3.*@dev"
   },
   "minimum-stability": "dev",
   "extra": {
     "branch-alias": {
-      "dev-master": "1.2-dev"
+      "dev-master": "1.3-dev"
     }
   },
   "config": {
