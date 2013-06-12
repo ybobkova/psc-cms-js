@@ -19,7 +19,6 @@ define(['psc-tests-assert', 'fixtures/navigation.comun.flat', 'jquery-simulate',
       },
 
       openTabsSelection: function (title, tabButtonItems, dialogAttributes) {
-        console.log(title);
         test.selection = {
           title: title,
           tabButtonItems: tabButtonItems,
