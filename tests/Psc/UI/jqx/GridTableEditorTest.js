@@ -1,4 +1,4 @@
-define(['psc-tests-assert','text!fixtures/ko.grid.html','jquery-simulate','Psc/UI/jqx/GridTableEditor','Psc/Table','Psc/UI/GridTable','Psc/CMS/Service'], function(t, html) {
+define(['psc-tests-assert','text!fixtures/ko.grid.html','jquery-simulate','Psc/UI/jqx/GridTableEditor','Psc/TableModel','Psc/UI/GridTable','Psc/CMS/Service'], function(t, html) {
   
   module("Psc.UI.jqx.GridTableEditor");
   
@@ -19,7 +19,7 @@ define(['psc-tests-assert','text!fixtures/ko.grid.html','jquery-simulate','Psc/U
       
       service = new Psc.CMS.Service();
       
-      table = new Psc.Table({
+      table = new Psc.TableModel({
         columns: [
                   {name:"number", type: "String", label: 'Sound No.'},
                   {name:"sound", type: "String", label: 'Sound'},

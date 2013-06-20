@@ -30,7 +30,7 @@ define(function () {
   "/tests/Psc/ResponseMetaReaderTest.js",
   "/tests/Psc/ResponseTest.js",
   "/tests/Psc/TPL/TemplatesRendererTest.js",
-  "/tests/Psc/TableTest.js",
+  "/tests/Psc/TableModelTest.js",
   "/tests/Psc/TextEditorTest.js",
   "/tests/Psc/TextParserTest.js",
   "/tests/Psc/UI/AutoCompleteTest.js",

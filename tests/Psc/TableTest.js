@@ -1,9 +1,9 @@
-define(['psc-tests-assert','Psc/Table'], function(t) {
+define(['psc-tests-assert','Psc/TableModel'], function(t) {
 
-  module("Psc.Table");
+  module("Psc.TableModel");
   
   var setup = function(test) {
-    var table = new Psc.Table({
+    var table = new Psc.TableModel({
         columns: [
                   {name:"number", type: "String"},
                   {name:"sound", type: "String"},

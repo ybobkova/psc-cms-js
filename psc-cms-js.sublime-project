@@ -2,8 +2,8 @@
 	"folders":
 	[
 		{
-			"path": "D:\\www\\psc-cms-js",
-      "folder_exclude_patterns": ["composer", "build", "node_modules"]
+			"path": "C:\\Users\\Julia.Jill-Laptop\\Documents\\ArbeitPhilipp\\psc-cms-js",
+      "folder_exclude_patterns": ["composer", "build", "node_modules", "vendor"]
 		}
 	]
 }
