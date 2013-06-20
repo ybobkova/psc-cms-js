@@ -1,4 +1,4 @@
-define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table','Psc/UI/GridTable','Psc/CMS/Service'], function(t) {
+define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/TableModel','Psc/UI/GridTable','Psc/CMS/Service'], function(t) {
   
   module("Psc.UI.GridTableEditor");
   
@@ -19,7 +19,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
       
       service = new Psc.CMS.Service();
       
-      table = new Psc.Table({
+      table = new Psc.TableModel({
         columns: [
                   {name:"number", type: "String", label: 'Sound No.'},
                   {name:"sound", type: "String", label: 'Sound'},
@@ -108,5 +108,94 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
     var $dialog = $('body').find('.ui-dialog:visible');
     
     this.assertEquals(1, $dialog.length, 'Ein Dialog wurde geöffnet');
+
+
+  });
+
+  test("correctly writes an integer-input in the table", function () {
+    setup(this);
+    
+    var $OIDs = this.$fixture.find('table tr:eq(5) td:eq(2)');
+    $OIDs.simulate('dblclick');
+
+    var $inputValue = $('body').find('.inputValue');
+    
+    $inputValue.val("2172, 463729");
+
+    var $OKbutton = $('.ui-dialog:visible').find('.submit');
+    $OKbutton.simulate('click');
+
+    var $newOIDs = this.grid.getCell(5, 'correctOIDs');
+
+    this.assertEquals([2172, 463729], $newOIDs);
+  });
+
+  test("correctly writes an ingeger-plus-string-input in the table", function () {
+    setup(this);
+    
+    var $OIDs = this.$fixture.find('table tr:eq(6) td:eq(2)');
+    $OIDs.simulate('dblclick');
+
+    var $inputValue = $('body').find('.inputValue');
+    
+    $inputValue.val("2172, TEST1:5676567");
+
+    var $OKbutton = $('.ui-dialog:visible').find('.submit');
+    $OKbutton.simulate('click');
+
+    var $newOIDs = this.grid.getCell(6, 'correctOIDs');
+
+    this.assertEquals([2172, "TEST1:5676567"], $newOIDs);
+  });
+
+  test("correctly writes an input with many spaces in the table", function () {
+    setup(this);
+    
+    var $OIDs = this.$fixture.find('table tr:eq(7) td:eq(2)');
+    $OIDs.simulate('dblclick');
+
+    var $inputValue = $('body').find('.inputValue');
+    
+    $inputValue.val("  2172 ,     TEST2:5676567   ");
+
+    var $OKbutton = $('.ui-dialog:visible').find('.submit');
+    $OKbutton.simulate('click');
+
+    var $newOIDs = this.grid.getCell(7, 'correctOIDs');
+
+    this.assertEquals([2172, "TEST2:5676567"], $newOIDs);
+  });
+
+  test("two cells can be changed one after another", function () {
+    setup(this);
+    
+    var $OIDs = this.$fixture.find('table tr:eq(8) td:eq(2)');
+    $OIDs.simulate('dblclick');
+
+    var $inputValue = $('body').find('.inputValue');
+    
+    $inputValue.val("2172,DEMO:6786788567");
+
+    var $OKbutton = $('.ui-dialog:visible').find('.submit');
+    $OKbutton.simulate('click');
+
+    var $newOIDs1 = this.grid.getCell(8, 'correctOIDs');
+
+    $OIDs = this.$fixture.find('table tr:eq(9) td:eq(2)');
+    $OIDs.simulate('dblclick');
+
+    $inputValue = $('body').find('.inputValue');
+    
+    $inputValue.val("567567,DEMO2:6786788567");
+
+    $OKbutton = $('.ui-dialog:visible').find('.submit');
+
+    $OKbutton.simulate('click');
+
+    var $newOIDs2 = this.grid.getCell(9, 'correctOIDs');
+
+    this.assertEquals([2172, "DEMO:6786788567"], $newOIDs1);
+
+    this.assertEquals([567567, "DEMO2:6786788567"], $newOIDs2);
   });
 });

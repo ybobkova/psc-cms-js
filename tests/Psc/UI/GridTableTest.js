@@ -1,9 +1,9 @@
-define(['psc-tests-assert','Psc/UI/GridTable','Psc/Table','Psc/UI/WidgetWrapper'], function(t) {
+define(['psc-tests-assert','Psc/UI/GridTable','Psc/TableModel','Psc/UI/WidgetWrapper'], function(t) {
 
   module("Psc.UI.GridTable");
   
   var setup = function (test) {
-    var table = new Psc.Table({
+    var table = new Psc.TableModel({
         columns: [
                   {name:"number", type: "String", label: 'Sound No.'},
                   {name:"sound", type: "String", label: 'Sound'},
@@ -145,4 +145,26 @@ define(['psc-tests-assert','Psc/UI/GridTable','Psc/Table','Psc/UI/WidgetWrapper'
     $td = this.assertjQueryLength(1, this.grid.findCell(3, "sound")); // 3 third-content-row, second column
     this.assertEquals('Das geänderte Rathaus', $td.text());
   });
+
+  test("onCellsDoubleClickCallback saves handler-activation functions in the array", function () {
+    var that = setup(this);
+
+    var callback = function(event){
+      that.grid.onCellsDoubleClick(function (event, rowNumber) {
+        that.openChangeValueDialog(rowNumber);
+      });
+    };
+
+    $('tr:eq(5) td:eq(2)')
+      .dblclick (function(event){
+        that.grid.onCellsDoubleClick(callback);
+      });
+
+    var $OIDs = this.$fixture.find('table tr:eq(5) td:eq(2)');
+    $OIDs.trigger('dblclick');
+
+    this.assertEquals(1, that.grid.$$onCellsDoubleClickCallbacks.length, 'adds an object to the array');
+    this.assertEquals(callback, that.grid.$$onCellsDoubleClickCallbacks[0], 'adds the callback-function to the array');
+  });
+
 });
