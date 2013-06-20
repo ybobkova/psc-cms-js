@@ -173,32 +173,28 @@ define(['psc-tests-assert', 'jquery-simulate', 'Psc/UI/GridTable','Psc/TableMode
   test("getCellIndexes returns the rowIndex and columnIndex from a jquery object $cell", function () {
     var that = setup(this);
 
-    /*
-    getCellIndexes
-    getColumnIndex
-    getRowIndex
-    */
+    var $cell = this.grid.findCell(5,2);
+    var indexes = this.grid.getCellIndexes($cell);
 
-    // @TODO für yulia
-    expect(0);
-
-
+    this.assertEquals(5, indexes.row);
+    this.assertEquals(2, indexes.column);
   });
-/*
 
+  test("getRowIndex returns the rowIndex from a jquery object $cell", function () {
+    var that = setup(this);
 
+    var $cell = this.grid.findCell(5,2);
+    var rowIndex = this.grid.getRowIndex($cell);
 
-    $('tr:eq(5) td:eq(2)')
-      .dblclick (function(event){
-        that.grid.onCellsDoubleClick(callback);
-      });
-
-    var $OIDs = this.$fixture.find('table tr:eq(5) td:eq(2)');
-    $OIDs.trigger('dblclick');
-
-    this.assertEquals(1, that.grid.$$onCellsDoubleClickCallbacks.length, 'adds an object to the array');
-    this.assertEquals(callback, that.grid.$$onCellsDoubleClickCallbacks[0], 'adds the callback-function to the array');
+    this.assertEquals(5, rowIndex);
   });
-*/
 
+  test("getColumnIndex returns the columnIndex from a jquery object $cell", function () {
+    var that = setup(this);
+
+    var $cell = this.grid.findCell(5,2);    
+    var columnIndex = this.grid.getColumnIndex($cell);
+
+    this.assertEquals(2, columnIndex);
+  });
 });

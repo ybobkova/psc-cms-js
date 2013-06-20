@@ -99,7 +99,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
     this.editor.getDialog().close();
   });
   
-  test("opens dialog when one cell in CorrectOID is doubleclicked", function () {
+  test("opens dialog when some cell is doubleclicked", function () {
     setup(this);
     
     var $OIDs = this.$fixture.find('table tr:eq(5) td:eq(2)');
@@ -109,10 +109,9 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
     
     this.assertEquals(1, $dialog.length, 'Ein Dialog wurde geöffnet');
 
-
   });
 
-  test("correctly writes an integer-input in the table", function () {
+  test("correctly writes an integer-oids in the table", function () {
     setup(this);
     
     var $OIDs = this.$fixture.find('table tr:eq(5) td:eq(2)');
@@ -130,7 +129,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
     this.assertEquals([2172, 463729], $newOIDs);
   });
 
-  test("correctly writes an ingeger-plus-string-input in the table", function () {
+  test("correctly writes an integer-plus-string-oids in the table", function () {
     setup(this);
     
     var $OIDs = this.$fixture.find('table tr:eq(6) td:eq(2)');
@@ -148,7 +147,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
     this.assertEquals([2172, "TEST1:5676567"], $newOIDs);
   });
 
-  test("correctly writes an input with many spaces in the table", function () {
+  test("correctly writes an oid-input with many spaces in the table", function () {
     setup(this);
     
     var $OIDs = this.$fixture.find('table tr:eq(7) td:eq(2)');
@@ -164,6 +163,24 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
     var $newOIDs = this.grid.getCell(7, 'correctOIDs');
 
     this.assertEquals([2172, "TEST2:5676567"], $newOIDs);
+  });
+
+  test("doesn't split a string-input that is not an oid", function () {
+    setup(this);
+    
+    var $OIDs = this.$fixture.find('table tr:eq(7) td:eq(1)');
+    $OIDs.simulate('dblclick');
+
+    var $inputValue = $('body').find('.inputValue');
+    
+    $inputValue.val("Das Auto,  das Fahrrad   ");
+
+    var $OKbutton = $('.ui-dialog:visible').find('.submit');
+    $OKbutton.simulate('click');
+
+    var newCell = this.grid.getCell(7, 'sound');
+
+    this.assertEquals("Das Auto,  das Fahrrad", newCell);
   });
 
   test("two cells can be changed one after another", function () {
