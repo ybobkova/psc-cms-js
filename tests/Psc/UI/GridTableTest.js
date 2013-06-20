@@ -146,14 +146,27 @@ define(['psc-tests-assert','Psc/UI/GridTable','Psc/TableModel','Psc/UI/WidgetWra
     this.assertEquals('Das geänderte Rathaus', $td.text());
   });
 
-  test("onCellsDoubleClickCallback saves handler-activation functions in the array", function () {
+  test("when onCellsDoubleClick() is called with a callback, the callback is executed when some cell is double clicked", function () {
     var that = setup(this);
 
-    var callback = function(event){
-      that.grid.onCellsDoubleClick(function (event, rowNumber) {
-        that.openChangeValueDialog(rowNumber);
-      });
+    var isCalled = false;
+
+    var callback = function (event, rowNumber) {
+      // das hier soll ausgeführt werden, wenn auf eine cell in gridTable doppel-geklickt wird
+      isCalled = true;
     };
+
+    that.grid.onCellsDoubleClick(callback);
+
+    // tue so als hätte ich geklickt: zeile 6 spalte 3
+    this.grid.unwrap().find('tr:eq(5) td:eq(2)').simulate('dblclick');
+
+    this.assertTrue(isCalled, 'callback was called');
+  });
+
+/*
+
+
 
     $('tr:eq(5) td:eq(2)')
       .dblclick (function(event){
@@ -166,5 +179,6 @@ define(['psc-tests-assert','Psc/UI/GridTable','Psc/TableModel','Psc/UI/WidgetWra
     this.assertEquals(1, that.grid.$$onCellsDoubleClickCallbacks.length, 'adds an object to the array');
     this.assertEquals(callback, that.grid.$$onCellsDoubleClickCallbacks[0], 'adds the callback-function to the array');
   });
+*/
 
 });
