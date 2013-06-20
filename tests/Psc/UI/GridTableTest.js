@@ -1,4 +1,4 @@
-define(['psc-tests-assert','Psc/UI/GridTable','Psc/TableModel','Psc/UI/WidgetWrapper'], function(t) {
+define(['psc-tests-assert', 'jquery-simulate', 'Psc/UI/GridTable','Psc/TableModel','Psc/UI/WidgetWrapper'], function(t) {
 
   module("Psc.UI.GridTable");
   
@@ -150,20 +150,40 @@ define(['psc-tests-assert','Psc/UI/GridTable','Psc/TableModel','Psc/UI/WidgetWra
     var that = setup(this);
 
     var isCalled = false;
+    var $cell = this.grid.findCell(5, 1);
 
-    var callback = function (event, rowNumber) {
+    var callback = function (event, $clickedCell, rowIndex, columnIndex) {
       // das hier soll ausgeführt werden, wenn auf eine cell in gridTable doppel-geklickt wird
       isCalled = true;
+
+      that.assertEquals(5, rowIndex, 'rowIndex is correct');
+      that.assertEquals(1, columnIndex, 'columnIndex is correct');
+      that.assertEquals($cell[0], $clickedCell[0]);
     };
 
     that.grid.onCellsDoubleClick(callback);
 
     // tue so als hätte ich geklickt: zeile 6 spalte 3
-    this.grid.unwrap().find('tr:eq(5) td:eq(2)').simulate('dblclick');
+
+    $cell.trigger('dblclick');
 
     this.assertTrue(isCalled, 'callback was called');
   });
 
+  test("getCellIndexes returns the rowIndex and columnIndex from a jquery object $cell", function () {
+    var that = setup(this);
+
+    /*
+    getCellIndexes
+    getColumnIndex
+    getRowIndex
+    */
+
+    // @TODO für yulia
+    expect(0);
+
+
+  });
 /*
 
 
