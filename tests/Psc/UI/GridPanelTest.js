@@ -1,4 +1,4 @@
-define(['psc-tests-assert','jquery','text!fixtures/entitygridpanel.html','js/main','Psc/UI/GridPanel','Psc/UI/Tab','Psc/UI/Tabs','Psc/UI/Main'], function(t, $, panelHTML) {
+define(['psc-tests-assert','jquery','text!fixtures/entitygridpanel.html','js/main','Psc/UI/GridPanel','Psc/UI/Tab','Psc/UI/Tabs','Psc/UI/Main', 'Psc/Test/DoublesManager'], function(t, $, panelHTML) {
   
   module("Psc.UI.GridPanel");
 
@@ -7,6 +7,7 @@ define(['psc-tests-assert','jquery','text!fixtures/entitygridpanel.html','js/mai
     
     // we bootstrap our own main, because the inline scripts register the gridPanel to main
     var main = new Psc.UI.Main({
+      translator: (new Psc.Test.DoublesManager()).getTranslator(),
       tabs: new Psc.UI.Tabs({
         widget: $('<div />')
       })

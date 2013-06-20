@@ -1,4 +1,4 @@
-define(['psc-tests-assert', 'joose', 'text!fixtures/tabs-for-main.html', 'Psc/UI/Main', 'Psc/UI/Tabs', 'Psc/UI/Tab', 'Psc/EventManager', 'Psc/EventManagerMock', 'Psc/Response', 'Psc/ResponseMetaReader', 'Psc/UI/FormController'], function(t, Joose, tabsHTML) {
+define(['psc-tests-assert', 'joose', 'text!fixtures/tabs-for-main.html', 'Psc/Test/DoublesManager', 'Psc/UI/Main', 'Psc/UI/Tabs', 'Psc/UI/Tab', 'Psc/EventManager', 'Psc/EventManagerMock', 'Psc/Response', 'Psc/ResponseMetaReader', 'Psc/UI/FormController'], function(t, Joose, tabsHTML) {
   module("Psc.UI.Main");
 
   var setup = function(test) {
@@ -6,6 +6,7 @@ define(['psc-tests-assert', 'joose', 'text!fixtures/tabs-for-main.html', 'Psc/UI
     var $tabs = $cmsContent.find('div.psc-cms-ui-tabs:eq(0)'); // das erste tabs objekt wird unser main tab
 
     var main = new Psc.UI.Main({
+      translator: (new Psc.Test.DoublesManager()).getTranslator(),
       tabs: new Psc.UI.Tabs({
         widget: $tabs
       })

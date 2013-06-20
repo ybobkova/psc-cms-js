@@ -1,0 +1,54 @@
+>#!tito v0.1
+Spiel: Starquiz
+
+:positiveFeedbackTable = table(sound)
+:negativeFeedbackTable = table(sound)
+richtig := 0
+:zeile
+
+> [start]
+Wähle von der fragen 5 zeilen zufällig aus.
+
+nächste Runde:
+  Wähle eine zeile aus fragen zufällig aus.
+  Wenn round == 5
+    > [lastQuestion]
+  Oder Wenn round == 1
+    > [firstQuestion]
+  Ansonsten
+    > [nextQuestion]
+
+  > :zeile.sound
+  
+  Wenn auf eine oid aus zeile.oids getippt wurde
+    => richtig getippt
+  Ansonsten
+    => falsch getippt
+
+richtig getippt:
+  richtig := richtig + 1
+
+  > (rightSound)
+  > (positiveFeedback)
+
+  => nächste Runde
+
+falsch getippt:
+  > (wrongSound)
+  > (negativeFeedback)
+
+  => nächste Runde
+
+bei Spielende:
+  Starte Evaluation für richtig.
+
+  Wenn richtig == 5
+    > [evaluationGood]
+  Oder Wenn richtig >= 3
+    > [evaluationMedium]
+  Ansonsten
+    > [evaluationBad]
+
+
+
+=> nächste Runde

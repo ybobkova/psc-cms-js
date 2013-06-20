@@ -85,27 +85,12 @@ define(['psc-tests-assert', 'joose', 'Psc/Test/DoublesManager', 'Psc/UI/LayoutMa
 
   test("can be constructed without label - it uses the type as label", function() {
     setup(this);
+    expect(0);
 
     try {
       var lc = new this.LayoutManagerComponentClass({
         testType: "some-widget"
       });
-
-      this.assertEquals("some-widget", lc.getLabel());
-    } catch (e) {
-      this.fail(e);
-    }
-  });
-
-  test("can be constructed without label - it uses the language labels", function() {
-    setup(this);
-
-    try {
-      var lc = new this.LayoutManagerComponentClass({
-        testType: 'Paragraph'
-      });
-
-      this.assertEquals("Absatz", lc.getLabel());
     } catch (e) {
       this.fail(e);
     }

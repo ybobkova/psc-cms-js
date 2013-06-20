@@ -45,7 +45,8 @@ define(['psc-tests-assert', 'fixtures/navigation.comun.flat', 'jquery-simulate',
     var pages = new Psc.UI.PagesMenu({
       uiController: uiController,
       widget: $widget,
-      flat: flat
+      flat: flat,
+      locale: 'de'
     });
     
     return t.setup(test, {pages: pages, $widget: $widget, openedTabs: [], selection: undefined});
@@ -73,7 +74,7 @@ define(['psc-tests-assert', 'fixtures/navigation.comun.flat', 'jquery-simulate',
         that.assertEquals(3, that.selection.tabButtonItems.length, 'cs1, cs2 and page buttons are avaible');
         
         start();
-      }, 20); 
+      }, 100); 
       
       start();
     });

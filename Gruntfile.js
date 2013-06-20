@@ -4,7 +4,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-qunit');
-//  grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks('grunt-contrib-requirejs');
 //  grunt.loadNpmTasks('grunt-contrib-concat');
 //  grunt.loadNpmTasks('grunt-contrib-uglify');
 //  grunt.loadNpmTasks('grunt-contrib-watch');
@@ -30,21 +30,6 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-
-    requirejs: {
-      compile: {
-        options: {
-          dir: "build",
-          baseUrl: "lib/",
-          mainConfigFile: "lib/main.js",
-          
-          name: "main",
-          findNestedDependencies: true,
-          optimize: "none",
-          skipModuleInsertion: true
-        }
-      }
-    },
 
     jshint: {
       files: ['Gruntfile.js', 'lib/**/*.js', '!lib/ClassTemplate.js', 'tests/**/*.js', '!tests/testTemplate.js'],
@@ -179,6 +164,23 @@ module.exports = function(grunt) {
           port: port,
           base: '.',
           keepalive: true
+        }
+      }
+    },
+
+    requirejs: {
+      compile: {
+        options: {
+          baseUrl: "lib",
+          mainConfigFile: "lib/boot-helper.js",
+          out: "build/psc-cms-js.min.js",
+
+          name: "main",
+          /*
+          
+          findNestedDependencies: true,
+          */
+          optimize: "none"
         }
       }
     }

@@ -12,5 +12,6 @@ branches:
     - sce
 
 before_script:
+  - git submodule update --init --recursive
   - npm install -g grunt-cli
   - grunt --version

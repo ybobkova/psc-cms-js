@@ -20,4 +20,24 @@ define(['psc-tests-assert', 'Psc/Test/DoublesManager', 'Psc/Container', 'Psc/TPL
 
     this.assertInstanceOf(Psc.CMS.NavigationService, that.container.getNavigationService());
   });
+
+  test("has a Translator", function() {
+    var that = setup(this), translator;
+
+    this.assertNotUndefined(translator = that.container.getTranslator());
+
+    that.container.setLocale('de');
+    this.assertEquals('de', translator.trans('test.loaded-language'));
+    this.assertEquals('de', that.container.getLocale());
+    this.assertEquals(
+      'Seite für Navigations-Punkt: Home', 
+      that.container.transf('navigation.openPage', ['Home'])
+    );
+
+    that.container.setLocale('en');
+    this.assertEquals('en', translator.trans('test.loaded-language'));
+
+    that.container.setLocale('fr');
+    this.assertEquals('fr', translator.trans('test.loaded-language'));
+  });
 });

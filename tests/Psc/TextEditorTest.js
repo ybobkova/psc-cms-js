@@ -16,27 +16,27 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquery-simulate', 'jquerypp/dom/s
     
     var assertCaretPosition = function (pos, message) {
       var selection = $ta.selection();
-      this.assertEquals(pos, selection.start, message);
-      this.assertEquals(pos, selection.end, message);
+      this.assertEquals(pos, selection.start, message+' (start)');
+      this.assertEquals(pos, selection.end, message+' (end)');
     };
     
     return t.setup(test, {textEditor: textEditor, $ta: $ta, assertCaretPosition: assertCaretPosition});
   };
   
   test("can move caret to position", function() {
-    var that = setup(this), l = "Lorem ipsum sit amet..".length;
+    var that = setup(this), length = "Lorem ipsum sit amet..".length;
 
     this.textEditor.move(11);
     this.assertCaretPosition(11, 'caret is moved');
     
-    this.textEditor.move(l);
-    this.assertCaretPosition(l, 'cat is moved after the last char (to the end)');
+    this.textEditor.move(length);
+    this.assertCaretPosition(length, 'cat is moved after the last char (to the end)');
 
     this.textEditor.move(0);
     this.assertCaretPosition(0, 'caret moved to begining');
 
-    this.textEditor.move(l+1);
-    this.assertCaretPosition(l, 'cat is moved after the last char (to the end), with overflow');
+    this.textEditor.move(length+1);
+    this.assertCaretPosition(length, 'cat is moved after the last char (to the end), with overflow');
   });
   
   test("getCaret reflects position", function () {
@@ -183,13 +183,17 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquery-simulate', 'jquerypp/dom/s
     setup(this);
     
     this.textEditor.select(0,5);
+
+    var sel = this.$ta.selection();
+
+    delete sel.startPos; // IE8 gimbel in pp
     
     this.assertEquals({
         width: 5,
         start: 0,
         end: 5
       },
-      this.$ta.selection()
+      sel
     );
     
     this.textEditor.setSelection(0,5);
