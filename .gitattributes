@@ -1,3 +1,9 @@
-* export-ignore
-dist !export-ignore
-dist/psc-cms*.js !export-ignore
+*.sublime* export-ignore
+tests export-ignore
+.gitignore export-ignore
+.gitattributes export-ignore
+.gitmodules export-ignore
+.travis.yml export-ignore
+composer.json export-ignore
+package.json export-ignore
+Gruntfile.js export-ignore
