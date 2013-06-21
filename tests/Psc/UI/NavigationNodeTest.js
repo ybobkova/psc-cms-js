@@ -2,7 +2,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode', 'Psc/UI/Co
   
   module("Psc.UI.NavigationNode");
   
-  var setup =  function (test) {
+  var setup =  function (test, navbuttons) {
     var uiController = new Psc.UI.Controller({tabs: {}});
 
     uiController.openTab = function (entityName, identifier, attributes, $target) {
@@ -21,17 +21,18 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/NavigationNode', 'Psc/UI/Co
       locale: 'en',
       languages: ['de','en'],
       pageId: 17,
-      pageIsActive: true
+      pageIsActive: true,
+      showContentButtons: navbuttons
     });
     
     return t.setup(test, {node: node, uiController: uiController, openedTabs: []});
   };
   
-  var setupWithHTML = function (test) {
+  var setupWithHTML = function (test, navbuttons) {
     var $fs = $('<fieldset />').addClass('psc-cms-ui-navigation');
     $('#qunit-fixture').empty().append($fs);
     
-    setup(test);
+    setup(test, navbuttons);
 
     test.container = $fs;
     
@@ -147,12 +148,23 @@ move this to navigation
 
 
   test("popup has cs buttons", function () {
-    var that = setupWithHTML(this);
+    var that = setupWithHTML(this, true);
     
     this.node.openEditDialog();
     var dialog = this.node.getDialog(), $dialog = dialog.unwrap();
     
     var $csButtons = this.assertjQueryLength(2, $dialog.find('.psc-cms-ui-button'));
+
+    dialog.close();
+  });
+
+  test("popup has not cs buttons by default", function () {
+    var that = setupWithHTML(this);
+    
+    this.node.openEditDialog();
+    var dialog = this.node.getDialog(), $dialog = dialog.unwrap();
+    
+    var $csButtons = this.assertjQueryLength(0, $dialog.find('.psc-cms-ui-button'));
 
     dialog.close();
   });
