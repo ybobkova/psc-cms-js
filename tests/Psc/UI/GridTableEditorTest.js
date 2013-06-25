@@ -95,23 +95,24 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
     var $dialog = $('body').find('.ui-dialog:visible');
     
     this.assertEquals(1, $dialog.length, 'Ein Dialog wurde geöffnet');
-    
     this.editor.getDialog().close();
   });
   
   test("opens dialog when some cell is doubleclicked", function () {
     setup(this);
     
-    var $OIDs = this.$fixture.find('table tr:eq(5) td:eq(2)');
-    $OIDs.simulate('dblclick');
+    var $cell = this.$fixture.find('table tr:eq(5) td:eq(2)');
+    $cell.simulate('dblclick');
     
     var $dialog = $('body').find('.ui-dialog:visible');
     
     this.assertEquals(1, $dialog.length, 'Ein Dialog wurde geöffnet');
 
+    var $OKbutton = $('.ui-dialog:visible').find('.submit');
+    $OKbutton.simulate('click');
   });
 
-  test("correctly writes an integer-oids in the table", function () {
+  test("correctly writes integer-oids in the table", function () {
     setup(this);
     
     var $OIDs = this.$fixture.find('table tr:eq(5) td:eq(2)');
@@ -129,7 +130,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
     this.assertEquals([2172, 463729], $newOIDs);
   });
 
-  test("correctly writes an integer-plus-string-oids in the table", function () {
+  test("correctly writes integer-plus-string-oids in the table", function () {
     setup(this);
     
     var $OIDs = this.$fixture.find('table tr:eq(6) td:eq(2)');
@@ -168,8 +169,8 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
   test("doesn't split a string-input that is not an oid", function () {
     setup(this);
     
-    var $OIDs = this.$fixture.find('table tr:eq(7) td:eq(1)');
-    $OIDs.simulate('dblclick');
+    var $cell = this.$fixture.find('table tr:eq(7) td:eq(1)');
+    $cell.simulate('dblclick');
 
     var $inputValue = $('body').find('.inputValue');
     
@@ -186,8 +187,8 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
   test("two cells can be changed one after another", function () {
     setup(this);
     
-    var $OIDs = this.$fixture.find('table tr:eq(8) td:eq(2)');
-    $OIDs.simulate('dblclick');
+    var $cell = this.$fixture.find('table tr:eq(8) td:eq(2)');
+    $cell.simulate('dblclick');
 
     var $inputValue = $('body').find('.inputValue');
     
@@ -198,8 +199,8 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
 
     var $newOIDs1 = this.grid.getCell(8, 'correctOIDs');
 
-    $OIDs = this.$fixture.find('table tr:eq(9) td:eq(2)');
-    $OIDs.simulate('dblclick');
+    $cell = this.$fixture.find('table tr:eq(9) td:eq(2)');
+    $cell.simulate('dblclick');
 
     $inputValue = $('body').find('.inputValue');
     
