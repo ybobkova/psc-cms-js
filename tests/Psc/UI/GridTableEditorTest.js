@@ -102,13 +102,14 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
     setup(this);
     
     var $cell = this.$fixture.find('table tr:eq(5) td:eq(2)');
+
     $cell.simulate('dblclick');
     
     var $dialog = $('body').find('.ui-dialog:visible');
-    
+
     this.assertEquals(1, $dialog.length, 'Ein Dialog wurde geöffnet');
 
-    var $OKbutton = $('.ui-dialog:visible').find('.submit');
+    var $OKbutton = $dialog.find('.submit');
     $OKbutton.simulate('click');
   });
 
@@ -118,8 +119,10 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
     var $OIDs = this.$fixture.find('table tr:eq(5) td:eq(2)');
     $OIDs.simulate('dblclick');
 
-    var $inputValue = $('body').find('.inputValue');
-    
+    var $dialog = $('.ui-dialog:visible');
+
+    var $inputValue = this.assertjQueryLength(1, $dialog.find('.inputValue'));
+
     $inputValue.val("2172, 463729");
 
     var $OKbutton = $('.ui-dialog:visible').find('.submit');
