@@ -370,24 +370,22 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     var that = setup(this), programRunner = this.programRunner, played = this.played;
       
     var program = pCode(
-      "tiptoi.start();",
-      "var timer = tiptoi.startTimer(20);",
-      "playSound('timer1 is started');",
-      "var timer2 = tiptoi.startTimer(10);",
-      "playSound('timer2 is started');",
+      "var timer = tiptoi.startTimer(1);",
+      "timer.hasRunOut(function() {",
+      "  throw 'timer ran out'",
+      "});",
+      "var timer2 = tiptoi.startTimer(2);",
+      "timer.hasRunOut(function() {",
+      "  throw 'timer2 ran out'",
+      "});",
       "tiptoi.end()"
     );
     
     var status = programRunner.run(program);
-    
-    status.done(function () {
-      that.assertEquals(['timer1 is started', 'timer1 is started'], played);
-      start();
 
-    status.fail(function (error) {
-      that.fail('failed because error '+error);
+    status.fail(function(msg) {
+      that.fail(msg);
       start();
-    });
     });
   });
 });
