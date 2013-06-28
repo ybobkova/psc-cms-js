@@ -83,4 +83,25 @@ define(['psc-tests-assert','tiptoi/cpu','tiptoi/InputProvider','tiptoi/Timer'], 
       start();
     });
   });
+
+  test("cpu call call command test", function () {
+    var that = setup(this);
+
+    var playSounds = function (play) {};
+    var tiptoi = { startTimer: function () {} };
+
+    var programCode = function(options, func_tiptoi, func_playSounds) {
+      that.assertSame(func_tiptoi, tiptoi);
+      that.assertSame(func_playSounds, playSounds);
+      that.assertTrue(options.opt1);
+    };
+
+    var scopes = [tiptoi, playSounds];
+
+    var runProgram = function (options) {
+      return programCode.apply(programCode, [options].concat(scopes));
+    };
+
+    runProgram({opt1: true});
+  });
 });
