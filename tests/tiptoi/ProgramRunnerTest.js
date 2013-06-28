@@ -371,14 +371,14 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
 
     requirejs.config({
       paths: {
-        'test.search-and-find': 'empty-module'
+        'test.search-and-find': '../tests/files/tiptoi/search-and-find-mock'
       }
     });
 
     var status = that.programRunner.run(pCode(
       "var that = this",
       "tiptoi.require(['test.search-and-find'], function (SearchAndFind) {",
-        "SearchAndFind(that, {opt1: true});",
+        "SearchAndFind(that, {mainTable: {isTable: true}, positiveFeedbackTable: {isTable: true}});",
       "});"
     ));
 
