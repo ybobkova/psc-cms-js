@@ -365,4 +365,26 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     that.fail("not caught");
     start();
   });
+
+  asyncTest("program can require another program that recieves the correct variables fromscope", function () {
+    var that = setup(this);
+
+    requirejs.config({
+      paths: {
+        'test.search-and-find': 'empty-module'
+      }
+    });
+
+    var status = that.programRunner.run(pCode(
+      "var that = this",
+      "tiptoi.require(['test.search-and-find'], function (SearchAndFind) {",
+        "SearchAndFind(that, {opt1: true});",
+      "});"
+    ));
+
+    status.done(function () {
+      that.ok('was run');
+      start();
+    });
+  });
 });
