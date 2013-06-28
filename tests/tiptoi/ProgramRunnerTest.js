@@ -37,16 +37,16 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
       was passiert alles in einem program?
     
       - es werden Sounds abgespielt
-      - es muss auf input gewartet werden
+      - es muss auf Ínput gewartet werden
           das ist nicht ganz untricky, weil wir nicht synchron blocken können (und wollen)
-          synchron würde das problem sein, dass dann der browser nix mehr machen kann (was bei interactivem Input blöd ist ;))
+          Synchron würde das Problem sein, dass dann der Browser nix mehr machen kann (was bei interactivem Input blöd ist ;))
           deshalb müssen wir waitForInput(function () { ... machen})
-          bis jetzt war meine Idee, dass immer nach dem schließen des Blocks von waitForInput kein Code mehr kommen darf,
-          mal sehen ob ich das durchziehen kann. man könnte die Syntax waitForInput(function () {
+          Bis jetzt war meine Idee, dass immer nach dem schließen des Blocks von waitForInput kein Code mehr kommen darf,
+          mal sehen ob ich das durchziehen kann. Man könnte die Syntax waitForInput(function () {
           zu waitForInput({ vereinfachen
       
-      - es müssen daten aus der Tabelle ausgelesen werden
-          da tables etwas tricky sind, habe ich mich dazu entschieden eine verbose datenstruktur:
+      - es müssen Daten aus der Tabelle ausgelesen werden
+          da tables etwas tricky sind, habe ich mich dazu entschieden eine verbose Datenstruktur:
           table = [
             {head1: wert11, head2: wert12}, // zeile 1 (index 0)
             {head1: wert21, head2: wert21}  // zeile 2 (index 1)
@@ -364,5 +364,30 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     
     that.fail("not caught");
     start();
+  });
+
+  asyncTest("all timers are stopped at the end of the program", function () {
+    var that = setup(this), programRunner = this.programRunner, played = this.played;
+      
+    var program = pCode(
+      "tiptoi.start();",
+      "var timer = tiptoi.startTimer(20);",
+      "playSound('timer1 is started');",
+      "var timer2 = tiptoi.startTimer(10);",
+      "playSound('timer2 is started');",
+      "tiptoi.end()"
+    );
+    
+    var status = programRunner.run(program);
+    
+    status.done(function () {
+      that.assertEquals(['timer1 is started', 'timer1 is started'], played);
+      start();
+
+    status.fail(function (error) {
+      that.fail('failed because error '+error);
+      start();
+    });
+    });
   });
 });
