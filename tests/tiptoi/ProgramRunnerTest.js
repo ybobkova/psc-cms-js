@@ -331,7 +331,15 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
   });
 
   asyncTest("program can require other resources", function () {
+    /* globals requirejs:true */
     var that = setup(this);
+
+    requirejs.config({
+      paths: {
+        'gdl/master/common/ispy': 'empty-module'
+      }
+    });
+
 
     var status = that.programRunner.run(pCode(
       "tiptoi.require(['master.common.ispy'], function (ISpy) {",
@@ -365,4 +373,38 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     that.fail("not caught");
     start();
   });
+
+  asyncTest("regression timed out timer will be stopped on tiptoi end", function () {
+    expect(2);
+    var that = setup(this);
+
+    // wenn die timers aufgerufen werden, verursachen die ein global failure, aber das ist ja okay
+    var status = that.programRunner.run(pCode(
+      " var timer1 = tiptoi.startTimer(0.1);",
+      " timer1.hasRunOut(function () {",
+        " throw 'timer1 error from regression test ProgramRunnerTest (timer will be stopped on tiptoi.end)'; ",
+      "});",
+
+      " var timer2 = tiptoi.startTimer(0.2);",
+      " timer2.hasRunOut(function () {",
+        " throw 'timer2 error from regression test ProgramRunnerTest (timer will be stopped on tiptoi.end)'; ",
+      "});",
+
+      "  tiptoi.end();"
+    ));
+
+    status.done(function () {
+      start();
+      that.ok("game is resolved and endet");
+
+      stop();
+      // wait until timers might have run out
+      window.setTimeout(function () {
+        start();
+        that.ok("waited for timers long enough");
+      }, 250);
+
+    });
+  });
+
 });
