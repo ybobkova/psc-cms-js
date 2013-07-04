@@ -46,7 +46,6 @@ define(['psc-tests-assert', 'jquery', 'tiptoi/Main', 'tiptoi/SoundImporter', 'ti
       },
 
       flush: function (soundImports) {
-        console.log(soundImports);
         this.imports = soundImports;
       }
     };
