@@ -3,7 +3,7 @@
 	[
 		{
 			"path": ".",
-      "folder_exclude_patterns": ["composer", "build", "node_modules"]
+      "folder_exclude_patterns": ["composer", "build", "node_modules", "vendor"]
 		}
 	]
 }

@@ -105,4 +105,66 @@ define(['psc-tests-assert','Psc/TextParser'], function(t) {
       " - list6\n"
     );
   });
+
+  test("test parser detects a simpler list", function () {
+    setup (this);
+
+    this.assertParsing([
+        {value: ["point1", "point2"], type:"list"}
+      ],
+      "- point1\n"+
+      "- point2"
+    );
+  });
+
+  test("numbered list with tabs", function () {
+    setup(this);
+
+    var text = '';
+    text += "Mehrwerte, die Sie überzeugen werden: \n";
+    text += "\n";
+    text += "1  Familienunternehmen mit mehr als 30 Jahren Erfahrung und Wissen \n";
+    text += "2  Unternehmergeist durch und durch – langfristige Fortführung des Unternehmens durch Söhne des Firmengründers    \n";
+    text += "3  Mehr als 12 000 zufriedene Kunden weltweit\n";
+    text += "14  Umfangreiche Innovationskraft und Erfindertum      \n";
+
+    this.assertParsing([
+        {value: "Mehrwerte, die Sie überzeugen werden:", type:"paragraph"},
+        {type: "list", value: [
+          "Familienunternehmen mit mehr als 30 Jahren Erfahrung und Wissen",
+          "Unternehmergeist durch und durch – langfristige Fortführung des Unternehmens durch Söhne des Firmengründers",
+          "Mehr als 12 000 zufriedene Kunden weltweit",
+          "Umfangreiche Innovationskraft und Erfindertum"
+        ]}
+      ],
+     
+      text
+    );
+  });
+
+  test("bullet list tabbed", function () {
+    setup(this);
+
+    var text = '';
+    text += "Mehrwerte, die Sie überzeugen werden: \n";
+    text += "\n";
+    text += "•  Familienunternehmen mit mehr als 30 Jahren Erfahrung und Wissen \n";
+    text += "•  Unternehmergeist durch und durch – langfristige Fortführung des Unternehmens durch Söhne des Firmengründers    \n";
+    text += "•  Mehr als 12 000 zufriedene Kunden weltweit\n";
+    text += "•  Umfangreiche Innovationskraft und Erfindertum      \n";
+
+    this.assertParsing([
+        {value: "Mehrwerte, die Sie überzeugen werden:", type:"paragraph"},
+        {type: "list", value: [
+          "Familienunternehmen mit mehr als 30 Jahren Erfahrung und Wissen",
+          "Unternehmergeist durch und durch – langfristige Fortführung des Unternehmens durch Söhne des Firmengründers",
+          "Mehr als 12 000 zufriedene Kunden weltweit",
+          "Umfangreiche Innovationskraft und Erfindertum"
+        ]}
+      ],
+     
+      text
+    );
+  });
 });
+

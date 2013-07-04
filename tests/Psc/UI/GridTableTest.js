@@ -1,9 +1,9 @@
-define(['psc-tests-assert','Psc/UI/GridTable','Psc/Table','Psc/UI/WidgetWrapper'], function(t) {
+define(['psc-tests-assert', 'jquery-simulate', 'Psc/UI/GridTable','Psc/TableModel','Psc/UI/WidgetWrapper'], function(t) {
 
   module("Psc.UI.GridTable");
   
   var setup = function (test) {
-    var table = new Psc.Table({
+    var table = new Psc.TableModel({
         columns: [
                   {name:"number", type: "String", label: 'Sound No.'},
                   {name:"sound", type: "String", label: 'Sound'},
@@ -109,5 +109,92 @@ define(['psc-tests-assert','Psc/UI/GridTable','Psc/Table','Psc/UI/WidgetWrapper'
     joose.serialize(data);
     
     this.assertEquals(grid.getExport(), data.agrid);
+  });
+
+  test("findCell returns a jqueryObject from one td in one specific row", function () {
+    var that = setup(this), $grid = this.assertjQueryLength(1, this.$fixture.find('table'));
+
+    var $tdRathaus = this.assertjQueryLength(1, this.grid.findCell(3, 1)); // 3 third-content-row, second column
+    this.assertEquals('Das Rathaus', $tdRathaus.text());
+
+    var $header = this.assertjQueryLength(1, this.grid.findCell(0, 0));
+    this.assertEquals('Sound No.', $header.text());
+  });
+
+  test("findCell returns a jqueryObject from one td in one specific row by name", function () {
+    var that = setup(this), $grid = this.assertjQueryLength(1, this.$fixture.find('table'));
+
+    var $tdRathaus = this.assertjQueryLength(1, this.grid.findCell(3, "sound")); // 3 third-content-row, sound column
+    this.assertEquals('Das Rathaus', $tdRathaus.text());
+
+    var $header = this.assertjQueryLength(1, this.grid.findCell(0, "number"));
+    this.assertEquals('Sound No.', $header.text());
+  });
+
+  test("refresh does refresh the data into the grid", function () {
+    var that = setup(this), 
+      $grid = this.assertjQueryLength(1, this.$fixture.find('table')),
+      $td = this.assertjQueryLength(1, this.grid.findCell(3, 1)); // 3 third-content-row, second column
+
+    // pre condition
+    this.assertEquals('Das Rathaus', $td.text());
+
+    that.grid.setCell(3, "sound", "Das geänderte Rathaus");
+    that.grid.refresh();
+
+    $td = this.assertjQueryLength(1, this.grid.findCell(3, "sound")); // 3 third-content-row, second column
+    this.assertEquals('Das geänderte Rathaus', $td.text());
+  });
+
+  test("when onCellsDoubleClick() is called with a callback, the callback is executed when some cell is double clicked", function () {
+    var that = setup(this);
+
+    var isCalled = false;
+    var $cell = this.grid.findCell(5, 1);
+
+    var callback = function (event, $clickedCell, rowIndex, columnIndex) {
+      // das hier soll ausgeführt werden, wenn auf eine cell in gridTable doppel-geklickt wird
+      isCalled = true;
+
+      that.assertEquals(5, rowIndex, 'rowIndex is correct');
+      that.assertEquals(1, columnIndex, 'columnIndex is correct');
+      that.assertEquals($cell[0], $clickedCell[0]);
+    };
+
+    that.grid.onCellsDoubleClick(callback);
+
+    // tue so als hätte ich geklickt: zeile 6 spalte 3
+
+    $cell.trigger('dblclick');
+
+    this.assertTrue(isCalled, 'callback was called');
+  });
+
+  test("getCellIndexes returns the rowIndex and columnIndex from a jquery object $cell", function () {
+    var that = setup(this);
+
+    var $cell = this.grid.findCell(5,2);
+    var indexes = this.grid.getCellIndexes($cell);
+
+    this.assertEquals(5, indexes.row);
+    this.assertEquals(2, indexes.column);
+  });
+
+  test("getRowIndex returns the rowIndex from a jquery object $cell", function () {
+    var that = setup(this);
+
+    var $cell = this.grid.findCell(5,2);
+    var rowIndex = this.grid.getRowIndex($cell);
+
+    this.assertEquals(5, rowIndex);
+  });
+
+  test("getColumnIndex returns the columnIndex from a jquery object $cell", function () {
+    var that = setup(this);
+
+    var $cell = this.grid.findCell(5,2);    
+    var columnIndex = this.grid.getColumnIndex($cell);
+
+    this.assertEquals(2, columnIndex);
   });
 });

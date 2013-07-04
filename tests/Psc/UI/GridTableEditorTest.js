@@ -1,4 +1,4 @@
-define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table','Psc/UI/GridTable','Psc/CMS/Service'], function(t) {
+define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/TableModel','Psc/UI/GridTable','Psc/CMS/Service'], function(t) {
   
   module("Psc.UI.GridTableEditor");
   
@@ -19,7 +19,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
       
       service = new Psc.CMS.Service();
       
-      table = new Psc.Table({
+      table = new Psc.TableModel({
         columns: [
                   {name:"number", type: "String", label: 'Sound No.'},
                   {name:"sound", type: "String", label: 'Sound'},
@@ -95,7 +95,128 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
     var $dialog = $('body').find('.ui-dialog:visible');
     
     this.assertEquals(1, $dialog.length, 'Ein Dialog wurde geöffnet');
-    
     this.editor.getDialog().close();
+  });
+  
+  test("opens dialog when some cell is doubleclicked", function () {
+    setup(this);
+    
+    var $cell = this.$fixture.find('table tr:eq(5) td:eq(2)');
+
+    $cell.simulate('dblclick');
+    
+    var $dialog = $('body').find('.ui-dialog:visible');
+
+    this.assertEquals(1, $dialog.length, 'Ein Dialog wurde geöffnet');
+
+    var $OKbutton = $dialog.find('.submit');
+    $OKbutton.simulate('click');
+  });
+
+  test("correctly writes integer-oids in the table", function () {
+    setup(this);
+    
+    var $OIDs = this.$fixture.find('table tr:eq(5) td:eq(2)');
+    $OIDs.simulate('dblclick');
+
+    var $dialog = $('.ui-dialog:visible');
+
+    var $inputValue = this.assertjQueryLength(1, $dialog.find('.inputValue'));
+
+    $inputValue.val("2172, 463729");
+
+    var $OKbutton = $('.ui-dialog:visible').find('.submit');
+    $OKbutton.simulate('click');
+
+    var $newOIDs = this.grid.getCell(5, 'correctOIDs');
+
+    this.assertEquals([2172, 463729], $newOIDs);
+  });
+
+  test("correctly writes integer-plus-string-oids in the table", function () {
+    setup(this);
+    
+    var $OIDs = this.$fixture.find('table tr:eq(6) td:eq(2)');
+    $OIDs.simulate('dblclick');
+
+    var $inputValue = $('body').find('.inputValue');
+    
+    $inputValue.val("2172, TEST1:5676567");
+
+    var $OKbutton = $('.ui-dialog:visible').find('.submit');
+    $OKbutton.simulate('click');
+
+    var $newOIDs = this.grid.getCell(6, 'correctOIDs');
+
+    this.assertEquals([2172, "TEST1:5676567"], $newOIDs);
+  });
+
+  test("correctly writes an oid-input with many spaces in the table", function () {
+    setup(this);
+    
+    var $OIDs = this.$fixture.find('table tr:eq(7) td:eq(2)');
+    $OIDs.simulate('dblclick');
+
+    var $inputValue = $('body').find('.inputValue');
+    
+    $inputValue.val("  2172 ,     TEST2:5676567   ");
+
+    var $OKbutton = $('.ui-dialog:visible').find('.submit');
+    $OKbutton.simulate('click');
+
+    var $newOIDs = this.grid.getCell(7, 'correctOIDs');
+
+    this.assertEquals([2172, "TEST2:5676567"], $newOIDs);
+  });
+
+  test("doesn't split a string-input that is not an oid", function () {
+    setup(this);
+    
+    var $cell = this.$fixture.find('table tr:eq(7) td:eq(1)');
+    $cell.simulate('dblclick');
+
+    var $inputValue = $('body').find('.inputValue');
+    
+    $inputValue.val("Das Auto,  das Fahrrad   ");
+
+    var $OKbutton = $('.ui-dialog:visible').find('.submit');
+    $OKbutton.simulate('click');
+
+    var newCell = this.grid.getCell(7, 'sound');
+
+    this.assertEquals("Das Auto,  das Fahrrad", newCell);
+  });
+
+  test("two cells can be changed one after another", function () {
+    setup(this);
+    
+    var $cell = this.$fixture.find('table tr:eq(8) td:eq(2)');
+    $cell.simulate('dblclick');
+
+    var $inputValue = $('body').find('.inputValue');
+    
+    $inputValue.val("2172,DEMO:6786788567");
+
+    var $OKbutton = $('.ui-dialog:visible').find('.submit');
+    $OKbutton.simulate('click');
+
+    var $newOIDs1 = this.grid.getCell(8, 'correctOIDs');
+
+    $cell = this.$fixture.find('table tr:eq(9) td:eq(2)');
+    $cell.simulate('dblclick');
+
+    $inputValue = $('body').find('.inputValue');
+    
+    $inputValue.val("567567,DEMO2:6786788567");
+
+    $OKbutton = $('.ui-dialog:visible').find('.submit');
+
+    $OKbutton.simulate('click');
+
+    var $newOIDs2 = this.grid.getCell(9, 'correctOIDs');
+
+    this.assertEquals([2172, "DEMO:6786788567"], $newOIDs1);
+
+    this.assertEquals([567567, "DEMO2:6786788567"], $newOIDs2);
   });
 });
