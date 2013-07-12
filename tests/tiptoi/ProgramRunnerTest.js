@@ -330,26 +330,6 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     });
   });
 
-  asyncTest("program can require other resources", function () {
-    var that = setup(this);
-
-    var status = that.programRunner.run(pCode(
-      "tiptoi.require(['master.common.ispy'], function (ISpy) {",
-      "  tiptoi.end();",
-      "});"
-    ));
-
-    status.done(function() {
-      start();
-      that.ok('is run asynchronously with require');
-    });
-
-    status.fail(function (error) {
-      start();
-      that.fail('failed because error '+error);
-    });
-  });
-
   asyncTest("program should be given to run()", function () {
     var that = setup(this), programRunner = this.programRunner;
     
@@ -367,6 +347,7 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
   });
 
   asyncTest("program can require another program that recieves the correct variables fromscope", function () {
+    /* globals requirejs */
     var that = setup(this);
 
     requirejs.config({

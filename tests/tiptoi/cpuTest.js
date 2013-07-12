@@ -108,7 +108,7 @@ define(['psc-tests-assert','tiptoi/cpu','tiptoi/InputProvider','tiptoi/Timer'], 
   test("cpu parses args names from function", function () {
     var that = setup(this);
 
-    var args = this.cpu._parseDepsFromFunctionArgs(function (options, playSounds, playSound, tiptoi, A) {
+    var args = this.cpu._parseFunctionArgs(function (options, playSounds, playSound, tiptoi, A) {
 
     });
 
