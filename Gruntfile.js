@@ -172,87 +172,91 @@ module.exports = function(grunt) {
     requirejs: {
       compile: {
         options: {
-          baseUrl: "lib",
+          // include other modules that are not found with include
           mainConfigFile: "lib/boot-helper.js",
-          out: "build/psc-cms-js.min.js",
+          //out: "build/psc-cms-js.min.js",
+          dir: "build/psc-cms-js",
 
-          name: "main",
-          /*
-          
+           //The top level directory that contains your app. If this option is used
+          //then it assumed your scripts are in a subdirectory under this path.
+          //This option is not required. If it is not specified, then baseUrl
+          //below is the anchor point for finding things. If this optio"n is specified,
+          //then all the files from the app directory will be copied to the dir:
+          //output area, and baseUrl will assume to be a relative path under
+          //this directory.
+          appDir: ".",
+
+          fileExclusionRegExp: /^(\.|node_modules|tests|\.git\\*|composer\.*|package\.json|Gruntfile.js|psc-cms-js\.*|[a-z-0-9A-Z]\.md)/,
+
+          baseUrl: "./lib",
+
+          paths: {
+            "app/main": "empty:"
+          },
+
+          modules: [
+            {
+              name: "boot-helper",
+              include: [
+                "Psc/UI/DropBox",
+                "Psc/UI/ComboDropBox",
+                "Psc/UI/GridTableEditor"
+              ]
+            },
+            {
+              name: "tiptoi/Main",
+              include: [
+                "tiptoi/GameSimulator",
+                "tiptoi/TitoGameEditor"
+              ],
+              exclude: [
+                "boot-helper"
+              ]
+            },
+            {
+              name: "Psc/UI/CodeEditor",
+              exclude: [
+                "boot-helper"
+              ]
+            }
+            //excludeShallow
+
+          ],
+
+          //Finds require() dependencies inside a require() or define call. By default
+          //this value is false, because those resources should be considered dynamic/runtime
+          //calls. However, for some optimization scenarios, it is desirable to
+          //include them in the build.
+          //Introduced in 1.0.3. Previous versions incorrectly found the nested calls
+          //by default.          
           findNestedDependencies: true,
-          */
-          optimize: "none"
+
+          //How to optimize all the JS files in the build output directory.
+          //Right now only the following values
+          //are supported:
+          //- "uglify": (default) uses UglifyJS to minify the code.
+          //- "uglify2": in version 2.1.2+. Uses UglifyJS2.
+          //- "closure": uses Google's Closure Compiler in simple optimization
+          //mode to minify the code. Only available if running the optimizer using
+          //Java.
+          //- "closure.keepLines": Same as closure option, but keeps line returns
+          //in the minified files.
+          //- "none": no minification will be done.
+          //optimize: "uglify2",
+          optimize: "uglify2",
+
+    //Introduced in 2.1.2: If using "dir" for an output directory, normally the
+    //optimize setting is used to optimize the build bundles (the "modules"
+    //section of the config) and any other JS file in the directory. However, if
+    //the non-build bundle JS files will not be loaded after a build, you can
+    //skip the optimization of those files, to speed up builds. Set this value
+    //to true if you want to skip optimizing those other non-build bundle JS
+    //files.          
+          skipDirOptimize: true,
+
+
+          optimizeCss: "none"
         }
-      }
-    },
-
-    webpack: {
-      options: {},
-      someName: {
-        entry: "./lib/boot-helper.js",
-        output: {
-          path: "build/",
-          filename: "[hash].js",
-          libraryTarget: "umd"
-        },
-
-        resolve: {
-          root: './lib/',
-          alias: {
-    'jquery': "../vendor/jquery/jquery-1.8.2",
-    'jquery-ui': "../vendor/jquery-ui/jquery-ui-1.8.24.custom.patched",
-    'jquery-ui-i18n': "../vendor/jquery-ui/jquery-ui-i18n.custom",
-    "qunit": "../vendor/qunit/qunit-1.10.0",
-    'joose': "../vendor/joose/all",
-    'ace': "../vendor/ace/lib/ace",
-    'lodash': "../vendor/lodash/lodash-0.10.0.min",
-    'psc-tests-assert': '../vendor/qunit-assert/lib/assert',
-    'qunit-assert': '../vendor/qunit-assert/lib/assert',
-    'TestRunner': "../vendor/qunit-assert/lib/TestRunner",
-    'img-files': '../img',
-    'jquery-form': "../vendor/jquery-form/jquery.form-3.20",
-    'jquery-fileupload': "../vendor/jquery-fileupload/jquery.fileupload",
-    'jquery-iframe-transport': "../vendor/jquery-fileupload/jquery.iframe-transport",
-    'jquery.ui.widget': "../vendor/jquery-fileupload/vendor/jquery.ui.widget",
-    'jquery-tmpl': "../vendor/jquery-tmpl/jquery.tmpl",
-    'jqwidgets': "../vendor/jqwidgets/jqx-all.min",
-    'jquery-simulate': "../vendor/jquery-simulate/jquery.simulate.patched",
-    'jquery-rangyinputs': "../vendor/jquery-rangyinputs/rangyinputs_jquery.min",
-    'jquerypp': "../vendor/jquerypp/1.0.0/amd/jquerypp",
-    'ui-connect-morphable': "../vendor/webforge/jquery.ui.connect-morphable",
-    'ui-paging': "../vendor/webforge/ui.paging",
-    "JSON": "../vendor/json/json2",
-    "hogan": "../vendor/hogan/hogan-2.0.0.min.amd",
-    'placeholder': "../vendor/mths.be/placeholder-2.0.6",
-    'stacktrace': "../vendor/eriwen/stacktrace-min-0.4",
-    'twitter-bootstrap': "../vendor/twitter-bootstrap/bootstrap",
-    'twitter-typeahead': "../vendor/twitter/typeahead/typeahead.min",
-    'knockout': "../vendor/knockout/knockout-2.2.1",
-    'knockout-mapping': "../vendor/knockout/knockout.mapping",
-    'test-files': "../tests/files",
-    'knockout-bindings': "lib/Psc/ko/bindings",
-    'jquery-selectrange': "../vendor/stackoverflow/jquery-selectrange",
-    'jquery-global': "../vendor/jqwidgets/globalization/jquery.global",
-    'jquery-global-de-DE': "../vendor/jqwidgets/globalization/jquery.glob.de-DE",
-    'templates': "../templates",
-    'html5shiv': "../vendor/afarkas/html5shiv",
-    'i18next': '../vendor/i18next/i18next.amd.withJQuery-1.6.3.min'
-
-          }
-        },
-
-        stats: {
-      // Configure the console output
-          colors: true,
-          modules: true,
-          reasons: true
-        },
-
-        //storeStatsTo: "xyz", // writes the status to a variable named xyz
-        // you may use it later in grunt i.e. <%= xyz.hash %>
-
-        failOnError: true // don't report error to grunt if webpack find errors
-        // Use this if webpack errors are tolerable and grunt should continue
       }
     }
   });

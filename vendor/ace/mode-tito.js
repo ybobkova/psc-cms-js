@@ -3,7 +3,6 @@ define("ace/mode/tito", ["require", "exports", "module"], function(require, expo
 
 var oop = require("pilot/oop");
 var TextMode = require("ace/mode/text").Mode;
-console.log(TextMode);
 var Tokenizer = require("ace/tokenizer").Tokenizer;
 var MyNewHighlightRules = require("ace/mode/titorules").MyNewHighlightRules;
 
