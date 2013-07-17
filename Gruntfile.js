@@ -183,6 +183,26 @@ module.exports = function(grunt) {
           optimize: "none"
         }
       }
+    },
+    'find-non-AMD': {
+      'default': {
+        src: [
+          'lib/**/*.js', '!lib/ClassTemplate.js', '!tests/testTemplate.js', '!lib/config.js',
+          'vendor/**/*.js', 
+            '!vendor/ace/**/*.js', 
+            '!vendor/afarkas/html5*', 
+            '!vendor/hogan/*', 
+            '!vendor/jquery-simulate/*', 
+            '!vendor/jquerypp/**',
+            '!vendor/jqwidgets/globalization/**',
+            '!vendor/jquery/jquery-1.8.*.js',
+            '!vendor/qunit-assert/**',
+            '!vendor/require*.js',
+            '!vendor/lodash/**', // not quite sure either
+            '!vendor/json/json2.js', // not quite sure
+            '!vendor/qunit/*.js'
+        ]
+      }
     }
   });
 
@@ -190,7 +210,7 @@ module.exports = function(grunt) {
   grunt.task.registerTask('default', ['jshint', 'connect:server', 'qunit:all', 'requirejs']);
   grunt.task.registerTask('test', ['connect:server', 'qunit:all']);
   grunt.task.registerTask('server', ['connect:listenserver']);
-  grunt.task.registerTask('travis', ['jshint', 'connect:server', 'qunit:all']);
+  grunt.task.registerTask('travis', ['jshint', 'find-non-AMD', 'connect:server', 'qunit:all']);
   
   grunt.registerTask("create-class", "crates a new Class Stub", function (className, isa, traits) {
     var _ = grunt.util._;
@@ -310,4 +330,28 @@ module.exports = function(grunt) {
     
     grunt.log.ok();
   });
+
+grunt.registerMultiTask("find-non-AMD", "finds all files without a define() header for AMD", function () {
+    var filepaths = grunt.file.expand(grunt.util._.pluck(this.files, 'src'));
+    var _ = grunt.util._;
+
+    grunt.log.writeln('Searching in '+filepaths.length+' files.');
+    var error = false;
+
+    _.each(filepaths, function(path) {
+      var code = grunt.file.read(path);
+
+      if (!code.match(/^\s*define\(/m) && !code.match(/("|')function("|')\s*\=\=\=?\s*typeof define&&define\.amd/)) {
+        grunt.log.error('File '+path+' contains not an AMD define');
+        error = true;
+      }
+
+    });
+
+    if (error) {
+      grunt.log.fail();
+    } else {
+      grunt.log.ok();
+    }
+});
 };
