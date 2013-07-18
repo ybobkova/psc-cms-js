@@ -1,0 +1,16 @@
+{
+  "name": "psc-cms-js",
+  "version": "1.4.0",
+  "main": "Gruntfile.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "1.8.3"
+  }
+}
