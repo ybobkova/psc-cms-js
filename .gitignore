@@ -8,3 +8,4 @@
 /composer
 /composer.lock
 /*.sublime-workspace
+/bower_components
