@@ -1,5 +1,5 @@
 /*globals TestRole*/
-define(['psc-tests-assert','stacktrace','joose', 'Psc/Code','Psc/WrongValueException','Psc/InvalidArgumentException','Psc/Request'], function (t, printStackTrace, Joose) {
+define(['psc-tests-assert','joose', 'Psc/Code','Psc/WrongValueException','Psc/InvalidArgumentException','Psc/Request'], function (t, Joose) {
   
   module("Psc.Code");
   
@@ -25,24 +25,6 @@ define(['psc-tests-assert','stacktrace','joose', 'Psc/Code','Psc/WrongValueExcep
     this.assertException("Psc.WrongValueException", function () {
       Psc.Code.value('wrong', 'a1','a2','a3');
     });
-    
-  });
-  
-  test("stacktrace thingy", function () {
-    /*globals a:true*/
-    t.setup(this);
-    
-    var thiswillfail = function () {
-      a++;
-    };
-    
-    try {
-      thiswillfail();
-    } catch (e) {
-      var stack = printStackTrace({e: e});
-      
-      this.assertTrue(stack.length > 2);
-    }
     
   });
   

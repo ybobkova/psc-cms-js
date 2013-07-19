@@ -1,4 +1,4 @@
-define(['psc-tests-assert', 'fixtures/navigation.comun.flat', 'jquery-simulate', 'Psc/UI/Group', 'Psc/UI/PagesMenu'], function(t, flat) {
+define(['psc-tests-assert', 'test-files/navigation.comun.flat', 'jquery-simulate', 'Psc/UI/Group', 'Psc/UI/PagesMenu'], function(t, flat) {
   
   module("Psc.UI.PagesMenu");
   

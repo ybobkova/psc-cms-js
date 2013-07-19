@@ -1,10 +1,12 @@
 /*globals alert*/
-define(['psc-tests-assert', 'Psc/TextEditor', 'jquery-simulate', 'jquerypp/dom/selection'], function(t) {
+define(['psc-tests-assert', 'Psc/TextEditor', 'jquery-simulate', 'jquery-rangyinputs'], function(t) {
+  // todo how to test without rangyinputs really?
   
   module("Psc.TextEditor");
 
   var setup = function (test) {
     //var dm = new Psc.Test.DoublesManager();
+
     var initialText = "Lorem ipsum sit amet..";
     var $ta = $('<textarea cols="120" rows="8">'+initialText+'</textarea>');
     
@@ -15,12 +17,26 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquery-simulate', 'jquerypp/dom/s
     });
     
     var assertCaretPosition = function (pos, message) {
-      var selection = $ta.selection();
+      var selection = $ta.getSelection();
       this.assertEquals(pos, selection.start, message+' (start)');
       this.assertEquals(pos, selection.end, message+' (end)');
     };
+
+    var setSelection  = function (start, end) {
+      $ta.setSelection(start,end);
+    };
+
+    var getSelection  = function () {
+      var sel = $ta.getSelection();
+
+      return {
+        width: sel.length,
+        start: sel.start,
+        end: sel.end
+      };
+    };
     
-    return t.setup(test, {textEditor: textEditor, $ta: $ta, assertCaretPosition: assertCaretPosition});
+    return t.setup(test, {textEditor: textEditor, $ta: $ta, getSelection: getSelection, setSelection: setSelection, assertCaretPosition: assertCaretPosition});
   };
   
   test("can move caret to position", function() {
@@ -79,7 +95,7 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquery-simulate', 'jquerypp/dom/s
   test("getCaret returns false if text is selected", function () {
     var that = setup(this);
     
-    this.$ta.selection(0,4);
+    this.setSelection(0,4);
     this.assertFalse(this.textEditor.getCaret());
   });
   
@@ -104,14 +120,14 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquery-simulate', 'jquerypp/dom/s
     
     this.assertFalse(this.textEditor.hasSelection(), 'is false before');
     
-    this.$ta.selection(0,4);
+    this.setSelection(0,4);
     this.assertTrue(this.textEditor.hasSelection(), 'is true for selection');
   });
   
   test("getSelectionText returns the text for current selection", function () {
     var that = setup(this);
     
-    this.$ta.selection(0,5);
+    this.setSelection(0,5);
     
     this.assertEquals("Lorem", this.textEditor.getSelectionText(), 'getSelectionText returns selected substring from ta');
   });
@@ -184,10 +200,8 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquery-simulate', 'jquerypp/dom/s
     
     this.textEditor.select(0,5);
 
-    var sel = this.$ta.selection();
+    var sel = this.getSelection();
 
-    delete sel.startPos; // IE8 gimbel in pp
-    
     this.assertEquals({
         width: 5,
         start: 0,

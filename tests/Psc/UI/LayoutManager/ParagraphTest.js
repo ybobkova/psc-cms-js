@@ -1,4 +1,4 @@
-define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Paragraph', 'Psc/Test/DoublesManager', 'Psc/UI/NavigationSelect', 'jquerypp/dom/selection'], function(t, require) {
+define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Paragraph', 'Psc/Test/DoublesManager', 'Psc/UI/NavigationSelect'], function(t, require) {
   
   module("Psc.UI.LayoutManager.Paragraph");
   
@@ -100,7 +100,7 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
     var that = setup(this);
     var $button = this.setupLinkButton();
     
-    this.editor().setSelection(0,73); // all
+    this.editor().select(0,73); // all
     
     // cancel url prompt
     this.interactionProvider.cancelNextPrompt();
@@ -120,7 +120,7 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
     var that = setup(this);    
     var $button = this.setupButton('bold');
     
-    this.editor().unwrap().selection(0,5);
+    this.editor().select(0,5);
     $button.trigger('click');
     
     this.assertEquals(
@@ -135,7 +135,7 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
     var that = setup(this);    
     var $button = this.setupButton('italic');
     
-    this.editor().unwrap().selection(0,5);
+    this.editor().select(0,5);
     $button.trigger('click');
     
     this.assertEquals(
@@ -149,7 +149,7 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
     var that = setup(this);    
     var $button = this.setupButton('underlined');
     
-    this.editor().unwrap().selection(6,11);
+    this.editor().select(6,11);
     $button.trigger('click');
     
     this.assertEquals(

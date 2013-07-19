@@ -1,0 +1,519 @@
+Testing http://localhost:8000/tests/Psc/UI/GridTableEditorTest.html..F......
+>> Psc.UI.GridTableEditor - opens upload dialog when button upload is clicked
+>> Message: TypeError: 'undefined' is not a function (evaluating 'this._on')
+>> http://localhost:8000/bower_components/jquery-file-upload/js/jquery.fileupload.js:1162
+
+>> Psc.UI.GridTableEditor - opens upload dialog when button upload is clicked
+>> Message: failed asserting that Ein Dialog wurde geöffnet
+>> Actual: 0
+>> Expected: 1
+>> at http://localhost:8000/vendor/qunit-assert/lib/assert.js:66
+>>   at http://localhost:8000/tests/Psc/UI/GridTableEditorTest.js:97
+>>   at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:136
+>>   at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:279
+>>   at process (http://localhost:8000/vendor/qunit/qunit-1.10.0.js:1277)
+>>   at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:383
+
+Testing http://localhost:8000/tests/Psc/UI/GridTableTest.html.............OK
+Testing http://localhost:8000/tests/Psc/UI/GroupTest.html.OK
+Testing http://localhost:8000/tests/Psc/UI/HTML/BaseTest.html.OK
+Testing http://localhost:8000/tests/Psc/UI/HTML/BuilderTest.html.OK
+Testing http://localhost:8000/tests/Psc/UI/HTML/TagBuilderTest.html.OK
+Testing http://localhost:8000/tests/Psc/UI/InteractionProviderTest.html.OK
+Testing http://localhost:8000/tests/Psc/UI/LayoutManager/CollectionWidgetTest.html...OK
+Testing http://localhost:8000/tests/Psc/UI/LayoutManager/ContentStreamWrapperTest.html..OK
+Testing http://localhost:8000/tests/Psc/UI/LayoutManager/ControlTest.html.OK
+Testing http://localhost:8000/tests/Psc/UI/LayoutManager/DownloadsListTest.html.......OK
+Testing http://localhost:8000/tests/Psc/UI/LayoutManager/HeadlineTest.html....OK
+Testing http://localhost:8000/tests/Psc/UI/LayoutManager/ImageTest.html....OK
+Testing http://localhost:8000/tests/Psc/UI/LayoutManager/LiTest.html....OK
+Testing http://localhost:8000/tests/Psc/UI/LayoutManager/ParagraphTest.html...........OK
+Testing http://localhost:8000/tests/Psc/UI/LayoutManager/TeaserTest.html....OK
+Testing http://localhost:8000/tests/Psc/UI/LayoutManager/WebsiteWidgetTest.html..OK
+Testing http://localhost:8000/tests/Psc/UI/LayoutManagerComponentTest.html......OK
+Testing http://localhost:8000/tests/Psc/UI/LayoutManagerTest.html.................OK
+Testing http://localhost:8000/tests/Psc/UI/MainTest.html...................OK
+Testing http://localhost:8000/tests/Psc/UI/MenuTest.html.OK
+Testing http://localhost:8000/tests/Psc/UI/MiniButtonPanelTest.html...OK
+Testing http://localhost:8000/tests/Psc/UI/NavigationFoodTest.html..OK
+Testing http://localhost:8000/tests/Psc/UI/NavigationNodeTest.html.......OK
+Testing http://localhost:8000/tests/Psc/UI/NavigationSelectTest.html....OK
+Testing http://localhost:8000/tests/Psc/UI/NavigationTest.html..OK
+Testing http://localhost:8000/tests/Psc/UI/PagesMenuTest.html..OK
+Testing http://localhost:8000/tests/Psc/UI/RadiosTest.html.OK
+Testing http://localhost:8000/tests/Psc/UI/ResizableImageTest.html.OK
+Testing http://localhost:8000/tests/Psc/UI/SingleImageTest.html...OK
+Testing http://localhost:8000/tests/Psc/UI/SpinnerTest.html.OK
+Testing http://localhost:8000/tests/Psc/UI/SplitPaneTest.html.OK
+Testing http://localhost:8000/tests/Psc/UI/TabTest.html.OK
+Testing http://localhost:8000/tests/Psc/UI/TableBuilderTest.html.OK
+Testing http://localhost:8000/tests/Psc/UI/TableTest.html...OK
+Testing http://localhost:8000/tests/Psc/UI/TabsTest.html...............OK
+Testing http://localhost:8000/tests/Psc/UI/TemplateTest.html.OK
+Testing http://localhost:8000/tests/Psc/UI/TemplateWidgetWrapperTest.htmlF
+>> Psc.UI.TemplateWidgetWrapper -
+>> Message: Died on test #1     at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:343
+>>     at http://localhost:8000/tests/Psc/UI/TemplateWidgetWrapperTest.js:15
+>>     at http://localhost:8000/vendor/require.js:1585
+>>     at http://localhost:8000/vendor/require.js:841
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1104
+>>     at http://localhost:8000/vendor/require.js:754
+>>     at callGetModule (http://localhost:8000/vendor/require.js:1129)
+>>     at http://localhost:8000/vendor/require.js:1479
+>>     at http://localhost:8000/vendor/require.js:1606: Required attribute [templateName] is missed during initialization of [Psc.UI.TemplateWidg
+>> Error: Required attribute [templateName] is missed during initialization of [Psc.UI.TemplateWidgetWrapper]
+
+Testing http://localhost:8000/tests/Psc/UI/TestInteractionProviderTest.html....OK
+Testing http://localhost:8000/tests/Psc/UI/UploadableFileTest.htmlF
+>> Psc.UI.UploadableFile - placeholder has button, on click starts upload dialog
+>> Message: TypeError: 'undefined' is not a function (evaluating 'this._on')
+>> http://localhost:8000/bower_components/jquery-file-upload/js/jquery.fileupload.js:1162
+
+>> Psc.UI.UploadableFile - placeholder has button, on click starts upload dialog
+>> Message: failed asserting that undefined is true
+>> Actual: undefined
+>> Expected: true
+>> at http://localhost:8000/vendor/qunit-assert/lib/assert.js:86
+>>   at http://localhost:8000/tests/Psc/UI/UploadableFileTest.js:44
+>>   at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:136
+>>   at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:279
+>>   at process (http://localhost:8000/vendor/qunit/qunit-1.10.0.js:1277)
+>>   at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:383
+
+>> Psc.UI.UploadableFile - placeholder has button, on click starts upload dialog
+>> Message: Died on test #4     at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:343
+>>     at http://localhost:8000/tests/Psc/UI/UploadableFileTest.js:49
+>>     at http://localhost:8000/vendor/require.js:1585
+>>     at http://localhost:8000/vendor/require.js:841
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:596
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:672
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at checkLoaded (http://localhost:8000/vendor/require.js:673)
+>>     at http://localhost:8000/vendor/require.js:1503
+>>     at http://localhost:8000/vendor/require.js:1606: 'undefined' is not an object (evaluating 'dialog.unwrap().find')
+>> TypeError: 'undefined' is not an object (evaluating 'dialog.unwrap().find')
+
+Testing http://localhost:8000/tests/Psc/UI/UploadableImageTest.html..F
+>> Psc.UI.UploadableImage - if dbl clicked on div in image (resizable image or placeholder) the uploadService is invoked
+>> Message: TypeError: 'undefined' is not a function (evaluating 'this._on')
+>> http://localhost:8000/bower_components/jquery-file-upload/js/jquery.fileupload.js:1162
+
+>> Psc.UI.UploadableImage - if dbl clicked on div in image (resizable image or placeholder) the uploadService is invoked
+>> Message: failed asserting that undefined is true
+>> Actual: undefined
+>> Expected: true
+>> at http://localhost:8000/vendor/qunit-assert/lib/assert.js:86
+>>   at http://localhost:8000/tests/Psc/UI/UploadableImageTest.js:61
+>>   at http://localhost:8000/tests/Psc/UI/UploadableImageTest.js:69
+>>   at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:136
+>>   at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:279
+>>   at process (http://localhost:8000/vendor/qunit/qunit-1.10.0.js:1277)
+>>   at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:383
+
+>> Psc.UI.UploadableImage - if dbl clicked on div in image (resizable image or placeholder) the uploadService is invoked
+>> Message: TypeError: 'undefined' is not a function (evaluating 'this._on')
+>> http://localhost:8000/bower_components/jquery-file-upload/js/jquery.fileupload.js:1162
+
+>> Psc.UI.UploadableImage - if dbl clicked on div in image (resizable image or placeholder) the uploadService is invoked
+>> Message: failed asserting that undefined is true
+>> Actual: undefined
+>> Expected: true
+>> at http://localhost:8000/vendor/qunit-assert/lib/assert.js:86
+>>   at http://localhost:8000/tests/Psc/UI/UploadableImageTest.js:61
+>>   at http://localhost:8000/tests/Psc/UI/UploadableImageTest.js:70
+>>   at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:136
+>>   at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:279
+>>   at process (http://localhost:8000/vendor/qunit/qunit-1.10.0.js:1277)
+>>   at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:383
+
+Testing http://localhost:8000/tests/Psc/UI/WidgetWrapperTest.html..OK
+Testing http://localhost:8000/tests/Psc/UI/jqx/GridTableEditorTest.html.OK
+Testing http://localhost:8000/tests/Psc/UI/jqx/I18nWrapperTest.html.OK
+Testing http://localhost:8000/tests/Psc/UploadServiceTest.htmlFFF
+>> Psc.UploadService - openSingleDialog opens a single dialog with a form and a file input in it
+>> Message: Died on test #1     at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:343
+>>     at http://localhost:8000/tests/Psc/UploadServiceTest.js:41
+>>     at http://localhost:8000/vendor/require.js:1585
+>>     at http://localhost:8000/vendor/require.js:841
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:596
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:672
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at checkLoaded (http://localhost:8000/vendor/require.js:673)
+>>     at http://localhost:8000/vendor/require.js:1503
+>>     at http://localhost:8000/vendor/require.js:1606: 'undefined' is not a function (evaluating 'this._on')
+>> TypeError: 'undefined' is not a function (evaluating 'this._on')
+
+>> Psc.UploadService - openSingleDialog renders other fields with the upload field
+>> Message: Died on test #1     at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:343
+>>     at http://localhost:8000/tests/Psc/UploadServiceTest.js:70
+>>     at http://localhost:8000/vendor/require.js:1585
+>>     at http://localhost:8000/vendor/require.js:841
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:596
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:672
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at checkLoaded (http://localhost:8000/vendor/require.js:673)
+>>     at http://localhost:8000/vendor/require.js:1503
+>>     at http://localhost:8000/vendor/require.js:1606: 'undefined' is not a function (evaluating 'this._on')
+>> TypeError: 'undefined' is not a function (evaluating 'this._on')
+
+>> Psc.UploadService - openSingleDialog submits the upload file and closes the dialog on error
+>> Message: Died on test #1     at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:343
+>>     at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:319
+>>     at http://localhost:8000/tests/Psc/UploadServiceTest.js:90
+>>     at http://localhost:8000/vendor/require.js:1585
+>>     at http://localhost:8000/vendor/require.js:841
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:596
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:672
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at checkLoaded (http://localhost:8000/vendor/require.js:673)
+>>     at http://localhost:8000/vendor/require.js:1503
+>>     at http://localhost:8000/vendor/require.js:1606: 'undefined' is not a function (evaluating 'this._on')
+>> TypeError: 'undefined' is not a function (evaluating 'this._on')
+
+Testing http://localhost:8000/tests/Psc/WrongValueExceptionTest.html.OK
+Testing http://localhost:8000/tests/Psc/ko/Bindings/LayoutManagerTest.html.....OK
+Testing http://localhost:8000/tests/Psc/ko/TableTest.html.OK
+Testing http://localhost:8000/tests/tiptoi/ConsoleOutputTest.html.OK
+Testing http://localhost:8000/tests/tiptoi/GameEditorTest.html..OK
+Testing http://localhost:8000/tests/tiptoi/GameMakerTest.html.OK
+Testing http://localhost:8000/tests/tiptoi/GameSimulatorTest.html..OK
+Testing http://localhost:8000/tests/tiptoi/GameTableTest.html.....OK
+Testing http://localhost:8000/tests/tiptoi/Games/SoundsTest.htmlSpiel "sounds1" startet
+Spiel "sounds1" startet
+Spiel beendet
+Spiel beendet
+.Spiel "sounds merged" startet
+Spiel "sounds merged" startet
+Spiel beendet
+Spiel beendet
+.OK
+Testing http://localhost:8000/tests/tiptoi/Games/TablesTest.htmlSpiel "chooseRandomRowProgram" startet
+Spiel "chooseRandomRowProgram" startet
+Spiel beendet
+Spiel beendet
+.OK
+Testing http://localhost:8000/tests/tiptoi/InputProviderTest.html.OK
+Testing http://localhost:8000/tests/tiptoi/InteractiveInputProviderTest.html..OK
+Testing http://localhost:8000/tests/tiptoi/ProgramRunnerTest.html.............OK
+Testing http://localhost:8000/tests/tiptoi/SoundImporterBackendTest.htmlF
+>> tiptoi.SoundImporterBackend -
+>> Message: Died on test #1     at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:343
+>>     at http://localhost:8000/tests/tiptoi/SoundImporterBackendTest.js:15
+>>     at http://localhost:8000/vendor/require.js:1585
+>>     at http://localhost:8000/vendor/require.js:841
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1104
+>>     at http://localhost:8000/vendor/require.js:754
+>>     at callGetModule (http://localhost:8000/vendor/require.js:1129)
+>>     at http://localhost:8000/vendor/require.js:1479
+>>     at http://localhost:8000/vendor/require.js:1606: Required attribute [uploadService] is missed during initialization of [tiptoi.SoundImport
+>> Error: Required attribute [uploadService] is missed during initialization of [tiptoi.SoundImporterBackend]
+
+Testing http://localhost:8000/tests/tiptoi/SoundImporterTest.html.FF
+>> tiptoi.SoundImporter - table contains all rows from backend rows when button is clicked for upload
+>> Message: Died on test #1     at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:343
+>>     at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:319
+>>     at http://localhost:8000/tests/tiptoi/SoundImporterTest.js:83
+>>     at http://localhost:8000/vendor/require.js:1585
+>>     at http://localhost:8000/vendor/require.js:841
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:596
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:672
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at checkLoaded (http://localhost:8000/vendor/require.js:673)
+>>     at http://localhost:8000/vendor/require.js:1503
+>>     at http://localhost:8000/vendor/require.js:1606: You cannot apply bindings multiple times to the same element.
+>> Error: You cannot apply bindings multiple times to the same element.
+
+>> tiptoi.SoundImporter - sounds are exported the way they are imported
+>> Message: Died on test #1     at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:343
+>>     at http://localhost:8000/vendor/qunit/qunit-1.10.0.js:319
+>>     at http://localhost:8000/tests/tiptoi/SoundImporterTest.js:113
+>>     at http://localhost:8000/vendor/require.js:1585
+>>     at http://localhost:8000/vendor/require.js:841
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:1074
+>>     at http://localhost:8000/vendor/require.js:126
+>>     at http://localhost:8000/vendor/require.js:1117
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at http://localhost:8000/vendor/require.js:1118
+>>     at http://localhost:8000/vendor/require.js:895
+>>     at http://localhost:8000/vendor/require.js:596
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:598
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at breakCycle (http://localhost:8000/vendor/require.js:601)
+>>     at http://localhost:8000/vendor/require.js:672
+>>     at each (http://localhost:8000/vendor/require.js:58)
+>>     at checkLoaded (http://localhost:8000/vendor/require.js:673)
+>>     at http://localhost:8000/vendor/require.js:1503
+>>     at http://localhost:8000/vendor/require.js:1606: You cannot apply bindings multiple times to the same element.
+>> Error: You cannot apply bindings multiple times to the same element.
+
+Testing http://localhost:8000/tests/tiptoi/SoundTest.html.OK
+Testing http://localhost:8000/tests/tiptoi/TimerTest.html..OK
+Testing http://localhost:8000/tests/tiptoi/TitoGameEditorTest.html...OK
+Testing http://localhost:8000/tests/tiptoi/cpuTest.html....OK
+Testing http://localhost:8000/tests/CoMun/CalendarEventTest.html.OK
+Testing http://localhost:8000/tests/CoMun/CityTest.html.OK
+Testing http://localhost:8000/tests/CoMun/CurverTest.html.OK
+Warning: 16/1460 assertions failed (44387ms) Use --force to continue.
+
+Aborted due to warnings.
