@@ -138,6 +138,21 @@ define(['psc-tests-assert','text!fixtures/tabs.html','text!fixtures/tabs-for-mai
     tabs.open(this.otherTab);
     this.assertEquals(2, selected(),'tab was selected the second time');
   });
+
+  test("select a tab sets error context info in _err", function() {
+    var that = setup(this), tabs = this.tabs, $tabs = tabs.unwrap(), tab = this.tab;
+
+    window._errs = {};
+    
+    tabs.add(tab);
+    tabs.select(tab);
+
+    this.assertEquals(
+      tab.getLabel()+' '+tab.getUrl(),
+      window._errs.meta.tab,
+      'tabs should set errors meta info'
+    );
+  });
   
   test("has searches by id not by reference", function() {
     var that = setup(this), tabs = this.tabs, tab = this.tab;
