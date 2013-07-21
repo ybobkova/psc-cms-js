@@ -1,4 +1,4 @@
-define(['psc-tests-assert', 'jquery', 'tiptoi/SoundImporter', 'tiptoi/Sound','Psc/Test/DoublesManager'], function(t, $) {
+define(['psc-tests-assert', 'jquery', 'tiptoi/Main', 'tiptoi/SoundImporter', 'tiptoi/Sound','Psc/Test/DoublesManager'], function(t, $) {
   
   module("tiptoi.SoundImporter");
   
@@ -9,47 +9,55 @@ define(['psc-tests-assert', 'jquery', 'tiptoi/SoundImporter', 'tiptoi/Sound','Ps
 
     var $widget = $('#visible-fixture').empty();
 
-    var Backend = function () {
-      var that = this;
-
-      $.extend(this, {
-
-        createSound: function (content, number, speakers, status, details) {
-          return {
+    var createSound =  function (content, number, speakers, status, done, details) {
+      return {
             status: status,
+            'do': done,
             details: details || [],
-            sound: new tiptoi.Sound({
+            sound: {
               content: content,
               number: number,
               speakers: speakers
-            })
+            }
           };
-        },
-
-        fakeGetParsedSounds: function () {
-          return [
-            that.createSound("Dieser Sound ist neu ohne Soundnummer", null, [hs], "new"),
-            that.createSound("Dieser Sound ist neu mit Soundnummer", "2-HRF-002", [hs], "new"),
-
-            that.createSound("Dieser Sound ist vorhanden mit Soundnummer", "2-TEST-201", ["Paul"], "existing"),
-            that.createSound("Dieser Sound ist vorhanden mit falscher Soundnummer", "2-TEST-2001", ["Paul"], ["wrong_number"], ["Der Inhalt wurde in der Datenbank unter einer anderen Nummer gefunden. Gefundene Nummer: 2-TEST-201]"]),
-
-            that.createSound("Dieser Sound ist vorhanden mit falschen Sprechern", "2-TEST-201", [hs], ["wrong_speakers"], ["Der Sound mit der Nummer 2-TEST-201 hat als Sprecher 'Pascal Breuer' eingetragen, der Sprecher in der Datenbank ist jedoch 'Paul'"])
-          ];
-        }
-      });
     };
 
-    var backend = new Backend();
+     var fakeSounds = [
+       createSound("Dieser Sound ist neu ohne Soundnummer", null, [hs], "new", undefined),
+       createSound("Dieser Sound ist neu mit Soundnummer", "2-HRF-002", [hs], "new", undefined),
+       createSound("Dieser Sound ist vorhanden mit Soundnummer", "2-TEST-201", ["Paul"], "existing", undefined),
+       createSound("Dieser Sound ist vorhanden mit falscher Soundnummer", "2-TEST-2001", ["Paul"], "wrong_number", ["Der Inhalt wurde in der Datenbank unter einer anderen Nummer gefunden. Gefundene Nummer: 2-TEST-201]"], undefined),
+       createSound("Dieser Sound ist vorhanden mit falschen Sprechern", "2-TEST-201", [hs], "wrong_speakers", ["Der Sound mit der Nummer 2-TEST-201 hat als Sprecher 'Pascal Breuer' eingetragen, der Sprecher in der Datenbank ist jedoch 'Paul'"], undefined)
+    ];
+
+    /*
+    var backed = new tiptoi.SoundImporterBackend({
+      uploadService: dm.getUploadService(),
+      tiptoiMain: new tiptoi.Main({main: { register: function () {}}, productName: 'TEST', widget: $('<div />')})
+    */
+
+    var backend = {
+      imports: null,
+
+      upload: function (callback) {
+        window.setTimeout(function () {
+          callback(fakeSounds);
+        }, 20);
+      },
+
+      flush: function (soundImports) {
+        console.log(soundImports);
+        this.imports = soundImports;
+      }
+    };
 
     var soundImporter = new tiptoi.SoundImporter({ 
       backend: backend,
       widget: $widget,
-      container: dm.getContainer(),
-      inputSounds: backend.fakeGetParsedSounds()
+      container: dm.getContainer()
     });
     
-    return t.setup(test, {importer: soundImporter, $table: $widget.find('> .psc-cms-ui-group > div.content > table:first')});
+    return t.setup(test, {importer: soundImporter, backend: backend, $table: $widget.find('> .psc-cms-ui-group > div.content > table:first')});
   };
 
   test("widget is rendered", function() {
@@ -62,9 +70,46 @@ define(['psc-tests-assert', 'jquery', 'tiptoi/SoundImporter', 'tiptoi/Sound','Ps
     this.assertSame(that.$table.get(0), $table.get(0));
   });
 
-  test("table contains all rows from inputSounds", function () {
+  asyncTest("table contains all rows from backend rows when button is clicked for upload", function () {
     var that = setup(this);
 
-    this.assertjQueryLength(5, that.$table.find('> tbody > tr'));
+    that.importer.getViewModel().openUpload();
+
+    window.setTimeout(function () {
+      start();
+
+      that.assertjQueryLength(5, that.$table.find('> tbody > tr'));
+  
+    }, 60);
+  });
+
+  asyncTest("sounds are exported the way they are imported", function () {
+    var that = setup(this);
+
+    that.importer.getViewModel().openUpload();
+
+    window.setTimeout(function () {
+      start();
+
+      that.assertjQueryLength(5, that.$table.find('> tbody > tr'));
+
+      that.importer.getViewModel().flush();
+
+      that.assertLength(5, that.backend.imports);
+
+      for (var i = 0, jsonImport; i < that.backend.imports.length; i++) {
+        jsonImport = that.backend.imports[i];
+
+        that.assertNotUndefined(jsonImport.status, 'status is defined');
+        that.assertTrue(jsonImport.hasOwnProperty('do'), 'do is an attribute');
+        that.assertNotUndefined(jsonImport.sound, 'sound is defined');
+        that.assertNotUndefined(jsonImport.sound.content, 'sound.content is defined');
+        that.assertNotUndefined(jsonImport.sound.speakers, 'sound.speakers is defined');
+        that.assertNotUndefined(jsonImport.sound.number, 'sound.number is defined');
+      }
+
+    }, 60);
+    
+
   });
 });
