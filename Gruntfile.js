@@ -87,6 +87,11 @@ module.exports = function(grunt) {
           urls: mapToUrl('tests/Psc/TextEditor*.html')
         }
       },
+      tabs: {
+        options: {
+          urls: mapToUrl('tests/Psc/UI/Tabs*.html')
+        }
+      },
       date: {
         options: {
           urls: mapToUrl('tests/Psc/Date*.html')

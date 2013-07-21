@@ -15,6 +15,9 @@ define(['psc-tests-assert','text!fixtures/tabs.html','text!fixtures/tabs-for-mai
       url: '/entities/persons/19/form'
     });
 
+    // hack
+    sessionStorage.removeItem('psc-cms-ui-pinned-tabs');
+
     var $fixture = $('#qunit-fixture').html(html);
     var $tabs = $fixture.find('div.psc-cms-ui-tabs');
     var tabs = new Psc.UI.Tabs({ widget: $tabs });
@@ -22,7 +25,7 @@ define(['psc-tests-assert','text!fixtures/tabs.html','text!fixtures/tabs-for-mai
     
     test.assertEquals($tabs.length,1,'self-test: Fixture hat div.psc-cms-ui-tabs im html des Ajax Requests');
     test.assertSame($tabs, tabs.unwrap());
-    
+
     return ret;
   };
   
@@ -225,10 +228,7 @@ define(['psc-tests-assert','text!fixtures/tabs.html','text!fixtures/tabs-for-mai
   
   test("tabs stores pinned tabs in sessionStorage (just a small acceptance here)", function () {
     var that = setup(this);
-    
-    // hack
-    sessionStorage.removeItem('psc-cms-ui-pinned-tabs');
-    
+        
     this.assertEquals(0, this.tabs.getPinnedTabs().length, 'there are no tabs pinned');
     this.tabs.pinn(this.tab);
     
