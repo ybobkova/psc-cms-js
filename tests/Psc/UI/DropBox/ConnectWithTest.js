@@ -1,7 +1,8 @@
 define(['psc-tests-assert',
         'text!fixtures/dropboxes-connected.html', // change to php for quick and dirty acceptance while dev
+        'test-setup',
         'Psc/UI/DropBox', 'Psc/UI/Dragger','Psc/UI/DropBox','Psc/UI/DropBoxButton','Psc/CMS/Item', 'Psc/CMS/TabOpenable', 'Psc/CMS/Buttonable', 'Psc/CMS/Identifyable','Psc/CMS/DropBoxButtonable', 'Psc/UI/WidgetWrapper'
-       ], function(t, html) {
+       ], function(t, html, testSetup) {
   
   module('Psc.UI.DropBox (connectWith)');
   
@@ -10,6 +11,7 @@ define(['psc-tests-assert',
 
     // we bootstrap our own main, because the inline scripts register the gridPanel to main
     var main = new Psc.UI.Main({
+      container: testSetup.dm.getContainer(),
       translator: {},
       tabs: new Psc.UI.Tabs({
         widget: $('<div />')
