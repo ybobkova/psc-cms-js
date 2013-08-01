@@ -5,10 +5,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
-//  grunt.loadNpmTasks('grunt-contrib-concat');
-//  grunt.loadNpmTasks('grunt-contrib-uglify');
-//  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-hogan');
+
+  grunt.loadTasks('D:/www/cojoko/lib/tasks');
 
   var port = 8000;
   var hostname = 'localhost';
@@ -208,6 +207,14 @@ module.exports = function(grunt) {
             '!vendor/qunit/*.js'
         ]
       }
+    },
+
+    'joose-transpile': {
+      'default': {
+        src: [
+          'lib/Comun/**/*.js', 'lib/Psc/**/*.js', 'lib/tiptoi/**/*.js'
+        ]
+      }
     }
   });
 
@@ -336,7 +343,7 @@ module.exports = function(grunt) {
     grunt.log.ok();
   });
 
-grunt.registerMultiTask("find-non-AMD", "finds all files without a define() header for AMD", function () {
+  grunt.registerMultiTask("find-non-AMD", "finds all files without a define() header for AMD", function () {
     var filepaths = grunt.file.expand(grunt.util._.pluck(this.files, 'src'));
     var _ = grunt.util._;
 
@@ -358,5 +365,5 @@ grunt.registerMultiTask("find-non-AMD", "finds all files without a define() head
     } else {
       grunt.log.ok();
     }
-});
+  });
 };
