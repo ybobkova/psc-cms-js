@@ -219,4 +219,28 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
 
     this.assertEquals([567567, "DEMO2:6786788567"], $newOIDs2);
   });
+
+  test("the dialog closes after pressing the Enter key", function () {
+    setup(this);
+    
+    var $cell = this.$fixture.find('table tr:eq(7) td:eq(1)');
+    $cell.simulate('dblclick');
+
+    var $dialog = $('.ui-dialog:visible');
+
+    this.assertEquals(1, $dialog.length, 'Ein Dialog wurde geöffnet');
+
+    var $inputValue = $('body').find('.inputValue');
+    
+    $inputValue.val("Das Auto,  das Fahrrad   ");
+
+    var e = jQuery.Event("keyup");
+    e.which = e.keyCode = 13;
+
+    $inputValue.trigger(e);
+
+    $dialog = $('.ui-dialog:visible');
+
+    this.assertEquals(0, $dialog.length, 'Der Dialog wurde geschlossen');
+  });
 });
