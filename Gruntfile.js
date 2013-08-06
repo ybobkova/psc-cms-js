@@ -7,6 +7,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-hogan');
 
+
   grunt.loadTasks('D:/www/cojoko/lib/tasks');
 
   var port = 8000;
@@ -212,7 +213,8 @@ module.exports = function(grunt) {
     'joose-transpile': {
       'default': {
         src: [
-          'lib/Comun/**/*.js', 'lib/Psc/**/*.js', 'lib/tiptoi/**/*.js'
+          'lib/Comun/**/*.js', 'lib/Psc/**/*.js', 'lib/tiptoi/**/*.js',
+          '!lib/Psc/Errors.js'
         ]
       }
     }
