@@ -7,8 +7,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-hogan');
 
-  grunt.loadTasks('D:/www/cojoko/lib/tasks');
-
   var port = 8000;
   var hostname = 'localhost';
   var nodepath = require("path");
