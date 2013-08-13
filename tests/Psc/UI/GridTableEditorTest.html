@@ -16,12 +16,19 @@
   <div id="visible-fixture">visible test markup</div>
   
   <script src="/vendor/require.js"></script>
+  <script src="/vendor/blanket.min.js" data-cover-only="lib\Psc\UI\GridTableEditor.js"></script>
   <script>
     require(["/lib/boot.js"], function () {
       require(["TestRunner"], function (runner) {
         runner.run(['tests/Psc/UI/GridTableEditorTest']);
       });
     });
+  </script>
+  <script type="text/javascript">
+    function blanket_toggleSource(e) {
+      var t = document.getElementById(e);
+      t.style.display === "block" ? t.style.display = "none" : t.style.display = "block";
+    }
   </script>
 </body>
 </html>

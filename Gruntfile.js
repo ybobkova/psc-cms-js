@@ -6,6 +6,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-hogan');
+  grunt.loadNpmTasks('grunt-blanket-qunit');
 
   grunt.loadTasks('D:/www/cojoko/lib/tasks');
 
