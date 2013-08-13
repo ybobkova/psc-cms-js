@@ -8,8 +8,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-hogan');
   grunt.loadNpmTasks('grunt-blanket-qunit');
 
-  grunt.loadTasks('D:/www/cojoko/lib/tasks');
-
   var port = 8000;
   var hostname = 'localhost';
   var nodepath = require("path");
