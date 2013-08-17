@@ -6,6 +6,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-hogan');
+//  grunt.loadNpmTasks('grunt-qunit-istanbul');
   grunt.loadNpmTasks('grunt-blanket-qunit');
 
   var port = 8000;
@@ -60,10 +61,19 @@ module.exports = function(grunt) {
     qunit: {
       all: {
         options: {
-           urls: [].concat(mapToUrl('tests/Psc/**/*.html'))
-                   .concat(mapToUrl('tests/tiptoi/**/*.html'))
-                   .concat(mapToUrl('tests/CoMun/**/*.html'))
-        }
+          urls: [].concat(mapToUrl('tests/Psc/**/*.html'))
+                  .concat(mapToUrl('tests/tiptoi/**/*.html'))
+                  .concat(mapToUrl('tests/CoMun/**/*.html')),
+//          '--web-security': 'no',
+//          coverage: {
+//            src: ['lib/**/*.js'],
+//            instrumentedFiles: 'temp/',
+//            htmlReport: 'report/coverage',
+//            coberturaReport: 'report/',
+//            linesThresholdPct: 85
+//          }
+//        },  
+//        all: ['tests/**/*.html']
       },
       nav: {
         options: {
