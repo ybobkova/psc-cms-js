@@ -16,10 +16,41 @@
   <div id="visible-fixture">visible test markup</div>
   
   <script src="/vendor/require.js"></script>
+  <script src="/vendor/blanket/blanket-1.1.5-dev.js" data-cover-flags="debug existingRequireJS" data-cover-only="GridTableEditor" data-cover-never="//.*Test$/i"></script>
   <script>
     require(["/lib/boot.js"], function () {
-      require(["TestRunner"], function (runner) {
-        runner.run(['tests/Psc/UI/GridTableEditorTest']);
+      require(['qunit'], function () { // as window.QUnit
+
+        QUnit.config.urlConfig.push({
+          id: "coverage",
+          label: "Enable coverage",
+          tooltip: "Enable code coverage."
+        });
+
+        QUnit.begin(function(){
+          blanket.noConflict().setupCoverage();
+        });
+
+        QUnit.done(function(failures, total) {
+          blanket.noConflict().onTestsDone();
+        });
+
+        QUnit.moduleStart(function( details ) {
+          blanket.noConflict().onModuleStart();
+        });
+
+        QUnit.testStart(function( details ) {
+          blanket.noConflict().onTestStart();
+        });
+
+        QUnit.testDone(function( details ) {
+          blanket.noConflict().onTestDone(details.total,details.passed);
+        });
+
+        require(["TestRunner"], function (runner) {
+          runner.run(['tests/Psc/UI/GridTableEditorTest']);
+        });
+
       });
     });
   </script>

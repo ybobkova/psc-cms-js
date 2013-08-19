@@ -5,6 +5,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks('grunt-blanket-qunit');
   grunt.loadNpmTasks('grunt-hogan');
 
   var port = 8000;
@@ -17,7 +18,7 @@ module.exports = function(grunt) {
     var urls = grunt.util._.map(
       grunt.file.expand(files),
       function (file) {
-        return baseUrl+file;
+        return baseUrl+file+'?coverage=true&gruntReport';
       }
     );
     
@@ -212,6 +213,17 @@ module.exports = function(grunt) {
         src: [
           'lib/Comun/**/*.js', 'lib/Psc/**/*.js', 'lib/tiptoi/**/*.js'
         ]
+      }
+    },
+
+    blanket_qunit: {
+      gridEditor: {
+        options: {
+          //urls: mapToUrl('tests/Psc/**/GridTableEditor*.html'),
+          urls: ['http://localhost:8000/tests/Psc/UI/GridTableEditorTest.html?coverage=true&gruntReport'],
+          inject: false,
+          threshold: 70
+        }
       }
     }
   });
