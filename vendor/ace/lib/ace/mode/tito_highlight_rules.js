@@ -16,7 +16,7 @@ define(function(require, exports, module) {
     var preposition = "(?:aus|zu|zum|zur|in|für jedes|für)";
     var equals = "\\s*\\:\\=\\s*";
     var operator = "(?:\\<|\\>|\\=\\=|\\>\\=|\\<\\=)";
-    var arrayElement = "\\[\\s*.+?\\s*\\]"
+    var arrayElement = "\\[\\s*.+?\\s*\\]";
 
     var tokenMap = {
       "variable": "support.function",
@@ -47,6 +47,10 @@ define(function(require, exports, module) {
         token: tokenMap.variable, // Wenn nach := eine variable steht
         regex: "^\\s*" + word + "(?!\\s*" + equals + "\\d+)(?=\\s*" + equals + ")",
         next: "variable"
+      }, {
+        token: tokenMap.plaintext,
+        regex: "\\s*Füge\\s*",
+        next: "fuege"
       }, {
         token: tokenMap.comment,
         regex: "\\#",
@@ -84,10 +88,6 @@ define(function(require, exports, module) {
       }, {
         token: tokenMap.variable, // Variablen mit < oder > oder == einer Value
         regex: word + "(?=\\s*(?:" + operator + ")\\s*\\d+)"
-      }, {
-        token: tokenMap.plaintext,
-        regex: "^\\s*Füge\\s*",
-        next: "fuegeEinen"
       }, {
         token: tokenMap.plaintext,
         regex: "(?:Wähle|auf)\\s*",
@@ -142,13 +142,13 @@ define(function(require, exports, module) {
         regex: "\\d+\\s*" + word,
         next: "start"
       }],      
-      fuegeEinen: [{
+      fuege: [{
         token: tokenMap.plaintext,
-        regex: "(?:einen|eine|ein)\\s+",
-        next: "variableImText"
+        regex: "ein Element",
+        next: "start"
       }, {
         token: tokenMap.variable,
-        regex: word,
+        regex: "[^\\s]+\\s+",
         next: "start"
       }],
       variableImText: [{
@@ -221,15 +221,27 @@ define(function(require, exports, module) {
         token: tokenMap.variable, // Variablen <>== einer Variable
         regex: word + "\\s*(?=" + operator + "\\s*)",
         next: "variable"
-      },  {
+      }, {
         token: tokenMap.variable, // Variablen <>== einer Variable
         regex: word + "\\." + word + "\\s*(?=" + operator + "\\s*)",
         next: "variable"
-      },  {
+      }, {
         token: tokenMap.variable, // Variablen <>== einer Variable
         regex: word + "(?=\\s*" + arrayElement + ")",
         next: "element"
+      }, {
+        token: tokenMap.variable,
+        regex: "[^\\s]+(?=\\sdie\\s[^\\s]+(?=\\s||$))",
+        next: "enthaelt"
       },  {
+        token: tokenMap.variable,
+        regex: "[^\\s]+(?=\\s||$)",
+        next: "start"
+      }],
+      enthaelt: [{
+        token: tokenMap.plaintext,
+        regex: "die"
+      }, {
         token: tokenMap.variable,
         regex: word,
         next: "start"
@@ -246,7 +258,7 @@ define(function(require, exports, module) {
       }, {
         token: tokenMap.variable,
         regex: word
-      },  {
+      }, {
         token: tokenMap.plaintext,
         regex: "\\.",
         next: "start"

@@ -45,6 +45,7 @@ define(['psc-tests-assert','joose', 'Psc/UI/FormController', 'Psc/EventManagerMo
   test("controller triggers error-form-save on reject()", function () {
     var that = setup(this);
     
+
     var deferred = $.Deferred();
     var response = new Psc.Response({code: 404, reason: 'Not Found'});
     var AjaxFormHandlerClass = Joose.Class({
