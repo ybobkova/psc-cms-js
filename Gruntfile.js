@@ -177,7 +177,7 @@ module.exports = function(grunt) {
           // include other modules that are not found with include
           mainConfigFile: "lib/boot-helper.js",
           //out: "build/psc-cms-js.min.js",
-          dir: "build/psc-cms-js",
+          dir: "build/",
 
            //The top level directory that contains your app. If this option is used
           //then it assumed your scripts are in a subdirectory under this path.
