@@ -1,5 +1,5 @@
 /*globals TestRole*/
-define(['psc-tests-assert','stacktrace','joose', 'Psc/Code','Psc/WrongValueException','Psc/InvalidArgumentException','Psc/Request'], function (t, printStackTrace, Joose) {
+define(['psc-tests-assert','stacktrace','joose', 'lodash', 'Psc/Code','Psc/WrongValueException','Psc/InvalidArgumentException','Psc/Request'], function (t, printStackTrace, Joose, _) {
   
   module("Psc.Code");
   
@@ -67,11 +67,11 @@ define(['psc-tests-assert','stacktrace','joose', 'Psc/Code','Psc/WrongValueExcep
       new Psc.InvalidArgumentException('katching','blubb')
     ];
     
-    Joose.A.each(positiveValues, function (data) {
+    _.each(positiveValues, function (data) {
       that.assertTrue(Psc.Code.isArray(data), that.debug(data)+" isArray");
     });
 
-    Joose.A.each(negativeValues, function (data) {
+    _.each(negativeValues, function (data) {
       that.assertFalse(Psc.Code.isArray(data), that.debug(data)+" !isArray");
     });
   });
@@ -104,15 +104,15 @@ define(['psc-tests-assert','stacktrace','joose', 'Psc/Code','Psc/WrongValueExcep
       [{}, 7]
     ];
     
-    Joose.A.each(positiveValues, function (data) {
+    _.each(positiveValues, function (data) {
       that.assertTrue(Psc.Code.isInstanceOf(data[0], data[1]), that.debug(data[0])+" isInstanceof "+that.debug(data[1]));
     });
 
-    Joose.A.each(negativeValues, function (data) {
+    _.each(negativeValues, function (data) {
       that.assertFalse(Psc.Code.isInstanceOf(data[0], data[1]), that.debug(data[0])+" isInstanceof "+that.debug(data[1]));
     });
 
-    Joose.A.each(failureValues, function (data) {
+    _.each(failureValues, function (data) {
       QUnit.raises(function () {
         Psc.Code.isInstanceOf(data[0], data[1]);
       });

@@ -1,4 +1,4 @@
-define(['psc-tests-assert', 'joose', 'tiptoi/GameTable','tiptoi/Sound'], function(t, Joose) {
+define(['psc-tests-assert', 'lodash', 'tiptoi/GameTable','tiptoi/Sound'], function(t, _) {
   
   module("tiptoi.GameTable");
   
@@ -74,7 +74,7 @@ define(['psc-tests-assert', 'joose', 'tiptoi/GameTable','tiptoi/Sound'], functio
     for (var i = 1, l = gameTable.rows.length; i <= l; i++) {
       row = gameTable.chooseNotYetUsedRandomRow();
       
-      if (Joose.A.exists(usedRows, row)) {
+      if (_.contains(usedRows, row)) {
         that.fail("Zeile wurde bereits vorher ausgegeben");
       } else {
         this.assertNotUndefined(row.sound);
@@ -96,7 +96,7 @@ define(['psc-tests-assert', 'joose', 'tiptoi/GameTable','tiptoi/Sound'], functio
     for (var i = 1, l = gameTable.getBlocksNum(); i <= l; i++) {
       block = gameTable.chooseNotYetUsedRandomBlock();
       
-      if (Joose.A.exists(usedBlocks, block)) {
+      if (_.contains(usedBlocks, block)) {
         that.fail("Zeile wurde bereits vorher ausgegeben");
       } else {
         this.assertNotUndefined(block[0].sound);
