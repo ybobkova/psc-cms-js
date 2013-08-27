@@ -1,11 +1,7 @@
 /*global module:false*/
 module.exports = function(grunt) {
   
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
-  grunt.loadNpmTasks('grunt-contrib-requirejs');
-  grunt.loadNpmTasks('grunt-hogan');
+  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
   var port = 8000;
   var hostname = 'localhost';
