@@ -286,11 +286,11 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.task.registerTask('pack', ['jshint', 'requirejs']);
   grunt.task.registerTask('default', ['jshint', 'connect:server', 'qunit:all', 'requirejs']);
   grunt.task.registerTask('test', ['connect:server', 'qunit:all']);
   grunt.task.registerTask('server', ['connect:listenserver']);
   grunt.task.registerTask('travis', ['jshint', 'find-non-AMD', 'connect:server', 'qunit:all']);
+  grunt.task.registerTask('build', ['requirejs']);
   
   grunt.registerTask("create-class", "crates a new Class Stub", function (className, isa, traits) {
     var _ = grunt.util._;
