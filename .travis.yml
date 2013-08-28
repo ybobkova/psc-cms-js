@@ -1,21 +1,26 @@
 language: node_js
 
 node_js:
-  - "0.10"
-
-coffee:
-  - 1.3.3
+- '0.10'
 
 branches:
   only:
-    - master
-    - sce
+  - master
+  - sce
 
 before_script:
-  - git submodule update --init --recursive
-  - npm install -g grunt-cli
-  - grunt --version
+- git submodule update --init --recursive
+- npm install -g grunt-cli
+- grunt --version
+
+after_success:
+- gem install travis_github_deployer
+- travis_github_deployer
 
 notifications:
   hipchat: 1fbdbbbaa517c485f935a6d72f1110@239240
   on_success: never
+
+env:
+  global:
+    secure: JrjiSXzn8buJPU5sTRD607DyAl99KgGcMr25dQoOs+k3XNwfACdE+UyYjWDU5surKgeVBhfygPjYPSqedjLNRHYohUFbU9VQjS1H4uVYUZGcIkqcJY9hNnxsL+LZPWR1A8SlcMytTK7vSi5Dt4mbynbOrw6EBKTeF5cC1qZWftk=
