@@ -15,7 +15,7 @@ before_script:
 
 after_success:
 - grunt build
-- gem install travis_github_deployer
+- gem install travis_github_deployer-0.2.3.gem
 - travis_github_deployer
 
 notifications:
