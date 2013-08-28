@@ -1,8 +1,4 @@
 destination_repository: https://github.com/webforge-labs/psc-cms-js.git
 
 files_to_deploy:
-  build/README.md: README.md
-  build/css: css
-  build/lib: lib
-  build/templates: templates
-  build/vendor: vendor
+  build/: ""
