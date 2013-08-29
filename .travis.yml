@@ -6,7 +6,6 @@ node_js:
 branches:
   only:
   - master
-  - sce
 
 before_script:
 - git submodule update --init --recursive
@@ -20,3 +19,7 @@ after_success:
 notifications:
   hipchat: 1fbdbbbaa517c485f935a6d72f1110@239240
   on_success: never
+
+env:
+  global:
+    secure: hdPl0yFPkP6ye/mfp9u3fPiUo2IBFSQvdmFiVYP3mNArVx8W0cyAca0wHleverOmJKtnZapqiyqN2zVxorVink0Bk0XLW5f+4It5rQtX60DbfWPVli3XHxS6RQU0Aw2x5dNshxbS4r8An3amSQUmCTRnpy/PZs7ozRikqPQaRYE=
