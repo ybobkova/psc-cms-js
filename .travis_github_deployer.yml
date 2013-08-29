@@ -1,5 +1,0 @@
-destination_repository: https://github.com/webforge-labs/psc-cms-js.git
-destination_branch: master
-
-files_to_deploy:
-  build/: ""

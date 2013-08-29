@@ -15,13 +15,7 @@ before_script:
 
 after_success:
 - grunt build
-- gem install travis_github_deployer-0.3.0.gem
-- travis_github_deployer -v
 
 notifications:
   hipchat: 1fbdbbbaa517c485f935a6d72f1110@239240
   on_success: never
-
-env:
-  global:
-    secure: QsQNlN5C3pzGn3qn433BDeTEbWvO6fCRC4uqpQMKrC6zB5IIeUspHr9NkTq/190SjLbSrRssKyRDA2LqspGXQUCpD4qdq40376aT5EBmKbrhlAcmGQl4x/2GIZ3OCtY6Bu2l0qK0qxVNIfS1OqetK4ttUoM+SfYFs9C6AeQI9m0=
