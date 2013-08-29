@@ -300,6 +300,11 @@ module.exports = function(grunt) {
     var npm = require('npm');
     var process = require('process');
 
+    if (!process.env.TRAVIS_SECURE_ENV_VARS || process.env.TRAVIS_SECURE_ENV_VARS === 'false') {
+      grunt.log.ok('Will not do something when secure vars are not set. (Travis Pull Request)');
+      return 0;
+    }
+
     var file = "package.json", toFile = "build/package.json";
     var gitVersion;
     var done = this.async();
