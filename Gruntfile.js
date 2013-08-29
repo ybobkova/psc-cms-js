@@ -256,6 +256,35 @@ module.exports = function(grunt) {
         }
       }
     },
+
+    bump: {
+      options: {
+        commit: true,
+        commitMessage: 'Release v%VERSION%',
+        commitFiles: ['package.json'], // '-a' for all files
+        createTag: true,
+        tagName: '%VERSION%',
+        tagMessage: 'Version %VERSION%',
+        push: true,
+        pushTo: 'upstream',
+        gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d' // options to use with '$ git describe'
+      }
+    },
+
+    release: {
+      options: {
+        npm: true,
+        folder: 'build',
+
+        bump: false,
+        add: false,
+        commit: false,
+        tag: false,
+        push: false,
+        pushTags: false,
+      }
+    },
+
     'find-non-AMD': {
       'default': {
         src: [
@@ -291,6 +320,80 @@ module.exports = function(grunt) {
   grunt.task.registerTask('server', ['connect:listenserver']);
   grunt.task.registerTask('travis', ['jshint', 'find-non-AMD', 'connect:server', 'qunit:all']);
   grunt.task.registerTask('build', ['requirejs']);
+
+  grunt.task.registerTask('publish', "prepares the relase and publishes with npm", function () {
+    var that = this;
+    var exec = require('child_process').exec;
+    var semver = require('semver');
+
+    var file = "package.json", toFile = "build/package.json";
+    var gitVersion;
+    var done = this.async();
+
+
+    grunt.util.spawn({
+      cmd: 'git',
+      args: ['rev-parse', '--short', 'HEAD']
+      //args: ['describe', '--tags', '--always', '--abbrev=1']
+    }, function (error, result, code) {
+      if (error) {
+        grunt.fatal('Can not get a version number using `git describe` '+error);
+      } else {
+        gitVersion = result.stdout;
+      }
+
+      var bumped = false;
+      var VERSION_REGEXP = /([\'|\"]version[\'|\"][ ]*:[ ]*[\'|\"])([\d||A-a|.|-]*)([\'|\"])/i;
+      var content = grunt.file.read(file).replace(VERSION_REGEXP, function(match, prefix, parsedVersion, suffix) {
+        bumped = true;
+        return prefix + parsedVersion+'-'+gitVersion + suffix;
+      });
+
+      if (!bumped) {
+        grunt.fatal('Cannot find version in file: '+file);
+      }
+
+      grunt.file.write(toFile, content);
+
+      var pkg = grunt.file.readJSON(toFile);
+      grunt.log.ok('Version bumped to '+pkg.version+' (in '+toFile+')');
+
+      var npm = require('npm');
+      var process = require('process');
+
+      var npmconfig = {
+        username: process.env.NPM_USERNAME,
+        password: process.env.NPM_PASSWORD,
+        email: process.env.NPM_EMAIL,
+      };
+
+      npm.load({}, function(err) {
+        npm.registry.adduser(npmconfig.username, npmconfig.password, npmconfig.email, function(err) {
+
+          if (err) {
+            grunt.log.error(err);
+            done(false);
+          } else {
+            npm.config.set("email", npmconfig.email, "user");
+            npm.config.set("tag", "dev", "user");
+
+            npm.commands.publish(["build"], function(err) {
+              if (err) {
+                grunt.log.err(err);
+                done(false);
+              } else {
+                grunt.log.ok('published to registry');
+                done(true);
+              }
+            });
+          }
+        });
+      });
+    });
+
+    // version = gitVersion || semver.inc(parsedVersion, versionType || 'patch');
+
+  });
   
   grunt.registerTask("create-class", "crates a new Class Stub", function (className, isa, traits) {
     var _ = grunt.util._;

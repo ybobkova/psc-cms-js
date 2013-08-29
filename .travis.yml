@@ -15,6 +15,7 @@ before_script:
 
 after_success:
 - grunt build
+- grunt publish
 
 notifications:
   hipchat: 1fbdbbbaa517c485f935a6d72f1110@239240
