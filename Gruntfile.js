@@ -257,34 +257,6 @@ module.exports = function(grunt) {
       }
     },
 
-    bump: {
-      options: {
-        commit: true,
-        commitMessage: 'Release v%VERSION%',
-        commitFiles: ['package.json'], // '-a' for all files
-        createTag: true,
-        tagName: '%VERSION%',
-        tagMessage: 'Version %VERSION%',
-        push: true,
-        pushTo: 'upstream',
-        gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d' // options to use with '$ git describe'
-      }
-    },
-
-    release: {
-      options: {
-        npm: true,
-        folder: 'build',
-
-        bump: false,
-        add: false,
-        commit: false,
-        tag: false,
-        push: false,
-        pushTags: false,
-      }
-    },
-
     'find-non-AMD': {
       'default': {
         src: [
@@ -324,12 +296,19 @@ module.exports = function(grunt) {
   grunt.task.registerTask('publish', "prepares the relase and publishes with npm", function () {
     var that = this;
     var exec = require('child_process').exec;
-    var semver = require('semver');
+    //var semver = require('semver');
+    var npm = require('npm');
+    var process = require('process');
 
     var file = "package.json", toFile = "build/package.json";
     var gitVersion;
     var done = this.async();
 
+    var npmconfig = {
+      username: process.env.NPM_USERNAME,
+      password: process.env.NPM_PASSWORD,
+      email: process.env.NPM_EMAIL
+    };
 
     grunt.util.spawn({
       cmd: 'git',
@@ -357,15 +336,6 @@ module.exports = function(grunt) {
 
       var pkg = grunt.file.readJSON(toFile);
       grunt.log.ok('Version bumped to '+pkg.version+' (in '+toFile+')');
-
-      var npm = require('npm');
-      var process = require('process');
-
-      var npmconfig = {
-        username: process.env.NPM_USERNAME,
-        password: process.env.NPM_PASSWORD,
-        email: process.env.NPM_EMAIL,
-      };
 
       npm.load({}, function(err) {
         npm.registry.adduser(npmconfig.username, npmconfig.password, npmconfig.email, function(err) {
