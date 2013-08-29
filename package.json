@@ -16,6 +16,11 @@
     "url": "https://github.com/pscheit/psc-cms-js.git"
   },
   "version": "1.3.0",
+  "config": {
+    "branch-alias": {
+      "dev-master": "1.4.x-dev"
+    }
+  },
   "scripts": {
     "test": "grunt travis"
   },

@@ -62,7 +62,15 @@ Publish a major/minor/patch:
 
 Notice: We cannot do `npm tag dependency@dev latest` to publish the build folder as the latest version. Because the package.json would then be still having the dev build.
 
+Notice: using an @dev tag resolves to ONE version (not to a range). For example npm install psc-cms-js@~1.3.*@dev is not possible. We have to create our own (npm-)tags here: @1.3-dev for example (but we will first use @dev and be fine)
+
 Disadvantages:
   - the build is checked twice from travis (with the same contents) only the package.json and maybe the changelog would be changed on publishing a major/minor/patch.
   - copying the package.json seems to be hacky
   - the travis ci has to check if the release is a major/minor/patch otherwise release a dev build.
+
+
+TODO: 
+  - implement major/minor/path releases 
+    - use grunt bump or something to dump the versions (or implement in self)
+    - just use git describe to find out if a tag is set in travis and adjust the script accordingly)
