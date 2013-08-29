@@ -357,10 +357,11 @@ module.exports = function(grunt) {
       grunt.file.write(toFile, content);
 
       var pkg = grunt.file.readJSON(toFile);
-      grunt.log.ok('Version bumped to '+pkg.version+' (in '+toFile+'). Will tag with: '+npmTag);
+      grunt.log.writeln('Version bumped to '+pkg.version+' (in '+toFile+'). Will tag with: '+npmTag);
 
       npm.load({}, function(err) {
         npm.registry.adduser(npmconfig.username, npmconfig.password, npmconfig.email, function(err) {
+          grunt.log.writeln('Logged in as: '+npmconfig.username+' ('+npmconfig.email+')');
 
           if (err) {
             grunt.log.error(err);
@@ -374,7 +375,7 @@ module.exports = function(grunt) {
                 grunt.log.err(err);
                 done(false);
               } else {
-                grunt.log.ok('published to registry');
+                grunt.log.ok('published to npm registry');
                 done(true);
               }
             });
