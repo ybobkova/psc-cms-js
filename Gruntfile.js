@@ -169,7 +169,7 @@ module.exports = function(grunt) {
     requirejs: {
       compile: {
         options: {
-          mainConfigFile: "lib/boot-helper.js",
+          mainConfigFile: "lib/config.js",
           dir: "build/",
 
           appDir: ".",
