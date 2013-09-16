@@ -1,17 +1,7 @@
 /*global module:false*/
 module.exports = function(grunt) {
   
-<<<<<<< HEAD
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
-=======
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
-  grunt.loadNpmTasks('grunt-contrib-requirejs');
-  grunt.loadNpmTasks('grunt-hogan');
-//  grunt.loadNpmTasks('grunt-qunit-istanbul');
-  grunt.loadNpmTasks('grunt-blanket-qunit');
->>>>>>> wip
 
   var port = 8000;
   var hostname = 'localhost';
@@ -68,16 +58,7 @@ module.exports = function(grunt) {
           urls: [].concat(mapToUrl('tests/Psc/**/*.html'))
                   .concat(mapToUrl('tests/tiptoi/**/*.html'))
                   .concat(mapToUrl('tests/CoMun/**/*.html')),
-//          '--web-security': 'no',
-//          coverage: {
-//            src: ['lib/**/*.js'],
-//            instrumentedFiles: 'temp/',
-//            htmlReport: 'report/coverage',
-//            coberturaReport: 'report/',
-//            linesThresholdPct: 85
-//          }
-//        },  
-//        all: ['tests/**/*.html']
+        },
       },
       nav: {
         options: {
