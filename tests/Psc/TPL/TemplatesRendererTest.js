@@ -28,7 +28,7 @@ define(['psc-tests-assert', 'knockout', 'templates/test-compiled', 'Psc/TPL/Temp
     
   });
   
-  test("widget  template can be rendered on the fly", function () {
+  test("widget template can be rendered on the fly", function () {
     var that = setup(this);
     
     this.tpl.compile('test.hello', "Hello {{world}}!");

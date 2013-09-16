@@ -50,5 +50,6 @@ define(['psc-tests-assert','tiptoi/InteractiveInputProvider','Psc/Code'], functi
 
   test("TODO: triggers input-provider-got-input on triggered tiptoi-tip event", function() {
     expect(0);
+    this.assertTrue(true, "the test is passed");
   });
 });

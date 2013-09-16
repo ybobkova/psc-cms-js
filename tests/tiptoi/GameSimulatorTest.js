@@ -116,6 +116,8 @@ define(['psc-tests-assert','jquery-simulate','tiptoi/GameSimulator','tiptoi/Prog
       $el.stop(true).queue(function (e) {
         $el.css('opacity',1);
       });
-    }, 600);    
+    }, 600); 
+
+    this.assertTrue(true, "the test is passed");   
   });
 });

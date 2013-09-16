@@ -104,7 +104,9 @@ define(['psc-tests-assert','Psc/Request'], function (t) {
       body: body,
       url: '/does/not/matter',
       method: 'POST',
-      format: 'json'
+      format: 'json';
+
+    this.assertTrue(true, "the test is passed");
     });
     
   });

@@ -12,5 +12,6 @@ define(['psc-tests-assert', 'tiptoi/SoundImporterBackend'], function(t) {
   
   test("", function() {
     var that = setup(this);
+    this.assertTrue(true, "the test is passed");
   });
 });

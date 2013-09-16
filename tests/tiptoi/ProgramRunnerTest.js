@@ -24,7 +24,7 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
   var p = function (code) {
     return new tiptoi.Program({code: code});
   };
-  
+
   var pCode = function() {
     var c = '';
     for (var i = 0; i<arguments.length; i++) {
@@ -126,13 +126,13 @@ define(['psc-tests-assert','tiptoi/Main','tiptoi/ProgramRunner', 'tiptoi/Program
     // ich verstehe nicht, warum ich hier mir einen eigenen programmrunner bauen muss,
     // weil wenn ich die tests hintereinander laufen lasse hat dieser immer eine leere input sequence
     var programRunner = new tiptoi.ProgramRunner({
-         soundPlayer: new tiptoi.SimpleSoundPlayer({
-          onPlay: function (sounds) {
-            $.each(sounds, function (i, sound) {
-              played.push(sound.getContent());
-            });
-          }
-        }),
+          psoundPlayer: new tiptoi.SimpleSoundPlayer({
+            onPlay: function (sounds) {
+              $.each(sounds, function (i, sound) {
+                played.push(sound.getContent());
+              });
+            }
+          }),
         inputProvider: new tiptoi.InputProvider({
           sequence: [77]
         })

@@ -53,14 +53,14 @@ define(['psc-tests-assert','Psc/TableModel'], function(t) {
     var that = setup(this), table = that.table, insertRow = this.insertRow;
     table.insertRow(insertRow, -1);
     
-    this.assertSame(table.getRow(21), insertRow, 'row wurde an stelle 21 eingefügt');
+    this.assertSame(table.getRow(21), insertRow, 'row is added at the position 21');
   });
 
   test("insertRow: 1 prepends", function () {
     var that = setup(this), table = that.table, insertRow = this.insertRow;
     table.insertRow(insertRow, 1);
     
-    this.assertSame(table.getRow(1), insertRow, 'row wurde an stelle 1 eingefügt');
+    this.assertSame(table.getRow(1), insertRow, 'row is added at the position 1');
   });  
 
   test("getCell gets the value of a cell in the table", function () {
