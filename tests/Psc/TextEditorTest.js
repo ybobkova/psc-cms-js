@@ -74,6 +74,7 @@ define(['psc-tests-assert', 'Psc/TextEditor', 'jquery-simulate', 'jquerypp/dom/s
     
     stop();
     $button.simulate('click');
+    this.assertTrue(true, "the test is passed");
   });
   
   test("getCaret returns false if text is selected", function () {

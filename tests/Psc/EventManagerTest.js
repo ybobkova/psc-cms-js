@@ -27,7 +27,7 @@ define(['psc-tests-assert','Psc/EventManager'], function(t) {
     this.assertTrue(called, 'manager2 Event is called');
   });
 
-  test("nativeBinding", function () {
+  test("native binding", function () {
     var that = setup(this);
     
     this.eventManager.on('tsing', function (e) {
@@ -39,7 +39,7 @@ define(['psc-tests-assert','Psc/EventManager'], function(t) {
     this.eventManager.trigger(ev);
   });
   
-  test("constructsJQueryEvents", function() {
+  test("constructs JQuery Events", function() {
     var that = setup(this);
     var savedEvent = that.eventManager.createEvent('saved', { method: 'edit' }); // nicht type benutzen als property das braucht jQuery
     
@@ -48,7 +48,7 @@ define(['psc-tests-assert','Psc/EventManager'], function(t) {
     this.assertEquals('saved', savedEvent.type);
   });
   
-  test("firstArgumentFromTriggerEventHasToBeAString", function() {
+  test("the first argument from trigger event has to be a string", function() {
     var that = setup(this);
     QUnit.raises(
       function () {
@@ -58,12 +58,12 @@ define(['psc-tests-assert','Psc/EventManager'], function(t) {
     );
   });
   
-  test("canBeTriggeredWithEvents_acceptsOnAndTrigger", function() {
+  test("can be triggered with events, accepts on and trigger", function() {
     var that = setup(this), eventManager = that.eventManager;
     var eventCount = 0;
     
     eventManager.on('saved', function (e, add1, add2) { // meint Psc.saved
-      that.assertEquals('add1', add1, 'additional Parameter wird im Handler übergeben');
+      that.assertEquals('add1', add1, 'additional Parameter is relayed in the handler');
       that.assertEquals('add2', add2);
       that.assertEquals('saved', e.type);
       that.assertEquals('edit', e.method);

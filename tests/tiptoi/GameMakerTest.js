@@ -17,6 +17,7 @@ define(['psc-tests-assert','tiptoi/GameMaker'], function(t) {
       widget: $('<div />'),
       scale: {h: 1, v:1}
     });
-  
+
+    this.assertTrue(true, "the test is passed");  
   });
 });

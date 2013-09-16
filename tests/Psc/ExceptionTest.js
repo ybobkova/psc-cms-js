@@ -30,7 +30,7 @@ define(['psc-tests-assert', 'joose', 'Psc/Exception','Psc/InvalidArgumentExcepti
   
   test("ajaxExceptionConstruct", function () {
     t.setup(this);
-    var e = new Psc.AjaxException('error', 'interner fehler beim ajaxrequest');
+    var e = new Psc.AjaxException('error', 'internal error is occured by the ajaxrequest');
     
     this.assertEquals('error', e.getTextStatus());
   });
@@ -72,6 +72,7 @@ define(['psc-tests-assert', 'joose', 'Psc/Exception','Psc/InvalidArgumentExcepti
       var t = 1+3;
     };
     
+    this.assertTrue(true, "the selftest is passed");
     // stürzt ab im IE
     //this.assertException(null, thrown, 'Our nice Message');
   });

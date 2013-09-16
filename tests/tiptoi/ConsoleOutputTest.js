@@ -13,5 +13,7 @@ define(['psc-tests-assert','Psc/EventManager','tiptoi/ConsoleOutput'], function(
     var consoleOutput = new tiptoi.ConsoleOutput({
       eventManager: new Psc.EventManager({})
     });
+
+    this.assertTrue(true, "the test is passed");
   });
 });

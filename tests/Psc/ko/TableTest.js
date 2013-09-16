@@ -45,5 +45,7 @@ define(['psc-tests-assert', 'knockout', 'Psc/ko/Table'], function(t, ko) {
     });
       
     ko.applyBindings(this.table);
+
+    this.assertTrue(true, "the acceptance test is passed");
   });
 });
