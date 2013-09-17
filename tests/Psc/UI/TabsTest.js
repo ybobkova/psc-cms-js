@@ -234,11 +234,13 @@ define(['psc-tests-assert','text!fixtures/tabs.html','text!fixtures/tabs-for-mai
   });
   
   test("TODO: tabs trigger remote-tab-loaded after loading a remote tab with success", function() {
-    expect(0);
+    t.setup(this);
+    this.assertTrue(true, 'test incomplete');
   });
 
   test("TODO: tabs trigger remote-tab-load before loading a remote tab", function() {
-    expect(0);
+    t.setup(this);
+    this.assertTrue(true, 'test incomplete');
   });
   
   test("tabs stores pinned tabs in sessionStorage (just a small acceptance here)", function () {

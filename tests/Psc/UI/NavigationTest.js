@@ -283,6 +283,6 @@ define(['psc-tests-assert','Psc/UI/Navigation'], function(t) {
   
   test("TODO: if a navigation point is added and edited, than added a new, the new one does not clone the title of the edited one", function() {
     var that = setup(this), navigation = this.navigation;
-    expect(0);
+    that.assertTrue(true, 'test incomplete');
   });
 });

@@ -15,6 +15,7 @@ define(['psc-tests-assert','Psc/UI/WidgetWrapper'], function(t) {
   });
   
   test("TODO: can unwrap statically", function() {
-    expect(0);
+    t.setup(this);
+    this.assertTrue(true, 'test incomplete');
   });
 });
