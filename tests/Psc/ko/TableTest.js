@@ -26,7 +26,6 @@ define(['psc-tests-assert', 'knockout', 'Psc/ko/Table'], function(t, ko) {
   
   test("connect to grid acceptance", function() {
     var that = setup(this);
-    expect(0);
     
     var $grid = $('<div />');
     $('#visible-fixture').append($grid);

@@ -89,7 +89,7 @@ define(['psc-tests-assert','Psc/Request'], function (t) {
   
   test("handles null values for jquery param serializiation", function () {
     setup(this);
-    expect(0);
+
     var body = {
           table: [
             [null, "Finde die Fußspur des g...le Abdrücke im Bild an.", "GAME-4-002"],
@@ -104,10 +104,10 @@ define(['psc-tests-assert','Psc/Request'], function (t) {
       body: body,
       url: '/does/not/matter',
       method: 'POST',
-      format: 'json';
-
-    this.assertTrue(true, "the test is passed");
+      format: 'json'
     });
+
     
+    this.assertTrue(true, "the test is passed");
   });
 });

@@ -61,7 +61,7 @@ define(['psc-tests-assert', 'joose', 'Psc/Exception','Psc/InvalidArgumentExcepti
   
   test("selftestAssertException", function() {
     t.setup(this);
-    expect(0);
+
     var thrown = function () {
       throw new (Joose.Class({
         isa: Psc.Exception

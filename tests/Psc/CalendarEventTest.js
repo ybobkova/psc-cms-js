@@ -25,8 +25,6 @@ define(['psc-tests-assert','Psc/CalendarEvent','Psc/Date', 'Psc/Test/DoublesMana
   
   test("todo: formatRange tests", function () {
     setup(this);
-    
-    expect(0);
     this.assertTrue(true, "the acceptance test is passed");
   });
 });

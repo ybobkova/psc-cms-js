@@ -8,7 +8,6 @@ define(['psc-tests-assert','Psc/EventManager','tiptoi/ConsoleOutput'], function(
 
   test("acceptance", function() {
     setup(this);
-    expect(0);
     
     var consoleOutput = new tiptoi.ConsoleOutput({
       eventManager: new Psc.EventManager({})

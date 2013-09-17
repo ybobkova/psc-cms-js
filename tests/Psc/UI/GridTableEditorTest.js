@@ -46,7 +46,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
             ['2-STA_0614', 'Die Bücherei', [11040], 'Seventeen'],
             ['2-STA_0615', 'Die Fußgängerzone', [11025,11041,11044,11051], 'Eighteen'],
             ['2-STA_0616', 'Ein Altstadtgebäude', [11013,11040,11042], 'Nineteen'],
-            ['2-STA_0617', 'Der Fernsehturm', [11045], 'Twenty'],
+            ['2-STA_0617', 'Der Fernsehturm', [11045], 'Twenty']
           ]
       });
       

@@ -106,7 +106,7 @@ define(['psc-tests-assert','jquery-simulate','tiptoi/GameSimulator','tiptoi/Prog
   
   test("flashing is going on my nerves", function() {
     t.setup(this);
-    expect(0);
+
     var $el = $('<p>tiptoi waiting for input</p>').css('color', '#000000');
     $('#visible-fixture').html($el);
     
