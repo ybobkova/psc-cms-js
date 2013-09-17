@@ -1,9 +1,9 @@
 define(['psc-tests-assert', 'text!test-files/tiptoi/tito-program.tito', 'Psc/UI/CodeEditor'], function(t, titoCode) {
-  var $html;
 
-  module("Psc.UI.CodeEditor", {
-    setup: function() {
-      var html = '<div class="editor">  public function testHTML() {' + "\n" +
+  module("Psc.UI.CodeEditor");
+
+  var setup = function(test) {
+    var html = '<div class="editor">  public function testHTML() {' + "\n" +
         '    $this->setFixtureValues();' + "\n" +
         '    ' + "\n" +
         '    $html = $this->component->getHTML();' + "\n" +
@@ -18,21 +18,23 @@ define(['psc-tests-assert', 'text!test-files/tiptoi/tito-program.tito', 'Psc/UI/
         "      ->getJQuery();" + "\n" +
         '</div>';
 
-      $html = $('#visible-fixture').html(html);
-    }
-  });
+    var $html = $('#visible-fixture').html(html);
+
+    return t.setup(test, {html: html, $html: $html});
+  };
 
   test("acceptance", function() {
-    expect(0);
+    var that = setup(this), $html = this.$html, $widget;
 
     var codeEditor = new Psc.UI.CodeEditor({
-      widget: $html.find('.editor')
+      widget: $widget = $html.find('.editor')
     });
+
+    this.assertHasJooseWidget(Psc.UI.CodeEditor, $widget);
   });
 
   test("load editor in tito mode", function() {
-    expect(0);
-
+    var that = setup(this);
     var $editor;
 
     $('#visible-fixture').empty().append(
@@ -43,5 +45,7 @@ define(['psc-tests-assert', 'text!test-files/tiptoi/tito-program.tito', 'Psc/UI/
       widget: $editor,
       mode: 'tito'
     });
+
+    this.assertHasJooseWidget(Psc.UI.CodeEditor, $editor);
   });
 });
