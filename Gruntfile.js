@@ -60,34 +60,9 @@ module.exports = function(grunt) {
                   .concat(mapToUrl('tests/CoMun/**/*.html'))
         }
       },
-      nav: {
+      filter: {
         options: {
-          urls: mapToUrl('tests/Psc/UI/Navigation*.html')
-        }
-      },
-      dropBox: {
-        options: {
-          urls: mapToUrl('tests/Psc/UI/DropBox/*.html')
-        }
-      },
-      textParser: {
-        options: {
-          urls: mapToUrl('tests/Psc/TextParser*.html')
-        }
-      },
-      textEditor: {
-        options: {
-          urls: mapToUrl('tests/Psc/TextEditor*.html')
-        }
-      },
-      tabs: {
-        options: {
-          urls: mapToUrl('tests/Psc/UI/Tabs*.html')
-        }
-      },
-      date: {
-        options: {
-          urls: mapToUrl('tests/Psc/Date*.html')
+          urls: mapToUrl('tests/**/*'+grunt.option('filter')+'*.html')
         }
       },
       options: {
@@ -288,7 +263,17 @@ module.exports = function(grunt) {
   });
 
   grunt.task.registerTask('default', ['jshint', 'connect:server', 'qunit:all', 'requirejs']);
-  grunt.task.registerTask('test', ['connect:server', 'qunit:all']);
+  grunt.task.registerTask('test', "runs the test with a temporary server", function () {
+    var tasks = ['connect:server']; 
+    if (grunt.option('filter')) {
+      tasks.push('qunit:filter');
+    } else {
+      tasks.push('qunit:all');
+    }
+    
+    grunt.task.run(tasks);
+  });
+  
   grunt.task.registerTask('server', ['connect:listenserver']);
   grunt.task.registerTask('travis', ['jshint', 'find-non-AMD', 'connect:server', 'qunit:all']);
   grunt.task.registerTask('build', ['requirejs']);
