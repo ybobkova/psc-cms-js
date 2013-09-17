@@ -37,7 +37,7 @@ define(['psc-tests-assert','Psc/UI/FormBuilder'], function(t) {
     setup(this);
     var fb = this.formBuilder;
     
-    fb.open(),
+    fb.open();
     fb.radios("Position", 'align', 'right', {'right':'rechts', 'left':'links'});
     
     var $form = fb.build(), $wrapper = $form.find('.component-wrapper'), $radios = $form.find('input[type="radio"]'), $labels = $form.find('label');
