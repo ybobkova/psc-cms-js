@@ -95,7 +95,7 @@ define(['psc-tests-assert', 'joose', 'Psc/Test/DoublesManager', 'Psc/UI/LayoutMa
       this.fail(e);
     }
 
-    that.assertTrue(true, 'test incomplete');
+    this.assertTrue(true, 'test incomplete');
   });
 
   test("has a serialize function per default that does nothing", function() {
