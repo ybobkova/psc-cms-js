@@ -330,15 +330,18 @@ define(['psc-tests-assert', 'joose', 'text!fixtures/tabs-for-main.html', 'Psc/Te
   });
 
   test("TODO: shows/hides spinner on tab remote load", function() {
-    expect(0);
+    t.setup(this);
+    this.assertTrue(true, 'test incomplete');
   });
 
   test("TODO: hides spinner on successful tab load and error load", function() {
-    expect(0);
+    t.setup(this);
+    this.assertTrue(true, 'test incomplete');
   });
 
   test("TODO: save and save-close delegates postData until formcontroller", function() {
-    expect(0);
+    t.setup(this);
+    this.assertTrue(true, 'test incomplete');
   });
 
   test("response with view in linkrelations and preview saved revision opens a new window", function() {

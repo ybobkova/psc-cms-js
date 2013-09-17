@@ -86,7 +86,6 @@ define(['psc-tests-assert', 'joose', 'Psc/Test/DoublesManager', 'Psc/UI/LayoutMa
 
   test("can be constructed without label - it uses the type as label", function() {
     setup(this);
-    expect(0);
 
     try {
       var lc = new this.LayoutManagerComponentClass({
@@ -95,6 +94,8 @@ define(['psc-tests-assert', 'joose', 'Psc/Test/DoublesManager', 'Psc/UI/LayoutMa
     } catch (e) {
       this.fail(e);
     }
+
+    this.assertTrue(true, 'test incomplete');
   });
 
   test("has a serialize function per default that does nothing", function() {
