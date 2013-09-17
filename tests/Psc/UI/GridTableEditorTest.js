@@ -76,17 +76,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/GridTableEditor','Psc/Table
     this.assertEquals(1, this.$fixture.find('button.psc-cms-ui-button.grid-upload-data').length, 'there is an upload button');
   });
   
-  test("starts download on service when button is clicked", function () {
-    setup(this);
-    expect(0);
-    var $downloadButton = this.$fixture.find('button.psc-cms-ui-button.grid-download-data');
-    
-    //$downloadButton.simulate('click');
-    
-    //this.assertNotUndefined(downloadRequest, 'downloadRequest was expected in service');
-    //this.assertNotUndefined(downloadRequest.getBody());
-  });
-  
+
   test("opens upload dialog when button upload is clicked", function () {
     setup(this);
     var $uploadButton = this.$fixture.find('button.psc-cms-ui-button.grid-upload-data');

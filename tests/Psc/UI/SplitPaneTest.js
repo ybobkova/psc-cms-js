@@ -9,9 +9,12 @@ define(['psc-tests-assert','Psc/UI/SplitPane'], function(t) {
   };
 
   test("acceptance", function() {
-    expect(0);
-    setup(this);
+    var that = setup(this);
   
-    // this.splitPane.doSomething();
+    var $html = this.splitPane.html();
+
+    var $pane = this.assertjQueryIs('.psc-cms-ui-splitpane', $html);
+    this.assertjQueryLength(1, $pane.find('.left'));
+    this.assertjQueryLength(1, $pane.find('.right'));
   });
 });

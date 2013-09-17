@@ -69,8 +69,7 @@ define(['psc-tests-assert','text!fixtures/ko.grid.html','jquery-simulate','Psc/U
   
   test("transform to jqx grid", function () {
     var that = setup(this);
-    expect(0);
-    
+
     this.editor.transformjqx();
     
     var $fix = $('#visible-fixture');
@@ -98,6 +97,8 @@ define(['psc-tests-assert','text!fixtures/ko.grid.html','jquery-simulate','Psc/U
         );
       });
     });
+
+    that.assertTrue(true, 'this is an experimental test');
     
   });
 });

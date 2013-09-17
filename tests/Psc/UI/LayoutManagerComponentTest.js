@@ -48,7 +48,6 @@ define(['psc-tests-assert', 'joose', 'Psc/Test/DoublesManager', 'Psc/UI/LayoutMa
   };
 
   test("returnsAMiniButtonPanelOnCreate", function() {
-    expect(0);
     setup(this);
 
     this.component.createWithMiniPanel({
@@ -68,6 +67,8 @@ define(['psc-tests-assert', 'joose', 'Psc/Test/DoublesManager', 'Psc/UI/LayoutMa
     });
 
     var html = this.buildContent(this.component);
+
+    this.assertjQueryLength(1, $(html).find('.psc-cms-ui-mini-button-panel'));
   });
 
   test("cannot be constructed without type", function() {

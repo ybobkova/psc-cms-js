@@ -249,7 +249,8 @@ define(['psc-tests-assert', 'joose', 'jquery-simulate','Psc/UI/AutoComplete','Ps
   
   asyncTest("todo: AutoComplete shows maxresult info hint when maxResults are given in meta in acInfo", function () {
     var that = setup(this);
-    expect(0);
+
+    that.assertTrue(true, 'test incomplete');
     start();
   });
 });

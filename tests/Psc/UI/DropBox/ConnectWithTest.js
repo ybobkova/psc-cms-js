@@ -94,13 +94,14 @@ define(['psc-tests-assert',
       that.drag.toElement($button2, that.$dropBox1);
       
       // does not work with simulate:
-      expect(0);
+
       /*
       that.assertTrue(that.dropBox1.hasButton($button2), 'that.dropBox1 has received button2');
       that.assertEquals(2, that.$dropBox1.find('button.psc-cms-ui-button').length, 'has now 2 buttons');
       that.assertFalse(that.dropBox2.hasButton($button2), 'that.dropBox2 has given button2 away');
       that.assertEquals(0, that.$dropBox2.find('button.psc-cms-ui-button').length, 'has now 0 buttons');
       */
+      that.assertTrue(true, 'this is a bug in jquery simulate');
       start();
     });
   });
@@ -128,11 +129,11 @@ define(['psc-tests-assert',
   });
   
   asyncTest("after sorting new buttons can be deleted", function () {
-    expect(0);
     $.when(setup(this)).then(function (that) {
       var $button2 = that.$dropBox2.find('button.psc-cms-ui-button');
     
       that.drag.toElement($button2, that.$dropBox1);
+      that.assertTrue(true, 'test incomplete');
       start();
     });
   });

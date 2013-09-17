@@ -165,7 +165,8 @@ define(['psc-tests-assert','text!fixtures/combobox.html', 'jquery-simulate', 'Ps
   });
   
   test("TODO: set correct initial value when selected is set", function () {
-    expect(0);
+    var that = setup(this);
+    that.assertTrue(true, 'test incomplete');
   });
   
   //asyncTest("acceptance from acceptance-php-test", function () {
@@ -189,12 +190,12 @@ define(['psc-tests-assert','text!fixtures/combobox.html', 'jquery-simulate', 'Ps
   //});
   
   test("TODO: combobox does not show initialtext when item from list is selected", function () {
-    expect(0);
     var that = setup(this), comboBox = this.comboBox, $comboBox = this.$comboBox, initialText = this.initialText;
     // 1. box aufmachen
     // a) initial text verschwindet
     // 2. über einen eintrag hovern
     // 3. über den 2. eintrag hovern => initial text kommt wieder. moep :)
+    that.assertTrue(true, 'test incomplete');
   });
 
 

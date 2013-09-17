@@ -18,9 +18,8 @@ define(['psc-tests-assert','Psc/UI/EffectsManager'], function(t) {
     effectsManager.blink($('#qunit-fixture'), '#880022', cb);
   });
 
-  test("successBlink does blink a button", function() {
+  asyncTest("successBlink does blink a button", function() {
     var that = setup(this);
-    expect(0);
     var effectsManager = new Psc.UI.EffectsManager({ });
     
     var $button = $('<button>My Save Button</button>').button({});
@@ -28,7 +27,8 @@ define(['psc-tests-assert','Psc/UI/EffectsManager'], function(t) {
     
     setTimeout(function () {
       effectsManager.successBlink($button);
+      that.assertTrue(true, 'test not visible for tests');
+      start();
     }, 1200);
-    
   });
 });
