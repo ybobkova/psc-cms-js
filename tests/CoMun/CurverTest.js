@@ -14,7 +14,7 @@ define(['psc-tests-assert','CoMun/Curver','Psc/Test/DoublesManager'], function(t
   };
 
   test("acceptance", function() {
-    expect(0);
+
     setup(this);
   
     // this.curver.doSomething();

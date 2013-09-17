@@ -1,6 +1,6 @@
 define(['psc-tests-assert','tiptoi/InteractiveInputProvider','Psc/Code'], function(t) {
   
-  module("tiptoi.InteractiveIputProvider", {});
+  module("tiptoi.InteractiveInputProvider", {});
 
   asyncTest("acceptance", function () {
     var that = t.setup(this);
@@ -49,7 +49,7 @@ define(['psc-tests-assert','tiptoi/InteractiveInputProvider','Psc/Code'], functi
   });
 
   test("TODO: triggers input-provider-got-input on triggered tiptoi-tip event", function() {
-    expect(0);
+    t.setup(this);
     this.assertTrue(true, "the test is passed");
   });
 });

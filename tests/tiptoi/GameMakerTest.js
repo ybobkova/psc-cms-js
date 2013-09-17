@@ -7,7 +7,7 @@ define(['psc-tests-assert','tiptoi/GameMaker'], function(t) {
   });
 
   test("acceptance", function() {
-    expect(0);
+     t.setup(this);
     
     var gameMaker = new tiptoi.GameMaker({
       name: 'aha',
