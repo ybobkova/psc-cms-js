@@ -1,17 +1,21 @@
-define(['psc-tests-assert', 'tiptoi/SoundImporterBackend'], function(t) {
+define(['psc-tests-assert', 'tiptoi/SoundImporterBackend', 'Psc/Test/DoublesManager','tiptoi/Main'], function(t) {
   
   module("tiptoi.SoundImporterBackend");
 
   var setup = function (test) {
-    //var dm = new Psc.Test.DoublesManager();
+    var dm = new Psc.Test.DoublesManager();
     var soundImporterBackend = new tiptoi.SoundImporterBackend({
+      uploadService: dm.getUploadService(),
+      tiptoiMain: {}
     });
     
     return t.setup(test, {soundImporterBackend: soundImporterBackend});
   };
   
-  test("", function() {
+  test("upload and flush API", function() {
     var that = setup(this);
-    this.assertTrue(true, "the test is passed");
+
+    this.assertNotUndefined(that.soundImporterBackend.flush);
+    this.assertNotUndefined(that.soundImporterBackend.upload);
   });
 });
