@@ -1,4 +1,4 @@
-define(['psc-tests-assert','jquery-simulate','Psc/UI/UploadableImage','Psc/Test/DoublesManager','Psc/UI/ResizableImage'], function(t) {
+define(['require', 'psc-tests-assert','jquery-simulate','Psc/UI/UploadableImage','Psc/Test/DoublesManager','Psc/UI/ResizableImage'], function(require, t) {
   
   module("Psc.UI.UploadableImage");
   
@@ -14,7 +14,7 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/UploadableImage','Psc/Test/
     var uploadService = dm.getUploadService();
     var image = new Psc.UI.UploadableImage({
       uploadService: uploadService,
-      url: '/js/fixtures/normalImage.jpg',
+      url: require.toUrl('fixtures/img/normalImage.jpg'),
       widget: $widget
     });
 
@@ -68,6 +68,5 @@ define(['psc-tests-assert','jquery-simulate','Psc/UI/UploadableImage','Psc/Test/
     
     doTest(this.image.unwrap(), this.image.getUploadService(), 'for image');
     doTest(this.emptyImage.unwrap(), this.uploadService, 'for placeholder');
-    
   });
 });
