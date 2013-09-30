@@ -35,6 +35,17 @@
     "grunt-blanket-qunit": "~0.2.0",
     "semver": "~2.1.0",
     "npm": "~1.3.9",
-    "process": "~0.5.1"
+    "process": "~0.5.1",
+    "grunt-shimney-sweeper": "~1.1.1"
+  },
+  "dependencies": {
+    "shimney-json": "~1.0.0",
+    "shimney-hogan": "~2.0.0",
+    "shimney-twitter-bootstrap": "~2.3.1",
+    "shimney-knockout": "~2.3.0",
+    "shimney-cookie-monster": "~0.2.0",
+    "shimney-sammy": "~0.7.4",
+    "shimney-jquery": "~1.8.3",
+    "shimney-lodash": "~1.3.1"
   }
 }

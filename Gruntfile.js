@@ -146,20 +146,10 @@ module.exports = function(grunt) {
     requirejs: {
       compile: {
         options: {
-          // include other modules that are not found with include
-          mainConfigFile: "lib/boot-helper.js",
-          //out: "build/psc-cms-js.min.js",
+          mainConfigFile: "lib/config.js",
           dir: "build/",
 
-           //The top level directory that contains your app. If this option is used
-          //then it assumed your scripts are in a subdirectory under this path.
-          //This option is not required. If it is not specified, then baseUrl
-          //below is the anchor point for finding things. If this optio"n is specified,
-          //then all the files from the app directory will be copied to the dir:
-          //output area, and baseUrl will assume to be a relative path under
-          //this directory.
           appDir: ".",
-
           fileExclusionRegExp: /^(\.|node_modules|tests|\.git\\*|composer\.*|package\.json|Gruntfile.js|psc-cms-js\.*|[a-z-0-9A-Z]\.md)/,
 
           baseUrl: "./lib",
@@ -193,42 +183,11 @@ module.exports = function(grunt) {
                 "boot-helper"
               ]
             }
-            //excludeShallow
-
           ],
 
-          //Finds require() dependencies inside a require() or define call. By default
-          //this value is false, because those resources should be considered dynamic/runtime
-          //calls. However, for some optimization scenarios, it is desirable to
-          //include them in the build.
-          //Introduced in 1.0.3. Previous versions incorrectly found the nested calls
-          //by default.          
           findNestedDependencies: true,
-
-          //How to optimize all the JS files in the build output directory.
-          //Right now only the following values
-          //are supported:
-          //- "uglify": (default) uses UglifyJS to minify the code.
-          //- "uglify2": in version 2.1.2+. Uses UglifyJS2.
-          //- "closure": uses Google's Closure Compiler in simple optimization
-          //mode to minify the code. Only available if running the optimizer using
-          //Java.
-          //- "closure.keepLines": Same as closure option, but keeps line returns
-          //in the minified files.
-          //- "none": no minification will be done.
-          //optimize: "uglify2",
           optimize: "uglify2",
-
-    //Introduced in 2.1.2: If using "dir" for an output directory, normally the
-    //optimize setting is used to optimize the build bundles (the "modules"
-    //section of the config) and any other JS file in the directory. However, if
-    //the non-build bundle JS files will not be loaded after a build, you can
-    //skip the optimization of those files, to speed up builds. Set this value
-    //to true if you want to skip optimizing those other non-build bundle JS
-    //files.          
           skipDirOptimize: true,
-
-
           optimizeCss: "none"
         }
       }
