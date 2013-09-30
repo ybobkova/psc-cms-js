@@ -7,7 +7,8 @@ define(['psc-tests-assert', 'jquery', 'tiptoi/Main', 'tiptoi/SoundImporter', 'ti
 
     var hs = "Pascal Breuer";
 
-    var $widget = $('#visible-fixture').empty();
+    var $fixture = $('#visible-fixture').empty();
+    var $widget = $('<div class="sound-importer-widget"></div>').appendTo($fixture);
 
     var createSound =  function (content, number, speakers, status, done, details) {
       return {
