@@ -4,3 +4,4 @@
 
   - the new knockout version does not allow to call applyBindings() for multiple times on the same element. Get your ducks in a row(!)
   - The way to load the library is completely changed: Be sure to include the psc-cms-js config.js before loading require.js. Then bootstrap as usual.
+  - Psc/UI/jqx/GridTableEditor was removed completely
