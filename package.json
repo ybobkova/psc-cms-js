@@ -22,7 +22,8 @@
     }
   },
   "scripts": {
-    "test": "grunt travis"
+    "test": "grunt travis",
+    "coverage": "istanbul cover node_modules/mocha/bin/_mocha" // after that: open coverage/lcov-report/index.html
   },
   "devDependencies": {
     "matchdep": "~0.1.2",
