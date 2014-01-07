@@ -13,6 +13,6 @@ define(['psc-tests-assert','tiptoi/Sound'], function(t) {
       number: '2-TEST_0001'
     });
   
-    this.assertEquals("„i make a trembling noise“ (2-TEST_0001)", sound.toString());
+    this.assertEquals("„i make a trembling noise“ (2-TEST_0001)", sound.asString());
   });
 });
