@@ -1,0 +1,262 @@
+Es ist ein Fehler aufgetreten. URL: api/product/fee/tito/synchronize
+Fehler: In der Datenbank wurde '2-EAE_0620' als Nummer gefunden, es wurde jedoch '2-DRA_0736' angegeben.. #8761 Text: 'Probiere es einfach noch mal'
+
+DebugInfo [level: 5]:
+[RequestHandler] == Psc\Net\HTTP\Request =========================
+[RequestHandler] POST : /api/product/fee/tito/synchronize
+[RequestHandler] Host: tiptoi.desktop.ps-webforge.net
+[RequestHandler] User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:16.0) Gecko/20100101 Firefox/16.0
+[RequestHandler] Accept: application/json, text/javascript, */*; q=0.01
+[RequestHandler] Accept-Language: de-de,en-us;q=0.8,en;q=0.5,fr-lu;q=0.3
+[RequestHandler] Accept-Encoding: gzip, deflate
+[RequestHandler] Dnt: 1
+[RequestHandler] Connection: keep-alive
+[RequestHandler] Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+[RequestHandler] X-Requested-With: XMLHttpRequest
+[RequestHandler] Referer: http://tiptoi.desktop.ps-webforge.net/fee
+[RequestHandler] Content-Length: 3334
+[RequestHandler] Cookie: login=YToyOntzOjU6ImlkZW50IjtzOjI0OiJwLnNjaGVpdEBwcy13ZWJmb3JnZS5jb20iO3M6ODoicGFzc3dvcmQiO3M6MzI6IjU4M2NkZDAwOGYyZWEyMzdiZmU0ZDM5YTJkODI3ZjQyIjt9; SID=n636n8hp6pcn1m170heiu9udq7
+[RequestHandler] Pragma: 
+[RequestHandler] Pragma: no-cache
+[RequestHandler] Cache-Control: 
+[RequestHandler] Cache-Control: no-cache
+[RequestHandler] 
+[RequestHandler] == Request-Body =================================
+[RequestHandler] array(1) {
+[RequestHandler]   ["tito"]=>
+[RequestHandler]   string(2639) "#!tito v0.1
+[RequestHandler] 
+[RequestHandler] [stillInGame]:
+[RequestHandler]   > "Du bist noch im Spiel! Wenn du das Spiel abbrechen möchtest, berühre eins der Zeichen in der Leiste unten auf der Seite. Wenn du weiterspielen möchtest," (2-LFU_1289)
+[RequestHandler]   > "blättere auf die Seiten 6/7." (110207md13)
+[RequestHandler] 
+[RequestHandler] [start]:
+[RequestHandler]   > [L] Hallo, Leseprofi! Lass uns ein Leserätsel machen!
+[RequestHandler]   > [L] Los geht's!
+[RequestHandler] 
+[RequestHandler] Wähle aus 2 Fragen zufällig aus.
+[RequestHandler] 
+[RequestHandler] Lachen := 17283
+[RequestHandler] Klingen := 17284
+[RequestHandler] Efeu := 12345
+[RequestHandler] dasWortEfeu := 12346
+[RequestHandler] letzteFrage :=
+[RequestHandler] 
+[RequestHandler] 1. Frage:
+[RequestHandler]   letzteFrage := "[L] Was hört Anna hinter der Mauer?"
+[RequestHandler]   > :letzteFrage
+[RequestHandler] 
+[RequestHandler]   Wenn auf "Lachen" getippt wurde
+[RequestHandler]     > (Richtig-Geräusch)
+[RequestHandler]     > [L] Genau! Anna hört ein Lachen!
+[RequestHandler]     > [L] Was hört sie noch? Tippe auf das Wort!
+[RequestHandler]     
+[RequestHandler]     Wenn auf das Wort Klingen getippt wurde
+[RequestHandler]       > (Richtig-Geräusch)
+[RequestHandler]       > [E] Klingen
+[RequestHandler]       > [L] "Anna hört ein Lachen und Klingen!"
+[RequestHandler]       > [L] "Gut gefunden!"
+[RequestHandler]       > [L] "Und jetzt: Lies weiter, was Anna noch alles erlebt!"
+[RequestHandler]       => Spielende
+[RequestHandler]     
+[RequestHandler]     Ansonsten
+[RequestHandler]       => falsch getippt
+[RequestHandler] 
+[RequestHandler]   Oder Wenn auf "Klingen" getippt wurde
+[RequestHandler]     > (Richtig-Geräusch)
+[RequestHandler]     > [E] Klingen
+[RequestHandler]     > [L] Genau! Anna hört ein Klingen!
+[RequestHandler]     > [L] Was hört Sie noch?
+[RequestHandler]     
+[RequestHandler]     Wenn auf "Lachen" getippt wurde
+[RequestHandler]       > (Richtig-Geräusch)
+[RequestHandler]       > Sound Feenlachen
+[RequestHandler]       > [E] Lachen
+[RequestHandler]       > [L] "Anna hört ein Lachen und Klingen!"
+[RequestHandler]       > [L] "Gut gefunden!"
+[RequestHandler]       > [L] "Und jetzt: Lies weiter, was Anna noch alles erlebt!"
+[RequestHandler]       => Spielende
+[RequestHandler]     
+[RequestHandler]     Ansonsten
+[RequestHandler]       => falsch getippt
+[RequestHandler]       
+[RequestHandler]   Ansonsten
+[RequestHandler]     => falsch getippt
+[RequestHandler] 
+[RequestHandler] 2. Frage:
+[RequestHandler]   letzteFrage := "Woran hält Anna sich fest, als sie in den Garten hineinklettert?"
+[RequestHandler]   > :letzteFrage
+[RequestHandler] 
+[RequestHandler]   Wenn auf das Bild Efeu getippt wurde
+[RequestHandler]     > (Richtig-Geräusch)
+[RequestHandler]     > Sound Efeu
+[RequestHandler]     > [L] "Genau! Anna hält sich am Efeu fest!"
+[RequestHandler]     > [L] Findest du auch noch das passende Wort? Tippe es an!
+[RequestHandler]     
+[RequestHandler]     Wenn auf "das Wort Efeu" getippt wurde
+[RequestHandler]       > (Richtig-Geräusch)
+[RequestHandler]       > [L] "Gut gefunden!"
+[RequestHandler]       > [L] "Und jetzt: Lies weiter, was Anna noch alles erlebt!"
+[RequestHandler]       => Spielende
+[RequestHandler] 
+[RequestHandler]     Ansonsten
+[RequestHandler]       => falsch getippt
+[RequestHandler]       
+[RequestHandler]   Oder wenn auf "das Wort Efeu" getippt wurde
+[RequestHandler]     > (Richtig-Geräusch)
+[RequestHandler]     > [E] Efeu
+[RequestHandler]     > [L] "Genau! Anna hält sich am Efeu fest!"
+[RequestHandler]     > [L] "Findest du auch noch das passende Bild? Tippe es an!"
+[RequestHandler] 
+[RequestHandler]   Ansonsten
+[RequestHandler]     => falsch getippt
+[RequestHandler] 
+[RequestHandler] 
+[RequestHandler] falsch getippt:
+[RequestHandler]   
+[RequestHandler]   Wenn 4 mal falsch getippt wurde
+[RequestHandler]     > Das ist ganz schön schwer, lies die Geschichte in Ruhe nochmal oder lass Sie dir vorlesen!
+[RequestHandler]     => Spielende
+[RequestHandler]     
+[RequestHandler]   Ansonsten
+[RequestHandler]     
+[RequestHandler]     > (Fehler-Geräusch)
+[RequestHandler]     > "Leider nicht richtig!" (2-DRA_0735)
+[RequestHandler]     > Probiere es einfach noch mal (2-DRA_0736)
+[RequestHandler]     > :letzteFrage
+[RequestHandler]     => Neuer Versuch"
+[RequestHandler] }
+[RequestHandler] =================================================
+
+[RequestHandler] Find Services..
+[RequestHandler] Service: Psc\CMS\Service\CMSService::isResponsibleFor
+[RequestHandler] [CMSService] überprüfe ob verantwortlich für: POST /api/product/fee/tito/synchronize
+[RequestHandler] [CMSService] fail: api matched string(3) "cms" nicht
+[RequestHandler] Service: Psc\CMS\Service\EntityService::isResponsibleFor
+[RequestHandler] [EntityService] überprüfe ob verantwortlich für: POST /api/product/fee/tito/synchronize
+[RequestHandler] [EntityService] fail: api matched string(8) "entities" nicht
+[RequestHandler] Service: tiptoi\APIService::isResponsibleFor
+[RequestHandler] [APIService] überprüfe ob verantwortlich für: POST /api/product/fee/tito/synchronize
+[RequestHandler] ok: Service übernimmt den Request
+[RequestHandler] [APIService] running Controller: tiptoi\Controllers\TitoController::synchronizeSounds(string(2613) "#!tito v0.1
+[RequestHandler] [APIService] 
+[RequestHandler] [APIService] [stillInGame]:
+[RequestHandler] [APIService]   > "Du bist noch im Spiel! Wenn du das Spiel abbrechen möchtest, berühre eins der Zeichen in der Leiste unten auf der Seite. Wenn du weiterspielen möchtest," (2-LFU_1289)
+[RequestHandler] [APIService]   > "blättere auf die Seiten 6/7." (110207md13)
+[RequestHandler] [APIService] 
+[RequestHandler] [APIService] [start]:
+[RequestHandler] [APIService]   > [L] Hallo, Leseprofi! Lass uns ein Leserätsel machen!
+[RequestHandler] [APIService]   > [L] Los geht's!
+[RequestHandler] [APIService] 
+[RequestHandler] [APIService] Wähle aus 2 Fragen zufällig aus.
+[RequestHandler] [APIService] 
+[RequestHandler] [APIService] Lachen := 17283
+[RequestHandler] [APIService] Klingen := 17284
+[RequestHandler] [APIService] Efeu := 12345
+[RequestHandler] [APIService] dasWortEfeu := 12346
+[RequestHandler] [APIService] letzteFrage :=
+[RequestHandler] [APIService] 
+[RequestHandler] [APIService] 1. Frage:
+[RequestHandler] [APIService]   letzteFrage := "[L] Was hört Anna hinter der Mauer?"
+[RequestHandler] [APIService]   > :letzteFrage
+[RequestHandler] [APIService] 
+[RequestHandler] [APIService]   Wenn auf "Lachen" getippt wurde
+[RequestHandler] [APIService]     > (Richtig-Geräusch)
+[RequestHandler] [APIService]     > [L] Genau! Anna hört ein Lachen!
+[RequestHandler] [APIService]     > [L] Was hört sie noch? Tippe auf das Wort!
+[RequestHandler] [APIService]     
+[RequestHandler] [APIService]     Wenn auf das Wort Klingen getippt wurde
+[RequestHandler] [APIService]       > (Richtig-Geräusch)
+[RequestHandler] [APIService]       > [E] Klingen
+[RequestHandler] [APIService]       > [L] "Anna hört ein Lachen und Klingen!"
+[RequestHandler] [APIService]       > [L] "Gut gefunden!"
+[RequestHandler] [APIService]       > [L] "Und jetzt: Lies weiter, was Anna noch alles erlebt!"
+[RequestHandler] [APIService]       => Spielende
+[RequestHandler] [APIService]     
+[RequestHandler] [APIService]     Ansonsten
+[RequestHandler] [APIService]       => falsch getippt
+[RequestHandler] [APIService] 
+[RequestHandler] [APIService]   Oder Wenn auf "Klingen" getippt wurde
+[RequestHandler] [APIService]     > (Richtig-Geräusch)
+[RequestHandler] [APIService]     > [E] Klingen
+[RequestHandler] [APIService]     > [L] Genau! Anna hört ein Klingen!
+[RequestHandler] [APIService]     > [L] Was hört Sie noch?
+[RequestHandler] [APIService]     
+[RequestHandler] [APIService]     Wenn auf "Lachen" getippt wurde
+[RequestHandler] [APIService]       > (Richtig-Geräusch)
+[RequestHandler] [APIService]       > Sound Feenlachen
+[RequestHandler] [APIService]       > [E] Lachen
+[RequestHandler] [APIService]       > [L] "Anna hört ein Lachen und Klingen!"
+[RequestHandler] [APIService]       > [L] "Gut gefunden!"
+[RequestHandler] [APIService]       > [L] "Und jetzt: Lies weiter, was Anna noch alles erlebt!"
+[RequestHandler] [APIService]       => Spielende
+[RequestHandler] [APIService]     
+[RequestHandler] [APIService]     Ansonsten
+[RequestHandler] [APIService]       => falsch getippt
+[RequestHandler] [APIService]       
+[RequestHandler] [APIService]   Ansonsten
+[RequestHandler] [APIService]     => falsch getippt
+[RequestHandler] [APIService] 
+[RequestHandler] [APIService] 2. Frage:
+[RequestHandler] [APIService]   letzteFrage := "Woran hält Anna sich fest, als sie in den Garten hineinklettert?"
+[RequestHandler] [APIService]   > :letzteFrage
+[RequestHandler] [APIService] 
+[RequestHandler] [APIService]   Wenn auf das Bild Efeu getippt wurde
+[RequestHandler] [APIService]     > (Richtig-Geräusch)
+[RequestHandler] [APIService]     > Sound Efeu
+[RequestHandler] [APIService]     > [L] "Genau! Anna hält sich am Efeu fest!"
+[RequestHandler] [APIService]     > [L] Findest du auch noch das passende Wort? Tippe es an!
+[RequestHandler] [APIService]     
+[RequestHandler] [APIService]     Wenn auf "das Wort Efeu" getippt wurde
+[RequestHandler] [APIService]       > (Richtig-Geräusch)
+[RequestHandler] [APIService]       > [L] "Gut gefunden!"
+[RequestHandler] [APIService]       > [L] "Und jetzt: Lies weiter, was Anna noch alles erlebt!"
+[RequestHandler] [APIService]       => Spielende
+[RequestHandler] [APIService] 
+[RequestHandler] [APIService]     Ansonsten
+[RequestHandler] [APIService]       => falsch getippt
+[RequestHandler] [APIService]       
+[RequestHandler] [APIService]   Oder wenn auf "das Wort Efeu" getippt wurde
+[RequestHandler] [APIService]     > (Richtig-Geräusch)
+[RequestHandler] [APIService]     > [E] Efeu
+[RequestHandler] [APIService]     > [L] "Genau! Anna hält sich am Efeu fest!"
+[RequestHandler] [APIService]     > [L] "Findest du auch noch das passende Bild? Tippe es an!"
+[RequestHandler] [APIService] 
+[RequestHandler] [APIService]   Ansonsten
+[RequestHandler] [APIService]     => falsch getippt
+[RequestHandler] [APIService] 
+[RequestHandler] [APIService] 
+[RequestHandler] [APIService] falsch getippt:
+[RequestHandler] [APIService]   
+[RequestHandler] [APIService]   Wenn 4 mal falsch getippt wurde
+[RequestHandler] [APIService]     > Das ist ganz schön schwer, lies die Geschichte in Ruhe nochmal oder lass Sie dir vorlesen!
+[RequestHandler] [APIService]     => Spielende
+[RequestHandler] [APIService]     
+[RequestHandler] [APIService]   Ansonsten
+[RequestHandler] [APIService]     
+[RequestHandler] [APIService]     > (Fehler-Geräusch)
+[RequestHandler] [APIService]     > "Leider nicht richtig!" (2-DRA_0735)
+[RequestHandler] [APIService]     > Probiere es einfach noch mal (2-DRA_0736)
+[RequestHandler] [APIService]     > :letzteFrage
+[RequestHandler] [APIService]     => Neuer Versuch")
+[RequestHandler] 
+[RequestHandler] ERROR: Uncaught exception 'tiptoi\Import\WrongNumberWarning' with message:
+[RequestHandler] 'In der Datenbank wurde '2-EAE_0620' als Nummer gefunden, es wurde jedoch '2-DRA_0736' angegeben.. #8761 Text: 'Probiere es einfach noch mal''
+[RequestHandler] in D:\www\tiptoi\Umsetzung\base\src\tiptoi\SoundPersister.php:289
+[RequestHandler] StackTrace: 
+[RequestHandler] #0 D:\www\tiptoi\Umsetzung\base\src\tiptoi\SoundPersister.php(107): tiptoi\SoundPersister->throwWrongNumberWarning(Object(tiptoi\Entities\Sound))
+[RequestHandler] #1 D:\www\tiptoi\Umsetzung\base\src\tiptoi\Import\PostProcessor.php(441): tiptoi\SoundPersister->persist('Probiere es ein...', Array, 'text', '2-DRA_0736')
+[RequestHandler] #2 D:\www\tiptoi\Umsetzung\base\src\tiptoi\tito\SoundSynchronizer.php(61): tiptoi\Import\PostProcessor->getSound('Probiere es ein...', Array, 'text', '2-DRA_0736')
+[RequestHandler] #3 D:\www\tiptoi\Umsetzung\base\src\tiptoi\tito\SoundSynchronizer.php(44): tiptoi\tito\SoundSynchronizer->persistSound(Object(tiptoi\tito\SoundToken))
+[RequestHandler] #4 D:\www\tiptoi\Umsetzung\base\src\tiptoi\Controllers\TitoController.php(44): tiptoi\tito\SoundSynchronizer->synchronize('#!tito v0.1??[s...')
+[RequestHandler] #5 D:\www\psc-cms\Umsetzung\base\src\psc\class\Psc\Code\Callback.php(185): tiptoi\Controllers\TitoController->synchronizeSounds('#!tito v0.1??[s...')
+[RequestHandler] #6 D:\www\psc-cms\Umsetzung\base\src\psc\class\Psc\Code\Callback.php(70): Psc\Code\Callback->callObject(Object(tiptoi\Controllers\TitoController), 'synchronizeSoun...', Array)
+[RequestHandler] #7 D:\www\psc-cms\Umsetzung\base\src\psc\class\Psc\CMS\Service\ControllerService.php(132): Psc\Code\Callback->call(Array)
+[RequestHandler] #8 D:\www\psc-cms\Umsetzung\base\src\psc\class\Psc\CMS\Service\ControllerService.php(100): Psc\CMS\Service\ControllerService->runController(Object(tiptoi\Controllers\TitoController), 'synchronizeSoun...', Array)
+[RequestHandler] #9 D:\www\psc-cms\Umsetzung\base\src\psc\class\Psc\Net\HTTP\RequestHandler.php(93): Psc\CMS\Service\ControllerService->route(Object(Psc\Net\ServiceRequest))
+[RequestHandler] #10 D:\www\psc-cms\Umsetzung\base\src\psc\class\Psc\Net\HTTP\FrontController.php(103): Psc\Net\HTTP\RequestHandler->handle(Object(Psc\Net\HTTP\Request))
+[RequestHandler] #11 D:\www\psc-cms\Umsetzung\base\src\psc\class\Psc\Net\HTTP\FrontController.php(56): Psc\Net\HTTP\FrontController->handle(Object(Psc\Net\HTTP\Request))
+[RequestHandler] #12 D:\www\psc-cms\Umsetzung\base\src\psc\class\Psc\CMS\ProjectMain.php(254): Psc\Net\HTTP\FrontController->process()
+[RequestHandler] #13 D:\www\tiptoi\Umsetzung\base\htdocs\api.php(9): Psc\CMS\ProjectMain->handleAPIRequest()
+[RequestHandler] #14 {main}
+[RequestHandler] in D:\www\tiptoi\Umsetzung\base\src\tiptoi\SoundPersister.php:289

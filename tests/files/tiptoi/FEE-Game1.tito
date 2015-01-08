@@ -1,0 +1,101 @@
+#!tito v0.1
+
+onStillInGame:
+  > "Du bist noch im Spiel! Wenn du das Spiel abbrechen möchtest, berühre eins der Zeichen in der Leiste unten auf der Seite. Wenn du weiterspielen möchtest," (2-LFU_1289)
+  > "blättere auf die Seiten 6/7." (110207md13)
+
+[start]:
+  > [L] Hallo, Leseprofi! Lass uns ein Leserätsel machen!
+  > [L] Los geht's!
+
+Wähle aus 2 Fragen zufällig aus.
+
+Lachen := 17283
+Klingen := 17284
+Efeu := 12345
+dasWortEfeu := 12346
+letzteFrage :=
+
+1. Frage:
+  letzteFrage := "[L] Was hört Anna hinter der Mauer?"
+  > :letzteFrage
+
+  Wenn auf "Lachen" getippt wurde
+    > (Richtig-Geräusch)
+    > [L] Genau! Anna hört ein Lachen!
+    > [L] Was hört sie noch? Tippe auf das Wort!
+    
+    Wenn auf das Wort Klingen getippt wurde
+      > (Richtig-Geräusch)
+      > [E] Klingen
+      > [L] "Anna hört ein Lachen und Klingen!"
+      > [L] "Gut gefunden!"
+      > [L] "Und jetzt: Lies weiter, was Anna noch alles erlebt!"
+      => Spielende
+    
+    Ansonsten
+      => falsch getippt
+
+  Oder Wenn auf "Klingen" getippt wurde
+    > (Richtig-Geräusch)
+    > [E] Klingen
+    > [L] Genau! Anna hört ein Klingen!
+    > [L] Was hört Sie noch?
+    
+    Wenn auf "Lachen" getippt wurde
+      > (Richtig-Geräusch)
+      > Sound Feenlachen
+      > [E] Lachen
+      > [L] "Anna hört ein Lachen und Klingen!"
+      > [L] "Gut gefunden!"
+      > [L] "Und jetzt: Lies weiter, was Anna noch alles erlebt!"
+      => Spielende
+    
+    Ansonsten
+      => falsch getippt
+      
+  Ansonsten
+    => falsch getippt
+
+2. Frage:
+  letzteFrage := "Woran hält Anna sich fest, als sie in den Garten hineinklettert?"
+  > :letzteFrage
+
+  Wenn auf das Bild Efeu getippt wurde
+    > (Richtig-Geräusch)
+    > Sound Efeu
+    > [L] "Genau! Anna hält sich am Efeu fest!"
+    > [L] Findest du auch noch das passende Wort? Tippe es an!
+    
+    Wenn auf "das Wort Efeu" getippt wurde
+      > (Richtig-Geräusch)
+      > [L] "Gut gefunden!"
+      > [L] "Und jetzt: Lies weiter, was Anna noch alles erlebt!"
+      => Spielende
+
+    Ansonsten
+      => falsch getippt
+      
+  Oder wenn auf "das Wort Efeu" getippt wurde
+    > (Richtig-Geräusch)
+    > [E] Efeu
+    > [L] "Genau! Anna hält sich am Efeu fest!"
+    > [L] "Findest du auch noch das passende Bild? Tippe es an!"
+
+  Ansonsten
+    => falsch getippt
+
+
+falsch getippt:
+  
+  Wenn 4 mal falsch getippt wurde
+    > Das ist ganz schön schwer, lies die Geschichte in Ruhe nochmal oder lass Sie dir vorlesen!
+    => Spielende
+    
+  Ansonsten
+    
+    > (Fehler-Geräusch)
+    > "Leider nicht richtig!" (2-DRA_0735)
+    > Probiere es einfach noch mal (2-DRA_0736)
+    > :letzteFrage
+    => Neuer Versuch
