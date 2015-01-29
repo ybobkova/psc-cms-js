@@ -48,6 +48,10 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
     test.setupInternalLinkButton = function() {
       return test.setupButton('add-internal-link');
     };
+
+    test.setupEmailLinkButton = function() {
+      return test.setupButton('add-email-link');
+    };
     
     return test;
   };
@@ -183,6 +187,14 @@ define(['psc-tests-assert','require','Psc/TextEditor', 'Psc/UI/LayoutManager/Par
   test("paragraph shows a button to add a internal link", function() {
     setup(this);
     var $button = this.setupInternalLinkButton();
+    
+    this.assertjQueryLength(1, $button);
+    this.assertjQueryHasClass('psc-cms-ui-button', $button);
+  });
+
+  test("paragraph shows a button to add a email link", function() {
+    setup(this);
+    var $button = this.setupEmailLinkButton();
     
     this.assertjQueryLength(1, $button);
     this.assertjQueryHasClass('psc-cms-ui-button', $button);
