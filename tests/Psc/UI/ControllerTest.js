@@ -13,8 +13,13 @@ define(['psc-tests-assert', 'Psc/UI/Controller', 'Psc/UI/Tab'], function(t) {
     var controller = new Psc.UI.Controller({
       tabs: tabs
     });
+
+    var prefixController = new Psc.UI.Controller({
+      tabs: tabs,
+      prefix: ['api', 'product', 'test']
+    });
     
-    return t.setup(test, {controller: controller, openedTab: undefined});
+    return t.setup(test, {controller: controller, prefixController: prefixController, openedTab: undefined});
   };
   
   asyncTest("openTab creates a tab and opens it in tabs", function() {
@@ -72,6 +77,13 @@ define(['psc-tests-assert', 'Psc/UI/Controller', 'Psc/UI/Tab'], function(t) {
     this.assertjQueryIs('.psc-cms-ui-tab-button-openable', $button);
 
     that.$widget.html($button);
+  });
+
+  test("create tab respects the ui controller prefix", function() {
+    var that = setup(this), ui = this.prefixController;
+    var tab = ui.tab('page', 17, 'form', 'label');
+
+    this.assertEquals("api/product/test/entities/page/17/form", tab.url);
   });
 
   test("create tab can have subresource as array", function () {
