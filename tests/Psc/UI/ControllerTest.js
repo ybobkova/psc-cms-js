@@ -79,11 +79,11 @@ define(['psc-tests-assert', 'Psc/UI/Controller', 'Psc/UI/Tab'], function(t) {
     that.$widget.html($button);
   });
 
-  test("create tab respects the ui controller prefix", function() {
+  test("create tab respects the ui controller prefix which replaces entities", function() {
     var that = setup(this), ui = this.prefixController;
     var tab = ui.tab('page', 17, 'form', 'label');
 
-    this.assertEquals("api/product/test/entities/page/17/form", tab.url);
+    this.assertEquals("api/product/test/page/17/form", tab.url);
   });
 
   test("create tab can have subresource as array", function () {
