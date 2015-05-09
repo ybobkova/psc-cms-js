@@ -43,7 +43,7 @@ define(['psc-tests-assert', 'joose', 'jquery-simulate','Psc/UI/AutoComplete','Ps
           }, 120);
           
           return d.promise();
-        }        
+        }
       }
     });
     
@@ -115,7 +115,7 @@ define(['psc-tests-assert', 'joose', 'jquery-simulate','Psc/UI/AutoComplete','Ps
       url: 'none'
     });
 
-      autoComplete.search('giraffe');
+      autoComplete.search(' giraffe '); // tests, if the string will be trimmed
       stop();
 
       setTimeout(function() {
