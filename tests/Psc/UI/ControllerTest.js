@@ -74,6 +74,26 @@ define(['psc-tests-assert', 'Psc/UI/Controller', 'Psc/UI/Tab'], function(t) {
     that.$widget.html($button);
   });
 
+  test("createDropBoxButtonItem creates a FastItem with identifier and an attached widget", function () {
+    var that = setup(this), ui = this.controller;
+
+    var dropBoxButtonItem = ui.createDropBoxButtonItem(
+      ui.tab('sound', 5, 'form', "Sound Flusspferd 'lacht' (2-TAF_0025)"),
+      ui.button("Sound Flusspferd 'lacht' (2-TAF_0025)", 1, "volume-on"),
+      5
+    );
+
+    this.assertInstanceOf(Psc.CMS.FastItem, dropBoxButtonItem);
+    this.assertEquals("entities/sound/5/form", dropBoxButtonItem.getUrl());
+    
+    var $button = dropBoxButtonItem.unwrap();
+    this.assertNotUndefined($button);
+    this.assertjQueryIs('.psc-cms-ui-button', $button);
+    this.assertjQueryIs('.psc-cms-ui-tab-button-openable', $button);
+
+    that.$widget.html($button);
+  });
+
   test("create tab can have subresource as array", function () {
     var that = setup(this), ui = this.controller;
     var tab = ui.tab('page', 17, ['contentstream', 'de'], 'Seiteninhalt von für DE');
