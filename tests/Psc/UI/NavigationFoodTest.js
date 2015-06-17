@@ -3,7 +3,7 @@ define(['psc-tests-assert','text!fixtures/navigation.food.json','Psc/UI/Navigati
   module("Psc.UI.Navigation (FoodTest)");
   
   var setup = function (test) {
-    var $html = $('#qunit-fixture').html('<div class="fpsc-cms-ui-navigation-container"><fieldset class="psc-cms-ui-navigation"><legend>Navigation</legend><div class="content"><ul class="ui-widget"></ul></div></fieldset></div>');
+    var $html = $('#visible-fixture').html('<div class="fpsc-cms-ui-navigation-container"><fieldset class="psc-cms-ui-navigation"><legend>Navigation</legend><div class="content"><ul class="ui-widget"></ul></div></fieldset></div>');
     
     var nodes;  
     var navigation = new Psc.UI.Navigation({
@@ -35,8 +35,9 @@ define(['psc-tests-assert','text!fixtures/navigation.food.json','Psc/UI/Navigati
     var assertNodeDepth = function (nodeTitle, expectedDepth) {
       var $widget = navigation.getNavigationWidget();
       
-      var $li = test.assertjQueryLength(1, $widget.find('ul.ui-widget li:has(span.title:contentEquals("'+nodeTitle+'"))'));
-      test.assertjQueryHasClass('depth-'+expectedDepth, $li);
+      var $li = test.assertjQueryLength(1, $widget.find('ul.ui-widget li > .dd-handle:has(span.title:contentEquals("'+nodeTitle+'"))'));
+
+      test.assertEquals(expectedDepth+1, $li.parents('ul').length);
     };
     
     return t.setup(test, {
@@ -46,10 +47,10 @@ define(['psc-tests-assert','text!fixtures/navigation.food.json','Psc/UI/Navigati
     });
   };
 
-  test("navigation widget has only one ul.ui-widget", function () {
+  test("navigation widget has only one root ul.ui-widget", function () {
     var that = setup(this);
     
-    this.assertjQueryLength(1, this.navigation.getNavigationWidget().find('ul.ui-widget'), 'there is only one ul.ui-widget in navigation-widget');
+    this.assertjQueryLength(1, this.navigation.getNavigationWidget().find('> ul.ui-widget'), 'there is only one ul.ui-widget in navigation-widget');
   });
 
   test("indentation in frontend", function() {

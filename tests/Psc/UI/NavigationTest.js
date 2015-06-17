@@ -4,14 +4,15 @@ define(['psc-tests-assert','Psc/UI/Navigation'], function(t) {
   module("Psc.UI.Navigation");
   
   var setup = function (test) {
-    $('#qunit-fixture').html('<div class="psc-cms-ui-navigation-container"><fieldset class="psc-cms-ui-navigation"><legend>Navigation</legend><div class="content"><ul class="ui-widget"></ul></div></fieldset></div>');
+    var $fixture = $('#visible-fixture');
+    $fixture.html('<div class="psc-cms-ui-navigation-container"><fieldset class="psc-cms-ui-navigation"><legend>Navigation</legend><div class="content"><ul class="ui-widget"></ul></div></fieldset></div>');
 
     var uiController = {};
       
-    var navigation = new Psc.UI.Navigation({
+    var navigation = window.navi = new Psc.UI.Navigation({
       languages: ['de', 'en'],
       uiController: uiController,
-        widget: $('#qunit-fixture div.psc-cms-ui-navigation-container'),
+        widget: $fixture.find('div.psc-cms-ui-navigation-container'),
         /* das hier lässt sich mit
           $em->getRepository('Entities\NavigationNode')->getTreeForUI()
           in Psc\CMS\Navigation\RepositoryTest erzeugen
@@ -280,9 +281,11 @@ define(['psc-tests-assert','Psc/UI/Navigation'], function(t) {
     });
     //onsole.log(JSON.stringify(flat));
   });
-  
+
+  /*  
   test("TODO: if a navigation point is added and edited, than added a new, the new one does not clone the title of the edited one", function() {
     var that = setup(this), navigation = this.navigation;
     that.assertTrue(true, 'test incomplete');
   });
+*/
 });

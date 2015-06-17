@@ -57,7 +57,7 @@ module.exports = function(grunt) {
     qunit: {
       all: {
         options: {
-          urls: [].concat(mapToUrl('tests/Psc/**/*.html'))
+          urls: [].concat(mapToUrl('tests/Psc/**/*Test.html'))
                   .concat(mapToUrl('tests/tiptoi/**/*.html'))
                   .concat(mapToUrl('tests/CoMun/**/*.html'))
         }
