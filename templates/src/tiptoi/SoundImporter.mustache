@@ -7,6 +7,7 @@
           <th class="first sound-number">Nummer</th>
           <th class="sound-content">Inhalt</th>
           <th class="sound-speaker">Sprecher</th>
+          <th class="sound-speaker">Type</th>
           <th class="sound-status">Status</th>
           <th class="sound-details last">Beschreibung</th>
         </tr>
@@ -16,6 +17,7 @@
           <td class="first" data-bind="text: sound.number"></td>
           <td data-bind="text: sound.formatContent()"></td>
           <td data-bind="text: sound.formatSpeakers()"></td>
+          <td data-bind="text: sound.type"></td>
           <td data-bind="text: formatStatus()"></td>
           <td class="last" data-bind="text: formatDetails()"></td>
         </tr>
